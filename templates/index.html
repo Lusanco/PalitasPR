@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flask Frontend</title>
+  </head>
+  <body>
+    <h1>Users</h1>
+    <ul id="user-list"></ul>
+
+    <h1>Services</h1>
+    <ul id="service-list"></ul>
+
+    <script>
+      // Function to fetch user data from Flask backend
+      function fetchUsers() {
+        fetch("/users") // MAKE A CALL TO FLASK, GETS BACKEND
+          .then((response) => response.json()) // Parse the JSON response
+          .then((users) => {
+            const userList = document.getElementById("user-list");
+            userList.innerHTML = "";
+            users.forEach((user) => {
+              const listItem = document.createElement("li");
+              // BELOW, THE USERS NAME AND LAST NAME ARE FETCHED
+              listItem.textContent = `${user.first_name} ${user.last_name}`;
+              userList.appendChild(listItem);
+            });
+          });
+      }
+
+      // Function to fetch service data from Flask backend
+      function fetchServices() {
+        fetch("/services") // MAKE A CALL TO FLASK, GETS BACKEND
+          .then((response) => response.json()) // Parse the JSON response
+          .then((services) => {
+            const serviceList = document.getElementById("service-list");
+            serviceList.innerHTML = "";
+            services.forEach((service) => {
+              const listItem = document.createElement("li");
+              // ALL SERVICES
+              listItem.textContent = service.name;
+              serviceList.appendChild(listItem);
+            });
+          });
+      }
+
+      // Fetch data when the page loads
+      fetchUsers();
+      fetchServices();
+    </script>
+  </body>
+</html>
