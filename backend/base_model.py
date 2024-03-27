@@ -1,16 +1,13 @@
 #!/usr/bin/python3
-""" BASE FOR ALL CLASSES"""
-import uuid
-from datetime import datetime
+from sqlalchemy import Column, String, DateTime, func
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, DateTime
-
+import uuid
 
 Base = declarative_base()
 
 class BaseModel:
     """
-        BASE CLASS
+    BASE CLASS
     """
 
     id = Column(
@@ -20,28 +17,24 @@ class BaseModel:
     )
 
     created_at = Column(
-        DateTime,
+        DateTime(timezone=True),  # Adjusted for timezone
         nullable=False,
-        default=datetime.utcnow
+        default=func.now()  # Use database's current timestamp function
     )
 
     updated_at = Column(
-        DateTime,
+        DateTime(timezone=True),  # Adjusted for timezone
         nullable=False,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
+        default=func.now(),  # Use database's current timestamp function
+        onupdate=func.now()  # Use database's current timestamp function for updates
     )
 
     def __init__(self, *args, **kwargs):
         """Instantiates a new model"""
         if not kwargs:
             self.id = str(uuid.uuid4())
-            self.created_at = datetime.utcnow()
-            self.updated_at = datetime.utcnow()
         else:
             self.id = str(uuid.uuid4())
-            self.created_at = datetime.utcnow()
-            self.updated_at = datetime.utcnow()
             self.set_attr(**kwargs)
 
     def set_attr(self, **kwargs):
@@ -51,7 +44,7 @@ class BaseModel:
 
     def all_columns(self):
         """
-            Returns dict of columns and values in json
+        Returns dict of columns and values in json
         """
         dict_of_table = {}
 
