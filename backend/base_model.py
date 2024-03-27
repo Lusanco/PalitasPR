@@ -44,7 +44,7 @@ class BaseModel:
 
     def all_columns(self):
         """
-        Returns dict of columns and values from table
+        Returns dict of columns and values from table to send to flask route
         """
         dict_of_table = {}
 
