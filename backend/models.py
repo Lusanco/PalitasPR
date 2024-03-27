@@ -8,6 +8,7 @@ from sqlalchemy import Column, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from backend.base_model import BaseModel, Base
 
+
 # Define association table for many-to-many relationship
 user_service_association = Table(
     'user_service_association', Base.metadata,

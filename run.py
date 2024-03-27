@@ -4,9 +4,10 @@
 from flask import Flask, jsonify, render_template, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from backend.base_model import Base
+from backend.base_model import Base, BaseModel
 from backend.models import Service, User
 from backend.db_operations import DBOperations   # Import the method for creating new objects
+
 
 # Create Flask app instance
 app = Flask(__name__)
