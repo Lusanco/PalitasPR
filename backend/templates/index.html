@@ -4,8 +4,18 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Flask Frontend</title>
+		<script src="../static/index.js" defer></script>
 	</head>
 	<body>
+		<form action="GET">
+			<label for="first_name">First Name</label>
+			<input id="first_name" type="text" />
+			<br />
+			<label for="last_name">Last Name</label>
+			<input id="last_name" type="text" />
+			<button id="button_input">Create User</button>
+		</form>
+		<br />
 		<h1>Users</h1>
 		<ul id="user-list"></ul>
 

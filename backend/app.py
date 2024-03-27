@@ -72,6 +72,8 @@ def create_object():
     return jsonify({"message": "Object created successfully"}), 200
 
 
+# {"User":{"first_name": "firstName", "last_name": "lastName"}}
+
 # Run the Flask app
 if __name__ == "__main__":
     app.run(debug=True)
