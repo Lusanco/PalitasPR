@@ -1,32 +1,28 @@
-#!/usr/bin/python3
 from sqlalchemy import Column, String, DateTime, func
 from sqlalchemy.ext.declarative import declarative_base
 import uuid
 
 Base = declarative_base()
 
+
 class BaseModel:
     """
     BASE CLASS
     """
 
-    id = Column(
-        String(60),
-        primary_key=True,
-        nullable=False
-    )
+    id = Column(String(60), primary_key=True, nullable=False)
 
     created_at = Column(
         DateTime(timezone=True),  # Adjusted for timezone
         nullable=False,
-        default=func.now()  # Use database's current timestamp function
+        default=func.now(),  # Use database's current timestamp function
     )
 
     updated_at = Column(
         DateTime(timezone=True),  # Adjusted for timezone
         nullable=False,
         default=func.now(),  # Use database's current timestamp function
-        onupdate=func.now()  # Use database's current timestamp function for updates
+        onupdate=func.now(),  # Use database's current timestamp function for updates
     )
 
     def __init__(self, *args, **kwargs):
