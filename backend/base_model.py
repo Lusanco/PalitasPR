@@ -44,7 +44,7 @@ class BaseModel:
 
     def all_columns(self):
         """
-        Returns dict of columns and values in json
+        Returns dict of columns and values from table
         """
         dict_of_table = {}
 
