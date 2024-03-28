@@ -28,6 +28,8 @@ if __name__ == "__main__":
                     .filter(Town.name.in_(['Ponce', 'Salinas'])) \
                     .all()
 
+    # results = [('John', 'Barber', 'Ponce'), ('Erick', 'Gardening', 'Salinas') 
+
     # Process the results
     for result in results:
         print(f"Person: {result.person} service: {result.service} Town: {result.town}")
