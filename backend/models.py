@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 from sqlalchemy import Column, String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
-from backend.base_model import BaseModel, Base
+from base_model import BaseModel, Base
 
 class UserServiceAssoc(BaseModel, Base):
     __tablename__ = 'user_service_assoc'
