@@ -1,9 +1,5 @@
--- Drop foreign key constraints
-ALTER TABLE IF EXISTS users_services_assc DROP CONSTRAINT IF EXISTS users_services_assc_user_id_fkey;
-ALTER TABLE IF EXISTS users_services_assc DROP CONSTRAINT IF EXISTS users_services_assc_service_id_fkey;
-
 -- Drop tables if they exist (for testing purposes)
-DROP TABLE IF EXISTS users_services_assc;
+DROP TABLE IF EXISTS user_service_assoc;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS services;
 DROP TABLE IF EXISTS towns;
@@ -33,8 +29,8 @@ CREATE TABLE towns (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create table for users_services_association
-CREATE TABLE users_services_assc (
+-- Create table for user_service_assoc
+CREATE TABLE user_service_assoc (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) NOT NULL,
     service_id UUID REFERENCES services(id) NOT NULL,
@@ -67,7 +63,7 @@ VALUES
     (gen_random_uuid(), 'Coamo');
 
 -- Assign 'Barber' service to 'John' in 'Ponce'
-INSERT INTO users_services_assc (user_id, service_id, town_id)
+INSERT INTO user_service_assoc (user_id, service_id, town_id)
 VALUES (
     (SELECT id FROM users WHERE first_name = 'John' LIMIT 1),
     (SELECT id FROM services WHERE name = 'Barber' LIMIT 1),
@@ -75,7 +71,7 @@ VALUES (
 );
 
 -- Assign 'Gardening' service to 'Erick' in 'Coamo' and 'Salinas'
-INSERT INTO users_services_assc (user_id, service_id, town_id)
+INSERT INTO user_service_assoc (user_id, service_id, town_id)
 VALUES (
     (SELECT id FROM users WHERE first_name = 'Erick' LIMIT 1),
     (SELECT id FROM services WHERE name = 'Gardening' LIMIT 1),
@@ -88,7 +84,7 @@ VALUES (
 );
 
 -- Assign 'Nails' service to 'Jane' in 'Ponce' and 'Juana Diaz'
-INSERT INTO users_services_assc (user_id, service_id, town_id)
+INSERT INTO user_service_assoc (user_id, service_id, town_id)
 VALUES (
     (SELECT id FROM users WHERE first_name = 'Jane' LIMIT 1),
     (SELECT id FROM services WHERE name = 'Nails' LIMIT 1),
@@ -101,7 +97,7 @@ VALUES (
 );
 
 -- Assign 'Gardening' service to 'Jane' in 'Ponce'
-INSERT INTO users_services_assc (user_id, service_id, town_id)
+INSERT INTO user_service_assoc (user_id, service_id, town_id)
 VALUES (
     (SELECT id FROM users WHERE first_name = 'Jane' LIMIT 1),
     (SELECT id FROM services WHERE name = 'Gardening' LIMIT 1),

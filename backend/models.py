@@ -3,16 +3,16 @@ from sqlalchemy import Column, String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from backend.base_model import BaseModel, Base
 
-class UserServicesAssociation(BaseModel, Base):
-    __tablename__ = 'users_services_assc'
+class UserServiceAssoc(BaseModel, Base):
+    __tablename__ = 'user_service_assoc'
 
 
     user_id = Column(String, ForeignKey('users.id'), nullable=False)
     service_id = Column(String, ForeignKey('services.id'), nullable=False)
     town_id = Column(String, ForeignKey('towns.id'), nullable=False)
 
-    # Relationships
-    user = relationship("User")
+    # Relationships, this allows to call the related objects to a row on this table
+    user = relationship('User')
     town = relationship('Town')
     service = relationship('Service')
 
