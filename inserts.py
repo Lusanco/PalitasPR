@@ -6,14 +6,6 @@
     EXAMPLE: new_user = User(**{att_name: att_value})
 """
 
-#!/usr/bin/python3
-"""
-    THIS IS IS FOR INSERTING DATA INTO TABLES
-    FEEL FREE TO MODIFY AND INSERT ANY DATA
-    USE KWARGS ONLY AT THE MOMENT WHEN INSERTING
-    EXAMPLE: new_user = User(**{att_name: att_value})
-"""
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from backend.models import User, Service, Town, UserServicesAssociation # Add Town import
@@ -26,18 +18,19 @@ if __name__ == "__main__":
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # Retrieve the Town object for Ponce
-    town = session.query(Town).filter_by(name="Ponce").first()
+    # Perform the query
+    results = session.query(User.first_name.label('person'),
+                            Service.name.label('service'),
+                            Town.name.label('town')) \
+                    .join(UserServicesAssociation, User.id == UserServicesAssociation.user_id) \
+                    .join(Service, Service.id == UserServicesAssociation.service_id) \
+                    .join(Town, Town.id == UserServicesAssociation.town_id) \
+                    .filter(Town.name.in_(['Ponce', 'Salinas'])) \
+                    .all()
 
-    # Retrieve the Service object for Gardening
-    service = session.query(Service).filter_by(name="Gardening").first() # id 'dbc'
-
-    user = session.query(User).filter_by(first_name="John", last_name="Doe").first() # jhon id is '0b', service '0f' barber of 
-
-    new_assc = UserServicesAssociation(**{'user_id': user.id, 'service_id': service.id, 'town_id': town.id})
-
-    session.add(new_assc)
-    session.commit()
+    # Process the results
+    for result in results:
+        print(f"Person: {result.person} service: {result.service} Town: {result.town}")
 
     # Close the session
     session.close()
