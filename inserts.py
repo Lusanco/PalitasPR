@@ -6,10 +6,17 @@
     EXAMPLE: new_user = User(**{att_name: att_value})
 """
 
+#!/usr/bin/python3
+"""
+    THIS IS IS FOR INSERTING DATA INTO TABLES
+    FEEL FREE TO MODIFY AND INSERT ANY DATA
+    USE KWARGS ONLY AT THE MOMENT WHEN INSERTING
+    EXAMPLE: new_user = User(**{att_name: att_value})
+"""
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from backend.models import User, Service  # Change to absolute import
+from backend.models import User, Service, Town, UserServicesAssociation # Add Town import
 
 if __name__ == "__main__":
     # Create the engine
@@ -19,16 +26,17 @@ if __name__ == "__main__":
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # INSERT into table ONLY KWARGS
-    new_user = User(**{'first_name': "Juan", 'last_name': "Melendez"})
+    # Retrieve the Town object for Ponce
+    town = session.query(Town).filter_by(name="Ponce").first()
 
-    # appending 'Nails' service to user, user can have more than one service
-    service = session.query(Service).filter_by(name="Gardening").first()
-    new_user.services.append(service)
-    
-    session.add(new_user)
+    # Retrieve the Service object for Gardening
+    service = session.query(Service).filter_by(name="Gardening").first() # id 'dbc'
 
-    # Commit the changes
+    user = session.query(User).filter_by(first_name="John", last_name="Doe").first() # jhon id is '0b', service '0f' barber of 
+
+    new_assc = UserServicesAssociation(**{'user_id': user.id, 'service_id': service.id, 'town_id': town.id})
+
+    session.add(new_assc)
     session.commit()
 
     # Close the session
