@@ -8,7 +8,7 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from backend.models import User, Service, Town, UserServiceAssoc # Add Town import
+from models import User, Service, Town, UserServiceAssoc # Add Town import
 
 if __name__ == "__main__":
     # Create the engine
