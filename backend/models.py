@@ -6,7 +6,7 @@
 
 from sqlalchemy import Column, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
-from backend.base_model import BaseModel, Base
+from base_model import BaseModel, Base
 
 
 # Define association table for many-to-many relationship

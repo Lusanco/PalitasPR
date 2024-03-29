@@ -7,8 +7,8 @@
 from os import getenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from backend.models import User, Service
-from backend.base_model import BaseModel, Base
+from models import User, Service
+from base_model import BaseModel, Base
 
 class DBOperations():
 
