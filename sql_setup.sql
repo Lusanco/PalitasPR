@@ -12,6 +12,7 @@ CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -19,7 +20,7 @@ CREATE TABLE users (
 -- Create table for Service
 CREATE TABLE services (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(50) UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -27,7 +28,7 @@ CREATE TABLE services (
 -- Create table for towns
 CREATE TABLE towns (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(50) UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -35,7 +36,7 @@ CREATE TABLE towns (
 -- Create table for categories
 CREATE TABLE categories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -43,10 +44,11 @@ CREATE TABLE categories (
 -- Create table for categories_service_assoc
 CREATE TABLE categories_service_assoc (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    category_id UUID REFERENCES categories(id) NOT NULL,
-    service_id UUID REFERENCES services(id) NOT NULL,
+    category_id UUID REFERENCES categories(id) ON DELETE CASCADE NOT NULL,
+    service_id UUID REFERENCES services(id) ON DELETE CASCADE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_category_service UNIQUE (category_id, service_id)
 );
 
 -- Create table for user_service_assoc
@@ -60,29 +62,41 @@ CREATE TABLE user_service_assoc (
     CONSTRAINT unique_user_service_town UNIQUE (user_id, service_id, town_id)
 );
 
--- Insert sample data into users table
-INSERT INTO users (id, first_name, last_name)
+-- Insert sample data into users table with simulated email addresses
+INSERT INTO users (id, first_name, last_name, email)
 VALUES
-    (gen_random_uuid(), 'John', 'Doe'),
-    (gen_random_uuid(), 'Jane', 'Smith'),
-    (gen_random_uuid(), 'Luis', 'Santiago'),
-    (gen_random_uuid(), 'Hector', 'Torres'),
-    (gen_random_uuid(), 'Angelica', 'Diaz'),
-    (gen_random_uuid(), 'Erick', 'Santiago'),
-    (gen_random_uuid(), 'Maria', 'Garcia'),
-    (gen_random_uuid(), 'Carlos', 'Martinez'),
-    (gen_random_uuid(), 'Sofia', 'Rodriguez'),
-    (gen_random_uuid(), 'Daniel', 'Lopez'),
-    (gen_random_uuid(), 'Laura', 'Hernandez'),
-    (gen_random_uuid(), 'Pedro', 'Gonzalez'),
-    (gen_random_uuid(), 'Ana', 'Perez'),
-    (gen_random_uuid(), 'Javier', 'Sanchez'),
-    (gen_random_uuid(), 'Marta', 'Lopez'),
-    (gen_random_uuid(), 'Gabriel', 'Rivera'),
-    (gen_random_uuid(), 'Veronica', 'Gomez'),
-    (gen_random_uuid(), 'Miguel', 'Diaz'),
-    (gen_random_uuid(), 'Julia', 'Fernandez'),
-    (gen_random_uuid(), 'Roberto', 'Ramirez');
+    (gen_random_uuid(), 'John', 'Doe', 'jd123@gmail.com'),
+    (gen_random_uuid(), 'Jane', 'Smith', 'jane006@gmail.com'),
+    (gen_random_uuid(), 'Luis', 'Santiago', 'bestbeast@gmail.com'),
+    (gen_random_uuid(), 'Hector', 'Torres', 'hector.torres@gmail.com'),
+    (gen_random_uuid(), 'Angelica', 'Diaz', 'angelicadiaz09@gmail.com'),
+    (gen_random_uuid(), 'Erick', 'Santiago', 'ericksan_san@gmail.com'),
+    (gen_random_uuid(), 'Maria', 'Garcia', 'maria1990@gmail.com'),
+    (gen_random_uuid(), 'Carlos', 'Martinez', 'carlos.martinez@gmail.com'),
+    (gen_random_uuid(), 'Sofia', 'Rodriguez', 'sofia.rodri@gmail.com'),
+    (gen_random_uuid(), 'Daniel', 'Lopez', 'daniellopezPR@gmail.com'),
+    (gen_random_uuid(), 'Laura', 'Hernandez', 'lauritaPR@gmail.com'),
+    (gen_random_uuid(), 'Pedro', 'Gonzalez', 'pedro.gonzalez@gmail.com'),
+    (gen_random_uuid(), 'Ana', 'Perez', 'ana.perez@gmail.com'),
+    (gen_random_uuid(), 'Javier', 'Sanchez', 'javier.sanchez@gmail.com'),
+    (gen_random_uuid(), 'Marta', 'Lopez', 'marta.lopez@gmail.com'),
+    (gen_random_uuid(), 'Gabriel', 'Rivera', 'gabriel.rivera@gmail.com'),
+    (gen_random_uuid(), 'Veronica', 'Gomez', 'veronica.gomez@gmail.com'),
+    (gen_random_uuid(), 'Miguel', 'Diaz', 'miguel.diaz@gmail.com'),
+    (gen_random_uuid(), 'Julia', 'Fernandez', 'julia.fernandez@gmail.com'),
+    (gen_random_uuid(), 'Roberto', 'Ramirez', 'roberto.ramirez@gmail.com'),
+
+    -- Outlook email addresses
+    (gen_random_uuid(), 'Alice', 'Brown', 'alice.brown@outlook.com'),
+    (gen_random_uuid(), 'David', 'Wilson', 'david.wilson@outlook.com'),
+    (gen_random_uuid(), 'Emma', 'Jones', 'emma.jones@outlook.com'),
+    (gen_random_uuid(), 'James', 'Taylor', 'james.taylor@outlook.com'),
+    (gen_random_uuid(), 'Olivia', 'Davis', 'olivia787@outlook.com'),
+    (gen_random_uuid(), 'Michael', 'Evans', 'michael_office@outlook.com'),
+    (gen_random_uuid(), 'Sophia', 'Clark', 'sophia.clark@outlook.com'),
+    (gen_random_uuid(), 'Alexander', 'Thomas', 'alexander.thomas@outlook.com'),
+    (gen_random_uuid(), 'Ava', 'White', 'ava.white@outlook.com'),
+    (gen_random_uuid(), 'Matthew', 'Walker', 'matthew.walker@outlook.com');
 
 
 -- Insert sample data into services table
@@ -91,9 +105,8 @@ VALUES
     (gen_random_uuid(), 'Nails'),
     (gen_random_uuid(), 'Gardening'),
     (gen_random_uuid(), 'Barber'),
-    (gen_random_uuid(), 'Babysitting'),
     (gen_random_uuid(), 'Hairstyling'),
-    (gen_random_uuid(), 'Pet Sitter'),
+    (gen_random_uuid(), 'Pet Sitting'),
     (gen_random_uuid(), 'Car Washing'),
     (gen_random_uuid(), 'Baking'),
     (gen_random_uuid(), 'Plumbing'),
@@ -116,6 +129,7 @@ VALUES
     (gen_random_uuid(), 'Pets'),
     (gen_random_uuid(), 'Events'),
     (gen_random_uuid(), 'Yard And Property'),
+    (gen_random_uuid(), 'Art And Crafts'),
     (gen_random_uuid(), 'Food Services');
 
 -- Insert sample data into towns table
@@ -200,55 +214,120 @@ VALUES
     (gen_random_uuid(), 'Yabucoa'),
     (gen_random_uuid(), 'Yauco');
 
--- Assign Services to users
+
+-- Insert sample data into categories_service_assoc table
+INSERT INTO categories_service_assoc (category_id, service_id, created_at, updated_at)
+VALUES
+    ((SELECT id FROM categories WHERE name = 'Beauty'), (SELECT id FROM services WHERE name = 'Nails'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Yard And Property'), (SELECT id FROM services WHERE name = 'Gardening'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Beauty'), (SELECT id FROM services WHERE name = 'Barber'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Beauty'), (SELECT id FROM services WHERE name = 'Hairstyling'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Pets'), (SELECT id FROM services WHERE name = 'Pet Sitting'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Auto Care'), (SELECT id FROM services WHERE name = 'Car Washing'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Food Services'), (SELECT id FROM services WHERE name = 'Baking'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Yard And Property'), (SELECT id FROM services WHERE name = 'Plumbing'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Yard And Property'), (SELECT id FROM services WHERE name = 'Electrical Service'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Yard And Property'), (SELECT id FROM services WHERE name = 'House Cleaning'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Pets'), (SELECT id FROM services WHERE name = 'Pet Grooming'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Yard And Property'), (SELECT id FROM services WHERE name = 'Landscaping'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Events'), (SELECT id FROM services WHERE name = 'Event Decorator'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Music'), (SELECT id FROM services WHERE name = 'DJ'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Food Services'), (SELECT id FROM services WHERE name = 'Catering'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Auto Care'), (SELECT id FROM services WHERE name = 'Auto Body Painting'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ((SELECT id FROM categories WHERE name = 'Art And Crafts'), (SELECT id FROM services WHERE name = 'Painter'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- Assigning services to the remaining users randomly with multiple towns
+
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Barber'
-JOIN towns t ON t.name = 'Ponce'
+JOIN services s ON s.name = 'Auto Body Painting'
+JOIN towns t ON t.name IN ('Aguadilla', 'Arecibo')
 WHERE u.first_name = 'John' AND u.last_name = 'Doe';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Gardening'
-JOIN towns t ON t.name IN ('Coamo', 'Salinas')
-WHERE u.first_name = 'Erick' AND u.last_name = 'Santiago';
-
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
-FROM users u
-JOIN services s ON s.name = 'Nails'
-JOIN towns t ON t.name IN ('Ponce', 'Juana Diaz')
+JOIN services s ON s.name = 'DJ'
+JOIN towns t ON t.name IN ('San Sebastian', 'Loiza')
 WHERE u.first_name = 'Jane' AND u.last_name = 'Smith';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Gardening'
-JOIN towns t ON t.name = 'Ponce'
-WHERE u.first_name = 'Jane' AND u.last_name = 'Smith';
+JOIN services s ON s.name = 'Pet Sitter'
+JOIN towns t ON t.name IN ('Caguas', 'Fajardo')
+WHERE u.first_name = 'Luis' AND u.last_name = 'Santiago';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Animal Grooming'
-JOIN towns t ON t.name = 'Ponce'
-WHERE u.first_name = 'Laura' AND u.last_name = 'Hernandez';
+JOIN services s ON s.name = 'Catering'
+JOIN towns t ON t.name IN ('Ponce', 'Carolina')
+WHERE u.first_name = 'Hector' AND u.last_name = 'Torres';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
 JOIN services s ON s.name = 'Event Decorator'
-JOIN towns t ON t.name = 'San Juan'
-WHERE u.first_name = 'Maria' AND u.last_name = 'Garcia';
+JOIN towns t ON t.name IN ('Arecibo', 'Guayama')
+WHERE u.first_name = 'Angelica' AND u.last_name = 'Diaz';
+
+INSERT INTO user_service_assoc (user_id, service_id, town_id)
+SELECT u.id, s.id, t.id
+FROM users u
+JOIN services s ON s.name = 'House Cleaning'
+JOIN towns t ON t.name IN ('Toa Alta', 'Bayamon')
+WHERE u.first_name = 'Erick' AND u.last_name = 'Santiago';
+
+INSERT INTO user_service_assoc (user_id, service_id, town_id)
+SELECT u.id, s.id, t.id
+FROM users u
+JOIN services s ON s.name = 'Landscaping'
+JOIN towns t ON t.name IN ('Luquillo', 'Culebra')
+WHERE u.first_name = 'Carlos' AND u.last_name = 'Martinez';
+
+INSERT INTO user_service_assoc (user_id, service_id, town_id)
+SELECT u.id, s.id, t.id
+FROM users u
+JOIN services s ON s.name = 'Plumbing'
+JOIN towns t ON t.name IN ('Guaynabo', 'Rincon')
+WHERE u.first_name = 'Sofia' AND u.last_name = 'Rodriguez';
+
+INSERT INTO user_service_assoc (user_id, service_id, town_id)
+SELECT u.id, s.id, t.id
+FROM users u
+JOIN services s ON s.name = 'Electrical Service'
+JOIN towns t ON t.name IN ('Bayamon', 'Isabela')
+WHERE u.first_name = 'Daniel' AND u.last_name = 'Lopez';
+
+INSERT INTO user_service_assoc (user_id, service_id, town_id)
+SELECT u.id, s.id, t.id
+FROM users u
+JOIN services s ON s.name = 'Pet Grooming'
+JOIN towns t ON t.name IN ('Carolina', 'Manati')
+WHERE u.first_name = 'Pedro' AND u.last_name = 'Gonzalez';
+
+INSERT INTO user_service_assoc (user_id, service_id, town_id)
+SELECT u.id, s.id, t.id
+FROM users u
+JOIN services s ON s.name = 'Baking'
+JOIN towns t ON t.name IN ('Humacao', 'Ceiba')
+WHERE u.first_name = 'Ana' AND u.last_name = 'Perez';
+
+INSERT INTO user_service_assoc (user_id, service_id, town_id)
+SELECT u.id, s.id, t.id
+FROM users u
+JOIN services s ON s.name = 'Hairstyling'
+JOIN towns t ON t.name IN ('Aguada', 'Jayuya')
+WHERE u.first_name = 'Marta' AND u.last_name = 'Lopez';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
 JOIN services s ON s.name = 'Car Washing'
-JOIN towns t ON t.name = 'Bayamón'
-WHERE u.first_name = 'Daniel' AND u.last_name = 'Lopez';
+JOIN towns t ON t.name IN ('Rincon', 'Mayaguez')
+WHERE u.first_name = 'Gabriel' AND u.last_name = 'Rivera';
 
 -- End of assingments
 
