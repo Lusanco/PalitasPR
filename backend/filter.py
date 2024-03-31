@@ -19,20 +19,13 @@ if __name__ == "__main__":
     session = Session()
 
     # Perform the query
-    results = session.query(User.first_name.label('person'),
-                            Service.name.label('service'),
-                            Town.name.label('town')) \
-                    .join(UserServiceAssoc, User.id == UserServiceAssoc.user_id) \
-                    .join(Service, Service.id == UserServiceAssoc.service_id) \
-                    .join(Town, Town.id == UserServiceAssoc.town_id) \
-                    .filter(Town.name.in_(['Ponce', 'Salinas'])) \
-                    .all()
+    user = session.query(User).first()
+    rows = user.user_service_assoc
 
-    # results = [('John', 'Barber', 'Ponce'), ('Erick', 'Gardening', 'Salinas') 
-
-    # Process the results
-    for result in results:
-        print(f"[{result.person}] provides [{result.service}] in [{result.town}]")
+    print()
+    print(f"{user.first_name} -{user.email}- provides: ")
+    for row in rows:
+        print(f"{row.service.name} in {row.town.name}")
 
     # Close the session
     session.close()
