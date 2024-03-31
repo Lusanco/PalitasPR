@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+"""
+    All classes for tables(DataBase)
+"""
+
 from sqlalchemy import Column, String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from base_model import BaseModel, Base
@@ -11,10 +15,14 @@ class UserServiceAssoc(BaseModel, Base):
     service_id = Column(String, ForeignKey('services.id'), nullable=False)
     town_id = Column(String, ForeignKey('towns.id'), nullable=False)
 
-    # Relationships, this allows to call the related objects to a row on this table
-    user = relationship('User')
-    town = relationship('Town')
-    service = relationship('Service')
+    """
+        Relationships, this allows to call the related objects to a row on this table
+        lazy=joined allows to load the objects from the relationships in ...
+        same time you query from 'user_service_assoc'
+    """
+    user = relationship('User', cascade='all, delete', lazy='joined')
+    town = relationship('Town', cascade='all, delete', lazy='joined')
+    service = relationship('Service', cascade='all, delete', lazy='joined')
 
     __table_args__ = (
         UniqueConstraint('user_id', 'service_id', 'town_id'),
@@ -30,6 +38,7 @@ class User(BaseModel, Base):
 
     first_name = Column(String(255), nullable=False)
     last_name = Column(String(255), nullable=False)
+
 
 
 class Town(BaseModel, Base):
