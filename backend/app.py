@@ -91,6 +91,21 @@ def create_object():
     else:
         return jsonify({'error': 'Error creating object'}), 400
 
+@app.route('/filter', methods=['POST'])
+def search_filter():
+    """
+        Front has to send {'Service': {'name': 'Nails, 'town': 'Ponce'}}
+        town is an optional argument for dict
+    """
+    data = request.json
+    dictionary = DBOperations().filter(data)
+
+    if dictionary:
+        return jsonify(dictionary)
+    else:
+        return jsonify({'error': 'Error filtering data'})
+
+
 # Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True)
