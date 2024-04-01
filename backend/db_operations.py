@@ -77,8 +77,6 @@ class DBOperations():
                         in this example will show all the USERS who is doing Gardening.
 
             there is a section to test the function after the delete method.
-
-            note: need fix to handle to view all services offered by an user
         """
 
 
@@ -112,7 +110,17 @@ class DBOperations():
                     if service_column is not None:
                         query = query.filter(getattr(Service, service_key) == service_value)
 
-        filtered_objs = query.all()
+            if key == 'user':
+                query = query.join(UserServiceAssoc)
+                query = query.join(User)
+
+                # Apply filtering conditions on the Service model
+                for user_key, user_value in value.items():
+                    user_column = getattr(User, user_key, None)
+                    if user_column is not None:
+                        query = query.filter(getattr(User, user_key) == user_value)
+
+        filtered_objs = query.distinct().all()
 
         # Serialize the filtered objects by calling the all_columns method on each object
         serialized_objs = [obj.all_columns() for obj in filtered_objs]
@@ -210,5 +218,5 @@ class DBOperations():
 # -----FILTER_TEST----- #
 
 # Filter User objects based on their associated Service and Town
-# filtered_objs = db.filter('Town', service={'name': 'Gardening'})
+# filtered_objs = db.filter('User')
 # print(filtered_objs)
