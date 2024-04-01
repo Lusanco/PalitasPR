@@ -6,11 +6,14 @@
     EXAMPLE: new_user = User(**{att_name: att_value})
 """
 
+import time  # Import the time module
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import User, Service, Town, UserServiceAssoc # Add Town import
 
 if __name__ == "__main__":
+    start_time = time.time()  # Record start time
+
     # Create the engine
     engine = create_engine('postgresql://postgres:9150@localhost/postgres', echo=True)
 
@@ -19,13 +22,18 @@ if __name__ == "__main__":
     session = Session()
 
     # Perform the query
-    user = session.query(User).first()
-    rows = user.user_service_assoc
-
-    print()
-    print(f"{user.first_name} -{user.email}- provides: ")
-    for row in rows:
-        print(f"{row.service.name} in {row.town.name}")
+    users = session.query(User).all()
+    for user in users:
+        rows = user.user_service_assoc
+        if rows:
+            print("User:")
+            print(f"{user.first_name} -{user.email}- provides: ")
+            for row in rows:
+                print(f"{row.service.name} in {row.town.name}")
 
     # Close the session
     session.close()
+
+    end_time = time.time()  # Record end time
+    elapsed_time = end_time - start_time  # Calculate elapsed time
+    print(f"Script execution time: {elapsed_time} seconds")
