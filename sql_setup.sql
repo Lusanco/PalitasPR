@@ -33,23 +33,6 @@ CREATE TABLE towns (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create table for categories
-CREATE TABLE categories (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) UNIQUE NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
--- Create table for categories_service_assoc
-CREATE TABLE categories_service_assoc (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    category_id UUID REFERENCES categories(id) ON DELETE CASCADE NOT NULL,
-    service_id UUID REFERENCES services(id) ON DELETE CASCADE NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT unique_category_service UNIQUE (category_id, service_id)
-);
 
 -- Create table for user_service_assoc
 CREATE TABLE user_service_assoc (
@@ -119,18 +102,6 @@ VALUES
     (gen_random_uuid(), 'Catering'),
     (gen_random_uuid(), 'Auto Body Painting'),
     (gen_random_uuid(), 'Painter');
-
--- Insert sample data into categories table
-INSERT INTO categories (id, name)
-VALUES
-    (gen_random_uuid(), 'Beauty'),
-    (gen_random_uuid(), 'Auto Care'),
-    (gen_random_uuid(), 'Music'),
-    (gen_random_uuid(), 'Pets'),
-    (gen_random_uuid(), 'Events'),
-    (gen_random_uuid(), 'Yard And Property'),
-    (gen_random_uuid(), 'Art And Crafts'),
-    (gen_random_uuid(), 'Food Services');
 
 -- Insert sample data into towns table
 INSERT INTO towns (id, name)
@@ -214,27 +185,6 @@ VALUES
     (gen_random_uuid(), 'Yabucoa'),
     (gen_random_uuid(), 'Yauco');
 
-
--- Insert sample data into categories_service_assoc table
-INSERT INTO categories_service_assoc (category_id, service_id, created_at, updated_at)
-VALUES
-    ((SELECT id FROM categories WHERE name = 'Beauty'), (SELECT id FROM services WHERE name = 'Nails'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Yard And Property'), (SELECT id FROM services WHERE name = 'Gardening'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Beauty'), (SELECT id FROM services WHERE name = 'Barber'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Beauty'), (SELECT id FROM services WHERE name = 'Hairstyling'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Pets'), (SELECT id FROM services WHERE name = 'Pet Sitting'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Auto Care'), (SELECT id FROM services WHERE name = 'Car Washing'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Food Services'), (SELECT id FROM services WHERE name = 'Baking'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Yard And Property'), (SELECT id FROM services WHERE name = 'Plumbing'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Yard And Property'), (SELECT id FROM services WHERE name = 'Electrical Service'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Yard And Property'), (SELECT id FROM services WHERE name = 'House Cleaning'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Pets'), (SELECT id FROM services WHERE name = 'Pet Grooming'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Yard And Property'), (SELECT id FROM services WHERE name = 'Landscaping'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Events'), (SELECT id FROM services WHERE name = 'Event Decorator'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Music'), (SELECT id FROM services WHERE name = 'DJ'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Food Services'), (SELECT id FROM services WHERE name = 'Catering'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Auto Care'), (SELECT id FROM services WHERE name = 'Auto Body Painting'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ((SELECT id FROM categories WHERE name = 'Art And Crafts'), (SELECT id FROM services WHERE name = 'Painter'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Assigning services to the remaining users randomly with multiple towns
 
