@@ -1,34 +1,79 @@
 #!/usr/bin/python3
 """
-    CLASSES FOR THE MOCKUP
-    ONLY USER AND SERVICE AT THE MOMENT
+    All classes for tables(DataBase)
 """
 
-from sqlalchemy import Column, String, ForeignKey, Table
+from sqlalchemy import Column, String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from base_model import BaseModel, Base
 
+# ASSOCIATION USER & SERVICE & TOWN CLASS
+class UserServiceAssoc(BaseModel, Base):
+    __tablename__ = 'user_service_assoc'
 
-# Define association table for many-to-many relationship
-user_service_association = Table(
-    'user_service_association', Base.metadata,
-    Column('user_id', String, ForeignKey('users.id')),
-    Column('service_id', String, ForeignKey('services.id'))
-)
 
+    user_id = Column(String, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    service_id = Column(String, ForeignKey('services.id', ondelete='CASCADE'), nullable=False)
+    town_id = Column(String, ForeignKey('towns.id', ondelete='CASCADE'), nullable=False)
+
+    # Relationships
+    user = relationship(
+        'User',
+        lazy='subquery',
+        back_populates='user_service_assoc'
+        )
+
+    town = relationship(
+        'Town',
+        lazy='subquery',
+        back_populates='user_service_assoc'
+        )
+
+    service = relationship(
+        'Service',
+        lazy='subquery',
+        back_populates='user_service_assoc'
+        )
+
+    __table_args__ = (UniqueConstraint('user_id', 'service_id', 'town_id'),)
+
+
+# SERVICE CLASS
 class Service(BaseModel, Base):
     __tablename__ = 'services'
 
-    name = Column(String(50), nullable=False)
+    name = Column(String(50), unique=True, nullable=False)
 
-    # Define relationship with User class, this is another table
-    users = relationship("User", secondary=user_service_association, back_populates="services")
+    # Relationships
+    user_service_assoc = relationship(
+        'UserServiceAssoc',
+        back_populates='service'
+        )
 
+# USER CLASS
 class User(BaseModel, Base):
     __tablename__ = 'users'
 
     first_name = Column(String(255), nullable=False)
     last_name = Column(String(255), nullable=False)
-    
-    # Define relationship with Service class, this is another table
-    services = relationship("Service", secondary=user_service_association, back_populates="users")
+    email = Column(String(255), unique=True, nullable=False)
+
+    # Relationships
+    user_service_assoc = relationship(
+        'UserServiceAssoc',
+        back_populates='user',
+        cascade='all, delete'
+        )
+
+# TOWN CLASS
+class Town(BaseModel, Base):
+    __tablename__ = 'towns'
+
+    name = Column(String(50), unique=True, nullable=False)
+
+    # Relationships
+    user_service_assoc = relationship(
+        'UserServiceAssoc',
+        back_populates='town',
+        cascade='all, delete'
+        )
