@@ -20,16 +20,25 @@ if __name__ == "__main__":
     # Create a session
     Session = sessionmaker(bind=engine)
     session = Session()
-
+    dict_for_front = {}
     # Perform the query
     users = session.query(User).all()
     for user in users:
+        inner_dict = {}
+        towns = []
         rows = user.user_service_assoc
         if rows:
-            print("User:")
-            print(f"{user.first_name} -{user.email}- provides: ")
+            inner_dict['first_name'] = user.first_name
+            inner_dict['last_name'] = user.last_name
             for row in rows:
-                print(f"{row.service.name} in {row.town.name}")
+                towns.append(row.town.name)
+            inner_dict['towns'] = towns
+            dict_for_front[user.id] = inner_dict
+            #Reset towns list
+
+    print(dict_for_front)
+
+
 
     # Close the session
     session.close()
