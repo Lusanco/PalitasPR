@@ -113,10 +113,9 @@ class DBOperations():
                 rows = obj.user_service_assoc
                 if rows:
                     for row in rows:
-                        service_name = row.service.name
                         if Town == row.town.name or Town == 'All' and Name == row.service.name or Name == 'All':
                             towns.append(row.town.name)
-                            inner_dict['name'] = service_name
+                            inner_dict['name'] = row.service.name
                             inner_dict['first_name'] = row.user.first_name
                             inner_dict['last_name'] = row.user.last_name
                             inner_dict['towns'] = towns
@@ -203,21 +202,61 @@ class DBOperations():
             session.close()
 
 
+    def update(self, data):
+        """
+            Update an object from Data Base
+            Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
+        """
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+    
+        class_name = list(data.keys())[0] # First key, class name
+        if class_name in self.classes_dict:
+            update_dict = {}
+            update_dict.update(data[class_name])
 
+            # User id from dict of front data
+            if 'id' in update_dict:
+                user_id = update_dict['id']
+                update_dict.pop('id')
+            else:
+                return 'Id not found'
+
+            # Perform the query
+            user = session.query(self.classes_dict[class_name]).filter_by(id=user_id).first()
+
+            user_dict = user.all_columns()
+            user_dict.update(update_dict)
+
+            for key, value in user_dict.items():
+                setattr(user, key, value)
+
+            # Commit the changes to the database
+            session.commit()
+            print("Object was updated")
+            # Close the session
+        else:
+            return "Class Not Found"
+        session.close()
+        return "Object updated"
+
+
+
+# -------------TEST AREA DONT TOUCH FRONT USERS----------------------
 db = DBOperations()
 
+# db.update({'User': {'id': '2cc63d22-a074-4f6a-84ab-66db61eb279a', 'last_name': 'Santiago'}})
 
-# -----DELETE_TEST----- #
-
+# db.new({'User': {'first_name': 'Pepe', 'last_name': 'Gomez', 'email': 'pepito@gmail.com'}})
+# -----DELETE_TEST----- 
 
 # print("Deleting Service associated to an user...")
-# result = db.delete('Service', user_id='63a047ec-c9fc-490a-8bbf-8ae8e66dd715', name='Auto Body Painting')
+# result = db.delete('Service', user_id='c0a5be5a-94bf-4ad8-95dc-1d6e54cb1aed', name='Gardening')
 # if result:
 #     print("Deleted successfully.")
 
 
-# -----FILTER_TEST----- #
+# -----FILTER_TEST----- 
 
-# Filter User objects based on their associated Service and Town
-filtered_objs = db.filter({'User':{}})
+filtered_objs = db.filter({'User': {'name': 'SERVICE', 'town': 'TOWN'}})
 print(filtered_objs)
