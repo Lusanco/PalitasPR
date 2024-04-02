@@ -4,12 +4,12 @@ Update data from a user
 """
 
 import time  # Import the time module
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 from models import User, Service, Town, UserServiceAssoc, BaseModel # Add Town import
 
 if __name__ == "__main__":
-    start_time = time.time()  # Record start time
+
     classes_dict = {'User': User, 'Service': Service}
     # Create the engine
     engine = create_engine('postgresql://postgres:9150@localhost/postgres', echo=True)
@@ -18,38 +18,39 @@ if __name__ == "__main__":
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # Simulate front end data
-    data = {'User': {'id': '6864b3ff-2b3d-4e7e-8410-f6755b44f9eb', 'last_name': 'Snow'}}
-    
-    class_name = list(data.keys())[0] # First key class name
-    if class_name in classes_dict:
-        update_dict = {}
-        update_dict.update(data[class_name])
+    data = {'Service': {'name': 'Auto Body Painting', 'town': 'All'}}
+    town_name = "All"
+    data_dict = data['Service']
 
-        # User id from dict of front data
-        if 'id' in update_dict:
-            user_id = update_dict['id']
-            update_dict.pop('id')
-        else:
-            print("Id not found")
-
-        # Perform the query
-        user = session.query(classes_dict[class_name]).filter_by(id=user_id).first()
-
-        user_columns = user.all_columns()
-        user_columns.update(update_dict)
-
-        for key, value in user_columns.items():
-            setattr(user, key, value)
-
-        # Commit the changes to the database
-        session.commit()
-        print(user_columns)
-        # Close the session
+    if 'town' in data_dict:
+        town_name = data_dict['town']
+    if 'name' in data_dict:
+        service_name = data_dict['name']
     else:
-        print("Class Not Found")
-    session.close()
+        print('no service name provided') 
+    print(town_name)
+    service = session.query(Service).filter_by(name = service_name).first()
+    my_service_id = service.id
 
-    end_time = time.time()  # Record end time
-    elapsed_time = end_time - start_time  # Calculate elapsed time
-    print(f"Script execution time: {elapsed_time} seconds")
+    if town_name == 'All':
+        print("Doing all")
+        rows = session.query(UserServiceAssoc.user_id, func.array_agg(Town.name)) \
+        .join(Town) \
+        .filter(UserServiceAssoc.service_id == my_service_id) \
+        .group_by(UserServiceAssoc.user_id) \
+        .order_by(UserServiceAssoc.user_id) \
+        .all()
+    else:
+        print("Doing Specific town")
+        rows = session.query(UserServiceAssoc.user_id, func.array_agg(Town.name)) \
+        .join(Town) \
+        .filter((UserServiceAssoc.service_id == my_service_id) & (Town.name == town_name)) \
+        .group_by(UserServiceAssoc.user_id) \
+        .order_by(UserServiceAssoc.user_id) \
+        .all()
+
+    print(rows)
+
+
+    session.close
+
