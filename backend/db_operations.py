@@ -1,4 +1,3 @@
-
 #!/usr/bin/python3
 """
     ALLOWS OPERATIONS FOR FRONT END DEVS
@@ -17,7 +16,7 @@ class DBOperations():
     classes_dict = {'User': User, 'Service': Service, 'Town': Town, 'UserServiceAssoc': UserServiceAssoc}
     
     def __init__(self):
-        self.engine = create_engine('postgresql://postgres:9495@localhost/postgres')    
+        self.engine = create_engine('postgresql://postgres:9150@localhost/postgres')    
 
     def new(self, front_data):
         """
@@ -78,8 +77,6 @@ class DBOperations():
                         in this example will show all the USERS who is doing Gardening.
 
             there is a section to test the function after the delete method.
-
-            note: need fix to handle to view all services offered by an user
         """
 
 
@@ -113,7 +110,17 @@ class DBOperations():
                     if service_column is not None:
                         query = query.filter(getattr(Service, service_key) == service_value)
 
-        filtered_objs = query.all()
+            if key == 'user':
+                query = query.join(UserServiceAssoc)
+                query = query.join(User)
+
+                # Apply filtering conditions on the Service model
+                for user_key, user_value in value.items():
+                    user_column = getattr(User, user_key, None)
+                    if user_column is not None:
+                        query = query.filter(getattr(User, user_key) == user_value)
+
+        filtered_objs = query.distinct().all()
 
         # Serialize the filtered objects by calling the all_columns method on each object
         serialized_objs = [obj.all_columns() for obj in filtered_objs]
@@ -194,9 +201,49 @@ class DBOperations():
         finally:
             session.close()
 
+    def update(self, data):
+        """
+            Update an object from Data Base
+        """
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+        # Simulate front end data
+        # data = {'User': {'id': '6864b3ff-2b3d-4e7e-8410-f6755b44f9eb', 'last_name': 'Snow'}}
+        
+        class_name = list(data.keys())[0] # First key, class name
+        if class_name in self.classes_dict:
+            update_dict = {}
+            update_dict.update(data[class_name])
+
+            # User id from dict of front data
+            if 'id' in update_dict:
+                user_id = update_dict['id']
+                update_dict.pop('id')
+            else:
+                print("Id not found")
+                return
+
+            # Perform the query
+            user = session.query(self.classes_dict[class_name]).filter_by(id=user_id).first()
+
+            user_dict = user.all_columns()
+            user_dict.update(update_dict)
+
+            for key, value in user_dict.items():
+                setattr(user, key, value)
+
+            # Commit the changes to the database
+            session.commit()
+            print("Object was updated")
+            # Close the session
+        else:
+            print("Class Not Found")
+        session.close()
 
 
-# db = DBOperations()
+db = DBOperations()
+
+db.update({'User': {'id': '2cc63d22-a074-4f6a-84ab-66db61eb279a', 'last_name': 'Santiago'}})
 
 
 # -----DELETE_TEST----- #
@@ -211,5 +258,5 @@ class DBOperations():
 # -----FILTER_TEST----- #
 
 # Filter User objects based on their associated Service and Town
-# filtered_objs = db.filter('Town', service={'name': 'Gardening'})
+# filtered_objs = db.filter('User')
 # print(filtered_objs)
