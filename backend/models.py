@@ -12,25 +12,31 @@ class UserServiceAssoc(BaseModel, Base):
     __tablename__ = 'user_service_assoc'
 
 
-    user_id = Column(String, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    service_id = Column(String, ForeignKey('services.id', ondelete='CASCADE'), nullable=False)
-    town_id = Column(String, ForeignKey('towns.id', ondelete='CASCADE'), nullable=False)
+    user_id = Column(String, ForeignKey('users.id'), nullable=False)
+    service_id = Column(String, ForeignKey('services.id'), nullable=False)
+    town_id = Column(String, ForeignKey('towns.id'), nullable=False)
 
     # Relationships
     user = relationship(
         'User',
+        cascade='all, delete-orphan',
+        single_parent=True,
         lazy='subquery',
         back_populates='user_service_assoc'
         )
 
     town = relationship(
         'Town',
+        cascade='all, delete-orphan',
+        single_parent=True,
         lazy='subquery',
         back_populates='user_service_assoc'
         )
 
     service = relationship(
         'Service',
+        cascade='all, delete-orphan',
+        single_parent=True,
         lazy='subquery',
         back_populates='user_service_assoc'
         )

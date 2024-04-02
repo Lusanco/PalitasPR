@@ -10,7 +10,7 @@ from sqlalchemy.orm import sessionmaker
 from base_model import Base
 
 # Create the engine
-engine = create_engine('postgresql://postgres:9150@localhost/postgres')
+engine = create_engine('postgresql://postgres:9495@localhost/postgres')
 
 # Bind the engine to the Base class
 Base.metadata.bind = engine
