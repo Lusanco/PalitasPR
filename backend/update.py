@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Update data from a user
+SAERCH FILET USING QUERY
 """
 
 import time  # Import the time module
@@ -18,6 +18,7 @@ if __name__ == "__main__":
     Session = sessionmaker(bind=engine)
     session = Session()
 
+    # Dummy data
     data = {'Service': {'name': 'Auto Body Painting', 'town': 'All'}}
     town_name = "All"
     data_dict = data['Service']
@@ -32,25 +33,46 @@ if __name__ == "__main__":
     service = session.query(Service).filter_by(name = service_name).first()
     my_service_id = service.id
 
+    start_time = time.time()  # Start time measurement
+
     if town_name == 'All':
         print("Doing all")
-        rows = session.query(UserServiceAssoc.user_id, func.array_agg(Town.name)) \
+        rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
         .join(Town) \
+        .join(User)\
         .filter(UserServiceAssoc.service_id == my_service_id) \
-        .group_by(UserServiceAssoc.user_id) \
+        .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
         .order_by(UserServiceAssoc.user_id) \
         .all()
     else:
         print("Doing Specific town")
-        rows = session.query(UserServiceAssoc.user_id, func.array_agg(Town.name)) \
+        rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
         .join(Town) \
+        .join(User)\
         .filter((UserServiceAssoc.service_id == my_service_id) & (Town.name == town_name)) \
-        .group_by(UserServiceAssoc.user_id) \
+        .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
         .order_by(UserServiceAssoc.user_id) \
         .all()
 
-    print(rows)
+    my_dict = {}
 
+    for row in rows:
+        user_id = row.user_id
+        first_name = row.first_name
+        last_name = row.last_name
+        town_names = row[3]  # Assuming the array of town names is at index 3
+        inner_dict = {
+            'service': service_name,
+            'first_name': first_name,
+            'last_name': last_name,
+            'towns': town_names
+        }
+        my_dict[user_id] = inner_dict
 
-    session.close
+    print(f"MY DICTIONARY: {my_dict}")
+    end_time = time.time()  # End time measurement
+    elapsed_time = end_time - start_time  # Calculate elapsed time
 
+    print("Query execution time:", elapsed_time, "seconds")
+
+    session.close()
