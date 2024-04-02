@@ -204,12 +204,11 @@ class DBOperations():
     def update(self, data):
         """
             Update an object from Data Base
+            Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
         """
         Session = sessionmaker(bind=self.engine)
         session = Session()
-        # Simulate front end data
-        # data = {'User': {'id': '6864b3ff-2b3d-4e7e-8410-f6755b44f9eb', 'last_name': 'Snow'}}
-        
+    
         class_name = list(data.keys())[0] # First key, class name
         if class_name in self.classes_dict:
             update_dict = {}
@@ -220,8 +219,7 @@ class DBOperations():
                 user_id = update_dict['id']
                 update_dict.pop('id')
             else:
-                print("Id not found")
-                return
+                return 'Id not found'
 
             # Perform the query
             user = session.query(self.classes_dict[class_name]).filter_by(id=user_id).first()
@@ -237,15 +235,17 @@ class DBOperations():
             print("Object was updated")
             # Close the session
         else:
-            print("Class Not Found")
+            return "Class Not Found"
         session.close()
+        return "Object updated"
 
+# -------------TEST AREA DONT TOUCH FRONT USERS----------------------
+# db = DBOperations()
 
-db = DBOperations()
+# db.update({'User': {'id': '2cc63d22-a074-4f6a-84ab-66db61eb279a', 'last_name': 'Santiago'}})
 
-db.update({'User': {'id': '2cc63d22-a074-4f6a-84ab-66db61eb279a', 'last_name': 'Santiago'}})
-
-
+# db = DBOperations()
+# db.new({'User': {'first_name': 'Pepe', 'last_name': 'Gomez', 'email': 'pepito@gmail.com'}})
 # -----DELETE_TEST----- #
 
 

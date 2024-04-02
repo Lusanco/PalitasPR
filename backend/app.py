@@ -105,6 +105,16 @@ def search_filter():
     else:
         return jsonify({'error': 'Error filtering data'})
 
+@app.route('/update', methods=['POST'])
+def updates():
+    """
+        Usage: {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
+        This will update the specified object with the values you want to change
+        Example: {'User_id': {'last_name': 'Santiago', 'email': 'watagata@gmail.com'}}
+    """
+    data = request.json
+    message_status = DBOperations().update(data)
+    return jsonify(message_status)
 
 # Run the Flask app
 if __name__ == '__main__':
