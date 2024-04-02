@@ -35,7 +35,7 @@ class DBOperations():
         model_name = list(front_data.keys())[0]  # model_name = "User"
 
         # Extract the inner dictionary containing attribute-value
-        inner_dict = front_data[model_name] # inner_dict = {"first_name": "Louis", "last_name": "Toro"}
+        inner_dict = front_data[model_name] # inner_dict = {"name": "Nails"}
 
         Session = sessionmaker(bind=self.engine)
         session = Session()
@@ -65,68 +65,68 @@ class DBOperations():
             return None
 
 
-    def filter(self, model_name, **data):
+
+
+    def filter(self, data):
         """
-            Retrieve objects based on specified criteria.
+        Retrieve objects based on specified criteria.
 
-            Args:
-                model_name: In our case the name of the class.
-                **data: Keyword arguments representing filtering criteria.
-                    example:
-                        filtered_objs = db.filter('User', service={'name': 'Gardening'})
-                        in this example will show all the USERS who is doing Gardening.
+        Args:
+            data: Dictionary containing the filtering criteria.
+                example:
+                    filtered_objs = db.filter({'User': {'name': 'Auto Body Painting'}})
+                    in this case, it will show all the users that work on Auto body painting.
 
-            there is a section to test the function after the delete method.
+            There is a section to test the function after the delete method.
         """
-
 
         Session = sessionmaker(bind=self.engine)
         session = Session()
 
-        try:
-            # Retrieve the model class from the classes_dict based on the model_name
-            model_class = self.classes_dict[model_name]
-        except KeyError:
-            session.close()
-            return None
+        result_dict = {}
+        front_town = None
+        front_name = None
+        model_name = list(data.keys())[0]
+        filter_values = data[model_name]
 
-        query = session.query(model_class)
+        model_class = self.classes_dict.get(model_name)
 
-        # Iterate over the key-value in the kwargs(data) dictionary
-        for key, value in data.items():
-            column = getattr(model_class, key, None)
-            if column is not None:
-                # If a valid column is found, apply the filtering condition to the query
+        if model_class:
+            query = session.query(model_class)
+            if 'town' in filter_values:
+                front_town = filter_values.pop('town')
+            if 'name' in filter_values:
+                front_name = filter_values.pop('name')
+            for key, value in filter_values.items():
                 query = query.filter(getattr(model_class, key) == value)
+            filtered_objs = query.all()
 
-            # Check if the key represents a relationship with Service
-            if key == 'service':
-                query = query.join(UserServiceAssoc)
-                query = query.join(Service)
-
-                # Apply filtering conditions on the Service model
-                for service_key, service_value in value.items():
-                    service_column = getattr(Service, service_key, None)
-                    if service_column is not None:
-                        query = query.filter(getattr(Service, service_key) == service_value)
-
-            if key == 'user':
-                query = query.join(UserServiceAssoc)
-                query = query.join(User)
-
-                # Apply filtering conditions on the Service model
-                for user_key, user_value in value.items():
-                    user_column = getattr(User, user_key, None)
-                    if user_column is not None:
-                        query = query.filter(getattr(User, user_key) == user_value)
-
-        filtered_objs = query.distinct().all()
-
-        # Serialize the filtered objects by calling the all_columns method on each object
-        serialized_objs = [obj.all_columns() for obj in filtered_objs]
+            Town = 'All'
+            Name = 'All'
+            if front_town:
+                Town = front_town
+            if front_name:
+                Name = front_name
+            for obj in filtered_objs:
+                inner_dict = {}
+                towns = []
+                rows = obj.user_service_assoc
+                if rows:
+                    for row in rows:
+                        service_name = row.service.name
+                        if Town == row.town.name or Town == 'All' and Name == row.service.name or Name == 'All':
+                            towns.append(row.town.name)
+                            inner_dict['name'] = service_name
+                            inner_dict['first_name'] = row.user.first_name
+                            inner_dict['last_name'] = row.user.last_name
+                            inner_dict['towns'] = towns
+                            result_dict[obj.id] = inner_dict
 
         session.close()
-        return serialized_objs
+        return result_dict
+
+
+
 
 
 
@@ -176,10 +176,11 @@ class DBOperations():
                     # delete the associated UserServiceAssoc object for the specific user
                     assoc_obj = session.query(UserServiceAssoc)\
                     .filter(UserServiceAssoc.service_id == obj.id,\
-                            UserServiceAssoc.user_id == user_id).first()
+                            UserServiceAssoc.user_id == user_id).all()
 
                     if assoc_obj:
-                        session.delete(assoc_obj)
+                        for obj in assoc_obj:
+                            session.delete(obj)
                 else:
                     # Delete all associated UserServiceAssoc objects first
                     assoc_objs = session.query(UserServiceAssoc)\
@@ -203,14 +204,14 @@ class DBOperations():
 
 
 
-# db = DBOperations()
+db = DBOperations()
 
 
 # -----DELETE_TEST----- #
 
 
 # print("Deleting Service associated to an user...")
-# result = db.delete('Service', user_id='c0a5be5a-94bf-4ad8-95dc-1d6e54cb1aed', name='Gardening')
+# result = db.delete('Service', user_id='63a047ec-c9fc-490a-8bbf-8ae8e66dd715', name='Auto Body Painting')
 # if result:
 #     print("Deleted successfully.")
 
@@ -218,5 +219,5 @@ class DBOperations():
 # -----FILTER_TEST----- #
 
 # Filter User objects based on their associated Service and Town
-# filtered_objs = db.filter('User')
-# print(filtered_objs)
+filtered_objs = db.filter({'User':{}})
+print(filtered_objs)
