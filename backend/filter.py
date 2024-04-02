@@ -20,9 +20,9 @@ if __name__ == "__main__":
     # Create a session
     Session = sessionmaker(bind=engine)
     session = Session()
-    dict_for_front = {}
     # Perform the query
     users = session.query(User).all()
+    dict_for_front = {}
     for user in users:
         inner_dict = {}
         towns = []
@@ -37,7 +37,6 @@ if __name__ == "__main__":
             #Reset towns list
 
     print(dict_for_front)
-
 
 
     # Close the session
