@@ -5,6 +5,7 @@
 
 """
 from os import getenv
+from time import time
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.relationships import RelationshipProperty
@@ -13,10 +14,17 @@ from base_model import BaseModel, Base
 
 class DBOperations():
 
-    classes_dict = {'User': User, 'Service': Service, 'Town': Town, 'UserServiceAssoc': UserServiceAssoc}
-    
+    classes_dict = {
+                'User': User,
+                'Service': Service,
+                'Town': Town,
+                'UserServiceAssoc': UserServiceAssoc
+                }
+
+
     def __init__(self):
         self.engine = create_engine('postgresql://postgres:9495@localhost/postgres')    
+
 
     def new(self, front_data):
         """
@@ -63,8 +71,6 @@ class DBOperations():
             print("Not a valid class")
             session.close()
             return None
-
-
 
 
     def filter(self, data):
@@ -123,10 +129,6 @@ class DBOperations():
 
         session.close()
         return result_dict
-
-
-
-
 
 
     def delete(self, model_name, user_id=None, **data):
@@ -243,7 +245,8 @@ class DBOperations():
 
 
 # -------------TEST AREA DONT TOUCH FRONT USERS----------------------
-db = DBOperations()
+# db = DBOperations()
+# start_time = time()
 
 # db.update({'User': {'id': '2cc63d22-a074-4f6a-84ab-66db61eb279a', 'last_name': 'Santiago'}})
 
@@ -258,5 +261,9 @@ db = DBOperations()
 
 # -----FILTER_TEST----- 
 
-filtered_objs = db.filter({'User': {'name': 'SERVICE', 'town': 'TOWN'}})
-print(filtered_objs)
+# filtered_objs = db.filter({'User': {'name': 'SERVICE', 'town': 'TOWN'}})
+# print(filtered_objs)
+
+# end_time = time()
+# elapsed_time = end_time - start_time
+# print("Time taken:", elapsed_time, "seconds")
