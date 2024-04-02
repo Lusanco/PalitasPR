@@ -6,7 +6,6 @@ DROP TABLE IF EXISTS services;
 DROP TABLE IF EXISTS towns;
 DROP TABLE IF EXISTS categories;
 
-
 -- Create table for User
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
