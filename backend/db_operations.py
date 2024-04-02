@@ -1,3 +1,4 @@
+
 #!/usr/bin/python3
 """
     ALLOWS OPERATIONS FOR FRONT END DEVS
@@ -6,7 +7,7 @@
 """
 from os import getenv
 from time import time
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.relationships import RelationshipProperty
 from models import User, Service, Town, UserServiceAssoc
@@ -77,11 +78,10 @@ class DBOperations():
         """
         Retrieve objects based on specified criteria.
 
-        Args:
-            data: Dictionary containing the filtering criteria.
-                example:
-                    filtered_objs = db.filter({'User': {'name': 'Auto Body Painting'}})
-                    in this case, it will show all the users that work on Auto body painting.
+        Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
+
+        example:
+            filtered_objs = db.filter({'User': {'name': 'service_name', 'town': 'town_name'}}).
 
             There is a section to test the function after the delete method.
         """
@@ -89,46 +89,59 @@ class DBOperations():
         Session = sessionmaker(bind=self.engine)
         session = Session()
 
-        result_dict = {}
-        front_town = None
-        front_name = None
+        town_name = "All"
         model_name = list(data.keys())[0]
-        filter_values = data[model_name]
+        data_dict = data[model_name]
 
         model_class = self.classes_dict.get(model_name)
 
         if model_class:
-            query = session.query(model_class)
-            if 'town' in filter_values:
-                front_town = filter_values.pop('town')
-            if 'name' in filter_values:
-                front_name = filter_values.pop('name')
-            for key, value in filter_values.items():
-                query = query.filter(getattr(model_class, key) == value)
-            filtered_objs = query.all()
+            if 'town' in data_dict:
+                town_name = data_dict['town']
+            if 'name' in data_dict:
+                service_name = data_dict['name']
+            else:
+                print('no service name provided') 
+            service = session.query(Service).filter_by(name = service_name).first()
+            my_service_id = service.id
 
-            Town = 'All'
-            Name = 'All'
-            if front_town:
-                Town = front_town
-            if front_name:
-                Name = front_name
-            for obj in filtered_objs:
-                inner_dict = {}
-                towns = []
-                rows = obj.user_service_assoc
-                if rows:
-                    for row in rows:
-                        if Town == row.town.name or Town == 'All' and Name == row.service.name or Name == 'All':
-                            towns.append(row.town.name)
-                            inner_dict['name'] = row.service.name
-                            inner_dict['first_name'] = row.user.first_name
-                            inner_dict['last_name'] = row.user.last_name
-                            inner_dict['towns'] = towns
-                            result_dict[obj.id] = inner_dict
+        if town_name == 'All':
+            print("Doing all")
+            rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
+            .join(Town) \
+            .join(User)\
+            .filter(UserServiceAssoc.service_id == my_service_id) \
+            .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
+            .order_by(UserServiceAssoc.user_id) \
+            .all()
+        else:
+            print("Doing Specific town")
+            rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
+            .join(Town) \
+            .join(User)\
+            .filter((UserServiceAssoc.service_id == my_service_id) & (Town.name == town_name)) \
+            .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
+            .order_by(UserServiceAssoc.user_id) \
+            .all()
 
+        my_dict = {}
+
+        for row in rows:
+            user_id = row.user_id
+            first_name = row.first_name
+            last_name = row.last_name
+            town_names = row[3]  # Assuming the array of town names is at index 3
+            inner_dict = {
+                'service': service_name,
+                'first_name': first_name,
+                'last_name': last_name,
+                'towns': town_names
+            }
+            my_dict[user_id] = inner_dict
+
+        # print(f"MY DICTIONARY: {my_dict}")
         session.close()
-        return result_dict
+        return(my_dict)
 
 
     def delete(self, model_name, user_id=None, **data):
