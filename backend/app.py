@@ -15,7 +15,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Create the engine
-engine = create_engine('postgresql://postgres:9150@localhost/postgres')
+engine = create_engine('postgresql://postgres:9495@localhost/postgres')
 
 # Bind the engine to the Base class
 Base.metadata.bind = engine
@@ -96,6 +96,11 @@ def search_filter():
     """
         Front has to send {'Service': {'name': 'Nails, 'town': 'Ponce'}}
         town is an optional argument for dict
+
+        Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
+
+        example:
+            filtered_objs = db.filter({'User': {'name': 'service_name', 'town': 'town_name'}})
     """
     data = request.json
     dictionary = DBOperations().filter(data)
