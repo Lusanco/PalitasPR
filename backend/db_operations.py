@@ -23,7 +23,7 @@ class DBOperations():
 
 
     def __init__(self):
-        self.engine = create_engine('postgresql://postgres:9495@localhost/postgres')    
+        self.engine = create_engine('postgresql://postgres:9150@localhost/postgres')    
 
 
     def new(self, front_data):
