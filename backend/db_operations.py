@@ -126,7 +126,7 @@ class DBOperations():
         my_dict = {}
 
         for row in rows:
-            user_id = row.user_id
+            user_id = str(row.user_id)
             first_name = row.first_name
             last_name = row.last_name
             town_names = row[3]  # Assuming the array of town names is at index 3
@@ -256,7 +256,7 @@ class DBOperations():
 
 
 
-# -------------TEST AREA DONT TOUCH FRONT USERS----------------------
+# # -------------TEST AREA DONT TOUCH FRONT USERS----------------------
 # db = DBOperations()
 # start_time = time()
 
