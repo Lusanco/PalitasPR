@@ -3,7 +3,7 @@
     All classes for tables(DataBase)
 """
 
-from sqlalchemy import Column, String, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, Float
 from sqlalchemy.orm import relationship
 from base_model import BaseModel, Base
 
@@ -12,31 +12,25 @@ class UserServiceAssoc(BaseModel, Base):
     __tablename__ = 'user_service_assoc'
 
 
-    user_id = Column(String, ForeignKey('users.id'), nullable=False)
-    service_id = Column(String, ForeignKey('services.id'), nullable=False)
-    town_id = Column(String, ForeignKey('towns.id'), nullable=False)
+    user_id = Column(String, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    service_id = Column(String, ForeignKey('services.id', ondelete='CASCADE'), nullable=False)
+    town_id = Column(String, ForeignKey('towns.id', ondelete='CASCADE'), nullable=False)
 
     # Relationships
     user = relationship(
         'User',
-        cascade='all, delete-orphan',
-        single_parent=True,
         lazy='subquery',
         back_populates='user_service_assoc'
         )
 
     town = relationship(
         'Town',
-        cascade='all, delete-orphan',
-        single_parent=True,
         lazy='subquery',
         back_populates='user_service_assoc'
         )
 
     service = relationship(
         'Service',
-        cascade='all, delete-orphan',
-        single_parent=True,
         lazy='subquery',
         back_populates='user_service_assoc'
         )
@@ -83,3 +77,24 @@ class Town(BaseModel, Base):
         back_populates='town',
         cascade='all, delete'
         )
+    
+# Task Class
+class Task(BaseModel, Base):
+    __tablename__ = 'tasks'
+
+    # Columns
+    id = Column(String, primary_key=True)
+    provider_id = Column(String, ForeignKey('users.id'), nullable=False)
+    receiver_id = Column(String, ForeignKey('users.id'), nullable=False)
+    service_id = Column(String, ForeignKey('services.id'), nullable=False)
+    status = Column(String, nullable=False)
+    review = Column(String)
+    rating = Column(Float)
+
+    # Relationships
+    provider = relationship('User', foreign_keys=[provider_id])
+    receiver = relationship('User', foreign_keys=[receiver_id])
+    service = relationship('Service')
+
+    def __repr__(self):
+        return f"<Task(id={self.id}, status={self.status}, rating={self.rating})>"

@@ -9,7 +9,7 @@ from time import time
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.relationships import RelationshipProperty
-from models import User, Service, Town, UserServiceAssoc
+from models import User, Service, Town, UserServiceAssoc, Task
 from base_model import BaseModel, Base
 
 class DBOperations():
@@ -18,7 +18,8 @@ class DBOperations():
                 'User': User,
                 'Service': Service,
                 'Town': Town,
-                'UserServiceAssoc': UserServiceAssoc
+                'UserServiceAssoc': UserServiceAssoc,
+                'Task': Task
                 }
 
 
@@ -126,7 +127,7 @@ class DBOperations():
         my_dict = {}
 
         for row in rows:
-            user_id = row.user_id
+            user_id = str(row.user_id)
             first_name = row.first_name
             last_name = row.last_name
             town_names = row[3]  # Assuming the array of town names is at index 3
@@ -223,41 +224,142 @@ class DBOperations():
         """
         Session = sessionmaker(bind=self.engine)
         session = Session()
-    
+
         class_name = list(data.keys())[0] # First key, class name
         if class_name in self.classes_dict:
             update_dict = {}
             update_dict.update(data[class_name])
 
-            # User id from dict of front data
-            if 'id' in update_dict:
-                user_id = update_dict['id']
-                update_dict.pop('id')
+            # Check if the class is Task
+            if class_name == 'Task':
+                task_id = update_dict.get('id')
+                status = update_dict.get('status')
+                review = update_dict.get('review')
+                rating = update_dict.get('rating')
+
+                if task_id:
+                    task = session.query(self.classes_dict[class_name]).filter_by(id=task_id).first()
+
+                    if task:
+                        task.status = status
+                        task.review = review
+                        task.rating = rating
+
+                        session.commit()
+                        print("Task updated successfully.")
+                    else:
+                        print("Task not found.")
+                else:
+                    return "Task ID not provided."
             else:
-                return 'Id not found'
+                # User id from dict of front data
+                if 'id' in update_dict:
+                    user_id = update_dict['id']
+                    update_dict.pop('id')
+                else:
+                    return 'Id not found'
 
-            # Perform the query
-            user = session.query(self.classes_dict[class_name]).filter_by(id=user_id).first()
+                # Perform the query
+                user = session.query(self.classes_dict[class_name]).filter_by(id=user_id).first()
 
-            user_dict = user.all_columns()
-            user_dict.update(update_dict)
+                user_dict = user.all_columns()
+                user_dict.update(update_dict)
 
-            for key, value in user_dict.items():
-                setattr(user, key, value)
+                for key, value in user_dict.items():
+                    setattr(user, key, value)
 
-            # Commit the changes to the database
-            session.commit()
-            print("Object was updated")
-            # Close the session
+                # Commit the changes to the database
+                session.commit()
+                print("Object was updated")
         else:
             return "Class Not Found"
         session.close()
         return "Object updated"
+    
+
+    def insert_task(self, data):
+        """
+        Insert a task into the database based on the provided parameters.
+        """
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+
+        # Extract model_name and data_dict from the input data
+        model_name = list(data.keys())[0]
+        data_dict = data[model_name]
+
+        # Determine the model class based on the model_name
+        model_class = self.classes_dict.get(model_name)
+
+        if not model_class:
+            print("Invalid model_name.")
+            session.close()
+            return
+
+        # Retrieve parameters for the task from data_dict
+        provider_id = data_dict.get('provider_id')
+        receiver_id = data_dict.get('receiver_id')
+        service_name = data_dict.get('service_name')
+        status = data_dict.get('status')
+        review = data_dict.get('review')
+        rating = data_dict.get('rating')
+
+        if not all([
+            provider_id,
+            receiver_id,
+            service_name
+            ]):
+            print("Missing parameters.")
+            session.close()
+            return
+
+        # Retrieve provider and receiver
+        provider = session.query(User)\
+            .filter_by(id=provider_id,).first()
+        receiver = session.query(User)\
+            .filter_by(id=receiver_id).first()
+
+        if not provider or not receiver:
+            print("Provider or receiver not found.")
+            session.close()
+            return
+
+        # Retrieve service
+        service = session.query(Service)\
+            .filter_by(name=service_name).first()
+
+        if not service:
+            print("Service not found.")
+            session.close()
+            return
+
+        # Check if the provider has the service associated
+        if not session.query(UserServiceAssoc)\
+            .filter_by(user_id=provider.id, service_id=service.id).first():
+            print("Provider does not offer this service.")
+            return
+
+        # Insert task
+        task = Task(
+            provider_id=provider.id,
+            receiver_id=receiver.id,
+            service_id=service.id,
+            status=status,
+            review=review,
+            rating=rating
+        )
+
+        session.add(task)
+        session.commit()
+
+        print("Task inserted successfully.")
+        session.close()
+
 
 
 
 # -------------TEST AREA DONT TOUCH FRONT USERS----------------------
-# db = DBOperations()
+db = DBOperations()
 # start_time = time()
 
 # db.update({'User': {'id': '2cc63d22-a074-4f6a-84ab-66db61eb279a', 'last_name': 'Santiago'}})
@@ -273,8 +375,36 @@ class DBOperations():
 
 # -----FILTER_TEST----- 
 
-# filtered_objs = db.filter({'User': {'name': 'Auto Body Painting'}})
-# print(filtered_objs)
+filtered_objs = db.filter({'User': {'name': 'Auto Body Painting'}})
+print(filtered_objs)
+
+
+# -----TASK_TEST-----
+
+# data = {
+#     'Task': {
+#         'provider_id': 'f648ac2c-b651-46c1-bc58-8d035d302e25',
+#         'receiver_id': '878d0084-c65d-4814-9d61-dc186ecdd344',
+#         'service_name': 'Auto Body Painting',
+#         'status': 'Pending'
+#     }
+# }
+
+# db.insert_task(data)
+
+
+# -----UPDATE_TASK_TEST-----
+
+# data = {
+#     'Task': {
+#         'id': 'd6a57008-19c9-4d72-a96e-da3084bff5b2',
+#         'status': 'Completed',
+#         'review': 'Great service!',
+#         'rating': 5.0
+#     }
+# }
+
+# db.update(data)
 
 # end_time = time()
 # elapsed_time = end_time - start_time
