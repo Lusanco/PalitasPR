@@ -11,6 +11,8 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.relationships import RelationshipProperty
 from models import User, Service, Town, UserServiceAssoc
 from base_model import BaseModel, Base
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 class DBOperations():
 
@@ -255,10 +257,88 @@ class DBOperations():
         return "Object updated"
 
 
+    def login(self, email=None, pwd=None):
+        '''
+        Validate login for a user
+        If valid,  db.new() will be called to handle the user creation
+        '''
+        import bcrypt
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+        
+        if email and pwd:
+            user = session.query(User).filter_by(email=email).first()
+
+            if user:
+                # Retrieve the hashed password from the database
+                hashed_password = user.password.encode('utf-8')  # Ensure it's encoded as bytes
+
+                # Verify the password using bcrypt
+                if bcrypt.checkpw(pwd.encode('utf-8'), hashed_password):
+                    print(f"\nLogin successful for user: {email} password:{pwd}\n")
+                else:
+                    print(f"\nINCORRECT password for user: {email} {pwd}\n")
+            else:
+                print(f"\nNo user found with email: {email}\n")
+        
+        session.close()
+
+    def sign_up(self, data):
+        '''
+            user signs up THIS IS A ROUGH SKETCH IDEA
+        '''
+        import bcrypt
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+
+        try:
+            email = data['email']
+            first_name = data['first_name']
+            last_name = data['last_name']
+            pwd = data['password']
+        except KeyError as e:
+            print(f"Error: Missing data field: {e}")
+            session.close()
+            return
+
+
+        # Check if email doesnt exist in db
+        user = session.query(User).filter_by(email=email).first()
+        if user:
+            print("Email is already in use")
+            session.close()
+            return
+
+        # Generate a new password hash with bcrypt and 12 rounds
+        # .encode is needed to hash properly, but we need to decode before saving to db
+        # we use this for sensitive data
+        new_hashed_password = bcrypt.hashpw(pwd.encode('utf-8'), bcrypt.gensalt(rounds=12))
+        new_hashed_password = new_hashed_password.decode('utf-8')  # Decode bytes to string for SQLAlchemy
+
+        dict_of_user = {}
+        dict_of_user.update(data)
+        dict_of_user['email'] = email
+        dict_of_user['password'] = new_hashed_password
+        dict_of_user['first_name'] = first_name
+        dict_of_user['last_name'] = last_name
+
+        self.new({'User': dict_of_user})
+
 
 # # -------------TEST AREA DONT TOUCH FRONT USERS----------------------
 # db = DBOperations()
+
+
+#------- SIGN_UP TEST ---------------------------
+
+# db.sign_up({'email': "antoniofdjs@gmail.com", 'password': '9150', 'first_name': 'Antonio', 'last_name': 'De Jesus'})
+
+#-------------------------------------------------
 # start_time = time()
+
+# ----- LOGIN TEST ------
+# db.login('jd123@gmail.com', 'pwd1')
+# -----------------------
 
 # db.update({'User': {'id': '2cc63d22-a074-4f6a-84ab-66db61eb279a', 'last_name': 'Santiago'}})
 

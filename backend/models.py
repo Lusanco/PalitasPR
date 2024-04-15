@@ -3,7 +3,7 @@
     All classes for tables(DataBase)
 """
 
-from sqlalchemy import Column, String, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, Integer, ARRAY
 from sqlalchemy.orm import relationship
 from base_model import BaseModel, Base
 
@@ -63,6 +63,7 @@ class User(BaseModel, Base):
     first_name = Column(String(255), nullable=False)
     last_name = Column(String(255), nullable=False)
     email = Column(String(255), unique=True, nullable=False)
+    password = Column(String(255), nullable=False)
 
     # Relationships
     user_service_assoc = relationship(
@@ -83,3 +84,11 @@ class Town(BaseModel, Base):
         back_populates='town',
         cascade='all, delete'
         )
+
+# Still missin Task class and need to work hereee relationships
+class Review(Base):
+    __tablename__ = 'reviews'
+
+    description = Column(String, nullable=False)
+    rating = Column(Integer, nullable=False)
+    picture_paths = Column(ARRAY(String))
