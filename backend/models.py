@@ -86,9 +86,19 @@ class Town(BaseModel, Base):
         )
 
 # Still missin Task class and need to work hereee relationships
-class Review(Base):
+class Review(BaseModel, Base):
     __tablename__ = 'reviews'
 
     description = Column(String, nullable=False)
     rating = Column(Integer, nullable=False)
     picture_paths = Column(ARRAY(String))
+
+class Task(BaseModel, Base):
+    __tablename__ = 'tasks'
+
+    receiver_id = Column(String(255), ForeignKey('users.id'), nullable=False)
+    provider_id = Column(String(255), ForeignKey('users.id'), nullable=False)
+    service_id = Column(String(255), ForeignKey('users.id'), nullable=False)
+    status = Column(String(255), nullable=False, default='open')
+    description = Column(String(255), nullable=False)
+    review_id = Column(String(255), ForeignKey('reviews.id'), nullable=False)
