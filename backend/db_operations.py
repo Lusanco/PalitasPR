@@ -261,6 +261,7 @@ class DBOperations():
         '''
         Validate login for a user
         If valid,  db.new() will be called to handle the user creation
+        USAGE: Receive pwd and email of user
         '''
         import bcrypt
         Session = sessionmaker(bind=self.engine)
@@ -286,6 +287,7 @@ class DBOperations():
     def sign_up(self, data):
         '''
             user signs up THIS IS A ROUGH SKETCH IDEA
+            USAGE: Send a dict of the user to create {name: ..., email:...,...}
         '''
         import bcrypt
         Session = sessionmaker(bind=self.engine)
