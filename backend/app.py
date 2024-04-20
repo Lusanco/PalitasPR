@@ -84,8 +84,16 @@ def all_services():
 @app.route('/create_object', methods=['POST'])
 def create_object():
     data = request.json # data = {"User": {"first_name": "John", "last_name": "Doe"}}
-    new_obj = DBOperations().new(data)
 
+    # If user is signing up
+    if list(data.keys())[0] == 'User':
+        data = data['User'].copy()
+        new_obj = DBOperations().sign_up(data)
+
+    else:
+        new_obj = DBOperations().new(data)
+
+    # Check if object was created
     if new_obj:
         return jsonify({'message': f'{type(new_obj).__name__} created successfully'}), 201
     else:
