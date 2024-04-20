@@ -9,8 +9,10 @@ from time import time
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.relationships import RelationshipProperty
-from models import User, Service, Town, UserServiceAssoc, Task
+from models import User, Service, Town, UserServiceAssoc, Review, Task
 from base_model import BaseModel, Base
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 class DBOperations():
 
@@ -19,6 +21,7 @@ class DBOperations():
                 'Service': Service,
                 'Town': Town,
                 'UserServiceAssoc': UserServiceAssoc,
+                'Review': Review,
                 'Task': Task
                 }
 
@@ -38,7 +41,7 @@ class DBOperations():
         if front_data is None:
             return None
 
-        print(front_data)
+        # print(front_data)
         dict = {}
         # Extract the model name from the received data
         model_name = list(front_data.keys())[0]  # model_name = "User"
@@ -94,6 +97,7 @@ class DBOperations():
         data_dict = data[model_name]
 
         model_class = self.classes_dict.get(model_name)
+        my_service_id = None
 
         if model_class:
             if 'town' in data_dict:
@@ -101,47 +105,58 @@ class DBOperations():
             if 'name' in data_dict:
                 service_name = data_dict['name']
             else:
-                print('no service name provided') 
-            service = session.query(Service).filter_by(name = service_name).first()
-            my_service_id = service.id
+                print('no service name provided')
+                session.close()
+                return {}
 
-        if town_name == 'All':
-            print("Doing all")
-            rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
-            .join(Town) \
-            .join(User)\
-            .filter(UserServiceAssoc.service_id == my_service_id) \
-            .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
-            .order_by(UserServiceAssoc.user_id) \
-            .all()
+            service = session.query(Service).filter_by(name=service_name).first()
+            if service:
+                my_service_id = service.id
+            else:
+                print(f"No service found with name: {service_name}")
+                session.close()
+                return {}
+        if my_service_id is not None:
+            if town_name == 'All':
+                print("Doing all")
+                rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
+                .join(Town) \
+                .join(User)\
+                .filter(UserServiceAssoc.service_id == my_service_id) \
+                .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
+                .order_by(UserServiceAssoc.user_id) \
+                .all()
+            else:
+                print("Doing Specific town")
+                rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
+                .join(Town) \
+                .join(User)\
+                .filter((UserServiceAssoc.service_id == my_service_id) & (Town.name == town_name)) \
+                .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
+                .order_by(UserServiceAssoc.user_id) \
+                .all()
+
+            my_dict = {}
+
+            for row in rows:
+                user_id = str(row.user_id)
+                first_name = row.first_name
+                last_name = row.last_name
+                town_names = row[3]  # Assuming the array of town names is at index 3
+                inner_dict = {
+                    'service': service_name,
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'towns': town_names
+                }
+                my_dict[user_id] = inner_dict
+
+            # print(f"MY DICTIONARY: {my_dict}")
+            session.close()
+            return(my_dict)
         else:
-            print("Doing Specific town")
-            rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
-            .join(Town) \
-            .join(User)\
-            .filter((UserServiceAssoc.service_id == my_service_id) & (Town.name == town_name)) \
-            .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
-            .order_by(UserServiceAssoc.user_id) \
-            .all()
-
-        my_dict = {}
-
-        for row in rows:
-            user_id = str(row.user_id)
-            first_name = row.first_name
-            last_name = row.last_name
-            town_names = row[3]  # Assuming the array of town names is at index 3
-            inner_dict = {
-                'service': service_name,
-                'first_name': first_name,
-                'last_name': last_name,
-                'towns': town_names
-            }
-            my_dict[user_id] = inner_dict
-
-        # print(f"MY DICTIONARY: {my_dict}")
-        session.close()
-        return(my_dict)
+            session.close()
+            return {}
 
 
     def delete(self, model_name, user_id=None, **data):
@@ -275,92 +290,93 @@ class DBOperations():
             return "Class Not Found"
         session.close()
         return "Object updated"
-    
 
-    def insert_task(self, data):
-        """
-        Insert a task into the database based on the provided parameters.
-        """
+
+    def login(self, email=None, pwd=None):
+        '''
+        Validate login for a user
+        If valid,  db.new() will be called to handle the user creation
+        USAGE: Receive pwd and email of user
+        '''
+        import bcrypt
         Session = sessionmaker(bind=self.engine)
         session = Session()
+        
+        if email and pwd:
+            user = session.query(User).filter_by(email=email).first()
 
-        # Extract model_name and data_dict from the input data
-        model_name = list(data.keys())[0]
-        data_dict = data[model_name]
+            if user:
+                # Retrieve the hashed password from the database
+                hashed_password = user.password.encode('utf-8')  # Ensure it's encoded as bytes
 
-        # Determine the model class based on the model_name
-        model_class = self.classes_dict.get(model_name)
-
-        if not model_class:
-            print("Invalid model_name.")
-            session.close()
-            return
-
-        # Retrieve parameters for the task from data_dict
-        provider_id = data_dict.get('provider_id')
-        receiver_id = data_dict.get('receiver_id')
-        service_name = data_dict.get('service_name')
-        status = data_dict.get('status')
-        review = data_dict.get('review')
-        rating = data_dict.get('rating')
-
-        if not all([
-            provider_id,
-            receiver_id,
-            service_name
-            ]):
-            print("Missing parameters.")
-            session.close()
-            return
-
-        # Retrieve provider and receiver
-        provider = session.query(User)\
-            .filter_by(id=provider_id,).first()
-        receiver = session.query(User)\
-            .filter_by(id=receiver_id).first()
-
-        if not provider or not receiver:
-            print("Provider or receiver not found.")
-            session.close()
-            return
-
-        # Retrieve service
-        service = session.query(Service)\
-            .filter_by(name=service_name).first()
-
-        if not service:
-            print("Service not found.")
-            session.close()
-            return
-
-        # Check if the provider has the service associated
-        if not session.query(UserServiceAssoc)\
-            .filter_by(user_id=provider.id, service_id=service.id).first():
-            print("Provider does not offer this service.")
-            return
-
-        # Insert task
-        task = Task(
-            provider_id=provider.id,
-            receiver_id=receiver.id,
-            service_id=service.id,
-            status=status,
-            review=review,
-            rating=rating
-        )
-
-        session.add(task)
-        session.commit()
-
-        print("Task inserted successfully.")
+                # Verify the password using bcrypt
+                if bcrypt.checkpw(pwd.encode('utf-8'), hashed_password):
+                    print(f"\nLogin successful for user: {email} password:{pwd}\n")
+                else:
+                    print(f"\nINCORRECT password for user: {email} {pwd}\n")
+            else:
+                print(f"\nNo user found with email: {email}\n")
+        
         session.close()
 
 
+    def sign_up(self, data):
+        '''
+            user signs up THIS IS A ROUGH SKETCH IDEA
+            USAGE: Send a dict of the user to create {name: ..., email:...,...}
+        '''
+        import bcrypt
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+
+        try:
+            email = data['email']
+            first_name = data['first_name']
+            last_name = data['last_name']
+            pwd = data['password']
+        except KeyError as e:
+            print(f"Error: Missing data field: {e}")
+            session.close()
+            return
 
 
-# -------------TEST AREA DONT TOUCH FRONT USERS----------------------
-db = DBOperations()
+        # Check if email doesnt exist in db
+        user = session.query(User).filter_by(email=email).first()
+        if user:
+            print("Email is already in use")
+            session.close()
+            return
+
+        # Generate a new password hash with bcrypt and 12 rounds
+        # .encode is needed to hash properly, but we need to decode before saving to db
+        # we use this for sensitive data
+        new_hashed_password = bcrypt.hashpw(pwd.encode('utf-8'), bcrypt.gensalt(rounds=12))
+        new_hashed_password = new_hashed_password.decode('utf-8')  # Decode bytes to string for SQLAlchemy
+
+        dict_of_user = {}
+        dict_of_user.update(data)
+        dict_of_user['email'] = email
+        dict_of_user['password'] = new_hashed_password
+        dict_of_user['first_name'] = first_name
+        dict_of_user['last_name'] = last_name
+
+        self.new({'User': dict_of_user})
+
+
+# # -------------TEST AREA DONT TOUCH FRONT USERS----------------------
+# db = DBOperations()
+
+
+#------- SIGN_UP TEST ---------------------------
+
+# db.sign_up({'email': "antoniofdjs@gmail.com", 'password': '9150', 'first_name': 'Antonio', 'last_name': 'De Jesus'})
+
+#-------------------------------------------------
 # start_time = time()
+
+# ----- LOGIN TEST ------
+# db.login('jd123@gmail.com', 'pwd1')
+# -----------------------
 
 # db.update({'User': {'id': '2cc63d22-a074-4f6a-84ab-66db61eb279a', 'last_name': 'Santiago'}})
 
@@ -375,36 +391,8 @@ db = DBOperations()
 
 # -----FILTER_TEST----- 
 
-filtered_objs = db.filter({'User': {'name': 'Auto Body Painting'}})
-print(filtered_objs)
-
-
-# -----TASK_TEST-----
-
-# data = {
-#     'Task': {
-#         'provider_id': 'f648ac2c-b651-46c1-bc58-8d035d302e25',
-#         'receiver_id': '878d0084-c65d-4814-9d61-dc186ecdd344',
-#         'service_name': 'Auto Body Painting',
-#         'status': 'Pending'
-#     }
-# }
-
-# db.insert_task(data)
-
-
-# -----UPDATE_TASK_TEST-----
-
-# data = {
-#     'Task': {
-#         'id': 'd6a57008-19c9-4d72-a96e-da3084bff5b2',
-#         'status': 'Completed',
-#         'review': 'Great service!',
-#         'rating': 5.0
-#     }
-# }
-
-# db.update(data)
+# filtered_objs = db.filter({'User': {'name': 'John'}})
+# print(filtered_objs)
 
 # end_time = time()
 # elapsed_time = end_time - start_time
