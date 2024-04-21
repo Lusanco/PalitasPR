@@ -63,9 +63,9 @@ class DBConsole(cmd.Cmd):
             data = dict(pair.split('=') for pair in arg_list[1:])
             result = db.delete(model_name, **data)
             if result:
-                print("Deletion successful.")
+                print("Delete successful.")
             else:
-                print("Deletion failed.")
+                print("Delete failed.")
         else:
             print("Invalid input. Please provide a model name and key-value pairs.")
 
