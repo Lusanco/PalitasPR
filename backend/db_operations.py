@@ -9,7 +9,7 @@ from time import time
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.relationships import RelationshipProperty
-from models import User, Service, Town, UserServiceAssoc
+from models import User, Service, Town, UserServiceAssoc, Review, Task
 from base_model import BaseModel, Base
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -20,12 +20,14 @@ class DBOperations():
                 'User': User,
                 'Service': Service,
                 'Town': Town,
-                'UserServiceAssoc': UserServiceAssoc
+                'UserServiceAssoc': UserServiceAssoc,
+                'Review': Review,
+                'Task': Task
                 }
 
 
     def __init__(self):
-        self.engine = create_engine('postgresql://postgres:9150@localhost/postgres')    
+        self.engine = create_engine('postgresql://demo_dev:demo_dev_pwd@localhost/demo_db')    
 
 
     def new(self, front_data):
@@ -39,7 +41,7 @@ class DBOperations():
         if front_data is None:
             return None
 
-        print(front_data)
+        # print(front_data)
         dict = {}
         # Extract the model name from the received data
         model_name = list(front_data.keys())[0]  # model_name = "User"
@@ -95,6 +97,7 @@ class DBOperations():
         data_dict = data[model_name]
 
         model_class = self.classes_dict.get(model_name)
+        my_service_id = None
 
         if model_class:
             if 'town' in data_dict:
@@ -102,47 +105,58 @@ class DBOperations():
             if 'name' in data_dict:
                 service_name = data_dict['name']
             else:
-                print('no service name provided') 
-            service = session.query(Service).filter_by(name = service_name).first()
-            my_service_id = service.id
+                print('no service name provided')
+                session.close()
+                return {}
 
-        if town_name == 'All':
-            print("Doing all")
-            rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
-            .join(Town) \
-            .join(User)\
-            .filter(UserServiceAssoc.service_id == my_service_id) \
-            .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
-            .order_by(UserServiceAssoc.user_id) \
-            .all()
+            service = session.query(Service).filter_by(name=service_name).first()
+            if service:
+                my_service_id = service.id
+            else:
+                print(f"No service found with name: {service_name}")
+                session.close()
+                return {}
+        if my_service_id is not None:
+            if town_name == 'All':
+                print("Doing all")
+                rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
+                .join(Town) \
+                .join(User)\
+                .filter(UserServiceAssoc.service_id == my_service_id) \
+                .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
+                .order_by(UserServiceAssoc.user_id) \
+                .all()
+            else:
+                print("Doing Specific town")
+                rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
+                .join(Town) \
+                .join(User)\
+                .filter((UserServiceAssoc.service_id == my_service_id) & (Town.name == town_name)) \
+                .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
+                .order_by(UserServiceAssoc.user_id) \
+                .all()
+
+            my_dict = {}
+
+            for row in rows:
+                user_id = str(row.user_id)
+                first_name = row.first_name
+                last_name = row.last_name
+                town_names = row[3]  # Assuming the array of town names is at index 3
+                inner_dict = {
+                    'service': service_name,
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'towns': town_names
+                }
+                my_dict[user_id] = inner_dict
+
+            # print(f"MY DICTIONARY: {my_dict}")
+            session.close()
+            return(my_dict)
         else:
-            print("Doing Specific town")
-            rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
-            .join(Town) \
-            .join(User)\
-            .filter((UserServiceAssoc.service_id == my_service_id) & (Town.name == town_name)) \
-            .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
-            .order_by(UserServiceAssoc.user_id) \
-            .all()
-
-        my_dict = {}
-
-        for row in rows:
-            user_id = str(row.user_id)
-            first_name = row.first_name
-            last_name = row.last_name
-            town_names = row[3]  # Assuming the array of town names is at index 3
-            inner_dict = {
-                'service': service_name,
-                'first_name': first_name,
-                'last_name': last_name,
-                'towns': town_names
-            }
-            my_dict[user_id] = inner_dict
-
-        # print(f"MY DICTIONARY: {my_dict}")
-        session.close()
-        return(my_dict)
+            session.close()
+            return {}
 
 
     def delete(self, model_name, user_id=None, **data):
@@ -225,32 +239,53 @@ class DBOperations():
         """
         Session = sessionmaker(bind=self.engine)
         session = Session()
-    
+
         class_name = list(data.keys())[0] # First key, class name
         if class_name in self.classes_dict:
             update_dict = {}
             update_dict.update(data[class_name])
 
-            # User id from dict of front data
-            if 'id' in update_dict:
-                user_id = update_dict['id']
-                update_dict.pop('id')
+            # Check if the class is Task
+            if class_name == 'Task':
+                task_id = update_dict.get('id')
+                status = update_dict.get('status')
+                review = update_dict.get('review')
+                rating = update_dict.get('rating')
+
+                if task_id:
+                    task = session.query(self.classes_dict[class_name]).filter_by(id=task_id).first()
+
+                    if task:
+                        task.status = status
+                        task.review = review
+                        task.rating = rating
+
+                        session.commit()
+                        print("Task updated successfully.")
+                    else:
+                        print("Task not found.")
+                else:
+                    return "Task ID not provided."
             else:
-                return 'Id not found'
+                # User id from dict of front data
+                if 'id' in update_dict:
+                    user_id = update_dict['id']
+                    update_dict.pop('id')
+                else:
+                    return 'Id not found'
 
-            # Perform the query
-            user = session.query(self.classes_dict[class_name]).filter_by(id=user_id).first()
+                # Perform the query
+                user = session.query(self.classes_dict[class_name]).filter_by(id=user_id).first()
 
-            user_dict = user.all_columns()
-            user_dict.update(update_dict)
+                user_dict = user.all_columns()
+                user_dict.update(update_dict)
 
-            for key, value in user_dict.items():
-                setattr(user, key, value)
+                for key, value in user_dict.items():
+                    setattr(user, key, value)
 
-            # Commit the changes to the database
-            session.commit()
-            print("Object was updated")
-            # Close the session
+                # Commit the changes to the database
+                session.commit()
+                print("Object was updated")
         else:
             return "Class Not Found"
         session.close()
@@ -284,6 +319,7 @@ class DBOperations():
         
         session.close()
 
+
     def sign_up(self, data):
         '''
             user signs up THIS IS A ROUGH SKETCH IDEA
@@ -298,6 +334,7 @@ class DBOperations():
             first_name = data['first_name']
             last_name = data['last_name']
             pwd = data['password']
+            # confirm_pwd = data['confirm_password']
         except KeyError as e:
             print(f"Error: Missing data field: {e}")
             session.close()
@@ -310,6 +347,12 @@ class DBOperations():
             print("Email is already in use")
             session.close()
             return
+        
+        # Check if passwords match
+        # if pwd != confirm_pwd:
+        #     print("Passwords do not match")
+        #     session.close()
+        #     return
 
         # Generate a new password hash with bcrypt and 12 rounds
         # .encode is needed to hash properly, but we need to decode before saving to db
@@ -355,7 +398,7 @@ class DBOperations():
 
 # -----FILTER_TEST----- 
 
-# filtered_objs = db.filter({'User': {'name': 'Auto Body Painting'}})
+# filtered_objs = db.filter({'User': {'name': 'John'}})
 # print(filtered_objs)
 
 # end_time = time()

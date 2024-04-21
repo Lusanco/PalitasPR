@@ -91,7 +91,7 @@ class Review(BaseModel, Base):
 
     description = Column(String, nullable=False)
     rating = Column(Integer, nullable=False)
-    picture_paths = Column(ARRAY(String))
+    picture_paths = Column(String)
 
 class Task(BaseModel, Base):
     __tablename__ = 'tasks'
@@ -101,4 +101,4 @@ class Task(BaseModel, Base):
     service_id = Column(String(255), ForeignKey('users.id'), nullable=False)
     status = Column(String(255), nullable=False, default='open')
     description = Column(String(255), nullable=False)
-    review_id = Column(String(255), ForeignKey('reviews.id'), nullable=False)
+    review_id = Column(String(255), ForeignKey('reviews.id'))

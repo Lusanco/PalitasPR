@@ -9,9 +9,9 @@
 DO
 $$
 BEGIN
-  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'demo_acces') THEN
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'demo_acces') THEN
     CREATE ROLE demo_acces LOGIN PASSWORD 'demo_acces_pwd';
-  END IF;
+    END IF;
 END
 $$;
 

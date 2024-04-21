@@ -15,7 +15,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Create the engine
-engine = create_engine('postgresql://postgres:9150@localhost/postgres')
+engine = create_engine('postgresql://demo_dev:demo_dev_pwd@localhost/demo_db')
 
 # Bind the engine to the Base class
 Base.metadata.bind = engine
