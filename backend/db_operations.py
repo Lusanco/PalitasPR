@@ -27,7 +27,7 @@ class DBOperations():
 
 
     def __init__(self):
-        self.engine = create_engine('postgresql://postgres:9495@localhost/postgres')    
+        self.engine = create_engine('postgresql://demo_dev:demo_dev_pwd@localhost/demo_db')    
 
 
     def new(self, front_data):
