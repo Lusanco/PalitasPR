@@ -1,14 +1,7 @@
-let classnames = {
-  body: "",
-  header: "",
-  footer: "",
-  app: "",
-};
-
 // Function to fetch user data from Flask backend
 function fetchUsers() {
-  fetch("/users") // MAKE A CALL TO FLASK, GETS BACKEND
-    .then((response) => response.json()) // Parse the JSON response
+  fetch("/users")
+    .then((response) => response.json())
     .then((users) => {
       const userList = document.getElementById("user-list");
       userList.classList = "gap-4 flex flex-col";
@@ -19,7 +12,6 @@ function fetchUsers() {
         listItem.textContent = `${user.first_name} ${user.last_name}: ${user.email}`;
         listItem.classList = "font-bold text-slate-800 text-center list-none";
         listContainer.appendChild(listItem);
-        // BELOW, THE USERS NAME AND LAST NAME ARE FETCHED
         userList.appendChild(listContainer);
       });
     });
@@ -27,14 +19,13 @@ function fetchUsers() {
 
 // Function to fetch service data from Flask backend
 function fetchServices() {
-  fetch("/services") // MAKE A CALL TO FLASK, GETS BACKEND
-    .then((response) => response.json()) // Parse the JSON response
+  fetch("/services")
+    .then((response) => response.json())
     .then((services) => {
       const serviceList = document.getElementById("service-list");
       serviceList.innerHTML = "";
       services.forEach((service) => {
         const listItem = document.createElement("li");
-        // ALL SERVICES
         listItem.textContent = service.name;
         serviceList.appendChild(listItem);
       });
@@ -49,13 +40,14 @@ function userToDict() {
   const firstNameInput = document.getElementById("first_name");
   const lastNameInput = document.getElementById("last_name");
   const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
 
   let user = {
     User: {
       first_name: firstNameInput.value,
       last_name: lastNameInput.value,
       email: emailInput.value,
-      // email: "email@email.test",
+      password: passwordInput.value,
     },
   };
 
@@ -69,8 +61,6 @@ function userToDict() {
     },
     body: userDict,
   };
-
-  console.log(userDict);
 
   fetch(fetchURL, fetchOptions)
     .then((response) => {
