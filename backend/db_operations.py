@@ -334,6 +334,7 @@ class DBOperations():
             first_name = data['first_name']
             last_name = data['last_name']
             pwd = data['password']
+            confirm_pwd = data['confirm_password']
         except KeyError as e:
             print(f"Error: Missing data field: {e}")
             session.close()
@@ -344,6 +345,12 @@ class DBOperations():
         user = session.query(User).filter_by(email=email).first()
         if user:
             print("Email is already in use")
+            session.close()
+            return
+        
+        # Check if passwords match
+        if pwd != confirm_pwd:
+            print("Passwords do not match")
             session.close()
             return
 

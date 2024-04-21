@@ -83,6 +83,20 @@ class DBConsole(cmd.Cmd):
         else:
             print("Invalid input. Please provide a model name, object ID, and key-value pairs.")
 
+
+    def do_login(self, args):
+        """
+        Validate user login.
+        Usage: login <email> <password>
+        Example: login john@example.com mypassword
+        """
+        arg_list = args.split()
+        if len(arg_list) == 2:
+            email, pwd = arg_list
+            db.login(email=email, pwd=pwd)
+        else:
+            print("Invalid input. Usage: login <email> <password>")
+
     def do_quit(self, args):
         """Quit the console"""
         return True
