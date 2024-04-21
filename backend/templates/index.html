@@ -1,49 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flask Frontend</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../static/pico.classless.slate.min.css" />
-  </head>
-  <body>
-    <main>
-      <form>
-        <label for="first_name">First Name</label>
-        <input id="first_name" type="text" required />
-        <br />
-        <label for="last_name">Last Name</label>
-        <input id="last_name" type="text" required />
-        <br />
-        <label for="email">Email</label>
-        <input
-          type="email"
-          name="email"
-          id="email"
-          placeholder="example@email.com"
-          required
-        />
-        <br />
-        <label for="password">Password</label>
-        <input
-          type="password"
-          name="password"
-          id="password"
-          placeholder="Enter your password"
-          required
-        />
-        <button id="button_input" onclick="userToDict(); fetchUsers()">
-          Create User
-        </button>
-      </form>
-      <br />
-      <h1>Users</h1>
-      <ul id="user-list"></ul>
-
-      <h1>Services</h1>
-      <ul id="service-list"></ul>
-    </main>
-    <script src="../static/index.js"></script>
-  </body>
-</html>
+{# {% extends 'base.html'%} {% block content %} {% endblock %} #} {# base
+  template for rendering header, content and footer type blocks #} {% import
+  '_macros.html' as macros %}
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <script src="https://cdn.tailwindcss.com"></script>
+      <title>{% block title %}{% endblock %}</title>
+    </head>
+    <body>
+      <div id="app" class="h-svh flex flex-col justify-between bg-slate-200">
+        {{ macros.header() }} {{ macros.signup() }} {{ macros.footer() }}
+      </div>
+      <script src="../static/index.js"></script>
+    </body>
+  </html>

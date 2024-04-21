@@ -71,8 +71,16 @@ def updates():
         Example: {'User_id': {'last_name': 'Santiago', 'email': 'watagata@gmail.com'}}
     """
     data = request.json
-    message_status = DBOperations().update(data)
-    return jsonify(message_status)
+    obj_to_update = DBOperations().update(data)
+    return jsonify(obj_to_update)
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+    DBOperations().login = (email, password)
+    return jsonify ({"message": "Login attempted"}), 200
 
 # Run the Flask app
 if __name__ == '__main__':
