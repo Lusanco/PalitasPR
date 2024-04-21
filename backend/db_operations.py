@@ -334,7 +334,7 @@ class DBOperations():
             first_name = data['first_name']
             last_name = data['last_name']
             pwd = data['password']
-            confirm_pwd = data['confirm_password']
+            # confirm_pwd = data['confirm_password']
         except KeyError as e:
             print(f"Error: Missing data field: {e}")
             session.close()
@@ -349,10 +349,10 @@ class DBOperations():
             return
         
         # Check if passwords match
-        if pwd != confirm_pwd:
-            print("Passwords do not match")
-            session.close()
-            return
+        # if pwd != confirm_pwd:
+        #     print("Passwords do not match")
+        #     session.close()
+        #     return
 
         # Generate a new password hash with bcrypt and 12 rounds
         # .encode is needed to hash properly, but we need to decode before saving to db
