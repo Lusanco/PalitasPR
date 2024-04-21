@@ -70,6 +70,7 @@ class DBOperations():
             # Commit changes
             session.commit()
             session.close()
+            print(new_object)
             return new_object
         else:
             print("Not a valid class")
@@ -240,54 +241,37 @@ class DBOperations():
         Session = sessionmaker(bind=self.engine)
         session = Session()
 
-        class_name = list(data.keys())[0] # First key, class name
+        class_name = list(data.keys())[0]  # First key, class name
         if class_name in self.classes_dict:
             update_dict = {}
             update_dict.update(data[class_name])
 
-            # Check if the class is Task
-            if class_name == 'Task':
-                task_id = update_dict.get('id')
-                status = update_dict.get('status')
-                review = update_dict.get('review')
-                rating = update_dict.get('rating')
+            # Get the object ID from the update_dict
+            obj_id = update_dict.pop('id', None)
 
-                if task_id:
-                    task = session.query(self.classes_dict[class_name]).filter_by(id=task_id).first()
+            if obj_id:
+                # Retrieve the object from the database
+                model_class = self.classes_dict[class_name]
+                obj = session.query(model_class).filter_by(id=obj_id).first()
 
-                    if task:
-                        task.status = status
-                        task.review = review
-                        task.rating = rating
+                if obj:
+                    # Iterate over the remaining key-value pairs in update_dict
+                    for key, value in update_dict.items():
+                        # Check if the attribute exists in the model
+                        if hasattr(model_class, key):
+                            setattr(obj, key, value)
+                        else:
+                            print(f"Attribute '{key}' not found in {class_name} model.")
 
-                        session.commit()
-                        print("Task updated successfully.")
-                    else:
-                        print("Task not found.")
+                    session.commit()
+                    print(f"{class_name} object with ID {obj_id} updated successfully.")
                 else:
-                    return "Task ID not provided."
+                    print(f"{class_name} object with ID {obj_id} not found.")
             else:
-                # User id from dict of front data
-                if 'id' in update_dict:
-                    user_id = update_dict['id']
-                    update_dict.pop('id')
-                else:
-                    return 'Id not found'
-
-                # Perform the query
-                user = session.query(self.classes_dict[class_name]).filter_by(id=user_id).first()
-
-                user_dict = user.all_columns()
-                user_dict.update(update_dict)
-
-                for key, value in user_dict.items():
-                    setattr(user, key, value)
-
-                # Commit the changes to the database
-                session.commit()
-                print("Object was updated")
+                return "Object ID not provided."
         else:
             return "Class Not Found"
+
         session.close()
         return "Object updated"
 
@@ -367,7 +351,8 @@ class DBOperations():
         dict_of_user['first_name'] = first_name
         dict_of_user['last_name'] = last_name
 
-        self.new({'User': dict_of_user})
+        obj = self.new({'User': dict_of_user})
+        return (obj)
 
 
 # # -------------TEST AREA DONT TOUCH FRONT USERS----------------------
