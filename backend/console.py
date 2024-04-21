@@ -22,6 +22,7 @@ class DBConsole(cmd.Cmd):
         arg_list = shlex.split(args)
         if arg_list:
             model_name = arg_list[0]
+            # it use sign up function if model_name is User
             if model_name == 'User':
                 data = dict(pair.split('=') for pair in arg_list[1:])
                 db.sign_up(data)
