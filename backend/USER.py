@@ -28,6 +28,14 @@ def create_users():
     else:
         return jsonify ({'error': 'Error creating user'}), 400
 
+@app_bp.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+    DBOperations().login = (email, password)
+    return jsonify ({"message": "Login attempted"}), 200
+
 @app_bp.route('/users/<user_id>', methods=['PUT'])
 def update_user(user_id):
     user_data = request.json
