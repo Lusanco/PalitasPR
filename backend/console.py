@@ -19,22 +19,41 @@ class DBConsole(cmd.Cmd):
         Example: new User first_name=John last_name=Doe email=john@example.com
         """
         # arg_list = args.split()
+        new_obj= None
         arg_list = shlex.split(args)
         if arg_list:
-            model_name = arg_list[0]
-            # it use sign up function if model_name is User
-            if model_name == 'User':
-                data = dict(pair.split('=') for pair in arg_list[1:])
-                db.sign_up(data)
-            else:
-                data = {model_name: dict(pair.split('=') for pair in arg_list[1:])}
-                new_obj = db.new(data)
+            if arg_list:
+                model_name = arg_list[0]
+                # it use sign up function if model_name is User
+                if model_name == 'User':
+                    # Prompt for user input
+                    first_name = input("Enter first name: ")
+                    last_name = input("Enter last name: ")
+                    email = input("Enter email: ")
+                    password = input("Enter password: ")
+
+                    # Create a dictionary with the user data
+                    data = {
+                        'first_name': first_name,
+                        'last_name': last_name,
+                        'email': email,
+                        'password': password
+                    }
+                    new_obj = db.sign_up(data)
                 if new_obj:
                     print(f"New {model_name} object created: {new_obj}")
                 else:
-                    print("Invalid input or model name.")
-        else:
-            print("Invalid input. Please provide a model name and key-value")
+                    if model_name == 'User':
+                        print("Error creating user.")
+                    else:
+                        data = {model_name: dict(pair.split('=') for pair in arg_list[1:])}
+                        new_obj = db.new(data)
+                        if new_obj:
+                            print(f"New {model_name} object created: {new_obj}")
+                        else:
+                            print("Invalid input or model name.")
+            else:
+                print("Invalid input. Please provide a model name.")
 
     def do_filter(self, args):
         """
@@ -55,13 +74,13 @@ class DBConsole(cmd.Cmd):
         """
         Delete objects based on criteria.
         Usage: delete <model_name> <key1>=<value1> <key2>=<value2> ...
-        Example: delete Service name=Gardening
+        Example: delete Service user_id=c0a5be5a-94bf-4ad8-95dc-1d6e54cb1aed name=Gardening
         """
-        arg_list = args.split()
+        arg_list = shlex.split(args)
         if arg_list:
             model_name = arg_list[0]
-            data = dict(pair.split('=') for pair in arg_list[1:])
-            result = db.delete(model_name, **data)
+            data = {model_name: dict(pair.split('=') for pair in arg_list[1:])}
+            result = db.delete(data)
             if result:
                 print("Delete successful.")
             else:

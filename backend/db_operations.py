@@ -12,6 +12,7 @@ from sqlalchemy.orm.relationships import RelationshipProperty
 from models import User, Service, Town, UserServiceAssoc, Review, Task
 from base_model import BaseModel, Base
 from werkzeug.security import generate_password_hash, check_password_hash
+import bcrypt
 
 
 class DBOperations():
@@ -160,77 +161,76 @@ class DBOperations():
             return {}
 
 
-    def delete(self, model_name, user_id=None, **data):
+    def delete(self, data):
         """
-            Delete objects and handle if the object has relationship.
-
-            example:
-                result = db.delete('Service', user_id='c0a5be5a-94bf-4ad8-95dc-1d6e54cb1aed', name='Gardening')
-                in this example will delete the row where the user_id is associated with the service we want to 
-                delete in user_service_assoc table.
-            
-            there is a section to test the function after this method. 
+            Delete objects and handle if the object has relationship
+            Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
         """
-        Session = sessionmaker(bind=self.engine)
-        session = Session()
+        session = sessionmaker(bind=self.engine)
+        session = session()
 
-        try:
-            # Retrieve the model class from the classes_dict based on the model_name
-            model_class = self.classes_dict.get(model_name)
-            if not model_class:
+        model_name = list(data.keys())[0]
+        model_class = self.classes_dict.get(model_name)
+        if not model_class:
+            print("\nInvalid model name.\n")
+            session.close()
+            return None
+        
+        inner_dict = data[model_name]
+        query = session.query(model_class)
+
+        for key, value in inner_dict.items():
+            column = getattr(model_class, key, None)
+            if column is not None:
+                query = query.filter(getattr(model_class, key) == value)
+            else:
+                print(f"\nInvalid attribute '{key}' for model '{model_name}'.\n")
+                session.close()
                 return None
 
-            # Create a new query object for the specified model_class
-            query = session.query(model_class)
-
-            # Iterate over the key-value in the kwargs(data) dictionary
-            for key, value in data.items():
-                # Attempt to retrieve the column attribute from the model_class using the key
-                column = getattr(model_class, key, None)
-                if column is not None:
-                    # If a valid column is found, apply the filtering condition to the query
-                    query = query.filter(getattr(model_class, key) == value)
-
-            # Execute the query and retrieve all the filtered objects
-            objs_to_delete = query.all()
-
-            # If no objects are found, return True
-            if not objs_to_delete:
-                print("No objects found to delete.")
-                return True
-
-            # Iterate over the filtered objects and handle deletions based on relationships
-            for obj in objs_to_delete:
-                if model_name == 'Service' and user_id:
-                    # If the model is 'Service' and user_id is provided,
-                    # delete the associated UserServiceAssoc object for the specific user
-                    assoc_obj = session.query(UserServiceAssoc)\
-                    .filter(UserServiceAssoc.service_id == obj.id,\
-                            UserServiceAssoc.user_id == user_id).all()
-
-                    if assoc_obj:
-                        for obj in assoc_obj:
-                            session.delete(obj)
-                else:
-                    # Delete all associated UserServiceAssoc objects first
-                    assoc_objs = session.query(UserServiceAssoc)\
-                    .filter(UserServiceAssoc.user_id == obj.id).all()
-                    for assoc_obj in assoc_objs:
-                        session.delete(assoc_obj)
-
-                    # Delete the filtered objects themselves
-                    session.delete(obj)
-
-            session.commit()
-            return True
-
-        except Exception as e:
-            session.rollback()
-            print(f"Error occurred: {e}")
-            return False
-
-        finally:
+        objs_to_delete = query.all()
+        if not objs_to_delete:
+            print("No object found to delete.\n")
             session.close()
+            return True
+        
+        for obj in objs_to_delete:
+            if model_name == 'User':
+                password = input("Enter your password to confirm delete: ")
+                if not self.confirm_password(obj, password):
+                    print("Incorrect password.")
+                    session.close()
+                    return False
+                else:
+                    # Print the user's first name and last name when deleted
+                    print(f"User {obj.first_name} {obj.last_name} deleted.")
+
+            if model_name == 'Service' and 'user_id' in inner_dict:
+                # If the model is 'Service' and user_id is provided,
+                # delete the associated UserServiceAssoc object for the specific user
+                assoc_obj = session.query(UserServiceAssoc) \
+                    .filter(UserServiceAssoc.service_id == obj.id,
+                            UserServiceAssoc.user_id == inner_dict['user_id']).all()
+
+                if assoc_obj:
+                    for obj in assoc_obj:
+                        session.delete(obj)
+            else:
+                # Delete all associated UserServiceAssoc objects first
+                assoc_objs = session.query(UserServiceAssoc) \
+                    .filter(UserServiceAssoc.user_id == obj.id).all()
+                for assoc_obj in assoc_objs:
+                    session.delete(assoc_obj)
+
+                # Delete the filtered objects themselves
+                session.delete(obj)
+
+        session.commit()
+        session.close()
+        return True
+
+
+
 
 
     def update(self, data):
@@ -282,7 +282,6 @@ class DBOperations():
         If valid,  db.new() will be called to handle the user creation
         USAGE: Receive pwd and email of user
         '''
-        import bcrypt
         Session = sessionmaker(bind=self.engine)
         session = Session()
         
@@ -295,9 +294,9 @@ class DBOperations():
 
                 # Verify the password using bcrypt
                 if bcrypt.checkpw(pwd.encode('utf-8'), hashed_password):
-                    print(f"\nLogin successful for user: {email} password:{pwd}\n")
+                    print(f"\nLogin successful for user: {user.first_name} {user.last_name}\n")
                 else:
-                    print(f"\nINCORRECT password for user: {email} {pwd}\n")
+                    print(f"\nEmail or password INCORRECT, try again\n")
             else:
                 print(f"\nNo user found with email: {email}\n")
         
@@ -353,6 +352,21 @@ class DBOperations():
 
         obj = self.new({'User': dict_of_user})
         return (obj)
+
+
+    def confirm_password(self, user_obj, password):
+        """
+        Confirm the password for the given user object.
+        """
+
+        # Retrieve the hashed password from the database
+        hashed_password = user_obj.password.encode('utf-8')
+
+        # Verify the password using bcrypt
+        if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
+            return True
+        else:
+            return False
 
 
 # # -------------TEST AREA DONT TOUCH FRONT USERS----------------------

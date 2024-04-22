@@ -109,7 +109,7 @@ async function handleSignup() {
   };
 
   const userDict = JSON.stringify(user);
-  const fetchURL = "http://127.0.0.1:5000/create_object";
+  const fetchURL = "http://127.0.0.1:5000/api/users";
   const fetchOptions = {
       method: "POST",
       headers: {
