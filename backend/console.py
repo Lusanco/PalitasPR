@@ -22,38 +22,35 @@ class DBConsole(cmd.Cmd):
         new_obj= None
         arg_list = shlex.split(args)
         if arg_list:
-            if arg_list:
-                model_name = arg_list[0]
-                # it use sign up function if model_name is User
-                if model_name == 'User':
-                    # Prompt for user input
-                    first_name = input("Enter first name: ")
-                    last_name = input("Enter last name: ")
-                    email = input("Enter email: ")
-                    password = input("Enter password: ")
+            model_name = arg_list[0]
+            # it use sign up function if model_name is User
+            if model_name == 'User':
+                # Prompt for user input
+                first_name = input("Enter first name: ")
+                last_name = input("Enter last name: ")
+                email = input("Enter email: ")
+                password = input("Enter password: ")
 
-                    # Create a dictionary with the user data
-                    data = {
-                        'first_name': first_name,
-                        'last_name': last_name,
-                        'email': email,
-                        'password': password
-                    }
-                    new_obj = db.sign_up(data)
+                # Create a dictionary with the user data
+                data = {
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'email': email,
+                    'password': password
+                }
+                new_obj = db.sign_up(data)
+            if new_obj:
+                print(f"\nNew {model_name} object created: '{first_name} {last_name}' with email: '{email}'.\n")
+            
+            else:
+                data = {model_name: dict(pair.split('=') for pair in arg_list[1:])}
+                new_obj = db.new(data)
                 if new_obj:
                     print(f"New {model_name} object created: {new_obj}")
                 else:
-                    if model_name == 'User':
-                        print("Error creating user.")
-                    else:
-                        data = {model_name: dict(pair.split('=') for pair in arg_list[1:])}
-                        new_obj = db.new(data)
-                        if new_obj:
-                            print(f"New {model_name} object created: {new_obj}")
-                        else:
-                            print("Invalid input or model name.")
-            else:
-                print("Invalid input. Please provide a model name.")
+                    print("Invalid input or model name.")
+        else:
+            print("Invalid input. Please provide a model name.")
 
     def do_filter(self, args):
         """

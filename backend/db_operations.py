@@ -71,7 +71,6 @@ class DBOperations():
             # Commit changes
             session.commit()
             session.close()
-            print(new_object)
             return new_object
         else:
             print("Not a valid class")
@@ -230,9 +229,6 @@ class DBOperations():
         return True
 
 
-
-
-
     def update(self, data):
         """
             Update an object from Data Base
@@ -312,16 +308,19 @@ class DBOperations():
         Session = sessionmaker(bind=self.engine)
         session = Session()
 
-        try:
-            email = data['email']
-            first_name = data['first_name']
-            last_name = data['last_name']
-            pwd = data['password']
-            # confirm_pwd = data['confirm_password']
-        except KeyError as e:
-            print(f"Error: Missing data field: {e}")
+        print("Data received:", data)
+
+        email = data['email']
+        first_name = data['first_name']
+        last_name = data['last_name']
+        pwd = data['password']
+        
+
+        # Check if all required fields are present
+        if not (email and first_name and last_name and pwd):
+            print("Error: Missing required fields.")
             session.close()
-            return
+            return None
 
 
         # Check if email doesnt exist in db
@@ -329,7 +328,7 @@ class DBOperations():
         if user:
             print("Email is already in use")
             session.close()
-            return
+            return None
         
         # Check if passwords match
         # if pwd != confirm_pwd:
@@ -343,14 +342,15 @@ class DBOperations():
         new_hashed_password = bcrypt.hashpw(pwd.encode('utf-8'), bcrypt.gensalt(rounds=12))
         new_hashed_password = new_hashed_password.decode('utf-8')  # Decode bytes to string for SQLAlchemy
 
-        dict_of_user = {}
-        dict_of_user.update(data)
-        dict_of_user['email'] = email
-        dict_of_user['password'] = new_hashed_password
-        dict_of_user['first_name'] = first_name
-        dict_of_user['last_name'] = last_name
+        dict_of_user = {
+        'email': email,
+        'password': new_hashed_password,
+        'first_name': first_name,
+        'last_name': last_name
+        }
 
         obj = self.new({'User': dict_of_user})
+        session.close()
         return (obj)
 
 
