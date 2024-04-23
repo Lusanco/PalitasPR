@@ -1,7 +1,8 @@
+
 #!/usr/bin/python3
 """MAIN APP WITH FLASK"""
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask_cors import CORS
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin
 from sqlalchemy import create_engine
@@ -25,11 +26,6 @@ engine = create_engine('postgresql://demo_dev:demo_dev_pwd@localhost/demo_db')
 # Bind the engine to the Base class
 Base.metadata.bind = engine
 
-# Define route to serve the index.html page
-@app.route('/')
-def index():
-    return render_template('index.html')
-
 
 # @app.route('/create_object', methods=['POST'])
 # def create_object():
@@ -45,9 +41,55 @@ def index():
 
 #     # Check if object was created
 #     if new_obj:
+#         return render_template("login.html")
 #         return jsonify({'message': f'{type(new_obj).__name__} created successfully'}), 201
 #     else:
 #         return jsonify({'error': 'Error creating object'}), 400
+
+# Define route to serve the index.html page
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
+
+@app.route('/signup')
+def signup_page():
+    return render_template('signup.html')
+
+@app.route("/login", methods=["POST"])
+def login():
+    email = request.form.get("email")
+    password = request.form.get("password")
+    DBOperations().login(email, password)
+    response_html = render_template("login_response.html")
+    return response_html
+
+@app.route('/create_object', methods=['POST'])
+def create_object():
+    form_data = request.form.to_dict()
+
+    # If user is signing up
+    if 'first_name' in form_data and 'last_name' in form_data and 'email' in form_data and 'password' in form_data:
+        user_data = {
+            'first_name': form_data['first_name'],
+            'last_name': form_data['last_name'],
+            'email': form_data['email'],
+            'password': form_data['password']
+        }
+        new_obj = DBOperations().sign_up(user_data)
+    else:
+        new_obj = DBOperations().new(form_data)
+
+    # Check if object was created
+    if new_obj:
+        return render_template("login.html")
+    else:
+        pass
+        # return render_template("error.html", error="Error creating object"), 400
+
 
 # @app.route('/filter', methods=['POST'])
 # def search_filter():
