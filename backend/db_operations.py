@@ -39,6 +39,9 @@ class DBOperations():
                 retrieves the value associated with the model_name key from the self.classes_dict dictionary.
                 If model_name is found in the dictionary, model_class will be assigned the corresponding value
         """
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+
         if front_data is None:
             return None
 
@@ -50,8 +53,6 @@ class DBOperations():
         # Extract the inner dictionary containing attribute-value
         inner_dict = front_data[model_name] # inner_dict = {"name": "Nails"}
 
-        Session = sessionmaker(bind=self.engine)
-        session = Session()
 
         # Get the model class corresponding to the model name
         model_class = self.classes_dict.get(model_name) # model_class = User
@@ -66,9 +67,7 @@ class DBOperations():
             # Create a new object of the model class using the attribute-value
             new_object = model_class(**dict) # new_object = User(first_name="Louis", last_name="Toro")
             
-            # Add the new object to the session
             session.add(new_object)
-            # Commit changes
             session.commit()
             session.close()
             return new_object
