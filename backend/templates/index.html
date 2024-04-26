@@ -1,64 +1,25 @@
+{% import '_macros.html' as macros %}
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Flask Frontend</title>
-		<script src="../static/index.js" defer></script>
-	</head>
-	<body>
-		<form action="GET">
-			<label for="first_name">First Name</label>
-			<input id="first_name" type="text" />
-			<br />
-			<label for="last_name">Last Name</label>
-			<input id="last_name" type="text" />
-			<button id="button_input">Create User</button>
-		</form>
-		<br />
-		<h1>Users</h1>
-		<ul id="user-list"></ul>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://unpkg.com/htmx.org@1.9.12/dist/htmx.js"
+      integrity="sha384-qbtR4rS9RrUMECUWDWM2+YGgN3U4V4ZncZ0BvUcg9FGct0jqXz3PUdVpU1p0yrXS"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{% block title %}PalitasPR{% endblock %}</title>
+  </head>
+  <body>
+    <div
+      id="app"
+      class="flex flex-col justify-between transition-all duration-300 h-svh bg-slate-200"
+    >
+      {{ macros.header() }} {{ macros.signup() }} {{ macros.footer() }}
+    </div>
 
-		<h1>Services</h1>
-		<ul id="service-list"></ul>
-
-		<script>
-			// Function to fetch user data from Flask backend
-			function fetchUsers() {
-				fetch("/users") // MAKE A CALL TO FLASK, GETS BACKEND
-					.then((response) => response.json()) // Parse the JSON response
-					.then((users) => {
-						const userList = document.getElementById("user-list");
-						userList.innerHTML = "";
-						users.forEach((user) => {
-							const listItem = document.createElement("li");
-							// BELOW, THE USERS NAME AND LAST NAME ARE FETCHED
-							listItem.textContent = `${user.first_name} ${user.last_name}`;
-							userList.appendChild(listItem);
-						});
-					});
-			}
-
-			// Function to fetch service data from Flask backend
-			function fetchServices() {
-				fetch("/services") // MAKE A CALL TO FLASK, GETS BACKEND
-					.then((response) => response.json()) // Parse the JSON response
-					.then((services) => {
-						const serviceList =
-							document.getElementById("service-list");
-						serviceList.innerHTML = "";
-						services.forEach((service) => {
-							const listItem = document.createElement("li");
-							// ALL SERVICES
-							listItem.textContent = service.name;
-							serviceList.appendChild(listItem);
-						});
-					});
-			}
-
-			// Fetch data when the page loads
-			fetchUsers();
-			fetchServices();
-		</script>
-	</body>
+    <!-- <script src="../static/index.js"></script> -->
+  </body>
 </html>

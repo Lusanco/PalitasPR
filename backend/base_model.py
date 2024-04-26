@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, DateTime, func
 from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
 import uuid
 
 Base = declarative_base()
@@ -29,8 +30,11 @@ class BaseModel:
         """Instantiates a new model"""
         if not kwargs:
             self.id = str(uuid.uuid4())
+            self.created_at = datetime.utcnow()
+            print(args)
         else:
             self.id = str(uuid.uuid4())
+            self.created_at = datetime.utcnow()
             self.set_attr(**kwargs)
 
     def set_attr(self, **kwargs):
