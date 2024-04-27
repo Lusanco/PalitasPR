@@ -1,9 +1,9 @@
+#!/usr/bin/python3
 """
     ALLOWS OPERATIONS FOR FRONT END DEVS
     THIS FILE WILL BRIDGE OUR CLASSES AND FLASK
 
 """
-
 from os import getenv
 from time import time
 from sqlalchemy import create_engine, func
@@ -28,7 +28,7 @@ class DBOperations:
 
     def __init__(self):
         self.engine = create_engine(
-            "postgresql://demo_dev:demo_dev_pwd@localhost/demo_db"
+            "postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres"
         )
 
     def new(self, front_data):

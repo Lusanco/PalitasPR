@@ -3,7 +3,6 @@
 
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask_cors import CORS
-from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from base_model import Base, BaseModel
@@ -20,7 +19,9 @@ app.register_blueprint(app_bp)
 CORS(app)
 
 # Create the engine
-engine = create_engine("postgresql://demo_dev:demo_dev_pwd@localhost/demo_db")
+engine = create_engine(
+    "postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres"
+)
 
 # Bind the engine to the Base class
 Base.metadata.bind = engine
