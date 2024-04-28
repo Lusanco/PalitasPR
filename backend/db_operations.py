@@ -13,6 +13,7 @@ from models import User, Service, Town, UserServiceAssoc, Review, Task
 from base_model import BaseModel, Base
 from werkzeug.security import generate_password_hash, check_password_hash
 import bcrypt
+from emails import send_confirm_email
 
 
 class DBOperations:
@@ -331,6 +332,7 @@ class DBOperations:
         USAGE: Send a dict of the user to create {name: ..., email:...,...}
         """
         import bcrypt
+        import secrets
 
         Session = sessionmaker(bind=self.engine)
         session = Session()
@@ -371,13 +373,17 @@ class DBOperations:
             "utf-8"
         )  # Decode bytes to string for SQLAlchemy
 
+        # Generate a verification token for the user
+        verification_token = secrets.token_urlsafe(32)  # Generate a URL-safe token
+
         dict_of_user = {
             "email": email,
             "password": new_hashed_password,
             "first_name": first_name,
             "last_name": last_name,
+            "verification_token": verification_token,
         }
-
+        send_confirm_email(email, first_name, verification_token)
         obj = self.new({"User": dict_of_user})
         session.close()
         return obj
