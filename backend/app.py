@@ -2,21 +2,33 @@
 #!/usr/bin/python3
 """MAIN APP WITH FLASK"""
 
-from flask import Flask, jsonify, render_template, request, redirect, url_for
+from flask import Flask, jsonify, render_template, request, redirect, url_for, send_file
 from flask_cors import CORS
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from base_model import Base, BaseModel
 from models import Service, User
-from db_operations import DBOperations   # Import the method for creating new objects
+from db_operations import DBOperations
 from routes import app_bp
 from flask_mail import Mail, Message
 import secrets
 from emails import confirm_email
+from flask_sqlalchemy import SQLAlchemy
+import boto3
+from botocore.exceptions import ClientError
+from flask import Flask, render_template_string
+import os
+import io
+
 
 
 # Create Flask app instance
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Recommended for performance
+
+db = SQLAlchemy(app)
+
 # Configure Flask app for sending emails using Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
@@ -26,15 +38,16 @@ app.config['MAIL_PASSWORD'] = 'syhk sijd eoli tgba'
 app.register_blueprint(app_bp)
 mail = Mail(app)
 
-# login_manager = LoginManager()
-# login_manager.init_app(app)
 CORS(app)
 
-# Create the engine
-engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')
-
-# Bind the engine to the Base class
-Base.metadata.bind = engine
+# Initialize S3 client
+s3 = boto3.client(
+    's3',
+    aws_access_key_id = 'AKIA4MTWIBZ4HIVJ6NWI',
+    aws_secret_access_key = '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'
+    )
+# login_manager = LoginManager()
+# login_manager.init_app(app)
 
 
 # @app.route('/create_object', methods=['POST'])
@@ -69,6 +82,38 @@ def verify_email(token):
         return 'Invalid verification token'
 
     return 'Email verification successful'
+
+# PICTURES ROUTE
+@app.route('/profile_pic/<picture_name>')
+def display_profile_picture(picture_name):
+
+    try:
+        bucket_name = 'palitas-pics'
+
+        object_key = 'profiles/' + picture_name
+
+        # Check if the object exists in S3 Bucket
+        head_object_response = s3.head_object(Bucket=bucket_name, Key=object_key)
+
+    except ClientError as e:
+        # Handle cases where the object doesn't exist or other errors
+        if e.response['Error']['Code'] == 'NoSuchKey':
+            # Object doesn't exist, handle appropriately
+            error_message = f"Profile picture '{picture_name}' not found."
+            return error_message, 404  # Return "Not Found" (404) status code
+        else:
+            # Handle other errors (e.g., network issues)
+            error_message = f"Error retrieving profile picture: {e}"
+            return error_message, 500  # Return "Internal Server Error" (500)
+
+    # Get the picture
+    response = s3.get_object(Bucket=bucket_name, Key=object_key)
+    image_data = response['Body'].read()
+    return send_file(
+            io.BytesIO(image_data),
+            mimetype='image/jpg'  # Specify the appropriate image MIME type (e.g., 'image/jpeg')
+        )
+
 
 # Define route to serve the index.html page
 @app.route('/')
