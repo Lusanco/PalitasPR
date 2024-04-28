@@ -1,0 +1,25 @@
+{% import '_macros.html' as macros %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://unpkg.com/htmx.org@1.9.12/dist/htmx.js"
+      integrity="sha384-qbtR4rS9RrUMECUWDWM2+YGgN3U4V4ZncZ0BvUcg9FGct0jqXz3PUdVpU1p0yrXS"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{% block title %}PalitasPR{% endblock %}</title>
+  </head>
+  <body>
+    <div
+      id="app"
+      class="flex flex-col justify-between transition-all duration-300 h-svh bg-slate-200"
+    >
+      {{ macros.header() }} {{ macros.signup() }} {{ macros.footer() }}
+    </div>
+
+    <!-- <script src="../static/index.js"></script> -->
+  </body>
+</html>

@@ -47,10 +47,27 @@ Base.metadata.bind = engine
 #         return jsonify({'error': 'Error creating object'}), 400
 
 
-# Define route to serve the index.html page
+# # Define route to serve the index.html page
+# @app.route("/")
+# def index():
+#     return render_template("index.html")
+
+
 @app.route("/")
 def index():
-    return render_template("index.html")
+    # Serve the built index.html from the frontend directory
+    # return serve_static("index.html")
+    return app.send_static_file("index.html")
+
+
+@app.route("/<path:filename>")
+def serve_static(filename):
+    """Serves static files from the configured static directory, or returns a 404 for unmatched files."""
+    try:
+        return app.send_static_file(filename)
+    except FileNotFoundError:
+        # Handle non-existent files gracefully
+        return "File not found", 404
 
 
 @app.route("/login")
