@@ -10,11 +10,22 @@ from base_model import Base, BaseModel
 from models import Service, User
 from db_operations import DBOperations   # Import the method for creating new objects
 from routes import app_bp
+from flask_mail import Mail, Message
+import secrets
+from emails import confirm_email
 
 
 # Create Flask app instance
 app = Flask(__name__)
+# Configure Flask app for sending emails using Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'antoniofdjs@gmail.com'
+app.config['MAIL_PASSWORD'] = 'syhk sijd eoli tgba'
 app.register_blueprint(app_bp)
+mail = Mail(app)
+
 # login_manager = LoginManager()
 # login_manager.init_app(app)
 CORS(app)
@@ -44,6 +55,20 @@ Base.metadata.bind = engine
 #         return jsonify({'message': f'{type(new_obj).__name__} created successfully'}), 201
 #     else:
 #         return jsonify({'error': 'Error creating object'}), 400
+
+# VERIFY EMAIL ROUTE
+@app.route('/verify_email/<token>', methods=['GET'])
+def verify_email(token):
+
+    if not token:
+        return 'Verification token is missing'
+
+    verified = confirm_email(token)
+
+    if not verified:
+        return 'Invalid verification token'
+
+    return 'Email verification successful'
 
 # Define route to serve the index.html page
 @app.route('/')

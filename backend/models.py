@@ -3,7 +3,7 @@
     All classes for tables(DataBase)
 """
 
-from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, Integer, ARRAY
+from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, Integer, Boolean
 from sqlalchemy.orm import relationship
 from base_model import BaseModel, Base
 
@@ -64,6 +64,8 @@ class User(BaseModel, Base):
     last_name = Column(String(255), nullable=False)
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
+    verified = Column(Boolean, default=False)
+    verification_token = Column(String(128), unique=True)
 
     # Relationships
     user_service_assoc = relationship(
