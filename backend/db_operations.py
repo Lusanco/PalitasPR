@@ -16,6 +16,10 @@ import bcrypt
 from emails import send_confirm_email
 
 
+class Email_in_use_Error(Exception):
+    pass
+
+
 class DBOperations():
 
     classes_dict = {
@@ -152,7 +156,6 @@ class DBOperations():
                 }
                 my_dict[user_id] = inner_dict
 
-            # print(f"MY DICTIONARY: {my_dict}")
             session.close()
             return(my_dict)
         else:
@@ -290,13 +293,18 @@ class DBOperations():
 
                 # Verify the password using bcrypt
                 if bcrypt.checkpw(pwd.encode('utf-8'), hashed_password):
-                    print(f"\nLogin successful for user: {user.first_name} {user.last_name}\n")
+                    if user.verified:
+                        print(f"Login successful for user: {user.first_name} {user.last_name}")
+                        # Allow login
+                    else:
+                        print("Email not verified. Please check your email and verify your account.")
+                        # Deny login
                 else:
-                    print(f"\nEmail or password INCORRECT, try again\n")
+                    print("Email or password is incorrect. Try again.")
             else:
-                print(f"\nNo user found with email: {email}\n")
-        
-        session.close()
+                print(f"No user found with email: {email}")
+
+            session.close()
 
 
     def sign_up(self, data):
@@ -321,7 +329,7 @@ class DBOperations():
         if not (email and first_name and last_name and pwd):
             print("Error: Missing required fields.")
             session.close()
-            return None
+            return {'success': False, 'message': 'Missing required fields'}
 
 
         # Check if email doesnt exist in db
@@ -329,13 +337,7 @@ class DBOperations():
         if user:
             print("Email is already in use")
             session.close()
-            return None
-        
-        # Check if passwords match
-        # if pwd != confirm_pwd:
-        #     print("Passwords do not match")
-        #     session.close()
-        #     return
+            return Email_in_use_Error("Email is already in use")
 
         # Generate a new password hash with bcrypt and 12 rounds
         # .encode is needed to hash properly, but we need to decode before saving to db
@@ -372,39 +374,3 @@ class DBOperations():
             return True
         else:
             return False
-
-
-# # -------------TEST AREA DONT TOUCH FRONT USERS----------------------
-# db = DBOperations()
-
-
-#------- SIGN_UP TEST ---------------------------
-
-# db.sign_up({'email': "antoniofdjs@gmail.com", 'password': '9150', 'first_name': 'Antonio', 'last_name': 'De Jesus'})
-
-#-------------------------------------------------
-# start_time = time()
-
-# ----- LOGIN TEST ------
-# db.login('jd123@gmail.com', 'pwd1')
-# -----------------------
-
-# db.update({'User': {'id': '2cc63d22-a074-4f6a-84ab-66db61eb279a', 'last_name': 'Santiago'}})
-
-# db.new({'User': {'first_name': 'Pepe', 'last_name': 'Gomez', 'email': 'pepito@gmail.com'}})
-# -----DELETE_TEST----- 
-
-# print("Deleting Service associated to an user...")
-# result = db.delete('Service', user_id='c0a5be5a-94bf-4ad8-95dc-1d6e54cb1aed', name='Gardening')
-# if result:
-#     print("Deleted successfully.")
-
-
-# -----FILTER_TEST----- 
-
-# filtered_objs = db.filter({'User': {'name': 'John'}})
-# print(filtered_objs)
-
-# end_time = time()
-# elapsed_time = end_time - start_time
-# print("Time taken:", elapsed_time, "seconds")
