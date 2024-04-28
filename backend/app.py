@@ -86,7 +86,9 @@ def verify_email(token):
 # PICTURES ROUTE
 @app.route('/profile_pic/<picture_name>')
 def display_profile_picture(picture_name):
-
+    """
+        Pic name path is 'user1.jpg', type it in the url
+    """
     try:
         bucket_name = 'palitas-pics'
 
