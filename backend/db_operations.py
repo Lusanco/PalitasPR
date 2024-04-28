@@ -13,6 +13,7 @@ from models import User, Service, Town, UserServiceAssoc, Review, Task
 from base_model import BaseModel, Base
 from werkzeug.security import generate_password_hash, check_password_hash
 import bcrypt
+from emails import send_confirm_email
 
 
 class DBOperations():
@@ -28,7 +29,7 @@ class DBOperations():
 
 
     def __init__(self):
-        self.engine = create_engine('postgresql://demo_dev:demo_dev_pwd@localhost/demo_db')    
+        self.engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')    
 
 
     def new(self, front_data):
@@ -304,6 +305,7 @@ class DBOperations():
             USAGE: Send a dict of the user to create {name: ..., email:...,...}
         '''
         import bcrypt
+        import secrets
         Session = sessionmaker(bind=self.engine)
         session = Session()
 
@@ -341,18 +343,22 @@ class DBOperations():
         new_hashed_password = bcrypt.hashpw(pwd.encode('utf-8'), bcrypt.gensalt(rounds=12))
         new_hashed_password = new_hashed_password.decode('utf-8')  # Decode bytes to string for SQLAlchemy
 
+        # Generate a verification token for the user
+        verification_token = secrets.token_urlsafe(32)  # Generate a URL-safe token
+
         dict_of_user = {
         'email': email,
         'password': new_hashed_password,
         'first_name': first_name,
-        'last_name': last_name
+        'last_name': last_name,
+        'verification_token': verification_token
         }
-
+        send_confirm_email(email, first_name, verification_token)
         obj = self.new({'User': dict_of_user})
         session.close()
         return (obj)
 
-
+    
     def confirm_password(self, user_obj, password):
         """
         Confirm the password for the given user object.
