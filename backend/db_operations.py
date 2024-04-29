@@ -119,7 +119,7 @@ class DBOperations():
                 session.close()
                 return {}
         if my_service_id is not None:
-            if town_name == 'All':
+            if town_name == 'all':
                 print("Doing all")
                 rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
                 .join(Town) \
