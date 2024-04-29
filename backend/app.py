@@ -144,24 +144,29 @@ def create_object():
         # return render_template("error.html", error="Error creating object"), 400
 
 
-# @app.route('/filter', methods=['POST'])
-# def search_filter():
-#     """
-#         Front has to send {'Service': {'name': 'Nails, 'town': 'Ponce'}}
-#         town is an optional argument for dict
+@app.route("/api/filter", methods=["POST"])
+def search_filter():
+    """
+    Front has to send {'Service': {'name': 'Nails, 'town': 'Ponce'}}
+    town is an optional argument for dict
 
-#         Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
+    Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
 
-#         example:
-#             filtered_objs = db.filter({'User': {'name': 'service_name', 'town': 'town_name'}})
-#     """
-#     data = request.json
-#     dictionary = DBOperations().filter(data)
+    example:
+        filtered_objs = db.filter({'User': {'name': 'service_name', 'town': 'town_name'}})
+    """
+    data = request.json
+    dictionary = DBOperations().filter(data)
+    print(data)
+    print(1, dictionary)
 
-#     if dictionary:
-#         return jsonify(dictionary)
-#     else:
-#         return jsonify({'error': 'Error filtering data'})
+    if dictionary:
+        return jsonify(dictionary)
+        print(2, dictionary)
+    else:
+        return jsonify({"error": "Error filtering data"})
+    print(3, dictionary)
+
 
 # @app.route('/update', methods=['POST'])
 # def updates():
