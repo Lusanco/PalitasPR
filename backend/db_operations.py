@@ -110,9 +110,10 @@ class DBOperations():
                 print('no service name provided')
                 session.close()
                 return {}
-            service = session.query(Service).filter(func.lower(Service.name) == service_name).first()
+            service = session.query(Service).filter(func.lower(Service.name).op("~")(f"{service_name}")).first()
             if service:
                 my_service_id = service.id
+                service_name = service.name
             else:
                 print(f"No service found with name: {service_name}")
                 session.close()
@@ -132,7 +133,7 @@ class DBOperations():
                 rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
                 .join(Town) \
                 .join(User)\
-                .filter((UserServiceAssoc.service_id == my_service_id) & (func.lower(Town.name) == town_name)) \
+                .filter((UserServiceAssoc.service_id == my_service_id) & (func.lower(Town.name).op("~")(f"{town_name}"))) \
                 .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
                 .order_by(UserServiceAssoc.user_id) \
                 .all()
