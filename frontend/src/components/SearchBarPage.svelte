@@ -10,7 +10,7 @@
     </h1>
     <p class="-mt-2 text-2xl italic">Servicios Locales y Accesibles</p>
   </div>
-  <div class="items-center justify-center w-full max-w-md md:w-fit">
+  <div class="items-center justify-center w-full max-w-md">
     <SearchBar />
     <!-- <Card /> -->
   </div>

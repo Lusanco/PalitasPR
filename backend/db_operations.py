@@ -14,6 +14,7 @@ from base_model import BaseModel, Base
 from werkzeug.security import generate_password_hash, check_password_hash
 import bcrypt
 from emails import send_confirm_email
+from sqlalchemy import func
 
 
 class DBOperations:
@@ -95,7 +96,7 @@ class DBOperations:
         Session = sessionmaker(bind=self.engine)
         session = Session()
 
-        town_name = "All"
+        town_name = "all"
         model_name = list(data.keys())[0]
         data_dict = data[model_name]
 
@@ -104,23 +105,27 @@ class DBOperations:
 
         if model_class:
             if "town" in data_dict:
-                town_name = data_dict["town"]
+                town_name = data_dict["town"].lower()
             if "name" in data_dict:
-                service_name = data_dict["name"]
+                service_name = data_dict["name"].lower()
             else:
                 print("no service name provided")
                 session.close()
                 return {}
-
-            service = session.query(Service).filter_by(name=service_name).first()
+            service = (
+                session.query(Service)
+                .filter(func.lower(Service.name).op("~")(f"{service_name}"))
+                .first()
+            )
             if service:
                 my_service_id = service.id
+                service_name = service.name
             else:
                 print(f"No service found with name: {service_name}")
                 session.close()
                 return {}
         if my_service_id is not None:
-            if town_name == "All":
+            if town_name == "all":
                 print("Doing all")
                 rows = (
                     session.query(
@@ -149,17 +154,16 @@ class DBOperations:
                     .join(User)
                     .filter(
                         (UserServiceAssoc.service_id == my_service_id)
-                        & (Town.name == town_name)
+                        & (func.lower(Town.name).op("~")(f"{town_name}"))
                     )
                     .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name)
                     .order_by(UserServiceAssoc.user_id)
                     .all()
                 )
 
-            my_dict = {}
+            list_of_dict = []
 
             for row in rows:
-                user_id = str(row.user_id)
                 first_name = row.first_name
                 last_name = row.last_name
                 town_names = row[3]  # Assuming the array of town names is at index 3
@@ -169,11 +173,11 @@ class DBOperations:
                     "last_name": last_name,
                     "towns": town_names,
                 }
-                my_dict[user_id] = inner_dict
+                list_of_dict.append(inner_dict)
 
             # print(f"MY DICTIONARY: {my_dict}")
             session.close()
-            return my_dict
+            return list_of_dict
         else:
             session.close()
             return {}

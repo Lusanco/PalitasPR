@@ -4,7 +4,6 @@
 </script>
 
 <div class="flex flex-col w-screen h-screen bg-slate-100">
-  <!-- <Navbar /> -->
   <Header></Header>
   <div class="w-screen h-full">
     <slot />
