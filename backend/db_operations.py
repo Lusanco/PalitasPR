@@ -14,7 +14,7 @@ from base_model import BaseModel, Base
 from werkzeug.security import generate_password_hash, check_password_hash
 import bcrypt
 from emails import send_confirm_email
-
+from sqlalchemy import func
 
 class DBOperations():
 
@@ -103,15 +103,14 @@ class DBOperations():
 
         if model_class:
             if 'town' in data_dict:
-                town_name = data_dict['town']
+                town_name = data_dict['town'].lower()
             if 'name' in data_dict:
-                service_name = data_dict['name']
+                service_name = data_dict['name'].lower()
             else:
                 print('no service name provided')
                 session.close()
                 return {}
-
-            service = session.query(Service).filter_by(name=service_name).first()
+            service = session.query(Service).filter(func.lower(Service.name) == service_name).first()
             if service:
                 my_service_id = service.id
             else:
@@ -133,7 +132,7 @@ class DBOperations():
                 rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
                 .join(Town) \
                 .join(User)\
-                .filter((UserServiceAssoc.service_id == my_service_id) & (Town.name == town_name)) \
+                .filter((UserServiceAssoc.service_id == my_service_id) & (func.lower(Town.name) == town_name)) \
                 .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
                 .order_by(UserServiceAssoc.user_id) \
                 .all()
