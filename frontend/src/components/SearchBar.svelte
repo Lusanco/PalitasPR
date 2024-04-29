@@ -21,54 +21,52 @@
 </div> -->
 
 <script>
+  // @ts-ignore
   import { changeView } from "../scripts/viewManager";
+  // @ts-ignore
   import { onMount } from "svelte";
+  import axios from "axios";
 
-  let searchTerm = "";
-  let selectedTown = ""; // No default town selected
+  let searchInput = document.getElementById("search-input");
+  let townInput = "All"; // No default town selected
   let services = []; // Array to store fetched services
   let errorMessage = ""; // Added to store error messages
 
-  async function fetchServices() {
-    try {
-      const response = await fetch("/api/filter", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          Service: {
-            name: searchTerm,
-            town: selectedTown === "" ? undefined : selectedTown, // Check for empty string
-          },
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.error) {
-        errorMessage = data.error;
-        services = []; // Clear services on error
-      } else {
-        errorMessage = "";
-        services = data;
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-      errorMessage = "Network error occurred.";
-      services = []; // Clear services on error
-    }
-  }
-
   async function handleSearch() {
-    services = []; // Clear previous results before fetching new data
-    await fetchServices();
-    changeView("SearchResults");
-  }
+    const data = {
+      Service: {
+        name: searchInput,
+        town: townInput,
+      },
+    };
 
-  // onMount(async () => {
-  //   await fetchServices(); // Fetch initial data (optional, can be triggered on a separate action)
-  // });
+    axios
+      .post("/api/filter", data)
+      .then((response) => {
+        services = response.data;
+        console.log(services);
+
+        // Loop through each service in the response
+        for (const serviceId in services) {
+          const service = services[serviceId];
+          const name = service.first_name + " " + service.last_name; // Access the towns array
+          const towns = service.towns;
+          // let listDiv = document.getElementById("search-list");
+          // let listCard = document.createElement("li");
+          // // @ts-ignore
+          // listCard.classList = "bg-teal-50 h-10 rounded-md w-full";
+          // listDiv.append(listCard);
+
+          console.log(
+            `Service ID: ${serviceId}, Towns: ${towns}, Name: ${name}`
+          ); // Example usage
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        errorMessage = error;
+      });
+  }
 </script>
 
 <div
@@ -79,12 +77,12 @@
       <input
         class="w-full md:w-fit input input-bordered join-item"
         placeholder="Search"
-        bind:value={searchTerm}
+        bind:value={searchInput}
       />
     </div>
   </div>
-  <select class="select select-bordered join-item" bind:value={selectedTown}>
-    <option value="">All Pueblos</option>
+  <select class="select select-bordered join-item">
+    <option selected disabled>Town</option>
     <option>Ponce</option>
     <option>San Juan</option>
     <option>Aguadilla</option>
@@ -96,3 +94,5 @@
     >
   </div>
 </div>
+
+<!-- <ul id="search-list scroll-auto" class=""></ul> -->
