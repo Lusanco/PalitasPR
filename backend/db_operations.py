@@ -94,7 +94,7 @@ class DBOperations():
         Session = sessionmaker(bind=self.engine)
         session = Session()
 
-        town_name = "All"
+        town_name = "all"
         model_name = list(data.keys())[0]
         data_dict = data[model_name]
 
@@ -138,10 +138,9 @@ class DBOperations():
                 .order_by(UserServiceAssoc.user_id) \
                 .all()
 
-            my_dict = {}
+            list_of_dict = []
 
             for row in rows:
-                user_id = str(row.user_id)
                 first_name = row.first_name
                 last_name = row.last_name
                 town_names = row[3]  # Assuming the array of town names is at index 3
@@ -151,11 +150,11 @@ class DBOperations():
                     'last_name': last_name,
                     'towns': town_names
                 }
-                my_dict[user_id] = inner_dict
+                list_of_dict.append(inner_dict)
 
             # print(f"MY DICTIONARY: {my_dict}")
             session.close()
-            return(my_dict)
+            return(list_of_dict)
         else:
             session.close()
             return {}
