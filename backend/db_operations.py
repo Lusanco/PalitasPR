@@ -15,6 +15,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import bcrypt
 from emails import send_confirm_email
 from sqlalchemy import func
+import random
+import datetime
 
 class DBOperations():
 
@@ -139,7 +141,12 @@ class DBOperations():
                 .all()
 
             list_of_dict = []
-
+            
+            current_time = datetime.datetime.now() # Delete this
+            descriptions = ["This is your chance to buy sushi from Sushi-kito. Especial offers for weekends and events. Dont miss out please call :(",
+                            "Experience an unforgettable night of music with us. Join us for an electrifying event!",
+                            "DJ 'AL-fr3' is bringing the beats to our venue. Reserve your spot for a night of excitement!"
+                            ]
             for row in rows:
                 first_name = row.first_name
                 last_name = row.last_name
@@ -148,7 +155,11 @@ class DBOperations():
                     'service': service_name,
                     'first_name': first_name,
                     'last_name': last_name,
-                    'towns': town_names
+                    'towns': town_names,
+                    'title': "This is a post Title", # delete
+                    'rating': random.randint(1, 5), # delete
+                    'description':descriptions[random.randint(0,2)], # delete
+                    'created_at': current_time.strftime("%Y-%m-%d")
                 }
                 list_of_dict.append(inner_dict)
 
