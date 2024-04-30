@@ -1,3 +1,4 @@
+<!-- Footer Start -->
 <footer class="hidden px-4 py-4 text-teal-100 bg-teal-800 md:flex">
   <div
     class="container flex flex-wrap items-center justify-center mx-auto space-y-4 sm:justify-between sm:space-y-0"
@@ -39,3 +40,4 @@
     </ul>
   </div>
 </footer>
+<!-- Footer End -->

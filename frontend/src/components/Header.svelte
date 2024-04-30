@@ -1,3 +1,4 @@
+<!-- Header Start -->
 <header class="hidden p-1 text-teal-100 bg-teal-800 md:flex">
   <div class="container flex justify-between h-16 mx-auto">
     <a
@@ -45,3 +46,4 @@
     </button>
   </div>
 </header>
+<!-- Header End -->
