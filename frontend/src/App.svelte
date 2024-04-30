@@ -135,10 +135,20 @@
       {#if switcher === false}
         <div class="hidden"></div>
       {:else}
-        <div class="flex flex-col h-[50%] overflow-y-scroll">
+        <div
+          class="flex py-2 flex-col min-h-20 max-h-[50%] gap-4 rounded-md w-[95%] sm:w-[90%] md:w-[80%] overflow-y-scroll bg-teal-50"
+        >
           {#each services as service}
+            <!-- <div class="w-full p-2 border-teal-800 rounded-md border-1">
+              {service.first_name}
+              {service.last_name}
+              {service.service}
+              {#each service.towns as town, index}
+                {town}{index < service.towns.length - 1 ? ", " : ""}
+              {/each}
+            </div> -->
             <div
-              class="relative block p-4 overflow-hidden border border-gray-100 rounded-lg sm:p-6 lg:p-8"
+              class="relative block w-full p-4 border border-teal-100 rounded-lg shadow-lg sm:p-6 lg:p-8"
             >
               <span
                 class="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-teal-200 via-teal-400 to-teal-600"
