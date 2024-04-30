@@ -1,9 +1,14 @@
+<script>
+  import { link } from "svelte-routing";
+</script>
+
 <!-- Header Start -->
 <header class="hidden p-1 text-teal-100 bg-teal-800 md:flex">
   <div class="container flex justify-between h-16 mx-auto">
     <a
+      use:link
+      href="/"
       rel="noopener noreferrer"
-      href="#"
       aria-label="Back to homepage"
       class="flex items-center p-2"
     >
@@ -21,14 +26,16 @@
         ></path>
       </svg>
     </a>
-    <div class="items-center flex-shrink-0 hidden lg:flex">
-      <button class="self-center px-8 py-3 rounded">Login</button>
-      <button
+    <div class="flex items-center">
+      <a use:link href="/login" class="self-center px-8 py-3 rounded">Login</a>
+      <a
+        use:link
+        href="/signup"
         class="self-center px-8 py-3 font-semibold text-teal-800 bg-teal-400 rounded"
-        >Sign up</button
+        >Sign up</a
       >
     </div>
-    <button class="p-4 lg:hidden">
+    <button class="hidden p-4">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

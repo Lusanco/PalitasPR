@@ -1,9 +1,12 @@
 <script>
   import axios from "axios";
-  import Footer from "./components/Footer.svelte";
+  import { Router, Route } from "svelte-routing";
   import Header from "./components/Header.svelte";
   import Main from "./components/Main.svelte";
   import PageSearchBar from "./components/PageSearchBar.svelte";
+  import Login from "./components/Login.svelte";
+  import Footer from "./components/Footer.svelte";
+  import Signup from "./components/Signup.svelte";
 
   let searchInput = document.getElementById("search-input");
   let townInput = "All"; // No default town selected
@@ -43,7 +46,11 @@
 <div class="flex flex-col">
   <Header></Header>
   <Main>
-    <PageSearchBar></PageSearchBar>
+    <Router>
+      <Route path="/" component={PageSearchBar} />
+      <Route path="/login" component={Login} />
+      <Route path="/signup" component={Signup} />
+    </Router>
   </Main>
   <Footer></Footer>
 </div>
