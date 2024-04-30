@@ -223,7 +223,7 @@ VALUES
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Auto Body Painting'
+JOIN services s ON s.name = 'DJ'
 JOIN towns t ON t.name IN ('Aguadilla', 'Arecibo')
 WHERE u.first_name = 'John' AND u.last_name = 'Doe';
 
@@ -237,77 +237,77 @@ WHERE u.first_name = 'Jane' AND u.last_name = 'Smith';
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Pet Sitter'
+JOIN services s ON s.name = 'DJ'
 JOIN towns t ON t.name IN ('Caguas', 'Fajardo')
 WHERE u.first_name = 'Luis' AND u.last_name = 'Santiago';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Catering'
+JOIN services s ON s.name = 'DJ'
 JOIN towns t ON t.name IN ('Ponce', 'Carolina')
 WHERE u.first_name = 'Hector' AND u.last_name = 'Torres';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Event Decorator'
+JOIN services s ON s.name = 'DJ'
 JOIN towns t ON t.name IN ('Arecibo', 'Guayama')
 WHERE u.first_name = 'Angelica' AND u.last_name = 'Diaz';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'House Cleaning'
+JOIN services s ON s.name = 'DJ'
 JOIN towns t ON t.name IN ('Toa Alta', 'Bayamon')
 WHERE u.first_name = 'Erick' AND u.last_name = 'Santiago';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Landscaping'
+JOIN services s ON s.name = 'DJ'
 JOIN towns t ON t.name IN ('Luquillo', 'Culebra')
 WHERE u.first_name = 'Carlos' AND u.last_name = 'Martinez';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Plumbing'
+JOIN services s ON s.name = 'DJ'
 JOIN towns t ON t.name IN ('Guaynabo', 'Rincon')
 WHERE u.first_name = 'Sofia' AND u.last_name = 'Rodriguez';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Electrical Service'
+JOIN services s ON s.name = 'DJ'
 JOIN towns t ON t.name IN ('Bayamon', 'Isabela')
 WHERE u.first_name = 'Daniel' AND u.last_name = 'Lopez';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Pet Grooming'
+JOIN services s ON s.name = 'DJ'
 JOIN towns t ON t.name IN ('Carolina', 'Manati')
 WHERE u.first_name = 'Pedro' AND u.last_name = 'Gonzalez';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Baking'
+JOIN services s ON s.name = 'DJ'
 JOIN towns t ON t.name IN ('Humacao', 'Ceiba')
 WHERE u.first_name = 'Ana' AND u.last_name = 'Perez';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Hairstyling'
+JOIN services s ON s.name = 'DJ'
 JOIN towns t ON t.name IN ('Aguada', 'Jayuya')
 WHERE u.first_name = 'Marta' AND u.last_name = 'Lopez';
 
 INSERT INTO user_service_assoc (user_id, service_id, town_id)
 SELECT u.id, s.id, t.id
 FROM users u
-JOIN services s ON s.name = 'Car Washing'
+JOIN services s ON s.name = 'DJ'
 JOIN towns t ON t.name IN ('Rincon', 'Mayaguez')
 WHERE u.first_name = 'Gabriel' AND u.last_name = 'Rivera';
 
