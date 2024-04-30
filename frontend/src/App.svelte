@@ -1,6 +1,9 @@
 <script>
-  import { onMount } from "svelte";
   import axios from "axios";
+  import Footer from "./components/Footer.svelte";
+  import Header from "./components/Header.svelte";
+  import Main from "./components/Main.svelte";
+  import PageSearchBar from "./components/PageSearchBar.svelte";
 
   let searchInput = document.getElementById("search-input");
   let townInput = "All"; // No default town selected
@@ -38,6 +41,7 @@
 </script>
 
 <div class="flex flex-col">
+  <!-- Header Start -->
   <header class="hidden p-1 text-teal-100 bg-teal-800 md:flex">
     <div class="container flex justify-between h-16 mx-auto">
       <a
@@ -85,16 +89,24 @@
       </button>
     </div>
   </header>
+  <!-- Header End -->
+
+  <!-- Main Start -->
   <main class="h-screen overflow-y-scroll element">
+    <!-- PageSearchBar Start -->
     <div class="flex flex-col items-center justify-center h-full gap-8">
+      <!-- LogoSlogan Start -->
       <div class="text-center text-teal-500">
         <h1 class="text-6xl font-bold">
           Palitas<span class="text-teal-700">PR</span>
         </h1>
         <p class="-mt-2 text-2xl italic">Servicios Locales y Accesibles</p>
       </div>
+      <!-- LogoSlogan End -->
+
       <div class="items-center justify-center w-full max-w-md">
-        <!-- <SearchBar /> -->
+        <!-- SearchBar Start -->
+
         <div class="relative">
           <label for="Search" class="sr-only"> Search </label>
 
@@ -131,6 +143,8 @@
             </button>
           </span>
         </div>
+
+        <!-- SearchBar End -->
       </div>
       {#if switcher === false}
         <div class="hidden"></div>
@@ -140,13 +154,14 @@
         >
           {#each services as service}
             <!-- <div class="w-full p-2 border-teal-800 rounded-md border-1">
-              {service.first_name}
-              {service.last_name}
-              {service.service}
-              {#each service.towns as town, index}
-                {town}{index < service.towns.length - 1 ? ", " : ""}
-              {/each}
-            </div> -->
+                  {service.first_name}
+                  {service.last_name}
+                  {service.service}
+                  {#each service.towns as town, index}
+                    {town}{index < service.towns.length - 1 ? ", " : ""}
+                  {/each}
+                </div> -->
+            <!-- {service.name} -->
             <div
               class="relative block w-full p-4 border border-teal-100 rounded-lg shadow-lg sm:p-6 lg:p-8"
             >
@@ -157,7 +172,7 @@
               <div class="sm:flex sm:justify-between sm:gap-4">
                 <div>
                   <h3 class="text-lg font-bold text-gray-900 sm:text-xl">
-                    Descriptive Attention Grabbing Title
+                    {service.title}
                   </h3>
 
                   <p class="mt-1 text-xs font-medium text-gray-600">
@@ -177,23 +192,19 @@
 
               <div class="">
                 <p class="text-sm text-gray-500 text-pretty">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. At
-                  velit illum provident a, ipsa maiores deleniti consectetur
-                  nobis et eaque.
+                  {service.description}
                 </p>
               </div>
 
               <dl class="flex gap-4 sm:gap-6">
                 <div class="flex flex-col-reverse">
                   <dt class="text-sm font-medium text-gray-600">Published</dt>
-                  <dd class="text-xs text-gray-500">31st June, 2021</dd>
+                  <dd class="text-xs text-gray-500">{service.created_at}</dd>
                 </div>
 
                 <div class="flex flex-col-reverse">
-                  <dt class="text-sm font-medium text-gray-600">
-                    Reading time
-                  </dt>
-                  <dd class="text-xs text-gray-500">3 minute</dd>
+                  <dt class="text-sm font-medium text-gray-600">Rated</dt>
+                  <dd class="text-xs text-gray-500">{service.rating}/5</dd>
                 </div>
               </dl>
             </div>
@@ -201,7 +212,12 @@
         </div>
       {/if}
     </div>
+
+    <!-- PageSearchBar End -->
   </main>
+  <!-- Main End -->
+
+  <!-- Footer Start -->
   <footer class="hidden px-4 py-4 text-teal-100 bg-teal-800 md:flex">
     <div
       class="container flex flex-wrap items-center justify-center mx-auto space-y-4 sm:justify-between sm:space-y-0"
@@ -243,4 +259,5 @@
       </ul>
     </div>
   </footer>
+  <!-- Footer End -->
 </div>
