@@ -40,22 +40,6 @@
       errorMessage = ""; // Clear any previous error messages on component mount
     });
   </script>
-  
-  <!-- <div class="flex flex-col items-center justify-center h-full max-w-lg p-6 m-auto text-teal-800 rounded-md sm:p-10">
-    <div class="mb-8 text-center">
-      <h1 class="my-3 text-4xl font-bold">You have succesfully created an account using this email: </h1>
-      <p class="text-sm text-teal-600">livanhernandez9@gmail.com</p>
-    </div>
-  
-    <div class="space-y-2">
-      <p class="px-6 text-sm text-center text-teal-600">{errorMessage}</p>
-      <p class="px-6 text-sm text-center text-teal-600">
-        To continue, login with your account, click below!
-        <a use:link href="/login" rel="noopener noreferrer" role="button" class="font-semibold text-teal-600 hover:underline">
-          Login
-        </a>
-      </p> -->
-
       <div class="flex flex-col items-center justify-center h-full max-w-lg p-6 m-auto text-teal-800 rounded-md sm:p-10">
         <div class="mb-8 text-center">
           <h1 class="my-3 text-3xl font-bold text-wrap">Account created succesfully</h1>
