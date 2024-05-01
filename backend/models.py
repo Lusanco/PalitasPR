@@ -104,3 +104,9 @@ class Task(BaseModel, Base):
     status = Column(String(255), nullable=False, default='open')
     description = Column(String(255), nullable=False)
     review_id = Column(String(255), ForeignKey('reviews.id'))
+
+class Promotion(BaseModel, Base):
+    __tablename__ = 'promotions'
+    provider_id = Column(String(255), ForeignKey('users.id'), nullable=False)
+    service_id = Column(String(255), ForeignKey('services.id'), nullable=False)
+    description = Column(String(255), nullable=False)
