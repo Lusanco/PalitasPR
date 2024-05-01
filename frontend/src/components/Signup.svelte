@@ -1,21 +1,44 @@
 <script>
+  import { onMount } from "svelte";
   import { link } from "svelte-routing";
+  import axios from "axios";
 
-  let name = "";
-  let username = "";
-  let email = "";
-  let password = "";
-  let confirm = "";
+  let password,
+    confirmPassword,
+    errorMessage,
+    email = "";
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    // Add your signup logic here
-    console.log("Name:", name);
-    console.log("Username:", username);
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log("Confirm Password:", confirm);
+  async function handleSignup() {
+    if (password !== confirmPassword) {
+      errorMessage = "Passwords do not match!";
+      return; // Prevent unnecessary API call
+    }
+
+    const data = {
+      first_name: "N/A",
+      last_name: "N/A",
+      email: email,
+      password: password,
+    };
+
+    // let user = JSON.stringify(data);
+
+    axios
+      .post("/api/create_object", data)
+      //   .get("https://jsonplaceholder.typicode.com/users")
+      .then((response) => {
+        console.log(response);
+        window.location.href = "/login";
+      })
+      .catch((error) => {
+        console.log(error);
+        errorMessage = error;
+      });
   }
+
+  onMount(() => {
+    errorMessage = ""; // Clear any previous error messages on component mount
+  });
 </script>
 
 <div
@@ -56,7 +79,7 @@
           <label for="password" class="text-sm">Confirm Password</label>
         </div>
         <input
-          bind:value={confirm}
+          bind:value={confirmPassword}
           type="password"
           name="confirm"
           id="confirm"
@@ -68,6 +91,7 @@
     <div class="space-y-2">
       <div>
         <button
+          on:click={handleSignup}
           type="button"
           class="w-full px-8 py-3 font-semibold bg-teal-600 rounded-md text-teal-50"
           >Sign up</button

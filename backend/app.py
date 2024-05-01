@@ -115,9 +115,9 @@ def login():
     return response_html
 
 
-@app.route("/create_object", methods=["POST"])
+@app.route("/api/create_object", methods=["POST"])
 def create_object():
-    form_data = request.form.to_dict()
+    form_data = request.get_json()
 
     # If user is signing up
     if (
@@ -138,10 +138,11 @@ def create_object():
 
     # Check if object was created
     if new_obj:
-        return render_template("login.html")
+        return
     else:
         pass
         # return render_template("error.html", error="Error creating object"), 400
+    return
 
 
 @app.route("/api/filter", methods=["POST"])
