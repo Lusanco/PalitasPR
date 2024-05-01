@@ -58,14 +58,16 @@ class DBConsole(cmd.Cmd):
         Usage: filter <model_name> <key1>=<value1> <key2>=<value2> ...
         Example: filter User name=Gardening town=New York
         """
-        arg_list = args.split()
-        if arg_list:
-            model_name = arg_list[0]
-            data = {model_name: dict(pair.split('=') for pair in arg_list[1:])}
-            filtered_objs = db.filter(data)
-            print(filtered_objs)
-        else:
-            print("Invalid input. Please provide a model name and key-value pairs.")
+        model_name = input("Enter model name: ")
+        name = input("Enter name: ")
+        town = input("Enter town: ")
+
+        # Constructing the filter criteria
+        data = {model_name: {"name": name, "town": town}}
+        
+        filtered_objs = db.filter(data)
+        print(filtered_objs)
+        
 
     def do_delete(self, args):
         """
@@ -107,10 +109,12 @@ class DBConsole(cmd.Cmd):
         Usage: login <email> <password>
         Example: login john@example.com mypassword
         """
-        arg_list = args.split()
-        if len(arg_list) == 2:
-            email, pwd = arg_list
-            db.login(email=email, pwd=pwd)
+        email = input("Enter email: ")
+        password = input("Enter password: ")
+
+        # Validate inputs and perform login
+        if email and password:
+            db.login(email=email, pwd=password)
         else:
             print("Invalid input. Usage: login <email> <password>")
 
