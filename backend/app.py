@@ -102,11 +102,11 @@ def display_profile_picture(picture_name):
         if e.response['Error']['Code'] == 'NoSuchKey':
             # Object doesn't exist, handle appropriately
             error_message = f"Profile picture '{picture_name}' not found."
-            return error_message, 404  # Return "Not Found" (404) status code
+            return error_message, 404
         else:
             # Handle other errors (e.g., network issues)
             error_message = f"Error retrieving profile picture: {e}"
-            return error_message, 500  # Return "Internal Server Error" (500)
+            return error_message, 500
 
     # Get the picture
     response = s3.get_object(Bucket=bucket_name, Key=object_key)
