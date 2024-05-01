@@ -138,7 +138,7 @@ def create_object():
 
     # Check if object was created
     if new_obj:
-        return
+        return {"response": "success"}
     else:
         pass
         # return render_template("error.html", error="Error creating object"), 400

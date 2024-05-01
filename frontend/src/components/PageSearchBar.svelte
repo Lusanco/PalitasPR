@@ -21,8 +21,7 @@
       // .get("https://jsonplaceholder.typicode.com/users")
       .then((response) => {
         services = response.data;
-        // console.log(services);
-        console.log(services);
+        // console.log(response);
         // Loop through each service in the response
         for (const serviceId in services) {
           const service = services[serviceId];
