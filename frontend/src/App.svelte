@@ -7,6 +7,7 @@
   import Login from "./components/Login.svelte";
   import Footer from "./components/Footer.svelte";
   import Signup from "./components/Signup.svelte";
+  import SignSuccess from "./components/SignSuccess.svelte";
 
   let searchInput = document.getElementById("search-input");
   let townInput = "All"; // No default town selected
@@ -50,6 +51,7 @@
       <Route path="/" component={PageSearchBar} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
+      <Route path="/success" component={SignSuccess} />
     </Router>
   </Main>
   <Footer></Footer>
