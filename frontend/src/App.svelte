@@ -8,8 +8,8 @@
   import Footer from "./components/Footer.svelte";
   import Signup from "./components/Signup.svelte";
   import SignSuccess from "./components/SignSuccess.svelte";
-  import Loading from "./components/Loading.svelte";
   import ContactUs from "./components/ContactUs.svelte";
+  import LoadingSpinner from "./components/LoadingSpinner.svelte";
 
   let searchInput = document.getElementById("search-input");
   let townInput = "All"; // No default town selected
@@ -54,7 +54,7 @@
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       <Route path="/success" component={SignSuccess} />
-      <Route path="/contactus" component={ContactUs} />
+      <Route path="/contact" component={ContactUs} />
     </Router>
   </Main>
   <Footer></Footer>

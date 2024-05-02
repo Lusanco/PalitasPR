@@ -1,3 +1,7 @@
+<script>
+  import { link } from "svelte-routing";
+</script>
+
 <!-- Footer Start -->
 <footer class="hidden px-4 py-4 text-teal-100 bg-teal-800 md:flex">
   <div
@@ -20,22 +24,24 @@
       </div>
       <ul class="flex flex-wrap items-center space-x-4 sm:space-x-8">
         <li>
-          <a rel="noopener noreferrer" href="#">Terms of Use</a>
+          <a rel="noopener noreferrer" use:link href="/terms-of-use"
+            >Terms of Use</a
+          >
         </li>
         <li>
-          <a rel="noopener noreferrer" href="#">Privacy</a>
+          <a rel="noopener noreferrer" use:link href="/privacy">Privacy</a>
         </li>
       </ul>
     </div>
     <ul class="flex flex-wrap pl-3 space-x-4 sm:space-x-8">
       <li>
-        <a rel="noopener noreferrer" href="#">About</a>
+        <a rel="noopener noreferrer" use:link href="/about">About</a>
       </li>
       <li>
-        <a rel="noopener noreferrer" href="#">Contact</a>
+        <a rel="noopener noreferrer" use:link href="/contact">Contact</a>
       </li>
       <li>
-        <a rel="noopener noreferrer" href="#">FAQ</a>
+        <a rel="noopener noreferrer" use:link href="/faq">FAQ</a>
       </li>
     </ul>
   </div>
