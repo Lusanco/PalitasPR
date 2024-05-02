@@ -1,14 +1,17 @@
 <script>
   import axios from "axios";
   import LogoSlogan from "./LogoSlogan.svelte";
+  import LoadingSpinner from "./LoadingSpinner.svelte";
 
   let searchInput = document.getElementById("search-input");
   let townInput = "All"; // No default town selected
   let services = []; // Array to store fetched services
   let errorMessage = ""; // Added to store error messages
-  let switcher = false;
+  let hidden = true;
+  let loaded = false;
 
   async function handleSearch() {
+    hidden = false;
     const data = {
       Service: {
         name: searchInput,
@@ -25,8 +28,7 @@
         // Loop through each service in the response
         for (const serviceId in services) {
           const service = services[serviceId];
-
-          switcher = true;
+          loaded = true;
         }
       })
       .catch((error) => {
@@ -79,8 +81,10 @@
     </div>
     <!-- SearchBar End -->
   </div>
-  {#if switcher === false}
+  {#if hidden === true}
     <div class="hidden"></div>
+  {:else if hidden === false && loaded === false}
+    <LoadingSpinner />
   {:else}
     <div
       class="flex py-2 flex-col min-h-20 max-h-[50%] gap-4 rounded-md w-[95%] sm:w-[90%] md:w-[80%] overflow-y-scroll bg-teal-50"
