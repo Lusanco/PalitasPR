@@ -81,33 +81,24 @@ class DBOperations():
             return None
 
 
-    def filter(self, data):
+    def filter(self, model=None, service=None, town='all'):
         """
-        Retrieve objects based on specified criteria.
+        Retrieve objects based on specified criteria from url query
 
-        Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
+        Usage: model=promotions or model=<requests>, service=<DJ>, town=<all> or specific <town>
 
-        example:
-            filtered_objs = db.filter({'User': {'name': 'service_name', 'town': 'town_name'}}).
-
-            There is a section to test the function after the delete method.
+        Returns: List of dict of the post details
         """
 
         Session = sessionmaker(bind=self.engine)
         session = Session()
 
-        town_name = "all"
-        model_name = list(data.keys())[0]
-        data_dict = data[model_name]
-
-        model_class = self.classes_dict.get(model_name)
         my_service_id = None
 
-        if model_class:
-            if 'town' in data_dict:
-                town_name = data_dict['town'].lower()
-            if 'name' in data_dict:
-                service_name = data_dict['name'].lower()
+        if model == 'promotions':
+            town_name = town.lower()
+            if service:
+                service_name = service.lower()
             else:
                 print('no service name provided')
                 session.close()

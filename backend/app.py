@@ -138,6 +138,17 @@ def login():
     response_html = render_template("login_response.html")
     return response_html
 
+@app.route('/api/explore', methods=['GET'])
+def explore():
+    model = request.args.get('model')
+    service = request.args.get('service')
+    town = request.args.get('town')
+    search_results = DBOperations.filter(model, service, town)
+    if search_results:
+        return jsonify(search_results)
+    else:
+        return jsonify("No Results"), 404
+
 @app.route('/create_object', methods=['POST'])
 def create_object():
     form_data = request.form.to_dict()
