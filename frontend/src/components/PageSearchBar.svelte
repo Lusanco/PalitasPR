@@ -17,7 +17,7 @@
     hidden = false;
 
     axios
-      .get(`/api/explore?search=${search}model=${model}&town=${town}`)
+      .get(`/api/explore?search=${search}&model=${model}&town=${town}`)
       // .get("https://jsonplaceholder.typicode.com/users")
       .then((response) => {
         services = response.data;
