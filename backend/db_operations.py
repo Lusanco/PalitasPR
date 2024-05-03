@@ -9,7 +9,7 @@ from time import time
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.relationships import RelationshipProperty
-from models import User, Service, Town, UserServiceAssoc, Review, Task
+from models import User, Service, Town, Promo_Towns, Review, Task, Promotion
 from base_model import BaseModel, Base
 from werkzeug.security import generate_password_hash, check_password_hash
 import bcrypt
@@ -24,14 +24,14 @@ class DBOperations():
                 'User': User,
                 'Service': Service,
                 'Town': Town,
-                'UserServiceAssoc': UserServiceAssoc,
+                'UserServiceAssoc': Promo_Towns,
                 'Review': Review,
                 'Task': Task
                 }
 
 
     def __init__(self):
-        self.engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')    
+        self.engine = create_engine('postgresql://postgres:9150@localhost/demo_db')
 
 
     def new(self, front_data):
@@ -112,6 +112,8 @@ class DBOperations():
                 print('no service name provided')
                 session.close()
                 return {}
+
+            # Check if service exists
             service = session.query(Service).filter(func.lower(Service.name).op("~")(f"{service_name}")).first()
             if service:
                 my_service_id = service.id
@@ -120,50 +122,68 @@ class DBOperations():
                 print(f"No service found with name: {service_name}")
                 session.close()
                 return {}
+
         if my_service_id is not None:
-            if town_name == 'all':
+            if town_name == 'all':  # Get all promotions of a service in all towns
                 print("Doing all")
-                rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
-                .join(Town) \
-                .join(User)\
-                .filter(UserServiceAssoc.service_id == my_service_id) \
-                .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
-                .order_by(UserServiceAssoc.user_id) \
+                rows = session.query(Promo_Towns.promo_id,
+                                     User.first_name,
+                                     User.last_name,
+                                     func.array_agg(Town.name),
+                                     Promotion.created_at,
+                                     Promotion.title,
+                                     Promotion.description
+                                     ) \
+                .select_from(Promotion)\
+                .join(User, Promotion.user_id == User.id)\
+                .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)\
+                .join(Town, Promo_Towns.town_id == Town.id)\
+                .filter((Promotion.service_id == my_service_id))\
+                .group_by(Promo_Towns.promo_id, User.first_name, User.last_name, Promotion.created_at, Promotion.description, Promotion.title)\
+                .order_by(Promo_Towns.promo_id)\
                 .all()
-            else:
+            else:  # Get all promotions of a service in a single town
                 print("Doing Specific town")
-                rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
-                .join(Town) \
-                .join(User)\
-                .filter((UserServiceAssoc.service_id == my_service_id) & (func.lower(Town.name).op("~")(f"{town_name}"))) \
-                .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
-                .order_by(UserServiceAssoc.user_id) \
+                rows = session.query(Promo_Towns.promo_id,
+                                     User.first_name, User.last_name,
+                                     func.array_agg(Town.name),
+                                     Promotion.created_at,
+                                     Promotion.title,
+                                     Promotion.description
+                                     ) \
+                .select_from(Promotion)\
+                .join(User, Promotion.user_id == User.id)\
+                .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)\
+                .join(Town, Promo_Towns.town_id == Town.id)\
+                .filter((Promotion.service_id == my_service_id) & (func.lower(Town.name).op("~")(f"{town_name}")))\
+                .group_by(Promo_Towns.promo_id, User.first_name, User.last_name, Promotion.created_at, Promotion.title, Promotion.description)\
+                .order_by(Promo_Towns.promo_id)\
                 .all()
 
+            # List to put inside all dicts
             list_of_dict = []
             
-            current_time = datetime.datetime.now() # Delete this
-            descriptions = ["This is your chance to buy sushi from Sushi-kito. Especial offers for weekends and events. Dont miss out please call :(",
-                            "Experience an unforgettable night of music with us. Join us for an electrifying event!",
-                            "DJ 'AL-fr3' is bringing the beats to our venue. Reserve your spot for a night of excitement!"
-                            ]
             for row in rows:
+                promo_id = row.promo_id
+                service_name = service_name
+                title = row.title
+                description = row.description
                 first_name = row.first_name
-                last_name = row.last_name
-                town_names = row[3]  # Assuming the array of town names is at index 3
+                last_name =  row.last_name
+                created_at = row.created_at.strftime("%Y-%m-%d")
+                towns = row[3]
                 inner_dict = {
+                    'promo_id': str(promo_id),
                     'service': service_name,
+                    'title': title,
+                    'description': description,
                     'first_name': first_name,
                     'last_name': last_name,
-                    'towns': town_names,
-                    'title': "This is a post Title", # delete
-                    'rating': random.randint(1, 5), # delete
-                    'description':descriptions[random.randint(0,2)], # delete
-                    'created_at': current_time.strftime("%Y-%m-%d")
+                    'towns': towns,
+                    'created_at': created_at
                 }
                 list_of_dict.append(inner_dict)
 
-            # print(f"MY DICTIONARY: {my_dict}")
             session.close()
             return(list_of_dict)
         else:
