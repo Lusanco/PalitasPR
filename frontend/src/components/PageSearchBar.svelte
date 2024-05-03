@@ -3,24 +3,29 @@
   import LogoSlogan from "./LogoSlogan.svelte";
   import LoadingSpinner from "./LoadingSpinner.svelte";
 
-  let searchInput = document.getElementById("search-input");
+  let explore = document.getElementById("search-input");
   let townInput = "All"; // No default town selected
   let services = []; // Array to store fetched services
   let errorMessage = ""; // Added to store error messages
   let hidden = true;
   let loaded = false;
+  let search;
+  let model = "promotions";
+  let service = "dj";
+  let town = "all";
+  let page;
+  let limit;
 
-  async function handleSearch() {
+  async function handleExplore() {
     hidden = false;
-    const data = {
-      Service: {
-        name: searchInput,
-        town: townInput,
-      },
-    };
 
     axios
-      .post("/api/filter", data)
+      // .post("/api/filter", data)
+      .get(
+        `/api/explore?search=${search}model=${model}&service=${service}&town=${town}&page=${page}&limit=${limit}`
+      )
+      // "/api/explore?type=promotions&service=DJ&town=all"
+      // http://localhost:3000/api/search?q=svelte&limit=10
       // .get("https://jsonplaceholder.typicode.com/users")
       .then((response) => {
         services = response.data;
@@ -45,18 +50,17 @@
     <!-- SearchBar Start -->
     <div class="relative">
       <label for="Search" class="sr-only"> Search </label>
-
       <input
         type="text"
-        id="Search"
-        bind:value={searchInput}
+        id="search"
+        bind:value={search}
         placeholder="Search for..."
         class="w-full rounded-md border-gray-200 py-2.5 pe-10 shadow-sm sm:text-sm"
       />
 
       <span class="absolute inset-y-0 grid w-10 end-0 place-content-center">
         <button
-          on:click={handleSearch}
+          on:click={handleExplore}
           type="button"
           class="text-gray-600 hover:text-gray-700"
         >

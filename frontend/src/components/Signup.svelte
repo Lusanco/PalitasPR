@@ -3,7 +3,9 @@
   import { link } from "svelte-routing";
   import axios from "axios";
 
-  let password,
+  let first_name,
+    last_name,
+    password,
     confirmPassword,
     errorMessage,
     email = "";
@@ -15,8 +17,8 @@
     }
 
     const data = {
-      first_name: "N/A",
-      last_name: "N/A",
+      first_name: first_name,
+      last_name: last_name,
       email: email,
       password: password,
     };
@@ -50,6 +52,30 @@
   </div>
   <form action="" class="w-full space-y-12">
     <div class="space-y-4">
+      <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
+        <div class="">
+          <label for="first_name" class="block mb-2 text-sm">First Name</label>
+          <input
+            bind:value={first_name}
+            type="text"
+            name="first_name"
+            id="first_name"
+            placeholder="John"
+            class="w-full px-3 py-2 text-teal-800 border border-teal-300 rounded-md bg-teal-50"
+          />
+        </div>
+        <div class="">
+          <label for="last_name" class="block mb-2 text-sm">Last Name</label>
+          <input
+            bind:value={last_name}
+            type="text"
+            name="last_name"
+            id="last_name"
+            placeholder="Doe"
+            class="w-full px-3 py-2 text-teal-800 border border-teal-300 rounded-md bg-teal-50"
+          />
+        </div>
+      </div>
       <div>
         <label for="email" class="block mb-2 text-sm">Email address</label>
         <input
@@ -57,7 +83,7 @@
           type="email"
           name="email"
           id="email"
-          placeholder="user@email.com"
+          placeholder="johndoe@email.com"
           class="w-full px-3 py-2 text-teal-800 border border-teal-300 rounded-md bg-teal-50"
         />
       </div>
