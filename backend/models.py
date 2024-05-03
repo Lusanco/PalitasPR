@@ -5,56 +5,22 @@
 
 from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, Integer, Boolean
 from sqlalchemy.orm import relationship
-from base_model import BaseModel, Base
+from base_model import BaseModel, Base, BaseModelSerial
 
 # ASSOCIATION USER & SERVICE & TOWN CLASS
-class UserServiceAssoc(BaseModel, Base):
-    __tablename__ = 'user_service_assoc'
+class Promo_Towns(BaseModel, Base):
+    __tablename__ = 'promo_towns'
 
+    promo_id = Column(String, ForeignKey('promotions.id'), nullable=False)
+    town_id = Column(Integer, ForeignKey('towns.id'), nullable=False)
 
-    user_id = Column(String, ForeignKey('users.id'), nullable=False)
-    service_id = Column(String, ForeignKey('services.id'), nullable=False)
-    town_id = Column(String, ForeignKey('towns.id'), nullable=False)
+    __table_args__ = (UniqueConstraint('promo_id', 'town_id'),)
 
-    # Relationships
-    user = relationship(
-        'User',
-        cascade='all, delete-orphan',
-        single_parent=True,
-        lazy='subquery',
-        back_populates='user_service_assoc'
-        )
-
-    town = relationship(
-        'Town',
-        cascade='all, delete-orphan',
-        single_parent=True,
-        lazy='subquery',
-        back_populates='user_service_assoc'
-        )
-
-    service = relationship(
-        'Service',
-        cascade='all, delete-orphan',
-        single_parent=True,
-        lazy='subquery',
-        back_populates='user_service_assoc'
-        )
-
-    __table_args__ = (UniqueConstraint('user_id', 'service_id', 'town_id'),)
-
-
-# SERVICE CLASS
-class Service(BaseModel, Base):
+# SERVICE CLASS (Serial)
+class Service(BaseModelSerial, Base):
     __tablename__ = 'services'
 
     name = Column(String(50), unique=True, nullable=False)
-
-    # Relationships
-    user_service_assoc = relationship(
-        'UserServiceAssoc',
-        back_populates='service'
-        )
 
 # USER CLASS
 class User(BaseModel, Base):
@@ -67,27 +33,12 @@ class User(BaseModel, Base):
     verified = Column(Boolean, default=False)
     verification_token = Column(String(128), unique=True)
 
-    # Relationships
-    user_service_assoc = relationship(
-        'UserServiceAssoc',
-        back_populates='user',
-        cascade='all, delete'
-        )
-
-# TOWN CLASS
-class Town(BaseModel, Base):
+# TOWN CLASS (Serial)
+class Town(BaseModelSerial, Base):
     __tablename__ = 'towns'
 
     name = Column(String(50), unique=True, nullable=False)
 
-    # Relationships
-    user_service_assoc = relationship(
-        'UserServiceAssoc',
-        back_populates='town',
-        cascade='all, delete'
-        )
-
-# Still missin Task class and need to work hereee relationships
 class Review(BaseModel, Base):
     __tablename__ = 'reviews'
 
@@ -107,6 +58,7 @@ class Task(BaseModel, Base):
 
 class Promotion(BaseModel, Base):
     __tablename__ = 'promotions'
-    provider_id = Column(String(255), ForeignKey('users.id'), nullable=False)
+    user_id = Column(String(255), ForeignKey('users.id'), nullable=False)
     service_id = Column(String(255), ForeignKey('services.id'), nullable=False)
+    title = Column(String(100), nullable=False)
     description = Column(String(255), nullable=False)
