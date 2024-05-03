@@ -27,9 +27,7 @@ mail = Mail(app)
 CORS(app)
 
 # Create the engine
-engine = create_engine(
-    "postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres"
-)
+engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')
 
 # Bind the engine to the Base class
 Base.metadata.bind = engine
@@ -84,6 +82,20 @@ def login():
     response_html = render_template("login_response.html")
     return response_html
 
+@app.route('/api/explore', methods=['GET'])
+def explore():
+    model = request.args.get('model')
+    service = request.args.get('search')
+    town = request.args.get('town')
+    print("AFTER GET ARGS REQUESTS")
+    print(model)
+    print(service)
+    print(town)
+    search_results = DBOperations().filter(model, service, town)
+    if search_results:
+        return jsonify(search_results)
+    else:
+        return jsonify("No Results"), 404
 
 @app.route("/api/create_object", methods=["POST"])
 def create_object():

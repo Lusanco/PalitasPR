@@ -2,6 +2,7 @@
 """
     ALLOWS OPERATIONS FOR FRONT END DEVS
     THIS FILE WILL BRIDGE OUR CLASSES AND FLASK
+    USING LOCAL POSTGRES DB NEED TO CHAMGE TO AWS
 
 """
 from os import getenv
@@ -9,7 +10,7 @@ from time import time
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.relationships import RelationshipProperty
-from models import User, Service, Town, UserServiceAssoc, Review, Task
+from models import User, Service, Town, Promo_Towns, Review, Task, Promotion
 from base_model import BaseModel, Base
 from werkzeug.security import generate_password_hash, check_password_hash
 import bcrypt
@@ -24,13 +25,14 @@ class DBOperations():
                 'User': User,
                 'Service': Service,
                 'Town': Town,
-                'UserServiceAssoc': UserServiceAssoc,
+                'UserServiceAssoc': Promo_Towns,
                 'Review': Review,
                 'Task': Task
                 }
 
 
     def __init__(self):
+        print('CREATING ENGINE')
         self.engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')    
 
 
@@ -81,37 +83,30 @@ class DBOperations():
             return None
 
 
-    def filter(self, data):
+    def filter(self, model=None, service=None, town='all'):
         """
-        Retrieve objects based on specified criteria.
+        Retrieve objects based on specified criteria from url query
 
-        Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
+        Usage: model=promotions or model=<requests>, service=<DJ>, town=<all> or specific <town>
 
-        example:
-            filtered_objs = db.filter({'User': {'name': 'service_name', 'town': 'town_name'}}).
-
-            There is a section to test the function after the delete method.
+        Returns: List of dict of the post details
         """
 
         Session = sessionmaker(bind=self.engine)
         session = Session()
 
-        town_name = "all"
-        model_name = list(data.keys())[0]
-        data_dict = data[model_name]
-
-        model_class = self.classes_dict.get(model_name)
         my_service_id = None
 
-        if model_class:
-            if 'town' in data_dict:
-                town_name = data_dict['town'].lower()
-            if 'name' in data_dict:
-                service_name = data_dict['name'].lower()
+        if model == 'promotions':
+            town_name = town.lower()
+            if service:
+                service_name = service.lower()
             else:
                 print('no service name provided')
                 session.close()
                 return {}
+
+            # Check if service exists
             service = session.query(Service).filter(func.lower(Service.name).op("~")(f"{service_name}")).first()
             if service:
                 my_service_id = service.id
@@ -120,50 +115,68 @@ class DBOperations():
                 print(f"No service found with name: {service_name}")
                 session.close()
                 return {}
+
         if my_service_id is not None:
-            if town_name == 'all':
+            if town_name == 'all':  # Get all promotions of a service in all towns
                 print("Doing all")
-                rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
-                .join(Town) \
-                .join(User)\
-                .filter(UserServiceAssoc.service_id == my_service_id) \
-                .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
-                .order_by(UserServiceAssoc.user_id) \
+                rows = session.query(Promo_Towns.promo_id,
+                                     User.first_name,
+                                     User.last_name,
+                                     func.array_agg(Town.name),
+                                     Promotion.created_at,
+                                     Promotion.title,
+                                     Promotion.description
+                                     ) \
+                .select_from(Promotion)\
+                .join(User, Promotion.user_id == User.id)\
+                .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)\
+                .join(Town, Promo_Towns.town_id == Town.id)\
+                .filter((Promotion.service_id == my_service_id))\
+                .group_by(Promo_Towns.promo_id, User.first_name, User.last_name, Promotion.created_at, Promotion.description, Promotion.title)\
+                .order_by(Promo_Towns.promo_id)\
                 .all()
-            else:
+            else:  # Get all promotions of a service in a single town
                 print("Doing Specific town")
-                rows = session.query(UserServiceAssoc.user_id,User.first_name, User.last_name, func.array_agg(Town.name)) \
-                .join(Town) \
-                .join(User)\
-                .filter((UserServiceAssoc.service_id == my_service_id) & (func.lower(Town.name).op("~")(f"{town_name}"))) \
-                .group_by(UserServiceAssoc.user_id, User.first_name, User.last_name) \
-                .order_by(UserServiceAssoc.user_id) \
+                rows = session.query(Promo_Towns.promo_id,
+                                     User.first_name, User.last_name,
+                                     func.array_agg(Town.name),
+                                     Promotion.created_at,
+                                     Promotion.title,
+                                     Promotion.description
+                                     ) \
+                .select_from(Promotion)\
+                .join(User, Promotion.user_id == User.id)\
+                .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)\
+                .join(Town, Promo_Towns.town_id == Town.id)\
+                .filter((Promotion.service_id == my_service_id) & (func.lower(Town.name).op("~")(f"{town_name}")))\
+                .group_by(Promo_Towns.promo_id, User.first_name, User.last_name, Promotion.created_at, Promotion.title, Promotion.description)\
+                .order_by(Promo_Towns.promo_id)\
                 .all()
 
+            # List to put inside all dicts
             list_of_dict = []
             
-            current_time = datetime.datetime.now() # Delete this
-            descriptions = ["This is your chance to buy sushi from Sushi-kito. Especial offers for weekends and events. Dont miss out please call :(",
-                            "Experience an unforgettable night of music with us. Join us for an electrifying event!",
-                            "DJ 'AL-fr3' is bringing the beats to our venue. Reserve your spot for a night of excitement!"
-                            ]
             for row in rows:
+                promo_id = row.promo_id
+                service_name = service_name
+                title = row.title
+                description = row.description
                 first_name = row.first_name
-                last_name = row.last_name
-                town_names = row[3]  # Assuming the array of town names is at index 3
+                last_name =  row.last_name
+                created_at = row.created_at.strftime("%Y-%m-%d")
+                towns = row[3]
                 inner_dict = {
+                    'promo_id': str(promo_id),
                     'service': service_name,
+                    'title': title,
+                    'description': description,
                     'first_name': first_name,
                     'last_name': last_name,
-                    'towns': town_names,
-                    'title': "This is a post Title", # delete
-                    'rating': random.randint(1, 5), # delete
-                    'description':descriptions[random.randint(0,2)], # delete
-                    'created_at': current_time.strftime("%Y-%m-%d")
+                    'towns': towns,
+                    'created_at': created_at
                 }
                 list_of_dict.append(inner_dict)
 
-            # print(f"MY DICTIONARY: {my_dict}")
             session.close()
             return(list_of_dict)
         else:
@@ -171,73 +184,73 @@ class DBOperations():
             return {}
 
 
-    def delete(self, data):
-        """
-            Delete objects and handle if the object has relationship
-            Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
-        """
-        session = sessionmaker(bind=self.engine)
-        session = session()
+    # def delete(self, data):
+    #     """
+    #         Delete objects and handle if the object has relationship
+    #         Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
+    #     """
+    #     session = sessionmaker(bind=self.engine)
+    #     session = session()
 
-        model_name = list(data.keys())[0]
-        model_class = self.classes_dict.get(model_name)
-        if not model_class:
-            print("\nInvalid model name.\n")
-            session.close()
-            return None
+    #     model_name = list(data.keys())[0]
+    #     model_class = self.classes_dict.get(model_name)
+    #     if not model_class:
+    #         print("\nInvalid model name.\n")
+    #         session.close()
+    #         return None
         
-        inner_dict = data[model_name]
-        query = session.query(model_class)
+    #     inner_dict = data[model_name]
+    #     query = session.query(model_class)
 
-        for key, value in inner_dict.items():
-            column = getattr(model_class, key, None)
-            if column is not None:
-                query = query.filter(getattr(model_class, key) == value)
-            else:
-                print(f"\nInvalid attribute '{key}' for model '{model_name}'.\n")
-                session.close()
-                return None
+    #     for key, value in inner_dict.items():
+    #         column = getattr(model_class, key, None)
+    #         if column is not None:
+    #             query = query.filter(getattr(model_class, key) == value)
+    #         else:
+    #             print(f"\nInvalid attribute '{key}' for model '{model_name}'.\n")
+    #             session.close()
+    #             return None
 
-        objs_to_delete = query.all()
-        if not objs_to_delete:
-            print("No object found to delete.\n")
-            session.close()
-            return True
+    #     objs_to_delete = query.all()
+    #     if not objs_to_delete:
+    #         print("No object found to delete.\n")
+    #         session.close()
+    #         return True
         
-        for obj in objs_to_delete:
-            if model_name == 'User':
-                password = input("Enter your password to confirm delete: ")
-                if not self.confirm_password(obj, password):
-                    print("Incorrect password.")
-                    session.close()
-                    return False
-                else:
-                    # Print the user's first name and last name when deleted
-                    print(f"User {obj.first_name} {obj.last_name} deleted.")
+    #     for obj in objs_to_delete:
+    #         if model_name == 'User':
+    #             password = input("Enter your password to confirm delete: ")
+    #             if not self.confirm_password(obj, password):
+    #                 print("Incorrect password.")
+    #                 session.close()
+    #                 return False
+    #             else:
+    #                 # Print the user's first name and last name when deleted
+    #                 print(f"User {obj.first_name} {obj.last_name} deleted.")
 
-            if model_name == 'Service' and 'user_id' in inner_dict:
-                # If the model is 'Service' and user_id is provided,
-                # delete the associated UserServiceAssoc object for the specific user
-                assoc_obj = session.query(UserServiceAssoc) \
-                    .filter(UserServiceAssoc.service_id == obj.id,
-                            UserServiceAssoc.user_id == inner_dict['user_id']).all()
+    #         if model_name == 'Service' and 'user_id' in inner_dict:
+    #             # If the model is 'Service' and user_id is provided,
+    #             # delete the associated UserServiceAssoc object for the specific user
+    #             assoc_obj = session.query(UserServiceAssoc) \
+    #                 .filter(UserServiceAssoc.service_id == obj.id,
+    #                         UserServiceAssoc.user_id == inner_dict['user_id']).all()
 
-                if assoc_obj:
-                    for obj in assoc_obj:
-                        session.delete(obj)
-            else:
-                # Delete all associated UserServiceAssoc objects first
-                assoc_objs = session.query(UserServiceAssoc) \
-                    .filter(UserServiceAssoc.user_id == obj.id).all()
-                for assoc_obj in assoc_objs:
-                    session.delete(assoc_obj)
+    #             if assoc_obj:
+    #                 for obj in assoc_obj:
+    #                     session.delete(obj)
+    #         else:
+    #             # Delete all associated UserServiceAssoc objects first
+    #             assoc_objs = session.query(UserServiceAssoc) \
+    #                 .filter(UserServiceAssoc.user_id == obj.id).all()
+    #             for assoc_obj in assoc_objs:
+    #                 session.delete(assoc_obj)
 
-                # Delete the filtered objects themselves
-                session.delete(obj)
+    #             # Delete the filtered objects themselves
+    #             session.delete(obj)
 
-        session.commit()
-        session.close()
-        return True
+    #     session.commit()
+    #     session.close()
+    #     return True
 
 
     def update(self, data):
@@ -383,39 +396,3 @@ class DBOperations():
             return True
         else:
             return False
-
-
-# # -------------TEST AREA DONT TOUCH FRONT USERS----------------------
-# db = DBOperations()
-
-
-#------- SIGN_UP TEST ---------------------------
-
-# db.sign_up({'email': "antoniofdjs@gmail.com", 'password': '9150', 'first_name': 'Antonio', 'last_name': 'De Jesus'})
-
-#-------------------------------------------------
-# start_time = time()
-
-# ----- LOGIN TEST ------
-# db.login('jd123@gmail.com', 'pwd1')
-# -----------------------
-
-# db.update({'User': {'id': '2cc63d22-a074-4f6a-84ab-66db61eb279a', 'last_name': 'Santiago'}})
-
-# db.new({'User': {'first_name': 'Pepe', 'last_name': 'Gomez', 'email': 'pepito@gmail.com'}})
-# -----DELETE_TEST----- 
-
-# print("Deleting Service associated to an user...")
-# result = db.delete('Service', user_id='c0a5be5a-94bf-4ad8-95dc-1d6e54cb1aed', name='Gardening')
-# if result:
-#     print("Deleted successfully.")
-
-
-# -----FILTER_TEST----- 
-
-# filtered_objs = db.filter({'User': {'name': 'John'}})
-# print(filtered_objs)
-
-# end_time = time()
-# elapsed_time = end_time - start_time
-# print("Time taken:", elapsed_time, "seconds")
