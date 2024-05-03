@@ -82,33 +82,24 @@ class DBOperations():
             return None
 
 
-    def filter(self, data):
+    def filter(self, model=None, service=None, town='all'):
         """
-        Retrieve objects based on specified criteria.
+        Retrieve objects based on specified criteria from url query
 
-        Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
+        Usage: model=promotions or model=<requests>, service=<DJ>, town=<all> or specific <town>
 
-        example:
-            filtered_objs = db.filter({'User': {'name': 'service_name', 'town': 'town_name'}}).
-
-            There is a section to test the function after the delete method.
+        Returns: List of dict of the post details
         """
 
         Session = sessionmaker(bind=self.engine)
         session = Session()
 
-        town_name = "all"
-        model_name = list(data.keys())[0]
-        data_dict = data[model_name]
-
-        model_class = self.classes_dict.get(model_name)
         my_service_id = None
 
-        if model_class:
-            if 'town' in data_dict:
-                town_name = data_dict['town'].lower()
-            if 'name' in data_dict:
-                service_name = data_dict['name'].lower()
+        if model == 'promotions':
+            town_name = town.lower()
+            if service:
+                service_name = service.lower()
             else:
                 print('no service name provided')
                 session.close()
@@ -192,73 +183,73 @@ class DBOperations():
             return {}
 
 
-    def delete(self, data):
-        """
-            Delete objects and handle if the object has relationship
-            Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
-        """
-        session = sessionmaker(bind=self.engine)
-        session = session()
+    # def delete(self, data):
+    #     """
+    #         Delete objects and handle if the object has relationship
+    #         Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
+    #     """
+    #     session = sessionmaker(bind=self.engine)
+    #     session = session()
 
-        model_name = list(data.keys())[0]
-        model_class = self.classes_dict.get(model_name)
-        if not model_class:
-            print("\nInvalid model name.\n")
-            session.close()
-            return None
+    #     model_name = list(data.keys())[0]
+    #     model_class = self.classes_dict.get(model_name)
+    #     if not model_class:
+    #         print("\nInvalid model name.\n")
+    #         session.close()
+    #         return None
         
-        inner_dict = data[model_name]
-        query = session.query(model_class)
+    #     inner_dict = data[model_name]
+    #     query = session.query(model_class)
 
-        for key, value in inner_dict.items():
-            column = getattr(model_class, key, None)
-            if column is not None:
-                query = query.filter(getattr(model_class, key) == value)
-            else:
-                print(f"\nInvalid attribute '{key}' for model '{model_name}'.\n")
-                session.close()
-                return None
+    #     for key, value in inner_dict.items():
+    #         column = getattr(model_class, key, None)
+    #         if column is not None:
+    #             query = query.filter(getattr(model_class, key) == value)
+    #         else:
+    #             print(f"\nInvalid attribute '{key}' for model '{model_name}'.\n")
+    #             session.close()
+    #             return None
 
-        objs_to_delete = query.all()
-        if not objs_to_delete:
-            print("No object found to delete.\n")
-            session.close()
-            return True
+    #     objs_to_delete = query.all()
+    #     if not objs_to_delete:
+    #         print("No object found to delete.\n")
+    #         session.close()
+    #         return True
         
-        for obj in objs_to_delete:
-            if model_name == 'User':
-                password = input("Enter your password to confirm delete: ")
-                if not self.confirm_password(obj, password):
-                    print("Incorrect password.")
-                    session.close()
-                    return False
-                else:
-                    # Print the user's first name and last name when deleted
-                    print(f"User {obj.first_name} {obj.last_name} deleted.")
+    #     for obj in objs_to_delete:
+    #         if model_name == 'User':
+    #             password = input("Enter your password to confirm delete: ")
+    #             if not self.confirm_password(obj, password):
+    #                 print("Incorrect password.")
+    #                 session.close()
+    #                 return False
+    #             else:
+    #                 # Print the user's first name and last name when deleted
+    #                 print(f"User {obj.first_name} {obj.last_name} deleted.")
 
-            if model_name == 'Service' and 'user_id' in inner_dict:
-                # If the model is 'Service' and user_id is provided,
-                # delete the associated UserServiceAssoc object for the specific user
-                assoc_obj = session.query(UserServiceAssoc) \
-                    .filter(UserServiceAssoc.service_id == obj.id,
-                            UserServiceAssoc.user_id == inner_dict['user_id']).all()
+    #         if model_name == 'Service' and 'user_id' in inner_dict:
+    #             # If the model is 'Service' and user_id is provided,
+    #             # delete the associated UserServiceAssoc object for the specific user
+    #             assoc_obj = session.query(UserServiceAssoc) \
+    #                 .filter(UserServiceAssoc.service_id == obj.id,
+    #                         UserServiceAssoc.user_id == inner_dict['user_id']).all()
 
-                if assoc_obj:
-                    for obj in assoc_obj:
-                        session.delete(obj)
-            else:
-                # Delete all associated UserServiceAssoc objects first
-                assoc_objs = session.query(UserServiceAssoc) \
-                    .filter(UserServiceAssoc.user_id == obj.id).all()
-                for assoc_obj in assoc_objs:
-                    session.delete(assoc_obj)
+    #             if assoc_obj:
+    #                 for obj in assoc_obj:
+    #                     session.delete(obj)
+    #         else:
+    #             # Delete all associated UserServiceAssoc objects first
+    #             assoc_objs = session.query(UserServiceAssoc) \
+    #                 .filter(UserServiceAssoc.user_id == obj.id).all()
+    #             for assoc_obj in assoc_objs:
+    #                 session.delete(assoc_obj)
 
-                # Delete the filtered objects themselves
-                session.delete(obj)
+    #             # Delete the filtered objects themselves
+    #             session.delete(obj)
 
-        session.commit()
-        session.close()
-        return True
+    #     session.commit()
+    #     session.close()
+    #     return True
 
 
     def update(self, data):
