@@ -9,27 +9,19 @@
   let errorMessage = ""; // Added to store error messages
   let hidden = true;
   let loaded = false;
-  let search;
+  let search; // service
   let model = "promotions";
-  let service = "dj";
   let town = "all";
-  let page;
-  let limit;
 
   async function handleExplore() {
     hidden = false;
 
     axios
-      // .post("/api/filter", data)
-      .get(
-        `/api/explore?search=${search}model=${model}&service=${service}&town=${town}&page=${page}&limit=${limit}`
-      )
-      // "/api/explore?type=promotions&service=DJ&town=all"
-      // http://localhost:3000/api/search?q=svelte&limit=10
+      .get(`/api/explore?search=${search}model=${model}&town=${town}`)
       // .get("https://jsonplaceholder.typicode.com/users")
       .then((response) => {
         services = response.data;
-        // console.log(response);
+
         // Loop through each service in the response
         for (const serviceId in services) {
           const service = services[serviceId];
