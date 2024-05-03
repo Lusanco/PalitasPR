@@ -39,8 +39,8 @@ class DBConsole(cmd.Cmd):
                     'password': password
                 }
                 new_obj = db.sign_up(data)
-            if new_obj:
-                print(f"\nNew {model_name} object created: '{first_name} {last_name}' with email: '{email}'.\n")
+                if new_obj:
+                    print(f"\nNew {model_name} object created: '{first_name} {last_name}' with email: '{email}'.\n")
             
             else:
                 data = {model_name: dict(pair.split('=') for pair in arg_list[1:])}
@@ -58,15 +58,13 @@ class DBConsole(cmd.Cmd):
         Usage: filter <model_name> <key1>=<value1> <key2>=<value2> ...
         Example: filter User name=Gardening town=New York
         """
-        model_name = input("Enter model name: ")
-        name = input("Enter name: ")
-        town = input("Enter town: ")
+        model_name = input("Enter <promotions> or <requests>: ")
+        name = input("Enter service name: ")
+        town = input("Enter town name(or all): ")
 
-        # Constructing the filter criteria
-        data = {model_name: {"name": name, "town": town}}
         
-        filtered_objs = db.filter(data)
-        print(filtered_objs)
+        filtered_objs = db.filter(model_name, name, town)
+        print(f'Found {len(filtered_objs)} results:\n{filtered_objs}')
         
 
     def do_delete(self, args):
