@@ -59,14 +59,14 @@ class DBConsole(cmd.Cmd):
         Example: filter User name=Gardening town=New York
         """
         model_name = input("Enter model name: ")
-        name = input("Enter name: ")
-        town = input("Enter town: ")
+        name = input("Enter service name: ")
+        town = input("Enter town name(or all): ")
 
         # Constructing the filter criteria
         data = {model_name: {"name": name, "town": town}}
         
         filtered_objs = db.filter(data)
-        print(filtered_objs)
+        print(f'Found {len(filtered_objs)} results:\n{filtered_objs}')
         
 
     def do_delete(self, args):
