@@ -32,7 +32,8 @@ class DBOperations():
 
 
     def __init__(self):
-        self.engine = create_engine('postgresql://postgres:9495@localhost/postgres')
+        print('CREATING ENGINE')
+        self.engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')    
 
 
     def new(self, front_data):
@@ -118,13 +119,13 @@ class DBOperations():
             if town_name == 'all':  # Get all promotions of a service in all towns
                 print("Doing all")
                 rows = session.query(Promo_Towns.promo_id,
-                                    User.first_name,
-                                    User.last_name,
-                                    func.array_agg(Town.name),
-                                    Promotion.created_at,
-                                    Promotion.title,
-                                    Promotion.description
-                                    ) \
+                                     User.first_name,
+                                     User.last_name,
+                                     func.array_agg(Town.name),
+                                     Promotion.created_at,
+                                     Promotion.title,
+                                     Promotion.description
+                                     ) \
                 .select_from(Promotion)\
                 .join(User, Promotion.user_id == User.id)\
                 .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)\
@@ -136,12 +137,12 @@ class DBOperations():
             else:  # Get all promotions of a service in a single town
                 print("Doing Specific town")
                 rows = session.query(Promo_Towns.promo_id,
-                                    User.first_name, User.last_name,
-                                    func.array_agg(Town.name),
-                                    Promotion.created_at,
-                                    Promotion.title,
-                                    Promotion.description
-                                    ) \
+                                     User.first_name, User.last_name,
+                                     func.array_agg(Town.name),
+                                     Promotion.created_at,
+                                     Promotion.title,
+                                     Promotion.description
+                                     ) \
                 .select_from(Promotion)\
                 .join(User, Promotion.user_id == User.id)\
                 .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)\
