@@ -5,13 +5,9 @@
 from os import getenv
 from time import time
 from sqlalchemy import create_engine, func
-from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.orm.relationships import RelationshipProperty
-from models import User, Service, Town, UserServiceAssoc, Review, Task
-from base_model import BaseModel, Base
+from sqlalchemy.orm import sessionmaker
+from models import User
 from werkzeug.security import generate_password_hash, check_password_hash
-import bcrypt
-
 
 
 
