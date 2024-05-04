@@ -1,20 +1,20 @@
 from flask import Blueprint, jsonify, request, render_template
 from db_operations import DBOperations
 from emails import confirm_email
+import emails
 
 api_bp = Blueprint('api', __name__)
 
 
 @api_bp.route("/verify_email/<token>", methods=["GET"])
 def verify_email(token):
-
     if not token:
         return "Verification token is missing"
 
-    verified = confirm_email(token)
+    response = emails.confirm_email(token)
 
-    if not verified:
-        return "Invalid verification token"
+    if not response:
+        return "Invalid verification token or error"
 
     return "Email verification successful"
 
