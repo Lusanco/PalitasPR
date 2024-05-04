@@ -14,7 +14,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Create table for User
 CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE services (
 
 --  Create Table for reviews
 CREATE TABLE reviews (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
     description Text NOT NULL,
     rating NUMERIC(2, 1) CHECK (rating >= 1 AND rating <= 5),
     picture_paths VARCHAR,
@@ -46,13 +46,13 @@ CREATE TABLE reviews (
 
 -- Create table for tasks
 CREATE TABLE tasks (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    provider_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    receiver_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+    provider_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    receiver_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     service_id INT REFERENCES services(id) ON DELETE CASCADE NOT NULL,
     description Text NOT NULL,
     status VARCHAR(10) DEFAULT 'open' CHECK(status in ('open', 'closed', 'pending')),
-    review_id UUID REFERENCES reviews(id) ON DELETE CASCADE,
+    review_id varchar(50) REFERENCES reviews(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT check_review_id_status CHECK ((status != 'closed' and review_id IS NULL) or
@@ -70,8 +70,8 @@ CREATE TABLE towns (
 -- Create table for promotions of users offering services
 -- If price max is left null, the price total is the price_min
 CREATE TABLE promotions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) NOT NULL,
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+    user_id VARCHAR(50) REFERENCES users(id) NOT NULL,
     service_id INT REFERENCES services(id) NOT NULL,
     title VARCHAR(100) not NULL,
     description Text NOT NULL,
@@ -83,8 +83,8 @@ CREATE TABLE promotions (
 
 -- Create table for public requests of services
 CREATE TABLE requests (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) NOT NULL,
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+    user_id varchar REFERENCES users(id) NOT NULL,
     service_id INT REFERENCES services(id) NOT NULL,
     title VARCHAR(100) not NULL,
     description Text NOT NULL,
@@ -94,8 +94,8 @@ CREATE TABLE requests (
 
 -- Create table for promo/towns assoc
 CREATE TABLE promo_towns (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    promo_id  UUID REFERENCES promotions(id) ON DELETE CASCADE NOT NULL,
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+    promo_id  varchar(50) REFERENCES promotions(id) ON DELETE CASCADE NOT NULL,
     town_id  INT REFERENCES towns(id) ON DELETE CASCADE NOT NULL,
     created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -103,8 +103,8 @@ CREATE TABLE promo_towns (
 
 -- Create table for request/towns assoc
 CREATE TABLE request_towns (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    request_id  UUID REFERENCES requests(id) ON DELETE CASCADE NOT NULL,
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+    request_id  varchar(50) REFERENCES requests(id) ON DELETE CASCADE NOT NULL,
     town_id  INT REFERENCES towns(id) ON DELETE CASCADE NOT NULL,
     created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
