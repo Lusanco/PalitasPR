@@ -1,6 +1,15 @@
 <!-- Profile component -->
 
 <script>
+  import banner from "../images/lawnMowing.jpg";
+  import profilePic from "../images/profile.png";
+  import pic1 from "../images/gallGrid_1.jpg";
+  import pic2 from "../images/gallGrid_2.jpg";
+  import pic3 from "../images/gallGrid_3.jpg";
+  import pic4 from "../images/gallGrid_4.jpg";
+  import pic5 from "../images/gallGrid_5.jpg";
+  import pic6 from "../images/gallGrid_6.jpg";
+
   let name = "Alfredo Santiago Cosme de los Palotes";
   let provServ = "Landscaper";
   let userTown = "San Juan, PR";
@@ -14,11 +23,7 @@
 <!--* Profile Body -->
 <body class="h-screen font-mono">
   <div class="profileContainer py-3 px-[5%] text-[#626262] bg-slate-100">
-    <img
-      src="../images/lawnMowing.jpg"
-      alt="Banner"
-      class="w-full mb-4 rounded-md h-96"
-    />
+    <img src={banner} alt="Banner" class="w-full mb-4 rounded-md h-96" />
     <!--* Profile Details -->
     <div
       class="flex items-start justify-between p-5 mb-4 bg-white rounded-md shadow-md profileDetails"
@@ -27,7 +32,7 @@
         <div class="pd">
           <div class="flex items-start pdRow">
             <img
-              src="../images/profile.png"
+              src={profilePic}
               alt="User Pic"
               class="w-24 mr-4 rounded-md pdImg"
             />
@@ -37,7 +42,8 @@
 
                 <p class="text-sm">{provServ}</p>
                 <p class="text-sm">
-                  <i class="fa-solid fa-star"></i> <span>{userRating}</span>
+                  <i class="fa-solid fa-star"></i>
+                  <span>{userRating} • {jobsCount}</span>
                 </p>
               </div>
               <div class="relative flex justify-end bottom-8">
@@ -164,36 +170,12 @@
             <div class="aboutHeader">
               <h3 class="text-xl font-bold border-b-2">Gallery</h3>
               <div class="grid grid-cols-3 grid-rows-2 gap-2 pt-2 userGalley">
-                <img
-                  src="images/images/gallGrid_1.jpg"
-                  alt=""
-                  class="h-24 rounded-md w-28"
-                />
-                <img
-                  src="images/images/gallGrid_2.jpg"
-                  alt=""
-                  class="h-24 rounded-md w-28"
-                />
-                <img
-                  src="images/images/gallGrid_3.jpg"
-                  alt=""
-                  class="h-24 rounded-md w-28"
-                />
-                <img
-                  src="images/images/gallGrid_4.jpg"
-                  alt=""
-                  class="h-24 rounded-md w-28"
-                />
-                <img
-                  src="images/images/gallGrid_5.jpg"
-                  alt=""
-                  class="h-24 rounded-md w-28"
-                />
-                <img
-                  src="images/images/gallGrid_6.jpg"
-                  alt=""
-                  class="h-24 rounded-md w-28"
-                />
+                <img src={pic1} alt="" class="h-24 rounded-md w-28" />
+                <img src={pic2} alt="" class="h-24 rounded-md w-28" />
+                <img src={pic3} alt="" class="h-24 rounded-md w-28" />
+                <img src={pic4} alt="" class="h-24 rounded-md w-28" />
+                <img src={pic5} alt="" class="h-24 rounded-md w-28" />
+                <img src={pic6} alt="" class="h-24 rounded-md w-28" />
               </div>
               <button
                 type="button"
@@ -242,7 +224,7 @@
           >
             <div class="flex items-start w-full gap-3 mb-2 postHeader">
               <img
-                src="images/images/profile.png"
+                src={profilePic}
                 alt="User Pic"
                 class="w-16 rounded-md pdImg"
               />
@@ -272,21 +254,9 @@
               deleniti voluptatum voluptates a.
             </p>
             <div class="grid grid-cols-3 gap-2 mb-2">
-              <img
-                src="images/images/gallGrid_1.jpg"
-                alt=""
-                class="w-64 rounded-md h-52"
-              />
-              <img
-                src="images/images/gallGrid_2.jpg"
-                alt=""
-                class="w-64 rounded-md h-52"
-              />
-              <img
-                src="images/images/gallGrid_3.jpg"
-                alt=""
-                class="w-64 rounded-md h-52"
-              />
+              <img src={pic1} alt="" class="w-64 rounded-md h-52" />
+              <img src={pic2} alt="" class="w-64 rounded-md h-52" />
+              <img src={pic3} alt="" class="w-64 rounded-md h-52" />
             </div>
             <div class="flex justify-center gap-2">
               <button
