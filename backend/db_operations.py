@@ -10,7 +10,7 @@ from time import time
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.relationships import RelationshipProperty
-from models import User, Service, Town, Promo_Towns, Review, Task, Promotion
+from models import User, Service, Town, Promo_Towns, Review, Task, Promotion, Request, Request_Towns
 from base_model import BaseModel, Base
 from werkzeug.security import generate_password_hash, check_password_hash
 import bcrypt
@@ -44,9 +44,6 @@ class DBOperations():
                 retrieves the value associated with the model_name key from the self.classes_dict dictionary.
                 If model_name is found in the dictionary, model_class will be assigned the corresponding value
         """
-        Session = sessionmaker(bind=self.engine)
-        session = Session()
-
         if front_data is None:
             return None
 
@@ -58,6 +55,8 @@ class DBOperations():
         # Extract the inner dictionary containing attribute-value
         inner_dict = front_data[model_name] # inner_dict = {"name": "Nails"}
 
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
 
         # Get the model class corresponding to the model name
         model_class = self.classes_dict.get(model_name) # model_class = User
@@ -72,7 +71,9 @@ class DBOperations():
             # Create a new object of the model class using the attribute-value
             new_object = model_class(**dict) # new_object = User(first_name="Louis", last_name="Toro")
             
+            # Add the new object to the session
             session.add(new_object)
+            # Commit changes
             session.commit()
             session.close()
             return new_object
@@ -96,7 +97,7 @@ class DBOperations():
 
         my_service_id = None
 
-        if model == 'promotions':
+        if model:
             town_name = town.lower()
             if service:
                 service_name = service.lower()
@@ -116,64 +117,41 @@ class DBOperations():
                 return {}
 
         if my_service_id is not None:
-            if town_name == 'all':  # Get all promotions of a service in all towns
-                print("Doing all")
-                rows = session.query(Promo_Towns.promo_id,
-                                     User.first_name,
-                                     User.last_name,
-                                     func.array_agg(Town.name),
-                                     Promotion.created_at,
-                                     Promotion.title,
-                                     Promotion.description
-                                     ) \
-                .select_from(Promotion)\
-                .join(User, Promotion.user_id == User.id)\
-                .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)\
-                .join(Town, Promo_Towns.town_id == Town.id)\
-                .filter((Promotion.service_id == my_service_id))\
-                .group_by(Promo_Towns.promo_id, User.first_name, User.last_name, Promotion.created_at, Promotion.description, Promotion.title)\
-                .order_by(Promo_Towns.promo_id)\
-                .all()
-            else:  # Get all promotions of a service in a single town
-                print("Doing Specific town")
-                rows = session.query(Promo_Towns.promo_id,
-                                     User.first_name, User.last_name,
-                                     func.array_agg(Town.name),
-                                     Promotion.created_at,
-                                     Promotion.title,
-                                     Promotion.description
-                                     ) \
-                .select_from(Promotion)\
-                .join(User, Promotion.user_id == User.id)\
-                .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)\
-                .join(Town, Promo_Towns.town_id == Town.id)\
-                .filter((Promotion.service_id == my_service_id) & (func.lower(Town.name).op("~")(f"{town_name}")))\
-                .group_by(Promo_Towns.promo_id, User.first_name, User.last_name, Promotion.created_at, Promotion.title, Promotion.description)\
-                .order_by(Promo_Towns.promo_id)\
-                .all()
+            
+            if model == 'promotions':
+                rows = self.explore_promos(session, my_service_id, town_name)
+            if model == 'requests':
+                rows = self.explore_requests(session, my_service_id, town_name)
 
             # List to put inside all dicts
             list_of_dict = []
-            
+
             for row in rows:
-                promo_id = row.promo_id
-                service_name = service_name
-                title = row.title
-                description = row.description
-                first_name = row.first_name
-                last_name =  row.last_name
-                created_at = row.created_at.strftime("%Y-%m-%d")
-                towns = row[3]
-                inner_dict = {
-                    'promo_id': str(promo_id),
-                    'service': service_name,
-                    'title': title,
-                    'description': description,
-                    'first_name': first_name,
-                    'last_name': last_name,
-                    'towns': towns,
-                    'created_at': created_at
-                }
+                if model == 'promotions': # Promotions dictionary data
+                    inner_dict = {
+                        'promo_id': str(row.promo_id),
+                        'service': service_name,
+                        'title': row.title,
+                        'description': row.description,
+                        'price_min': row.price_min,
+                        'price_max': row.price_max,
+                        'first_name': row.first_name,
+                        'last_name': row.last_name,
+                        'towns': row[3],
+                        'created_at': row.created_at.strftime("%Y-%m-%d")
+                    }
+                else: # Requests dictionary data
+                    inner_dict = {
+                        'promo_id': str(row.request_id),
+                        'service': service_name,
+                        'title': row.title,
+                        'description': row.description,
+                        'first_name': row.first_name,
+                        'last_name': row.last_name,
+                        'towns': row[3],
+                        'created_at': row.created_at.strftime("%Y-%m-%d")
+                    }
+
                 list_of_dict.append(inner_dict)
 
             session.close()
@@ -181,6 +159,109 @@ class DBOperations():
         else:
             session.close()
             return {}
+
+    def explore_promos(self, session, my_service_id, town_name):
+        '''
+            Main query to filter promotions
+        '''
+        if town_name == 'all':  # Get all promotions of a service in all towns
+            print("Doing all")
+            rows = session.query(Promo_Towns.promo_id,
+                                    User.first_name,
+                                    User.last_name,
+                                    func.array_agg(Town.name),
+                                    Promotion.created_at,
+                                    Promotion.title,
+                                    Promotion.description,
+                                    Promotion.price_min,
+                                    Promotion.price_max
+                                    ) \
+            .select_from(Promotion)\
+            .join(User, Promotion.user_id == User.id)\
+            .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)\
+            .join(Town, Promo_Towns.town_id == Town.id)\
+            .filter((Promotion.service_id == my_service_id))\
+            .group_by(Promo_Towns.promo_id,
+                      User.first_name,
+                      User.last_name,
+                      Promotion.created_at,
+                      Promotion.description,
+                      Promotion.title,
+                      Promotion.price_min,
+                      Promotion.price_max
+                      )\
+            .order_by(Promo_Towns.promo_id)\
+            .all()
+            return rows
+        else:  # Get all promotions of a service in a single town
+            print("Doing Specific town")
+            rows = session.query(Promo_Towns.promo_id,
+                                    User.first_name, User.last_name,
+                                    func.array_agg(Town.name),
+                                    Promotion.created_at,
+                                    Promotion.title,
+                                    Promotion.description,
+                                    Promotion.price_min,
+                                    Promotion.price_max
+                                    ) \
+            .select_from(Promotion)\
+            .join(User, Promotion.user_id == User.id)\
+            .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)\
+            .join(Town, Promo_Towns.town_id == Town.id)\
+            .filter((Promotion.service_id == my_service_id) & (func.lower(Town.name).op("~")(f"{town_name}")))\
+            .group_by(Promo_Towns.promo_id,
+                      User.first_name,
+                      User.last_name,
+                      Promotion.created_at,
+                      Promotion.title,
+                      Promotion.description,
+                      Promotion.price_min,
+                      Promotion.price_max)\
+            .order_by(Promo_Towns.promo_id)\
+            .all()
+            return rows
+
+    def explore_requests(self, session, my_service_id, town_name):
+        '''
+            Main query to filter requests
+        '''
+        if town_name == 'all':  # Get all promotions of a service in all towns
+            print("Doing all")
+            rows = session.query(Request_Towns.request_id,
+                                    User.first_name,
+                                    User.last_name,
+                                    func.array_agg(Town.name),
+                                    Request.created_at,
+                                    Request.title,
+                                    Request.description
+                                    ) \
+            .select_from(Request)\
+            .join(User, Request.user_id == User.id)\
+            .join(Request_Towns, Request.id == Request_Towns.request_id)\
+            .join(Town, Request_Towns.town_id == Town.id)\
+            .filter((Request.service_id == my_service_id))\
+            .group_by(Request_Towns.request_id, User.first_name, User.last_name, Request.created_at, Request.description, Request.title)\
+            .order_by(Request_Towns.request_id)\
+            .all()
+            return rows
+        else:  # Get all Requests of a service in a single town
+            print("Doing Specific town")
+            rows = session.query(Request_Towns.request_id,
+                                    User.first_name, User.last_name,
+                                    func.array_agg(Town.name),
+                                    Request.created_at,
+                                    Request.title,
+                                    Request.description
+                                    ) \
+            .select_from(Request)\
+            .join(User, Request.user_id == User.id)\
+            .join(Request_Towns, Request.id == Request_Towns.request_id)\
+            .join(Town, Request_Towns.town_id == Town.id)\
+            .filter((Request.service_id == my_service_id) & (func.lower(Town.name).op("~")(f"{town_name}")))\
+            .group_by(Request_Towns.request_id, User.first_name, User.last_name, Request.created_at, Request.title, Request.description)\
+            .order_by(Request_Towns.request_id)\
+            .all()
+            return rows
 
 
     # def delete(self, data):
@@ -313,18 +394,13 @@ class DBOperations():
 
                 # Verify the password using bcrypt
                 if bcrypt.checkpw(pwd.encode('utf-8'), hashed_password):
-                    if user.verified:
-                        print(f"Login successful for user: {user.first_name} {user.last_name}")
-                        # Allow login
-                    else:
-                        print("Email not verified. Please check your email and verify your account.")
-                        # Deny login
+                    print(f"\nLogin successful for user: {user.first_name} {user.last_name}\n")
                 else:
-                    print("Email or password is incorrect. Try again.")
+                    print(f"\nEmail or password INCORRECT, try again\n")
             else:
-                print(f"No user found with email: {email}")
-
-            session.close()
+                print(f"\nNo user found with email: {email}\n")
+        
+        session.close()
 
 
     def sign_up(self, data):
@@ -337,6 +413,7 @@ class DBOperations():
         Session = sessionmaker(bind=self.engine)
         session = Session()
 
+        print("Data received:", data)
 
         email = data['email']
         first_name = data['first_name']
@@ -358,8 +435,11 @@ class DBOperations():
             session.close()
             return None
         
-
-        print("Data received:", data)
+        # Check if passwords match
+        # if pwd != confirm_pwd:
+        #     print("Passwords do not match")
+        #     session.close()
+        #     return
 
         # Generate a new password hash with bcrypt and 12 rounds
         # .encode is needed to hash properly, but we need to decode before saving to db
