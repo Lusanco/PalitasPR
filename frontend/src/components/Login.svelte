@@ -1,15 +1,36 @@
 <script>
   import { link } from "svelte-routing";
+  import { onMount } from "svelte";
+  import axios from "axios";
 
-  let email = "";
-  let password = "";
+  let password, errorMessage, email;
+  let success = { response: "success" };
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    // Add your login logic here
-    console.log("Email:", email);
-    console.log("Password:", password);
+  async function handleLogin() {
+    const data = {
+      email: email,
+      password: password,
+    };
+
+    axios
+      .post("/api/login", data)
+      //   .get("https://jsonplaceholder.typicode.com/users")
+      .then((response) => {
+        console.log(response);
+        // console.log(response.data.message);
+        if (response.data.response === "success") {
+          window.location.href = "/";
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        errorMessage = error;
+      });
   }
+
+  onMount(() => {
+    errorMessage = ""; // Clear any previous error messages on component mount
+  });
 </script>
 
 <div
@@ -19,7 +40,7 @@
     <h1 class="my-3 text-4xl font-bold">Login</h1>
     <p class="text-sm text-teal-600">Login to access your account</p>
   </div>
-  <form on:submit={handleSubmit} action="" class="w-full space-y-12">
+  <form action="" class="w-full space-y-12">
     <div class="space-y-4">
       <div>
         <label for="email" class="block mb-2 text-sm">Email address</label>
@@ -37,7 +58,7 @@
           <label for="password" class="text-sm">Password</label>
           <a
             rel="noopener noreferrer"
-            href="#"
+            href="/forgot-password"
             class="text-xs text-teal-600 hover:underline">Forgot password?</a
           >
         </div>
@@ -52,13 +73,12 @@
       </div>
     </div>
     <div class="space-y-2">
-      <div>
-        <button
-          type="button"
-          class="w-full px-8 py-3 font-semibold bg-teal-600 rounded-md text-teal-50"
-          >Login</button
-        >
-      </div>
+      <button
+        on:click={handleLogin}
+        type="button"
+        class="w-full px-8 py-3 font-semibold bg-teal-600 rounded-md text-teal-50"
+        >Login</button
+      >
       <p class="px-6 text-sm text-center text-teal-600">
         Don't have an account yet?
         <a

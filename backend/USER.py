@@ -33,8 +33,9 @@ def login():
     data = request.json
     email = data.get("email")
     password = data.get("password")
-    DBOperations().login = (email, password)
-    return jsonify ({"message": "Login attempted"}), 200
+    response = DBOperations().login(email, password)
+    return jsonify(response), 200
+
 
 @app_bp.route('/users/<user_id>', methods=['PUT'])
 def update_user(user_id):
