@@ -395,3 +395,22 @@ class DBOperations():
             return True
         else:
             return False
+        
+
+
+    def search(self, class_name, obj_id):
+        """
+        Search for an object based on its class model and ID.
+        """
+        if class_name in self.classes_dict:
+            model_class = self.classes_dict[class_name]
+            Session = sessionmaker(bind=self.engine)
+            session = Session()
+            obj = session.query(model_class).filter_by(id=obj_id).first()
+            session.close()
+            if obj:
+                return obj
+            else:
+                return None
+        else:
+            return None
