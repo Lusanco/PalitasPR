@@ -8,7 +8,9 @@ from base_model import Base
 from db_operations import DBOperations  # Import the method for creating new objects
 from routes import app_bp
 from flask_mail import Mail
-from emails import confirm_email
+import emails
+import aws_bucket
+from models import User
 
 
 # Create Flask app instance
@@ -35,17 +37,15 @@ Base.metadata.bind = engine
 # VERIFY EMAIL ROUTE
 @app.route("/verify_email/<token>", methods=["GET"])
 def verify_email(token):
-
     if not token:
         return "Verification token is missing"
 
-    verified = confirm_email(token)
+    response = emails.confirm_email(token)
 
-    if not verified:
-        return "Invalid verification token"
+    if not response:
+        return "Invalid verification token or error"
 
     return "Email verification successful"
-
 
 @app.route("/")
 def index():
