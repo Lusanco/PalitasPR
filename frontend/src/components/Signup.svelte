@@ -30,7 +30,7 @@
       //   .get("https://jsonplaceholder.typicode.com/users")
       .then((response) => {
         console.log(response);
-        window.location.href = "/login";
+        window.location.href = "/success";
       })
       .catch((error) => {
         console.log(error);

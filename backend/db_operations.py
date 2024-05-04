@@ -314,11 +314,11 @@ class DBOperations():
 
                 # Verify the password using bcrypt
                 if bcrypt.checkpw(pwd.encode('utf-8'), hashed_password):
-                    print(f"\nLogin successful for user: {user.first_name} {user.last_name}\n")
+                    return {"response":"success"}
                 else:
-                    print(f"\nEmail or password INCORRECT, try again\n")
+                    return {"response":"error"}
             else:
-                print(f"\nNo user found with email: {email}\n")
+                return {"response":"userNotFound"}
         
         session.close()
 
