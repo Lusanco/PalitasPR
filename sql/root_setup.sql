@@ -273,8 +273,7 @@ WHERE u.first_name = 'Hector' AND u.last_name = 'Torres';
 INSERT INTO promotions (user_id, service_id, title, description)
 SELECT u.id, s.id, 'New Styles Modern',
 'Latest hair trends with our professional service.
-Look stunning for your special day! Our stylists excel in special occasion hair styling, from elegant updos to glamorous curls,
-ensuring you shine at weddings, proms, and more'
+Look stunning for your special day! Our stylists excel in special occasion hair styling, from elegant updos to glamorous curls,ensuring you shine at weddings, proms, and more'
 FROM users u
 JOIN services s ON s.name = 'Hairstyling'
 WHERE u.first_name = 'Olivia' AND u.last_name = 'Davis';
