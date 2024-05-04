@@ -1,3 +1,4 @@
+
 #!/usr/bin/python3
 """
     ALLOWS OPERATIONS FOR FRONT END DEVS
@@ -33,7 +34,7 @@ class DBOperations():
 
     def __init__(self):
         print('CREATING ENGINE')
-        self.engine = create_engine('postgresql://postgres:9495@localhost/postgres')    
+        self.engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')    
 
 
     def new(self, front_data):
@@ -142,7 +143,7 @@ class DBOperations():
                     }
                 else: # Requests dictionary data
                     inner_dict = {
-                        'promo_id': str(row.request_id),
+                        'request_id': str(row.request_id),
                         'service': service_name,
                         'title': row.title,
                         'description': row.description,
@@ -182,14 +183,14 @@ class DBOperations():
             .join(Town, Promo_Towns.town_id == Town.id)\
             .filter((Promotion.service_id == my_service_id))\
             .group_by(Promo_Towns.promo_id,
-                    User.first_name,
-                    User.last_name,
-                    Promotion.created_at,
-                    Promotion.description,
-                    Promotion.title,
-                    Promotion.price_min,
-                    Promotion.price_max
-                    )\
+                      User.first_name,
+                      User.last_name,
+                      Promotion.created_at,
+                      Promotion.description,
+                      Promotion.title,
+                      Promotion.price_min,
+                      Promotion.price_max
+                      )\
             .order_by(Promo_Towns.promo_id)\
             .all()
             return rows
@@ -210,13 +211,13 @@ class DBOperations():
             .join(Town, Promo_Towns.town_id == Town.id)\
             .filter((Promotion.service_id == my_service_id) & (func.lower(Town.name).op("~")(f"{town_name}")))\
             .group_by(Promo_Towns.promo_id,
-                    User.first_name,
-                    User.last_name,
-                    Promotion.created_at,
-                    Promotion.title,
-                    Promotion.description,
-                    Promotion.price_min,
-                    Promotion.price_max)\
+                      User.first_name,
+                      User.last_name,
+                      Promotion.created_at,
+                      Promotion.title,
+                      Promotion.description,
+                      Promotion.price_min,
+                      Promotion.price_max)\
             .order_by(Promo_Towns.promo_id)\
             .all()
             return rows
