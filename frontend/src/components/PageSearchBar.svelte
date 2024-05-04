@@ -37,7 +37,7 @@
 <div class="flex flex-col items-center justify-center h-full gap-8">
   <LogoSlogan></LogoSlogan>
   <div class="items-center justify-center w-full max-w-md">
-    <!-- FIX WITH GRID SYSTEM 2 ROWS 2 COLS -->
+    <!-- FIX WITH GRID SYSTEM 2 ROWS 2 COLS test-commit -->
     <!-- SearchBar Start -->
     <div class="relative bg-white rounded-lg">
       <label for="Search" class="sr-only"> Search </label>
