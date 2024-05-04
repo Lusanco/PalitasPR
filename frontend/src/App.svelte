@@ -9,7 +9,9 @@
   import Signup from "./components/Signup.svelte";
   import SignSuccess from "./components/SignSuccess.svelte";
   import ContactUs from "./components/ContactUs.svelte";
-  import LoadingSpinner from "./components/LoadingSpinner.svelte";
+
+  // Import Test Component
+  import Pagination from "./components/Pagination.svelte";
 
   let searchInput = document.getElementById("search-input");
   let townInput = "All"; // No default town selected
@@ -55,6 +57,9 @@
       <Route path="/signup" component={Signup} />
       <Route path="/success" component={SignSuccess} />
       <Route path="/contact" component={ContactUs} />
+
+      <!-- Route  Test Components -->
+      <Route path="/components" component={Pagination} />
     </Router>
   </Main>
   <Footer></Footer>
