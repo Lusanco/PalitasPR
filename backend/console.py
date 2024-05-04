@@ -58,14 +58,19 @@ class DBConsole(cmd.Cmd):
         Usage: filter <model_name> <key1>=<value1> <key2>=<value2> ...
         Example: filter User name=Gardening town=New York
         """
-        model_name = input("Enter <promotions> or <requests>: ")
-        name = input("Enter service name: ")
-        town = input("Enter town name(or all): ")
+        on = 1
+        while on == 1:
+            model_name = input("Enter <promotions> or <requests>: ")
+            name = input("Enter service name: ")
+            town = input("Enter town name(or all): ")
 
-        
-        filtered_objs = db.filter(model_name, name, town)
-        print(f'Found {len(filtered_objs)} results:\n{filtered_objs}')
-        
+            
+            filtered_objs = db.filter(model_name, name, town)
+            print(f'\nFound {len(filtered_objs)} results:\n{filtered_objs}')
+            response = input('\n\nIf you dont want to filter again press <q>: ')
+            if response == 'q':
+                on = 0
+
 
     def do_delete(self, args):
         """
