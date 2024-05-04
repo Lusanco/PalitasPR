@@ -21,6 +21,7 @@ CREATE TABLE users (
     verified BOOLEAN DEFAULT false,
     verification_token VARCHAR(128) UNIQUE,
     password VARCHAR(255) NOT NULL,
+    profile_pic VARCHAR(150),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -271,17 +272,13 @@ WHERE u.first_name = 'Hector' AND u.last_name = 'Torres';
 
 INSERT INTO promotions (user_id, service_id, title, description)
 SELECT u.id, s.id, 'New Styles Modern',
-'Latest hair trends with our professional service.
-Look stunning for your special day! Our stylists excel in special occasion hair styling, from elegant updos to glamorous curls,
-ensuring you shine at weddings, proms, and more'
+'Latest hair trends with our professional service. Look stunning for your special day! Our stylists excel in special occasion hair styling, from elegant updos to glamorous curls,ensuring you shine at weddings, proms, and more'
 FROM users u
 JOIN services s ON s.name = 'Hairstyling'
 WHERE u.first_name = 'Olivia' AND u.last_name = 'Davis';
 
 INSERT INTO promotions (user_id, service_id, title, description)
-SELECT u.id, s.id, 'Best Styles in Town',
-'Discover your ideal hair style with our personalized consultations. Our stylists will assess your hair type, face shape,
-and lifestyle to recommend the perfect cut and style for you.'
+SELECT u.id, s.id, 'Best Styles in Town', 'Discover your ideal hair style with our personalized consultations. Our stylists will assess your hair type, face shape, and lifestyle to recommend the perfect cut and style for you.'
 FROM users u
 JOIN services s ON s.name = 'Hairstyling'
 WHERE u.first_name = 'Marta' AND u.last_name = 'Lopez';
@@ -299,22 +296,19 @@ JOIN services s ON s.name = 'House Cleaning'
 WHERE u.first_name = 'Sofia' AND u.last_name = 'Rodriguez';
 
 INSERT INTO promotions (user_id, service_id, title, description)
-SELECT u.id, s.id, 'Pet Paradise Retreat', 'Your pets home away from home! We provide personalized
-pet sitting services to ensure your furry friends are happy and cared for.'
+SELECT u.id, s.id, 'Pet Paradise Retreat', 'Your pets home away from home! We provide personalized pet sitting services to ensure your furry friends are happy and cared for.'
 FROM users u
 JOIN services s ON s.name = 'Pet Sitting'
 WHERE u.first_name = 'Angelica' AND u.last_name = 'Diaz';
 
 INSERT INTO promotions (user_id, service_id, title, description)
-SELECT u.id, s.id, 'Premium Car Wash & Detailing', 'Revitalize your vehicle with our premium car wash and detailing services.
-We will make your car shine inside and out!'
+SELECT u.id, s.id, 'Premium Car Wash & Detailing', 'Revitalize your vehicle with our premium car wash and detailing services. We will make your car shine inside and out!'
 FROM users u
 JOIN services s ON s.name = 'Car Washing'
 WHERE u.first_name = 'Erick' AND u.last_name = 'Santiago';
 
 INSERT INTO promotions (user_id, service_id, title, description)
-SELECT u.id, s.id, 'Landscaping Masterpieces', 'Transform your outdoor space into a lush paradise.
-Our landscaping experts specialize in creating beautiful and functional landscapes.'
+SELECT u.id, s.id, 'Landscaping Masterpieces', 'Transform your outdoor space into a lush paradise. Our landscaping experts specialize in creating beautiful and functional landscapes.'
 FROM users u
 JOIN services s ON s.name = 'Landscaping'
 WHERE u.first_name = 'Gabriel' AND u.last_name = 'Rivera';
