@@ -27,7 +27,7 @@ mail = Mail(app)
 CORS(app)
 
 # Create the engine
-engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')
+engine = create_engine('postgresql://postgres:9495@localhost/postgres')
 
 # Bind the engine to the Base class
 Base.metadata.bind = engine
@@ -147,6 +147,16 @@ def search_filter():
         return jsonify(dictionary)
     else:
         return jsonify({"error": "Error filtering data"})
+
+
+@app.route("/<class_name>/<id>", methods=["GET"])
+def search_object(class_name, id):
+    obj = DBOperations().search(class_name, id)
+    if obj:
+        return jsonify({"message": f"{class_name} object with ID {id} found"}), 200
+    else:
+        return jsonify({"error": f"No {class_name} object found with ID {id}"}), 404
+
 
 
 # Run the Flask app

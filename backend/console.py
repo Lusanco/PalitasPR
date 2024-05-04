@@ -145,7 +145,7 @@ class DBConsole(cmd.Cmd):
 
         obj = db.search(class_name, obj_id)
         if obj:
-            print("ok")
+            print(f"{class_name} object with ID {obj_id} found")
         else:
             print(f"No {class_name} object found with ID {obj_id}")
 
