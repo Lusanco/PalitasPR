@@ -3,8 +3,6 @@
   import LogoSlogan from "./LogoSlogan.svelte";
   import LoadingSpinner from "./LoadingSpinner.svelte";
 
-  let explore = document.getElementById("search-input");
-  let townInput = "All"; // No default town selected
   let services = []; // Array to store fetched services
   let errorMessage = ""; // Added to store error messages
   let hidden = true;

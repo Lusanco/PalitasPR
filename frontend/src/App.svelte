@@ -59,7 +59,7 @@
       <Route path="/contact" component={ContactUs} />
 
       <!-- Route  Test Components -->
-      <Route path="/components" component={Pagination} />
+      <!-- <Route path="/components" component={Pagination} /> -->
     </Router>
   </Main>
   <Footer></Footer>
