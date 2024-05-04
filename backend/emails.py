@@ -11,6 +11,7 @@ from models import User, Service, Town, Review, Task
 from base_model import BaseModel, Base
 from werkzeug.security import generate_password_hash, check_password_hash
 import bcrypt
+import aws_bucket
 
 
 engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')    
@@ -43,15 +44,20 @@ def send_confirm_email(email, first_name, token):
 
 def confirm_email(token):
     '''
-        Confirm token from email_confirm route
+        Confirm token from email_confirm route.
+        After user is confirmed, aws folders will be created for him.
+        Return: <User id>
     '''
     Session = sessionmaker(bind=engine)
     session = Session()
     print(token)
     user = session.query(User).filter_by(verification_token = token).first()
     if user:
-        user.verification_token = None
-        user.verified = True
+        folder_path = aws_bucket.create_user_folder(user.id)
+        if folder_path:
+            user.verification_token = None
+            user.verified = True
+            user.profile_pic = folder_path
         session.commit()
     else:
         return False # No user with that token
