@@ -16,6 +16,14 @@ class Promo_Towns(BaseModel, Base):
 
     __table_args__ = (UniqueConstraint('promo_id', 'town_id'),)
 
+class Request_Towns(BaseModel, Base):
+    __tablename__ = 'request_towns'
+
+    request_id = Column(String, ForeignKey('requests.id'), nullable=False)
+    town_id = Column(Integer, ForeignKey('towns.id'), nullable=False)
+
+    __table_args__ = (UniqueConstraint('request_id', 'town_id'),)
+
 # SERVICE CLASS (Serial)
 class Service(BaseModelSerial, Base):
     __tablename__ = 'services'
@@ -58,6 +66,15 @@ class Task(BaseModel, Base):
 
 class Promotion(BaseModel, Base):
     __tablename__ = 'promotions'
+    user_id = Column(String(255), ForeignKey('users.id'), nullable=False)
+    service_id = Column(String(255), ForeignKey('services.id'), nullable=False)
+    title = Column(String(100), nullable=False)
+    description = Column(String(255), nullable=False)
+    price_min = Column(Integer, default=0)
+    price_max = Column(Integer, default=0)
+
+class Request(BaseModel, Base):
+    __tablename__ = 'requests'
     user_id = Column(String(255), ForeignKey('users.id'), nullable=False)
     service_id = Column(String(255), ForeignKey('services.id'), nullable=False)
     title = Column(String(100), nullable=False)
