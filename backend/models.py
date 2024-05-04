@@ -40,6 +40,7 @@ class User(BaseModel, Base):
     password = Column(String(255), nullable=False)
     verified = Column(Boolean, default=False)
     verification_token = Column(String(128), unique=True)
+    profile_pic = Column(String(255)) # Testing with one folder here for AWS only profile
 
 # TOWN CLASS (Serial)
 class Town(BaseModelSerial, Base):
