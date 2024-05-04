@@ -64,23 +64,12 @@ def serve_static(filename):
         return "File not found", 404
 
 
-@app.route("/login")
-def login_page():
-    return render_template("login.html")
-
-
-@app.route("/signup")
-def signup_page():
-    return render_template("signup.html")
-
-
-@app.route("/login", methods=["POST"])
+@app.route("/api/login", methods=["POST"])
 def login():
     email = request.form.get("email")
     password = request.form.get("password")
-    DBOperations().login(email, password)
-    response_html = render_template("login_response.html")
-    return response_html
+    response = DBOperations().login(email, password)
+    return jsonify(response)
 
 @app.route('/api/explore', methods=['GET'])
 def explore():
