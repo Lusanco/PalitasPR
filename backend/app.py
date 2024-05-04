@@ -28,7 +28,7 @@ mail = Mail(app)
 
 CORS(app)
 
-engine = create_engine('postgresql://postgres:9495@localhost/postgres')
+engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')
 
 Base.metadata.bind = engine
 
