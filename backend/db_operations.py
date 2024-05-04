@@ -142,7 +142,7 @@ class DBOperations():
                     }
                 else: # Requests dictionary data
                     inner_dict = {
-                        'promo_id': str(row.request_id),
+                        'request_id': str(row.request_id),
                         'service': service_name,
                         'title': row.title,
                         'description': row.description,
