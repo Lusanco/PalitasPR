@@ -13,7 +13,7 @@
   let name = "Alfredo Santiago Cosme de los Palotes";
   let provServ = "Landscaper";
   let userTown = "San Juan, PR";
-  let userRating = 4.7;
+  let userRating = 4.5;
   let clientsCount = "100 Clients";
   let jobsCount = 20;
   let reviewerName = "John Doe";
@@ -23,7 +23,11 @@
 <!--* Profile Body -->
 <body class="h-screen font-mono">
   <div class="profileContainer py-3 px-[5%] text-[#626262] bg-slate-100">
-    <img src={banner} alt="Banner" class="w-full mb-4 rounded-md h-96" />
+    <img
+      src={banner}
+      alt="Banner"
+      class="w-full mb-4 rounded-md sm:h-80 md:h-96 lg:h-96 xl:h-96"
+    />
     <!--* Profile Details -->
     <div
       class="flex items-start justify-between p-5 mb-4 bg-white rounded-md shadow-md profileDetails"
@@ -95,8 +99,8 @@
     </div>
     <!--* Profile Info -->
     <div class="profileInfo">
-      <div class="grid grid-cols-3 gap-4">
-        <div class="infoCol">
+      <div class="gap-4 md:flex sm:grid lg:grid-cols-3">
+        <div class="items-center w-full col-span-1 infoCol">
           <!--* User Info Containers -->
           <!--* User About Me -->
           <div
@@ -169,7 +173,7 @@
           >
             <div class="aboutHeader">
               <h3 class="text-xl font-bold border-b-2">Gallery</h3>
-              <div class="grid grid-cols-3 grid-rows-2 gap-2 pt-2 userGalley">
+              <div class="grid grid-cols-3 grid-rows-2 gap-1 pt-2 userGalley">
                 <img src={pic1} alt="" class="h-24 rounded-md w-28" />
                 <img src={pic2} alt="" class="h-24 rounded-md w-28" />
                 <img src={pic3} alt="" class="h-24 rounded-md w-28" />
@@ -185,7 +189,7 @@
               </button>
             </div>
           </div>
-          <!--* Reviews -->
+          <!--* User Reviews -->
           <div
             class="w-full p-4 mx-0 my-5 bg-white rounded-md shadow-md userInfoContainer"
           >
@@ -254,9 +258,9 @@
               deleniti voluptatum voluptates a.
             </p>
             <div class="grid grid-cols-3 gap-2 mb-2">
-              <img src={pic1} alt="" class="w-64 rounded-md h-52" />
-              <img src={pic2} alt="" class="w-64 rounded-md h-52" />
-              <img src={pic3} alt="" class="w-64 rounded-md h-52" />
+              <img src={pic1} alt="" class="w-64 h-40 rounded-md" />
+              <img src={pic2} alt="" class="w-64 h-40 rounded-md" />
+              <img src={pic3} alt="" class="w-64 h-40 rounded-md" />
             </div>
             <div class="flex justify-center gap-2">
               <button
