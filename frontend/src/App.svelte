@@ -15,6 +15,7 @@
 
   // Import Test Component
   import Pagination from "./components/Pagination.svelte";
+  import UploadImage from "./components/UploadImage.svelte";
 
   let searchInput = document.getElementById("search-input");
   let townInput = "All"; // No default town selected
@@ -66,6 +67,7 @@
 
       <!-- Route  Test Components -->
       <!-- <Route path="/components" component={Pagination} /> -->
+      <!-- <Route path="/components" component={UploadImage} /> -->
     </Router>
   </Main>
   <Footer></Footer>
