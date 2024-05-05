@@ -125,9 +125,17 @@ def sign_up():
 
 @api_bp.route("/Promotion/<id>", methods=["GET"])
 def show_promo(id):
-    promo_obj = DBOperations().search('Promotion',id)
+    promo_obj = DBOperations().search('Promotion', id)
     if promo_obj:
         # obj_dict = promo_obj.all_columns()
         return jsonify(promo_obj), 200
     else:
         return jsonify({"error": f"No Promotion object found with ID {id}"}), 404
+
+@api_bp.route("/Request/<id>", methods=["GET"])
+def show_request(id):
+    request_obj = DBOperations().search('Request', id)
+    if request_obj:
+        return jsonify(request_obj), 200
+    else:
+        return jsonify({"error": f"No Request object found with ID {id}"}), 404
