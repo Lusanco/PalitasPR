@@ -30,7 +30,8 @@ class DBOperations():
                 'UserServiceAssoc': Promo_Towns,
                 'Review': Review,
                 'Task': Task,
-                'Promotion': Promotion
+                'Promotion': Promotion,
+                'Request': Request
                 }
 
 
@@ -280,7 +281,7 @@ class DBOperations():
     #         print("\nInvalid model name.\n")
     #         session.close()
     #         return None
-        
+
     #     inner_dict = data[model_name]
     #     query = session.query(model_class)
 
