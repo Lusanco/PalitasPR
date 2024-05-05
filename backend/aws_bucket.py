@@ -1,10 +1,8 @@
 #!/usr/bin/python3
 '''
-    Important READ:
-    Working here, this file will manage all related S3 bucket
-    operations to create folder, delete pictures from profile,
-    read all pictures.
-    To change user id go down at the end where the function is called
+    All related S3 AWS Bucket operations.
+    C.R.U.D operations.
+
 '''
 import boto3
 from botocore.exceptions import ClientError
@@ -90,7 +88,7 @@ def create_user_folder(user_id: str = None) -> None:
 
 def get_picture(user_id: str, model: str, key: str) -> dict:
     """
-    Retrieve an object (picture) from an AWS S3 bucket based on the specified user ID, model (folder),
+    Retrieve an object (picture) from an AWS S3 bucket based on the specified user ID, model (Promotion, Request, Task, Review),
     and key (object key/path).
 
     Parameters:
@@ -106,14 +104,14 @@ def get_picture(user_id: str, model: str, key: str) -> dict:
     - Example: get_picture('101', 'Promotion', '001/Palitas_logo_pitch.png')
     """
 
-    folders_dict = {
-        'Promotion': f'user.{user_id}/promotions/{key}',
-        'Request': f'user.{user_id}/requests/{key}',
-        'Task': f'user.{user_id}/tasks/{key}',
-        'Review': f'user.{user_id}/reviews/{key}'
+    models_dict = {
+        'Promotion': f'{user_id}/promotions/{key}',
+        'Request': f'{user_id}/requests/{key}',
+        'Task': f'{user_id}/tasks/{key}',
+        'Review': f'{user_id}/reviews/{key}'
         }
-    if model in folders_dict:
-        path = f'users/{folders_dict[model]}' # This pastes users/user.101/promotions/001/Palitas_logo_pitch.png
+    if model in models_dict:
+        path = f'users/{models_dict[model]}' # This pastes users/101/promotions/001/Palitas_logo_pitch.png
     else:
         return {'response': 'Model(Folder) does not not exist'}
     try:
@@ -130,6 +128,61 @@ def get_picture(user_id: str, model: str, key: str) -> dict:
         else:
             # Other error occurred, raise or handle accordingly
             return {'response': e.response['Error']['Code']}
+
+def delete_picture(user_id: str, model: str, key: str) -> dict:
+        """
+        Delete an object (picture) from an AWS S3 bucket based on the specified user ID, model, and key.
+
+        Parameters:
+        - user_id (str): User identifier used to construct the folder path.
+        - model (str): Model or folder name where the object is stored (example: 'Promotion' = /promotions/).
+        - key (str): Key or path of the object within the specified model's folder (promotions/<key>)
+
+        Returns:
+        - dict: A dictionary containing the response status of the delete operation.
+
+        Usage:
+        Call this function with the user ID, model name, and key to delete an object from the S3 bucket.
+        - Example: delete_picture('101', 'Promotion', '001/Palitas_logo_pitch.png')
+        """
+
+        # Define the models and their respective paths
+        models_dict = {
+            'Promotion': f'{user_id}/promotions/{key}',
+            'Request': f'{user_id}/requests/{key}',
+            'Task': f'{user_id}/tasks/{key}',
+            'Review': f'{user_id}/reviews/{key}'
+        }
+
+        # Check if the specified model is valid
+        if model in models_dict:
+            path = f'users/{models_dict[model]}'  # Construct the full path of the object
+        else:
+            return {'response': 'Model (Folder) does not exist'}
+
+        # Check if object exists
+        try:
+            s3_client.head_object(Bucket='palitas-pics', Key=path)
+            print(f'Object found {path}')
+
+        except ClientError as e: # Not found object
+
+            if e.response['Error']['Code'] == "404":
+                return {'response': f'No object found {path}'}
+
+
+        try:
+            # Attempt to delete the object from the S3 bucket
+            print(f'\nPAth to delete object from: {path}\n')
+            response = s3_client.delete_object(Bucket='palitas-pics', Key=path)
+            return {'response': 'ok'}
+
+        except ClientError as e:
+            # Handle the specific error codes
+            if e.response['Error']['Code'] == 'NoSuchKey':
+                return {'response': 'Object not found'}
+            else:
+                return {'response': e.response['Error']['Code']}
 
 def create_model_folder(user_id: str, model: str, model_id: str) -> dict:
     '''
