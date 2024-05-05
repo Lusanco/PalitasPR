@@ -219,7 +219,7 @@ VALUES
     ('Manati'),
     ('Maricao'),
     ('Maunabo'),
-    ('Mayagüez'),
+    ('Mayaguez'),
     ('Moca'),
     ('Morovis'),
     ('Naguabo'),
