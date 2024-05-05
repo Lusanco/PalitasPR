@@ -11,8 +11,6 @@ from api_blueprint import api_bp
 from flask_mail import Mail
 
 
-
-
 # Create Flask app instance
 app = Flask(__name__)
 # Configure Flask app for sending emails using Flask-Mail
@@ -31,7 +29,6 @@ CORS(app)
 engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')
 
 Base.metadata.bind = engine
-
 
 
 @app.route("/")
