@@ -1,5 +1,9 @@
 -- Drop tables if they exist (for testing purposes)
 DROP TABLE IF EXISTS user_service_assoc;
+DROP TABLE IF EXISTS request_towns;
+DROP TABLE If EXISTS promo_towns;
+DROP Table IF EXISTS promotions;
+DROP Table IF EXISTS requests;
 DROP TABLE IF EXISTS tasks;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS users;
@@ -8,32 +12,31 @@ DROP TABLE IF EXISTS towns;
 -- Create Extension for encryption
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-
 -- Create table for User
 CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     verified BOOLEAN DEFAULT false,
     verification_token VARCHAR(128) UNIQUE,
     password VARCHAR(255) NOT NULL,
+    profile_pic VARCHAR(150),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-
 -- Create table for Service
 CREATE TABLE services (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id Serial PRIMARY KEY,
     name VARCHAR(50) UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-
+--  Create Table for reviews
 CREATE TABLE reviews (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
     description Text NOT NULL,
     rating NUMERIC(2, 1) CHECK (rating >= 1 AND rating <= 5),
     picture_paths VARCHAR,
@@ -43,13 +46,13 @@ CREATE TABLE reviews (
 
 -- Create table for tasks
 CREATE TABLE tasks (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    provider_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    receiver_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    service_id UUID REFERENCES services(id) ON DELETE CASCADE NOT NULL,
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+    provider_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    receiver_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    service_id INT REFERENCES services(id) ON DELETE CASCADE NOT NULL,
     description Text NOT NULL,
     status VARCHAR(10) DEFAULT 'open' CHECK(status in ('open', 'closed', 'pending')),
-    review_id UUID REFERENCES reviews(id) ON DELETE CASCADE,
+    review_id varchar(50) REFERENCES reviews(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT check_review_id_status CHECK ((status != 'closed' and review_id IS NULL) or
@@ -58,25 +61,54 @@ CREATE TABLE tasks (
 
 -- Create table for towns
 CREATE TABLE towns (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id SERIAL PRIMARY KEY,
     name VARCHAR(50) UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create table for promotions of users offering services
+-- If price max is left null, the price total is the price_min
+CREATE TABLE promotions (
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+    user_id VARCHAR(50) REFERENCES users(id) NOT NULL,
+    service_id INT REFERENCES services(id) NOT NULL,
+    title VARCHAR(100) not NULL,
+    description Text NOT NULL,
+    price_min INT DEFAULT 0,
+    price_max INT DEFAULT 0,
+    created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
 
+-- Create table for public requests of services
+CREATE TABLE requests (
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+    user_id varchar REFERENCES users(id) NOT NULL,
+    service_id INT REFERENCES services(id) NOT NULL,
+    title VARCHAR(100) not NULL,
+    description Text NOT NULL,
+    created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
 
--- Create table for user_service_assoc
-CREATE TABLE user_service_assoc (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    service_id UUID REFERENCES services(id) ON DELETE CASCADE NOT NULL,
-    town_id UUID REFERENCES towns(id) ON DELETE CASCADE NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT unique_user_service_town UNIQUE (user_id, service_id, town_id)
+-- Create table for promo/towns assoc
+CREATE TABLE promo_towns (
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+    promo_id  varchar(50) REFERENCES promotions(id) ON DELETE CASCADE NOT NULL,
+    town_id  INT REFERENCES towns(id) ON DELETE CASCADE NOT NULL,
+    created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create table for request/towns assoc
+CREATE TABLE request_towns (
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+    request_id  varchar(50) REFERENCES requests(id) ON DELETE CASCADE NOT NULL,
+    town_id  INT REFERENCES towns(id) ON DELETE CASCADE NOT NULL,
+    created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
 -- Insert sample data into users table with simulated email addresses
 INSERT INTO users (id, first_name, last_name, email, password)
@@ -115,203 +147,626 @@ VALUES
     (gen_random_uuid(), 'Matthew', 'Walker', 'matthew.walker@outlook.com', crypt('pwd30', gen_salt('bf', 12)));
 
 -- Insert sample data into services table
-INSERT INTO services (id, name)
+INSERT INTO services (name)
 VALUES
-    (gen_random_uuid(), 'Nails'),
-    (gen_random_uuid(), 'Gardening'),
-    (gen_random_uuid(), 'Barber'),
-    (gen_random_uuid(), 'Hairstyling'),
-    (gen_random_uuid(), 'Pet Sitting'),
-    (gen_random_uuid(), 'Car Washing'),
-    (gen_random_uuid(), 'Baking'),
-    (gen_random_uuid(), 'Plumbing'),
-    (gen_random_uuid(), 'Electrical Service'),
-    (gen_random_uuid(), 'House Cleaning'),
-    (gen_random_uuid(), 'Pet Grooming'),
-    (gen_random_uuid(), 'Landscaping'),
-    (gen_random_uuid(), 'Event Decorator'),
-    (gen_random_uuid(), 'DJ'),
-    (gen_random_uuid(), 'Catering'),
-    (gen_random_uuid(), 'Auto Body Painting'),
-    (gen_random_uuid(), 'Painter');
+    ('Nails'),
+    ('Gardening'),
+    ('Barber'),
+    ('Hairstyling'),
+    ('Pet Sitting'),
+    ('Car Washing'),
+    ('Baking'),
+    ('Plumbing'),
+    ('Electrical Service'),
+    ('House Cleaning'),
+    ('Pet Grooming'),
+    ('Landscaping'),
+    ('Event Decorator'),
+    ('DJ'),
+    ('Catering'),
+    ('Auto Body Painting'),
+    ('Painter');
 
 -- Insert sample data into towns table
-INSERT INTO towns (id, name)
+INSERT INTO towns (name)
 VALUES
-    (gen_random_uuid(), 'Adjuntas'),
-    (gen_random_uuid(), 'Aguada'),
-    (gen_random_uuid(), 'Aguadilla'),
-    (gen_random_uuid(), 'Aguas Buenas'),
-    (gen_random_uuid(), 'Aibonito'),
-    (gen_random_uuid(), 'Añasco'),
-    (gen_random_uuid(), 'Arecibo'),
-    (gen_random_uuid(), 'Arroyo'),
-    (gen_random_uuid(), 'Barceloneta'),
-    (gen_random_uuid(), 'Barranquitas'),
-    (gen_random_uuid(), 'Bayamon'),
-    (gen_random_uuid(), 'Cabo Rojo'),
-    (gen_random_uuid(), 'Caguas'),
-    (gen_random_uuid(), 'Camuy'),
-    (gen_random_uuid(), 'Canovanas'),
-    (gen_random_uuid(), 'Carolina'),
-    (gen_random_uuid(), 'Cataño'),
-    (gen_random_uuid(), 'Cayey'),
-    (gen_random_uuid(), 'Ceiba'),
-    (gen_random_uuid(), 'Ciales'),
-    (gen_random_uuid(), 'Cidra'),
-    (gen_random_uuid(), 'Coamo'),
-    (gen_random_uuid(), 'Comerio'),
-    (gen_random_uuid(), 'Corozal'),
-    (gen_random_uuid(), 'Culebra'),
-    (gen_random_uuid(), 'Dorado'),
-    (gen_random_uuid(), 'Fajardo'),
-    (gen_random_uuid(), 'Florida'),
-    (gen_random_uuid(), 'Guanica'),
-    (gen_random_uuid(), 'Guayama'),
-    (gen_random_uuid(), 'Guayanilla'),
-    (gen_random_uuid(), 'Guaynabo'),
-    (gen_random_uuid(), 'Gurabo'),
-    (gen_random_uuid(), 'Hatillo'),
-    (gen_random_uuid(), 'Hormigueros'),
-    (gen_random_uuid(), 'Humacao'),
-    (gen_random_uuid(), 'Isabela'),
-    (gen_random_uuid(), 'Jayuya'),
-    (gen_random_uuid(), 'Juana Diaz'),
-    (gen_random_uuid(), 'Juncos'),
-    (gen_random_uuid(), 'Lajas'),
-    (gen_random_uuid(), 'Lares'),
-    (gen_random_uuid(), 'Las Marias'),
-    (gen_random_uuid(), 'Las Piedras'),
-    (gen_random_uuid(), 'Loiza'),
-    (gen_random_uuid(), 'Luquillo'),
-    (gen_random_uuid(), 'Manati'),
-    (gen_random_uuid(), 'Maricao'),
-    (gen_random_uuid(), 'Maunabo'),
-    (gen_random_uuid(), 'Mayagüez'),
-    (gen_random_uuid(), 'Moca'),
-    (gen_random_uuid(), 'Morovis'),
-    (gen_random_uuid(), 'Naguabo'),
-    (gen_random_uuid(), 'Naranjito'),
-    (gen_random_uuid(), 'Orocovis'),
-    (gen_random_uuid(), 'Patillas'),
-    (gen_random_uuid(), 'Peñuelas'),
-    (gen_random_uuid(), 'Ponce'),
-    (gen_random_uuid(), 'Quebradillas'),
-    (gen_random_uuid(), 'Rincon'),
-    (gen_random_uuid(), 'Rio Grande'),
-    (gen_random_uuid(), 'Sabana Grande'),
-    (gen_random_uuid(), 'Salinas'),
-    (gen_random_uuid(), 'San German'),
-    (gen_random_uuid(), 'San Juan'),
-    (gen_random_uuid(), 'San Lorenzo'),
-    (gen_random_uuid(), 'San Sebastian'),
-    (gen_random_uuid(), 'Santa Isabel'),
-    (gen_random_uuid(), 'Toa Alta'),
-    (gen_random_uuid(), 'Toa Baja'),
-    (gen_random_uuid(), 'Trujillo Alto'),
-    (gen_random_uuid(), 'Utuado'),
-    (gen_random_uuid(), 'Vega Alta'),
-    (gen_random_uuid(), 'Vega Baja'),
-    (gen_random_uuid(), 'Vieques'),
-    (gen_random_uuid(), 'Villalba'),
-    (gen_random_uuid(), 'Yabucoa'),
-    (gen_random_uuid(), 'Yauco');
+    ('Adjuntas'),
+    ('Aguada'),
+    ('Aguadilla'),
+    ('Aguas Buenas'),
+    ('Aibonito'),
+    ('Añasco'),
+    ('Arecibo'),
+    ('Arroyo'),
+    ('Barceloneta'),
+    ('Barranquitas'),
+    ('Bayamon'),
+    ('Cabo Rojo'),
+    ('Caguas'),
+    ('Camuy'),
+    ('Canovanas'),
+    ('Carolina'),
+    ('Cataño'),
+    ('Cayey'),
+    ('Ceiba'),
+    ('Ciales'),
+    ('Cidra'),
+    ('Coamo'),
+    ('Comerio'),
+    ('Corozal'),
+    ('Culebra'),
+    ('Dorado'),
+    ('Fajardo'),
+    ('Florida'),
+    ('Guanica'),
+    ('Guayama'),
+    ('Guayanilla'),
+    ('Guaynabo'),
+    ('Gurabo'),
+    ('Hatillo'),
+    ('Hormigueros'),
+    ('Humacao'),
+    ('Isabela'),
+    ('Jayuya'),
+    ('Juana Diaz'),
+    ('Juncos'),
+    ('Lajas'),
+    ('Lares'),
+    ('Las Marias'),
+    ('Las Piedras'),
+    ('Loiza'),
+    ('Luquillo'),
+    ('Manati'),
+    ('Maricao'),
+    ('Maunabo'),
+    ('Mayaguez'),
+    ('Moca'),
+    ('Morovis'),
+    ('Naguabo'),
+    ('Naranjito'),
+    ('Orocovis'),
+    ('Patillas'),
+    ('Peñuelas'),
+    ('Ponce'),
+    ('Quebradillas'),
+    ('Rincon'),
+    ('Rio Grande'),
+    ('Sabana Grande'),
+    ('Salinas'),
+    ('San German'),
+    ('San Juan'),
+    ('San Lorenzo'),
+    ('San Sebastian'),
+    ('Santa Isabel'),
+    ('Toa Alta'),
+    ('Toa Baja'),
+    ('Trujillo Alto'),
+    ('Utuado'),
+    ('Vega Alta'),
+    ('Vega Baja'),
+    ('Vieques'),
+    ('Villalba'),
+    ('Yabucoa'),
+    ('Yauco');
 
-
--- Assigning services to the remaining users randomly with multiple towns
-
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
-FROM users u
-JOIN services s ON s.name = 'Auto Body Painting'
-JOIN towns t ON t.name IN ('Aguadilla', 'Arecibo')
-WHERE u.first_name = 'John' AND u.last_name = 'Doe';
-
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
+-- Assigning promos to users
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Nightclubs and Weddings','I create a personalized timeline that reflects your taste, ensuring a smooth transition from ceremony to reception and unforgettable dance floor moments for you and your guests. I also make video recordings!'
 FROM users u
 JOIN services s ON s.name = 'DJ'
-JOIN towns t ON t.name IN ('San Sebastian', 'Loiza')
+WHERE u.first_name = 'John' AND u.last_name = 'Doe';
+
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Special Gardening Offer',
+'Transform your garden with our expert gardening service. We offer a variety of designs tailored to your preferences.'
+FROM users u
+JOIN services s ON s.name = 'Gardening'
 WHERE u.first_name = 'Jane' AND u.last_name = 'Smith';
 
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Urban DJ',
+'Get the latest mix trends and hits. If you are looking to get your clients invested in your business, give them the entertainment they deserve.'
 FROM users u
-JOIN services s ON s.name = 'Pet Sitter'
-JOIN towns t ON t.name IN ('Caguas', 'Fajardo')
-WHERE u.first_name = 'Luis' AND u.last_name = 'Santiago';
-
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
-FROM users u
-JOIN services s ON s.name = 'Catering'
-JOIN towns t ON t.name IN ('Ponce', 'Carolina')
+JOIN services s ON s.name = 'DJ'
 WHERE u.first_name = 'Hector' AND u.last_name = 'Torres';
 
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
-FROM users u
-JOIN services s ON s.name = 'Event Decorator'
-JOIN towns t ON t.name IN ('Arecibo', 'Guayama')
-WHERE u.first_name = 'Angelica' AND u.last_name = 'Diaz';
-
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
-FROM users u
-JOIN services s ON s.name = 'House Cleaning'
-JOIN towns t ON t.name IN ('Toa Alta', 'Bayamon')
-WHERE u.first_name = 'Erick' AND u.last_name = 'Santiago';
-
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
-FROM users u
-JOIN services s ON s.name = 'Landscaping'
-JOIN towns t ON t.name IN ('Luquillo', 'Culebra')
-WHERE u.first_name = 'Carlos' AND u.last_name = 'Martinez';
-
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
-FROM users u
-JOIN services s ON s.name = 'Plumbing'
-JOIN towns t ON t.name IN ('Guaynabo', 'Rincon')
-WHERE u.first_name = 'Sofia' AND u.last_name = 'Rodriguez';
-
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
-FROM users u
-JOIN services s ON s.name = 'Electrical Service'
-JOIN towns t ON t.name IN ('Bayamon', 'Isabela')
-WHERE u.first_name = 'Daniel' AND u.last_name = 'Lopez';
-
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
-FROM users u
-JOIN services s ON s.name = 'Pet Grooming'
-JOIN towns t ON t.name IN ('Carolina', 'Manati')
-WHERE u.first_name = 'Pedro' AND u.last_name = 'Gonzalez';
-
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
-FROM users u
-JOIN services s ON s.name = 'Baking'
-JOIN towns t ON t.name IN ('Humacao', 'Ceiba')
-WHERE u.first_name = 'Ana' AND u.last_name = 'Perez';
-
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'New Styles Modern',
+'Latest hair trends with our professional service. Look stunning for your special day! Our stylists excel in special occasion hair styling, from elegant updos to glamorous curls,ensuring you shine at weddings, proms, and more'
 FROM users u
 JOIN services s ON s.name = 'Hairstyling'
-JOIN towns t ON t.name IN ('Aguada', 'Jayuya')
+WHERE u.first_name = 'Olivia' AND u.last_name = 'Davis';
+
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Best Styles in Town', 'Discover your ideal hair style with our personalized consultations. Our stylists will assess your hair type, face shape, and lifestyle to recommend the perfect cut and style for you.'
+FROM users u
+JOIN services s ON s.name = 'Hairstyling'
 WHERE u.first_name = 'Marta' AND u.last_name = 'Lopez';
 
-INSERT INTO user_service_assoc (user_id, service_id, town_id)
-SELECT u.id, s.id, t.id
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Nail Art Extravaganza', 'Treat yourself to stunning nail art designs. Our expert nail technicians will transform your nails into works of art!'
+FROM users u
+JOIN services s ON s.name = 'Nails'
+WHERE u.first_name = 'Maria' AND u.last_name = 'Garcia';
+
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Spotless Cleaning Service', 'Experience the joy of a spotless home! Our cleaning experts will handle all your cleaning needs with meticulous care.'
+FROM users u
+JOIN services s ON s.name = 'House Cleaning'
+WHERE u.first_name = 'Sofia' AND u.last_name = 'Rodriguez';
+
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Pet Paradise Retreat', 'Your pets home away from home! We provide personalized pet sitting services to ensure your furry friends are happy and cared for.'
+FROM users u
+JOIN services s ON s.name = 'Pet Sitting'
+WHERE u.first_name = 'Angelica' AND u.last_name = 'Diaz';
+
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Premium Car Wash & Detailing', 'Revitalize your vehicle with our premium car wash and detailing services. We will make your car shine inside and out!'
 FROM users u
 JOIN services s ON s.name = 'Car Washing'
-JOIN towns t ON t.name IN ('Rincon', 'Mayaguez')
+WHERE u.first_name = 'Erick' AND u.last_name = 'Santiago';
+
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Landscaping Masterpieces', 'Transform your outdoor space into a lush paradise. Our landscaping experts specialize in creating beautiful and functional landscapes.'
+FROM users u
+JOIN services s ON s.name = 'Landscaping'
 WHERE u.first_name = 'Gabriel' AND u.last_name = 'Rivera';
 
--- End of assingments
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Expert Plumbing Solutions', 'Need plumbing repairs or installations? We offer reliable plumbing services tailored to your needs.'
+FROM users u
+JOIN services s ON s.name = 'Plumbing'
+WHERE u.first_name = 'Carlos' AND u.last_name = 'Martinez';
+
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Gourmet Catering Experience', 'Indulge in a gourmet feast prepared by our talented chefs. Our catering services will make your event unforgettable.'
+FROM users u
+JOIN services s ON s.name = 'Catering'
+WHERE u.first_name = 'Laura' AND u.last_name = 'Hernandez';
+
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Ultimate Party DJ', 'Set the dance floor on fire with our energetic DJ services.
+We will create the perfect ambiance for your event!'
+FROM users u
+JOIN services s ON s.name = 'DJ'
+WHERE u.first_name = 'Javier' AND u.last_name = 'Sanchez';
+
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Professional Electrical Solutions', 'Need electrical repairs or installations? Our experts deliver safe and efficient electrical services.'
+FROM users u
+JOIN services s ON s.name = 'Electrical Service'
+WHERE u.first_name = 'Daniel' AND u.last_name = 'Lopez';
+
+INSERT INTO promotions (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Artistic Painting Services', 'Transform your space with our artistic painting services. Our painters bring creativity and precision to every project.'
+FROM users u
+JOIN services s ON s.name = 'Painter'
+WHERE u.first_name = 'Roberto' AND u.last_name = 'Ramirez';
+-- End of inserts for promos ---------------
+
+-- Insert requests for each user and their preferred services
+
+-- Jhon Doe
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Birthday Party DJ', 'Looking for a DJ for my upcoming birthday party.'
+FROM users u
+JOIN services s ON s.name = 'DJ'
+WHERE u.first_name = 'John' AND u.last_name = 'Doe';
+
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Corporate Event DJ', 'Seeking a DJ for our companys annual event.'
+FROM users u
+JOIN services s ON s.name = 'DJ'
+WHERE u.first_name = 'John' AND u.last_name = 'Doe';
+
+-- Jane Smith
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Backyard Garden Design', 'Want to enhance my backyard with a custom garden design.'
+FROM users u
+JOIN services s ON s.name = 'Gardening'
+WHERE u.first_name = 'Jane' AND u.last_name = 'Smith';
+
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Front Yard Landscaping', 'Looking for landscaping ideas for my front yard.'
+FROM users u
+JOIN services s ON s.name = 'Landscaping'
+WHERE u.first_name = 'Jane' AND u.last_name = 'Smith';
+
+-- Luis Santiago
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Home Deep Cleaning', 'Need thorough cleaning service for my home.'
+FROM users u
+JOIN services s ON s.name = 'House Cleaning'
+WHERE u.first_name = 'Luis' AND u.last_name = 'Santiago';
+
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Weekly Cleaning Service', 'Interested in regular weekly cleaning assistance.'
+FROM users u
+JOIN services s ON s.name = 'House Cleaning'
+WHERE u.first_name = 'Luis' AND u.last_name = 'Santiago';
+
+-- Hector Torres
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Plumbing Repair', 'Need immediate plumbing repair services.'
+FROM users u
+JOIN services s ON s.name = 'Plumbing'
+WHERE u.first_name = 'Hector' AND u.last_name = 'Torres';
+
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Electrical Troubleshooting', 'Experiencing electrical issues at home, need assistance.'
+FROM users u
+JOIN services s ON s.name = 'Electrical Service'
+WHERE u.first_name = 'Hector' AND u.last_name = 'Torres';
+
+-- Angelica Diaz
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Pet Sitting', 'Looking for a reliable pet sitter for my cat.'
+FROM users u
+JOIN services s ON s.name = 'Pet Sitting'
+WHERE u.first_name = 'Angelica' AND u.last_name = 'Diaz';
+
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Pet Grooming', 'Need grooming service for my dog.'
+FROM users u
+JOIN services s ON s.name = 'Pet Grooming'
+WHERE u.first_name = 'Angelica' AND u.last_name = 'Diaz';
+
+-- Erick Santiago
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Car Wash', 'Looking for professional car washing service.'
+FROM users u
+JOIN services s ON s.name = 'Car Washing'
+WHERE u.first_name = 'Erick' AND u.last_name = 'Santiago';
+
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Auto Body Painting', 'Need auto body painting for my vehicle.'
+FROM users u
+JOIN services s ON s.name = 'Auto Body Painting'
+WHERE u.first_name = 'Erick' AND u.last_name = 'Santiago';
+
+-- Maria Garcia
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Baking Service', 'Looking for custom cake baking service.'
+FROM users u
+JOIN services s ON s.name = 'Baking'
+WHERE u.first_name = 'Maria' AND u.last_name = 'Garcia';
+
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Event Catering', 'Require catering service for upcoming event.'
+FROM users u
+JOIN services s ON s.name = 'Catering'
+WHERE u.first_name = 'Maria' AND u.last_name = 'Garcia';
+
+-- Carlos Martinez
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Haircut and Shave', 'In need of a haircut and shave.'
+FROM users u
+JOIN services s ON s.name = 'Barber'
+WHERE u.first_name = 'Carlos' AND u.last_name = 'Martinez';
+
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Hairstyling for Event', 'Seeking hairstyling service for special event.'
+FROM users u
+JOIN services s ON s.name = 'Hairstyling'
+WHERE u.first_name = 'Carlos' AND u.last_name = 'Martinez';
+
+-- Sofia Rodriguez
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Interior Painting', 'Looking for interior painting services.'
+FROM users u
+JOIN services s ON s.name = 'Painter'
+WHERE u.first_name = 'Sofia' AND u.last_name = 'Rodriguez';
+
+INSERT INTO requests (user_id, service_id, title, description)
+SELECT u.id, s.id, 'Event Decoration', 'Need help with event decoration.'
+FROM users u
+JOIN services s ON s.name = 'Event Decorator'
+WHERE u.first_name = 'Sofia' AND u.last_name = 'Rodriguez';
+
+-- End of requests inserts ---------
+
+
+-- Insert promotions into promo_towns
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('San Juan', 'Carolina', 'Bayamon', 'Santurce', 'Guaynabo')
+WHERE p.title = 'Nightclubs and Weddings' AND u.first_name = 'John' AND u.last_name = 'Doe' AND s.name = 'DJ';
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('Ponce', 'Juana Diaz')
+WHERE p.title = 'Expert Plumbing Solutions' AND u.first_name = 'Carlos' AND u.last_name = 'Martinez' AND s.name = 'Plumbing';
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('Ponce', 'Salinas', 'Santa Isabel', 'Coamo', 'Jauna Diaz')
+WHERE p.title = 'Landscaping Masterpieces' AND u.first_name = 'Gabriel' AND u.last_name = 'Rivera' AND s.name = 'DJ';
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('Aguadilla', 'Isabela', 'Mayagüez', 'Rincon', 'San Sebastian')
+WHERE p.title = 'Special Gardening Offer' AND u.first_name = 'Jane' AND u.last_name = 'Smith' AND s.name = 'Gardening';
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('San Juan', 'Carolina', 'Guaynabo', 'Santurce', 'Bayamon')
+WHERE p.title = 'Urban DJ' AND u.first_name = 'Hector' AND u.last_name = 'Torres' AND s.name = 'DJ';
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('San Juan', 'Carolina', 'Bayamon', 'Santurce', 'Guaynabo')
+WHERE p.title = 'New Styles Modern' AND u.first_name = 'Olivia' AND u.last_name = 'Davis' AND s.name = 'Hairstyling';
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('Aibonito', 'Cayey', 'Guayama')
+WHERE p.title = 'Best Styles in Town' AND u.first_name = 'Marta' AND u.last_name = 'Lopez' AND s.name = 'Hairstyling';
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('Carolina')
+WHERE p.title = 'Nail Art Extravaganza' AND u.first_name = 'Maria' AND u.last_name = 'Garcia' AND s.name = 'Nails';
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('Fajardo')
+WHERE p.title = 'Spotless Cleaning Service' AND u.first_name = 'Sofia' AND u.last_name = 'Rodriguez' AND s.name = 'House Cleaning';
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('Cabo Rojo', 'Hormigueros')
+WHERE p.title = 'Pet Paradise Retreat' AND u.first_name = 'Angelica' AND u.last_name = 'Diaz' AND s.name = 'Pet Sitting';
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('Carolina', 'San Juan', 'Guaynabo', 'Bayamon', 'Santurce')
+WHERE p.title = 'Premium Car Wash & Detailing' AND u.first_name = 'Erick' AND u.last_name = 'Santiago' AND s.name = 'Car Washing';
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('Carolina', 'Guaynabo')
+WHERE p.title = 'Professional Electrical Solutions' AND u.first_name = 'Daniel' AND u.last_name = 'Lopez' AND s.name = 'Electrical Service';
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('Santurce', 'Bayamon')
+WHERE p.title = 'Artistic Painting Services' AND u.first_name = 'Roberto' AND u.last_name = 'Ramirez' AND s.name = 'Painter';
+
+-- Output confirmation
+SELECT 'Promotions assigned to towns successfully' AS Status;
+
+
+-- Insert Requests into Request_town
+-- Insert Requests into Request_town for John Doe's requests
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Ponce'
+WHERE r.title = 'Birthday Party DJ'
+AND u.first_name = 'John'
+AND u.last_name = 'Doe';
+
+-- Insert into request_towns for John Doe's Corporate Event DJ request (Specify the town)
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Bayamon'
+WHERE r.title = 'Corporate Event DJ'
+AND u.first_name = 'John'
+AND u.last_name = 'Doe';
+
+-- Insert Requests into Request_town for Jane Smith's requests
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Aguadilla'
+WHERE r.title = 'Backyard Garden Design'
+AND u.first_name = 'Jane'
+AND u.last_name = 'Smith';
+
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Caguas'
+WHERE r.title = 'Front Yard Landscaping'
+AND u.first_name = 'Jane'
+AND u.last_name = 'Smith';
+
+-- Insert Requests into Request_town for Luis Santiago's requests
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Coamo'
+WHERE r.title = 'Home Deep Cleaning'
+AND u.first_name = 'Luis'
+AND u.last_name = 'Santiago';
+
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Aibonito'
+WHERE r.title = 'Weekly Cleaning Service'
+AND u.first_name = 'Luis'
+AND u.last_name = 'Santiago';
+
+-- Insert Requests into Request_town for Hector Torres's requests
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'San German'
+WHERE r.title = 'Plumbing Repair'
+AND u.first_name = 'Hector'
+AND u.last_name = 'Torres';
+
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Rincon'
+WHERE r.title = 'Electrical Troubleshooting'
+AND u.first_name = 'Hector'
+AND u.last_name = 'Torres';
+
+-- Insert Requests into Request_town for Angelica Diaz's requests
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Carolina'
+WHERE r.title = 'Pet Sitting'
+AND u.first_name = 'Angelica'
+AND u.last_name = 'Diaz';
+
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Vega Baja'
+WHERE r.title = 'Pet Grooming'
+AND u.first_name = 'Angelica'
+AND u.last_name = 'Diaz';
+
+-- Insert Requests into Request_town for Erick Santiago's requests
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Arecibo'
+WHERE r.title = 'Car Wash'
+AND u.first_name = 'Erick'
+AND u.last_name = 'Santiago';
+
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Carolina'
+WHERE r.title = 'Auto Body Painting'
+AND u.first_name = 'Erick'
+AND u.last_name = 'Santiago';
+
+-- Insert Requests into Request_town for Maria Garcia's requests
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Caguas'
+WHERE r.title = 'Baking Service'
+AND u.first_name = 'Maria'
+AND u.last_name = 'Garcia';
+
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'San Juan'
+WHERE r.title = 'Event Catering'
+AND u.first_name = 'Maria'
+AND u.last_name = 'Garcia';
+
+-- Insert Requests into Request_town for Carlos Martinez's requests
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Aibonito'
+WHERE r.title = 'Haircut and Shave'
+AND u.first_name = 'Carlos'
+AND u.last_name = 'Martinez';
+
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'San Juan'
+WHERE r.title = 'Hairstyling for Event'
+AND u.first_name = 'Carlos'
+AND u.last_name = 'Martinez';
+
+-- Insert Requests into Request_town for Sofia Rodriguez's requests
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Ponce'
+WHERE r.title = 'Interior Painting'
+AND u.first_name = 'Sofia'
+AND u.last_name = 'Rodriguez';
+
+INSERT INTO request_towns (request_id, town_id)
+SELECT r.id, t.id
+FROM requests r
+JOIN users u ON r.user_id = u.id
+JOIN services s ON r.service_id = s.id
+JOIN towns t ON t.name = 'Bayamon'
+WHERE r.title = 'Event Decoration'
+AND u.first_name = 'Sofia'
+AND u.last_name = 'Rodriguez';
 
 
 -- Output confirmation
