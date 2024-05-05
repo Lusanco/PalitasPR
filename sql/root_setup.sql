@@ -95,7 +95,7 @@ CREATE TABLE requests (
 -- Create table for promo/towns assoc
 CREATE TABLE promo_towns (
     id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
-    promo_id  varchar()50REFERENCES promotions(id) ON DELETE CASCADE NOT NULL,
+    promo_id  varchar(50) REFERENCES promotions(id) ON DELETE CASCADE NOT NULL,
     town_id  INT REFERENCES towns(id) ON DELETE CASCADE NOT NULL,
     created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -219,7 +219,7 @@ VALUES
     ('Manati'),
     ('Maricao'),
     ('Maunabo'),
-    ('Mayagüez'),
+    ('Mayaguez'),
     ('Moca'),
     ('Morovis'),
     ('Naguabo'),
@@ -476,6 +476,14 @@ JOIN users u ON p.user_id = u.id
 JOIN services s ON p.service_id = s.id
 JOIN towns t ON t.name IN ('San Juan', 'Carolina', 'Bayamon', 'Santurce', 'Guaynabo')
 WHERE p.title = 'Nightclubs and Weddings' AND u.first_name = 'John' AND u.last_name = 'Doe' AND s.name = 'DJ';
+
+INSERT INTO promo_towns (promo_id, town_id)
+SELECT p.id, t.id
+FROM promotions p
+JOIN users u ON p.user_id = u.id
+JOIN services s ON p.service_id = s.id
+JOIN towns t ON t.name IN ('Ponce', 'Juana Diaz')
+WHERE p.title = 'Expert Plumbing Solutions' AND u.first_name = 'Carlos' AND u.last_name = 'Martinez' AND s.name = 'Plumbing';
 
 INSERT INTO promo_towns (promo_id, town_id)
 SELECT p.id, t.id
