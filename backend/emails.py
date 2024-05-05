@@ -27,7 +27,7 @@ def send_confirm_email(email, first_name, token):
         from flask import url_for
 
         subject = "Welcome to PalitasPR"
-        confirm_link = f"http://127.0.0.1:5000/verify_email/{token}"
+        confirm_link = f"http://127.0.0.1:5000/api/verify_email/{token}"
 
         body = f"Hello,\n\nThank you for signing up {first_name}. Please click: {confirm_link} to verify your email."
 

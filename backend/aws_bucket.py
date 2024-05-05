@@ -16,9 +16,9 @@ region_name = 'us-east-2'
 
 # Initialize the S3 client
 s3_client = boto3.client('s3', 
-                          aws_access_key_id=aws_access_key_id,
-                          aws_secret_access_key=aws_secret_access_key,
-                          region_name=region_name)
+                        aws_access_key_id=aws_access_key_id,
+                        aws_secret_access_key=aws_secret_access_key,
+                        region_name=region_name)
 
 def create_user_folder(user_id: str = None) -> None:
     '''
@@ -70,6 +70,7 @@ def create_user_folder(user_id: str = None) -> None:
 #         Example: User 004 wants to delete his picture in folder /profile/pic.01
 #     '''
 #     bucket_name = 'palitas-pics'
+<<<<<<< HEAD
 
 #     user_folder = f'users/user.{user_id}/'
 #     reviews_folder = f'{user_folder}reviews/'
@@ -90,3 +91,24 @@ def create_user_folder(user_id: str = None) -> None:
 #                 # Put_object creates objects in the aws specified path
 #                 response = s3_client.put_object(Bucket=bucket_name, Key=folder)
 
+=======
+
+#     user_folder = f'users/user.{user_id}/'
+#     reviews_folder = f'{user_folder}reviews/'
+#     profile_folder = f'{user_folder}profile/'
+#     tasks_folder = f'{user_folder}tasks/'
+
+#     try:
+
+#             # Attempt a head_object to check if it already exists
+#             s3_client.head_object(Bucket=bucket_name, Key=folder)
+#             print(f"Folder '{folder}' already exists.")
+
+#         except ClientError as e:
+
+#             if e.response['Error']['Code'] == "404":
+#                 print(f'\n{folder} doesnt exist.\nCreating folder\n')
+
+#                 # Put_object creates objects in the aws specified path
+#                 response = s3_client.put_object(Bucket=bucket_name, Key=folder)
+>>>>>>> development/backend

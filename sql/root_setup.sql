@@ -95,7 +95,7 @@ CREATE TABLE requests (
 -- Create table for promo/towns assoc
 CREATE TABLE promo_towns (
     id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
-    promo_id  varchar(50) REFERENCES promotions(id) ON DELETE CASCADE NOT NULL,
+    promo_id  varchar()50REFERENCES promotions(id) ON DELETE CASCADE NOT NULL,
     town_id  INT REFERENCES towns(id) ON DELETE CASCADE NOT NULL,
     created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

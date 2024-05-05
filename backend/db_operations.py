@@ -1,3 +1,4 @@
+
 #!/usr/bin/python3
 """
     ALLOWS OPERATIONS FOR FRONT END DEVS
