@@ -120,6 +120,18 @@ class DBConsole(cmd.Cmd):
         else:
             print(f"No {class_name} object found with ID {obj_id}")
 
+    # def do_all(self, args):
+    #     """
+    #     Retrieve all objects in the database
+    #     """
+    #     class_name = input("Enter the class model: ")
+    #     objs = db.search_all_objects(class_name)
+    #     if objs:
+    #         for obj in objs:
+    #             print(obj.all_columns())
+    #     else:
+    #         print(f"No {class_name} objects found")
+
     def do_login(self, args):
         """
         Validate user login.

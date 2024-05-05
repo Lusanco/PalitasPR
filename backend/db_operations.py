@@ -496,3 +496,24 @@ class DBOperations():
                 return None
         else:
             return None
+
+    # def search_all_objects(self, class_name, service_id=None):
+    #     """
+    #     Retrieve all Promotion objects from the database.
+    #     """
+    #     if class_name in self.classes_dict:
+    #         model_class = self.classes_dict[class_name]
+
+    #         Session = sessionmaker(bind=self.engine)
+    #         session = Session()
+
+    #         if service_id:
+    #             obj = session.query(model_class).filter_by(service_id=service_id).all()
+    #         else:
+    #             obj = session.query(model_class).all()
+
+    #         session.close()
+
+    #         return obj
+    #     else:
+    #         return None

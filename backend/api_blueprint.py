@@ -147,3 +147,17 @@ def show_review(id):
         return jsonify(review_obj), 200
     else:
         return jsonify({"error": f"No Review object found with ID {id}"}), 404
+
+# @api_bp.route("/Promotion", methods=["GET"])
+# def get_all_promotion():
+#     """
+#     comment
+#     """
+#     promotions = DBOperations().search_all_objects()
+#     promotions_dicts = []
+
+#     for promo in promotions:
+#         promo_dict = promo.all_columns()
+#         promotions_dicts.append(promo_dict)
+#         return jsonify(promotions_dicts), 200
+
