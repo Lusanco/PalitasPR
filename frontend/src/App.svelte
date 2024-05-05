@@ -9,6 +9,7 @@
   import Signup from "./components/Signup.svelte";
   import SignSuccess from "./components/SignSuccess.svelte";
   import ContactUs from "./components/ContactUs.svelte";
+  import AboutUs from "./components/AboutUs.svelte";
   import NotFound from "./components/NotFound.svelte";
 
   // Import Test Component
@@ -58,6 +59,7 @@
       <Route path="/signup" component={Signup} />
       <Route path="/success" component={SignSuccess} />
       <Route path="/contact" component={ContactUs} />
+      <Route path="/about" component={AboutUs} />
       <Route path="/404" component={NotFound} />
 
       <!-- Route  Test Components -->
