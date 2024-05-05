@@ -65,3 +65,28 @@ def create_user_folder(user_id: str = None) -> None:
                     return
     return profile_folder
 
+def get_s3_object(user_id: str, key: str) -> dict:
+    """
+        Get object
+    """
+    try:
+        # Attempt to get the object
+        response = s3_client.get_object(Bucket='palitas-pics', Key=key)
+        
+        return {'response': response}
+
+    except ClientError as e:
+
+        if e.response['Error']['Code'] == 'NoSuchKey':
+            # Object does not exist, return an empty response
+            return {'response': {}}
+        else:
+            # Other error occurred, raise or handle accordingly
+            raise e
+
+# Example Usage:
+# Retrieve an object from S3 bucket
+response = get_s3_object('101', 'users/user.101/promotions/psotgres_logo.png')
+
+# Print the response
+print(response)
