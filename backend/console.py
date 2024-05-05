@@ -115,7 +115,8 @@ class DBConsole(cmd.Cmd):
 
         obj = db.search(class_name, obj_id)
         if obj:
-            print("ok")
+            obj_dict = obj.all_columns()
+            print (obj_dict)
         else:
             print(f"No {class_name} object found with ID {obj_id}")
 
@@ -133,21 +134,6 @@ class DBConsole(cmd.Cmd):
             db.login(email=email, pwd=password)
         else:
             print("Invalid input. Usage: login <email> <password>")
-
-
-    def do_search(self, args):
-        """
-        Search for an object based on its class model and ID.
-        Usage: search
-        """
-        class_name = input("Enter the class name: ")
-        obj_id = input("Enter the object ID: ")
-
-        obj = db.search(class_name, obj_id)
-        if obj:
-            print(f"{class_name} object with ID {obj_id} found")
-        else:
-            print(f"No {class_name} object found with ID {obj_id}")
 
 
     def do_quit(self, args):

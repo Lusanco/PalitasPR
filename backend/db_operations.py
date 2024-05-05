@@ -11,7 +11,7 @@ from time import time
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.relationships import RelationshipProperty
-from models import User, Service, Town, Promo_Towns, Review, Task, Promotion, Request, Request_Towns
+from models import User, Service, Town, Promo_Towns, Review, Task, Promotion, Request, Request_Towns, Promotion
 from base_model import BaseModel, Base
 from werkzeug.security import generate_password_hash, check_password_hash
 import bcrypt
@@ -19,6 +19,7 @@ from emails import send_confirm_email
 from sqlalchemy import func
 import random
 import datetime
+from sqlalchemy.dialects.postgresql import UUID
 
 class DBOperations():
 
@@ -28,12 +29,12 @@ class DBOperations():
                 'Town': Town,
                 'UserServiceAssoc': Promo_Towns,
                 'Review': Review,
-                'Task': Task
+                'Task': Task,
+                'Promotion': Promotion
                 }
 
 
     def __init__(self):
-        print('CREATING ENGINE')
         self.engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')    
 
 
@@ -92,7 +93,7 @@ class DBOperations():
 
         Returns: List of dict of the post details
         """
-
+        print(town)
         Session = sessionmaker(bind=self.engine)
         session = Session()
 
@@ -168,56 +169,56 @@ class DBOperations():
         if town_name == 'all':  # Get all promotions of a service in all towns
             print("Doing all")
             rows = session.query(Promo_Towns.promo_id,
-                                    User.first_name,
-                                    User.last_name,
-                                    func.array_agg(Town.name),
-                                    Promotion.created_at,
-                                    Promotion.title,
-                                    Promotion.description,
-                                    Promotion.price_min,
-                                    Promotion.price_max
-                                    ) \
+                                User.first_name,
+                                User.last_name,
+                                func.array_agg(Town.name),
+                                Promotion.created_at,
+                                Promotion.title,
+                                Promotion.description,
+                                Promotion.price_min,
+                                Promotion.price_max
+                                ) \
             .select_from(Promotion)\
             .join(User, Promotion.user_id == User.id)\
             .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)\
             .join(Town, Promo_Towns.town_id == Town.id)\
             .filter((Promotion.service_id == my_service_id))\
             .group_by(Promo_Towns.promo_id,
-                      User.first_name,
-                      User.last_name,
-                      Promotion.created_at,
-                      Promotion.description,
-                      Promotion.title,
-                      Promotion.price_min,
-                      Promotion.price_max
-                      )\
+                    User.first_name,
+                    User.last_name,
+                    Promotion.created_at,
+                    Promotion.description,
+                    Promotion.title,
+                    Promotion.price_min,
+                    Promotion.price_max
+                    )\
             .order_by(Promo_Towns.promo_id)\
             .all()
             return rows
         else:  # Get all promotions of a service in a single town
             print("Doing Specific town")
             rows = session.query(Promo_Towns.promo_id,
-                                    User.first_name, User.last_name,
-                                    func.array_agg(Town.name),
-                                    Promotion.created_at,
-                                    Promotion.title,
-                                    Promotion.description,
-                                    Promotion.price_min,
-                                    Promotion.price_max
-                                    ) \
+                                User.first_name, User.last_name,
+                                func.array_agg(Town.name),
+                                Promotion.created_at,
+                                Promotion.title,
+                                Promotion.description,
+                                Promotion.price_min,
+                                Promotion.price_max
+                                ) \
             .select_from(Promotion)\
             .join(User, Promotion.user_id == User.id)\
             .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)\
             .join(Town, Promo_Towns.town_id == Town.id)\
             .filter((Promotion.service_id == my_service_id) & (func.lower(Town.name).op("~")(f"{town_name}")))\
             .group_by(Promo_Towns.promo_id,
-                      User.first_name,
-                      User.last_name,
-                      Promotion.created_at,
-                      Promotion.title,
-                      Promotion.description,
-                      Promotion.price_min,
-                      Promotion.price_max)\
+                    User.first_name,
+                    User.last_name,
+                    Promotion.created_at,
+                    Promotion.title,
+                    Promotion.description,
+                    Promotion.price_min,
+                    Promotion.price_max)\
             .order_by(Promo_Towns.promo_id)\
             .all()
             return rows
@@ -229,13 +230,13 @@ class DBOperations():
         if town_name == 'all':  # Get all promotions of a service in all towns
             print("Doing all")
             rows = session.query(Request_Towns.request_id,
-                                    User.first_name,
-                                    User.last_name,
-                                    func.array_agg(Town.name),
-                                    Request.created_at,
-                                    Request.title,
-                                    Request.description
-                                    ) \
+                                User.first_name,
+                                User.last_name,
+                                func.array_agg(Town.name),
+                                Request.created_at,
+                                Request.title,
+                                Request.description
+                                ) \
             .select_from(Request)\
             .join(User, Request.user_id == User.id)\
             .join(Request_Towns, Request.id == Request_Towns.request_id)\
@@ -248,12 +249,12 @@ class DBOperations():
         else:  # Get all Requests of a service in a single town
             print("Doing Specific town")
             rows = session.query(Request_Towns.request_id,
-                                    User.first_name, User.last_name,
-                                    func.array_agg(Town.name),
-                                    Request.created_at,
-                                    Request.title,
-                                    Request.description
-                                    ) \
+                                User.first_name, User.last_name,
+                                func.array_agg(Town.name),
+                                Request.created_at,
+                                Request.title,
+                                Request.description
+                                ) \
             .select_from(Request)\
             .join(User, Request.user_id == User.id)\
             .join(Request_Towns, Request.id == Request_Towns.request_id)\
