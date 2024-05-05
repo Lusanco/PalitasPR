@@ -2,6 +2,7 @@
   import axios from "axios";
   import LogoSlogan from "./LogoSlogan.svelte";
   import LoadingSpinner from "./LoadingSpinner.svelte";
+  import listTowns from "../listTowns";
 
   let services = []; // Array to store fetched services
   let errorMessage = ""; // Added to store error messages
@@ -10,6 +11,7 @@
   let search; // service
   let model = "requests";
   let town = "all";
+  const towns = Object.values(listTowns);
 
   async function handleExplore() {
     hidden = false;
@@ -65,9 +67,13 @@
           class="block w-full overflow-y-auto border-0 border-b-2 border-gray-200 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
         >
           <option value="all" disabled>Town</option>
+          {#each towns as town}
+            <option value={town}>{town}</option>
+          {/each}
+          <!-- 
           <option value="ponce">Ponce</option>
           <option value="aguadilla">Aguadilla</option>
-          <option value="san-juan">San Juan</option>
+          <option value="san juan">San Juan</option> -->
         </select>
         <!-- Town Filter End -->
         <button
