@@ -139,3 +139,11 @@ def show_request(id):
         return jsonify(request_obj), 200
     else:
         return jsonify({"error": f"No Request object found with ID {id}"}), 404
+
+@api_bp.route("/Review/<id>", methods=["GET"])
+def show_review(id):
+    review_obj = DBOperations().search('Review', id)
+    if review_obj:
+        return jsonify(review_obj), 200
+    else:
+        return jsonify({"error": f"No Review object found with ID {id}"}), 404
