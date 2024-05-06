@@ -490,7 +490,7 @@ SELECT p.id, t.id
 FROM promotions p
 JOIN users u ON p.user_id = u.id
 JOIN services s ON p.service_id = s.id
-JOIN towns t ON t.name IN ('Ponce', 'Salinas', 'Santa Isabel', 'Coamo', 'Jauna Diaz')
+JOIN towns t ON t.name IN ('Ponce', 'Salinas', 'Santa Isabel', 'Coamo', 'Juana Diaz')
 WHERE p.title = 'Landscaping Masterpieces' AND u.first_name = 'Gabriel' AND u.last_name = 'Rivera' AND s.name = 'DJ';
 
 INSERT INTO promo_towns (promo_id, town_id)
