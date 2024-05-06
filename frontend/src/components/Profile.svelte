@@ -1,6 +1,8 @@
 <!-- Profile component -->
 
 <script>
+  import { slide } from "svelte/transition";
+  import { onMount } from "svelte";
   import banner from "../images/lawnMowing.jpg";
   import profilePic from "../images/profile.png";
   import pic1 from "../images/gallGrid_1.jpg";
@@ -10,7 +12,7 @@
   import pic5 from "../images/gallGrid_5.jpg";
   import pic6 from "../images/gallGrid_6.jpg";
 
-  let name = "Alfredo Santiago Cosme de los Palotes";
+  let name = "Alfredo Santiago";
   let provServ = "Landscaper";
   let userTown = "San Juan, PR";
   let userRating = 4.5;
@@ -18,6 +20,40 @@
   let jobsCount = 20;
   let reviewerName = "John Doe";
   let reviewStars = 4.5;
+
+  let reviews = [
+    {
+      reviewerName: "John Doe",
+      reviewStars: 4,
+      reviewText: "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
+    },
+    {
+      reviewerName: "Jane Smith",
+      reviewStars: 5,
+      reviewText:
+        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem.",
+    },
+    {
+      reviewerName: "Bob Johnson",
+      reviewStars: 3,
+      reviewText: "At vero eos et accusamus et iusto odio dignissimos ducimus.",
+    },
+  ];
+
+  let currentIndex = 0;
+  let intervalId;
+
+  function nextReview() {
+    currentIndex = (currentIndex + 1) % reviews.length;
+  }
+
+  function prevReview() {
+    currentIndex = (currentIndex - 1 + reviews.length) % reviews.length;
+  }
+
+  onMount(() => {
+    intervalId = setInterval(nextReview, 5000);
+  });
 </script>
 
 <!--* Profile Body -->
@@ -52,7 +88,9 @@
               </div>
               <div class="relative flex justify-end bottom-8">
                 <button type="button" class="pr-2 text-black">
-                  <i class="fa-solid fa-ellipsis"></i>
+                  <i
+                    class="invisible md:visible lg:visible xl:visible fa-solid fa-ellipsis"
+                  ></i>
                 </button>
               </div>
               <!-- <p id="clientsCount" class="text-sm text-center"></p> -->
@@ -90,11 +128,16 @@
           </button>
           <button
             type="button"
-            class="w-full p-2 text-white bg-green-800 rounded-lg shadow-sm hover:bg-green-900"
+            class="w-full p-2 text-black bg-gray-100 rounded-lg shadow-sm hover:bg-gray-300"
           >
             <i class="text-xs fa-solid fa-message"></i>
           </button>
         </div>
+        <button
+          type="button"
+          class="w-full p-2 mt-2 text-white bg-green-800 rounded-lg shadow-sm sm:block md:hidden lg:hidden xl:hidden 2xl:hidden hover:bg-green-900"
+          >Gallery
+        </button>
       </div>
     </div>
     <!--* Profile Info -->
@@ -169,21 +212,36 @@
           </div>
           <!--* User Gallery -->
           <div
-            class="w-full p-4 mx-0 my-5 bg-white rounded-md shadow-md userGalleryContainer"
+            class="hidden w-full p-4 mx-0 my-5 bg-white rounded-md shadow-md userGalleryContainer md:block lg:block xl:block"
           >
             <div class="aboutHeader">
               <h3 class="text-xl font-bold border-b-2">Gallery</h3>
-              <div class="grid grid-cols-3 grid-rows-2 gap-1 pt-2 userGalley">
-                <img src={pic1} alt="" class="h-24 rounded-md w-28" />
-                <img src={pic2} alt="" class="h-24 rounded-md w-28" />
-                <img src={pic3} alt="" class="h-24 rounded-md w-28" />
-                <img src={pic4} alt="" class="h-24 rounded-md w-28" />
-                <img src={pic5} alt="" class="h-24 rounded-md w-28" />
-                <img src={pic6} alt="" class="h-24 rounded-md w-28" />
-              </div>
+
+              <section class="">
+                <div class="container flex flex-col justify-center p-4 mx-auto">
+                  <div class="grid gap-2 lg:grid-cols-3 sm:grid-cols-3">
+                    <img
+                      class="object-cover w-full rounded-md aspect-square"
+                      alt=""
+                      src={pic4}
+                    />
+                    <img
+                      class="object-cover w-full rounded-md aspect-square"
+                      alt=""
+                      src={pic3}
+                    />
+                    <img
+                      class="object-cover w-full rounded-md aspect-square"
+                      alt=""
+                      src={pic6}
+                    />
+                  </div>
+                </div>
+              </section>
+
               <button
                 type="button"
-                class="w-full p-2 mt-2 text-sm rounded-md shadow-sm hover:bg-slate-200 bg-slate-100"
+                class="w-full p-3.5 mt-2 text-sm rounded-md shadow-sm hover:bg-slate-200 bg-slate-100"
               >
                 See more
               </button>
@@ -191,34 +249,59 @@
           </div>
           <!--* User Reviews -->
           <div
-            class="w-full p-4 mx-0 my-5 bg-white rounded-md shadow-md userInfoContainer"
+            class="relative w-full p-4 mx-0 my-5 bg-white rounded-md shadow-md userInfoContainer"
           >
             <div class="reviewsHeader">
-              <h3 class="text-xl font-bold border-b-2">Reviews</h3>
+              <h3 class="flex justify-between text-xl font-bold border-b-2">
+                Reviews <span class="text-sm"><a href="/">See all</a> </span>
+              </h3>
               <div class="pt-3">
                 <div class="userReview">
-                  <div
-                    class="p-2 rounded-md shadow-md reviewHeader bg-slate-100"
-                  >
+                  {#key reviews[currentIndex].reviewerName}
                     <div
-                      class="flex justify-between p-2 rounded-md bg-slate-200"
+                      transition:slide
+                      class="p-2 transition duration-300 rounded-md shadow-md reviewHeader bg-slate-100"
                     >
-                      <h3 class="text-sm">{reviewerName}</h3>
-                      <p class="text-xs">
-                        <i class="fa-solid fa-star"></i>
-                        <span>{reviewStars}</span>
-                      </p>
+                      <div
+                        class="flex justify-between p-2 rounded-md bg-slate-200"
+                      >
+                        <h3 class="text-sm">
+                          {reviews[currentIndex].reviewerName}
+                        </h3>
+                        <p class="text-xs">
+                          {#each Array(reviews[currentIndex].reviewStars) as _, i}
+                            <i class="fa-solid fa-star" />
+                          {/each}
+                        </p>
+                      </div>
+                      <div class="flex justify-between">
+                        <p class="p-2 text-xs">
+                          {reviews[currentIndex].reviewText}
+                        </p>
+                      </div>
                     </div>
-                    <div class="flex justify-between">
-                      <p class="p-2 text-xs">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing
-                        elit.
-                      </p>
-                    </div>
-                  </div>
+                  {/key}
                 </div>
               </div>
             </div>
+            <!-- <div class="flex items-center justify-center w-full gap-2 mt-2">
+              <div class="flex items-center justify-center w-full">
+                <button
+                  on:click={prevReview}
+                  class="w-full px-4 py-2 text-gray-800 bg-gray-300 rounded-l hover:bg-gray-400"
+                >
+                  Prev
+                </button>
+              </div>
+              <div class="flex items-center w-full">
+                <button
+                  on:click={nextReview}
+                  class="w-full px-4 py-2 text-gray-800 bg-gray-300 rounded-r hover:bg-gray-400"
+                >
+                  Next
+                </button>
+              </div>
+            </div> -->
           </div>
         </div>
         <div class="col-span-2 postCol">
@@ -261,6 +344,116 @@
               <img src={pic1} alt="" class="w-64 h-40 rounded-md" />
               <img src={pic2} alt="" class="w-64 h-40 rounded-md" />
               <img src={pic3} alt="" class="w-64 h-40 rounded-md" />
+            </div>
+            <div class="flex justify-center gap-2">
+              <button
+                type="button"
+                class="w-full p-2 text-black bg-gray-100 rounded-lg shadow-sm hover:bg-gray-300"
+              >
+                <i class="fa-regular fa-thumbs-up"></i>
+              </button>
+              <button
+                type="button"
+                class="w-full p-2 text-white bg-green-800 rounded-lg shadow-sm hover:bg-green-900"
+              >
+                <i class="text-xs fa-solid fa-message"></i>
+              </button>
+            </div>
+          </div>
+          <!--* Post Container -->
+          <div
+            class="w-full p-3 mx-0 my-5 bg-white rounded-md shadow-md postContainer"
+          >
+            <div class="flex items-start w-full gap-3 mb-2 postHeader">
+              <img
+                src={profilePic}
+                alt="User Pic"
+                class="w-16 rounded-md pdImg"
+              />
+              <div class="flex justify-between w-full">
+                <div>
+                  <h3 class="text-lg font-semibold text-wrap">
+                    {name}
+                  </h3>
+
+                  <p
+                    class="inline-block p-1 text-xs font-thin text-center text-white bg-green-800 rounded-lg whitespace-nowrap min-w-12 max-w-40"
+                  >
+                    {provServ}
+                  </p>
+                </div>
+                <div class="relative flex justify-end bottom-4">
+                  <button type="button" class="pr-2 text-black">
+                    <i class="fa-solid fa-ellipsis"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p class="mb-2 text-sm text-wrap">
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eveniet
+              cumque ratione id voluptates quae. Iure expedita quaerat possimus
+              optio adipisci laudantium? Vitae voluptas dignissimos iste rerum
+              deleniti voluptatum voluptates a.
+            </p>
+            <div class="grid grid-cols-3 gap-2 mb-2">
+              <img src={pic4} alt="" class="w-64 h-40 rounded-md" />
+              <img src={pic5} alt="" class="w-64 h-40 rounded-md" />
+              <img src={pic6} alt="" class="w-64 h-40 rounded-md" />
+            </div>
+            <div class="flex justify-center gap-2">
+              <button
+                type="button"
+                class="w-full p-2 text-black bg-gray-100 rounded-lg shadow-sm hover:bg-gray-300"
+              >
+                <i class="fa-regular fa-thumbs-up"></i>
+              </button>
+              <button
+                type="button"
+                class="w-full p-2 text-white bg-green-800 rounded-lg shadow-sm hover:bg-green-900"
+              >
+                <i class="text-xs fa-solid fa-message"></i>
+              </button>
+            </div>
+          </div>
+          <!--* Post Container -->
+          <div
+            class="w-full p-3 mx-0 my-5 bg-white rounded-md shadow-md postContainer"
+          >
+            <div class="flex items-start w-full gap-3 mb-2 postHeader">
+              <img
+                src={profilePic}
+                alt="User Pic"
+                class="w-16 rounded-md pdImg"
+              />
+              <div class="flex justify-between w-full">
+                <div>
+                  <h3 class="text-lg font-semibold text-wrap">
+                    {name}
+                  </h3>
+
+                  <p
+                    class="inline-block p-1 text-xs font-thin text-center text-white bg-green-800 rounded-lg whitespace-nowrap min-w-12 max-w-40"
+                  >
+                    {provServ}
+                  </p>
+                </div>
+                <div class="relative flex justify-end bottom-4">
+                  <button type="button" class="pr-2 text-black">
+                    <i class="fa-solid fa-ellipsis"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p class="mb-2 text-sm text-wrap">
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eveniet
+              cumque ratione id voluptates quae. Iure expedita quaerat possimus
+              optio adipisci laudantium? Vitae voluptas dignissimos iste rerum
+              deleniti voluptatum voluptates a.
+            </p>
+            <div class="grid grid-cols-3 gap-2 mb-2">
+              <!-- <img src={pic1} alt="" class="w-64 h-40 rounded-md" />
+              <img src={pic2} alt="" class="w-64 h-40 rounded-md" />
+              <img src={pic3} alt="" class="w-64 h-40 rounded-md" /> -->
             </div>
             <div class="flex justify-center gap-2">
               <button
