@@ -8,6 +8,7 @@
   import Footer from "./components/Footer.svelte";
   import Signup from "./components/Signup.svelte";
   import SignSuccess from "./components/SignSuccess.svelte";
+  import Profile from "./components/Profile.svelte";
   import ContactUs from "./components/ContactUs.svelte";
   import AboutUs from "./components/AboutUs.svelte";
   import Faq from "./components/FAQ.svelte";
@@ -60,6 +61,7 @@
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       <Route path="/success" component={SignSuccess} />
+      <Route path="/profile" component={Profile} />
       <Route path="/contact" component={ContactUs} />
       <Route path="/about" component={AboutUs} />
       <Route path="/faq" component={Faq} />
