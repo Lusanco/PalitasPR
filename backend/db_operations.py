@@ -20,6 +20,8 @@ from sqlalchemy import func
 import random
 import datetime
 from sqlalchemy.dialects.postgresql import UUID
+from unidecode import unidecode
+
 
 class DBOperations():
 
@@ -94,16 +96,15 @@ class DBOperations():
 
         Returns: List of dict of the post details
         """
-        print(town)
         Session = sessionmaker(bind=self.engine)
         session = Session()
 
         my_service_id = None
 
         if model:
-            town_name = town.lower()
+            town_name = unidecode(town).lower()
             if service:
-                service_name = service.lower()
+                service_name = unidecode(service).lower()
             else:
                 print('no service name provided')
                 session.close()
