@@ -78,13 +78,13 @@ def search_filter():
         return jsonify({"error": "Error filtering data"})
 
 
-@api_bp.route("/login", methods=["POST"])
+@api_bp.route('/login', methods=['POST'])
 def login():
-    email = request.form.get("email")
-    password = request.form.get("password")
-    DBOperations().login(email, password)
-    response_html = render_template("login_response.html")
-    return response_html
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+    response = DBOperations().login(email, password)
+    return jsonify(response), 200
 
 
 # @api_bp.route("/<class_name>/<id>", methods=["GET"])
