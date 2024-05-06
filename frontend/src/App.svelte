@@ -9,9 +9,13 @@
   import Signup from "./components/Signup.svelte";
   import SignSuccess from "./components/SignSuccess.svelte";
   import ContactUs from "./components/ContactUs.svelte";
+  import AboutUs from "./components/AboutUs.svelte";
+  import Faq from "./components/FAQ.svelte";
+  import NotFound from "./components/NotFound.svelte";
 
   // Import Test Component
   import Pagination from "./components/Pagination.svelte";
+  import UploadImage from "./components/UploadImage.svelte";
 
   let searchInput = document.getElementById("search-input");
   let townInput = "All"; // No default town selected
@@ -57,9 +61,13 @@
       <Route path="/signup" component={Signup} />
       <Route path="/success" component={SignSuccess} />
       <Route path="/contact" component={ContactUs} />
+      <Route path="/about" component={AboutUs} />
+      <Route path="/faq" component={Faq} />
+      <Route path="/404" component={NotFound} />
 
       <!-- Route  Test Components -->
       <!-- <Route path="/components" component={Pagination} /> -->
+      <!-- <Route path="/components" component={UploadImage} /> -->
     </Router>
   </Main>
   <Footer></Footer>
