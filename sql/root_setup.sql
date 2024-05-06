@@ -498,7 +498,7 @@ SELECT p.id, t.id
 FROM promotions p
 JOIN users u ON p.user_id = u.id
 JOIN services s ON p.service_id = s.id
-JOIN towns t ON t.name IN ('Aguadilla', 'Isabela', 'Mayagüez', 'Rincon', 'San Sebastian')
+JOIN towns t ON t.name IN ('Aguadilla', 'Isabela', 'Mayaguez', 'Rincon', 'San Sebastian')
 WHERE p.title = 'Special Gardening Offer' AND u.first_name = 'Jane' AND u.last_name = 'Smith' AND s.name = 'Gardening';
 
 INSERT INTO promo_towns (promo_id, town_id)
