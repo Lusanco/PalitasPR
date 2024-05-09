@@ -4,8 +4,8 @@
   import LoadingSpinner from "./LoadingSpinner.svelte";
   import listTowns from "../listTowns";
 
-  let services = []; // Array to store fetched services
-  let errorMessage = ""; // Added to store error messages
+  let services = [];
+  let errorMessage = "";
   let hidden = true;
   let loaded = false;
   let reload = false;
@@ -13,21 +13,16 @@
   let model = "promotions";
   let town = "all";
   const towns = Object.values(listTowns);
+  let keydownEvent;
 
-  async function handleExplore() {
+  function exploreLogic() {
     hidden = false;
     reload = true;
 
     axios
       .get(`/api/explore?search=${search}&model=${model}&town=${town}`)
-      // .get("https://jsonplaceholder.typicode.com/users")
       .then((response) => {
         services = response.data;
-
-        // Loop through each service in the response
-        for (const serviceId in services) {
-          const service = services[serviceId];
-        }
         loaded = true;
         reload = false;
       })
@@ -35,6 +30,17 @@
         console.log(error);
         errorMessage = error;
       });
+  }
+
+  function handleKeydown(event) {
+    if (event.key === "Enter") {
+      search = search;
+      exploreLogic();
+    }
+  }
+
+  async function handleExplore() {
+    exploreLogic();
   }
 </script>
 
@@ -52,6 +58,7 @@
           bind:value={search}
           placeholder="Search for..."
           class="w-full col-span-2 rounded-md border-gray-200 py-2.5 pe-10 shadow-sm sm:text-sm"
+          on:keydown={handleKeydown}
         />
       </div>
       <div id="filters" class="grid grid-cols-3 col-span-2 row-span-1">
