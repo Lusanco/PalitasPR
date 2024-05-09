@@ -4,34 +4,43 @@
   import LoadingSpinner from "./LoadingSpinner.svelte";
   import listTowns from "../listTowns";
 
-  let services = []; // Array to store fetched services
-  let errorMessage = ""; // Added to store error messages
+  let services = [];
+  let errorMessage = "";
   let hidden = true;
   let loaded = false;
-  let search; // service
-  let model = "requests";
+  let reload = false;
+  let search = "all"; // service
+  let model = "promotions";
   let town = "all";
   const towns = Object.values(listTowns);
+  let keydownEvent;
 
-  async function handleExplore() {
+  function exploreLogic() {
     hidden = false;
+    reload = true;
 
     axios
       .get(`/api/explore?search=${search}&model=${model}&town=${town}`)
-      // .get("https://jsonplaceholder.typicode.com/users")
       .then((response) => {
         services = response.data;
-
-        // Loop through each service in the response
-        for (const serviceId in services) {
-          const service = services[serviceId];
-          loaded = true;
-        }
+        loaded = true;
+        reload = false;
       })
       .catch((error) => {
         console.log(error);
         errorMessage = error;
       });
+  }
+
+  function handleKeydown(event) {
+    if (event.key === "Enter") {
+      search = search;
+      exploreLogic();
+    }
+  }
+
+  async function handleExplore() {
+    exploreLogic();
   }
 </script>
 
@@ -49,6 +58,7 @@
           bind:value={search}
           placeholder="Search for..."
           class="w-full col-span-2 rounded-md border-gray-200 py-2.5 pe-10 shadow-sm sm:text-sm"
+          on:keydown={handleKeydown}
         />
       </div>
       <div id="filters" class="grid grid-cols-3 col-span-2 row-span-1">
@@ -57,8 +67,8 @@
           bind:value={model}
           class="block w-full overflow-y-auto border-0 border-b-2 border-gray-200 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
         >
-          <option value="requests">Requests</option>
           <option value="promotions">Promotions</option>
+          <option value="requests">Requests</option>
         </select>
         <!-- Model Filter End -->
         <!-- Town Filter Start -->
@@ -70,10 +80,6 @@
           {#each towns as town}
             <option value={town}>{town}</option>
           {/each}
-          <!-- 
-          <option value="ponce">Ponce</option>
-          <option value="aguadilla">Aguadilla</option>
-          <option value="san juan">San Juan</option> -->
         </select>
         <!-- Town Filter End -->
         <button
@@ -104,22 +110,14 @@
   </div>
   {#if hidden === true}
     <div class="hidden"></div>
-  {:else if hidden === false && loaded === false}
+  {:else if (hidden === false && loaded === false) || reload === true}
     <LoadingSpinner />
   {:else}
-    <div
+    <a
+      href="##"
       class="flex py-2 flex-col min-h-20 max-h-[50%] gap-4 rounded-md w-[95%] sm:w-[90%] md:w-[80%] overflow-y-scroll bg-teal-50"
     >
       {#each services as service}
-        <!-- <div class="w-full p-2 border-teal-800 rounded-md border-1">
-              {service.first_name}
-              {service.last_name}
-              {service.service}
-              {#each service.towns as town, index}
-                {town}{index < service.towns.length - 1 ? ", " : ""}
-              {/each}
-            </div> -->
-        <!-- {service.name} -->
         <div
           class="relative block w-full p-4 border border-teal-100 rounded-lg shadow-lg sm:p-6 lg:p-8"
         >
@@ -167,7 +165,7 @@
           </dl>
         </div>
       {/each}
-    </div>
+    </a>
   {/if}
 </div>
 <!-- PageSearchBar End -->

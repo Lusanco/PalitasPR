@@ -58,14 +58,19 @@ class DBConsole(cmd.Cmd):
         Usage: filter <model_name> <key1>=<value1> <key2>=<value2> ...
         Example: filter User name=Gardening town=New York
         """
-        model_name = input("Enter <promotions> or <requests>: ")
-        name = input("Enter service name: ")
-        town = input("Enter town name(or all): ")
+        on = 1
+        while on == 1:
+            model_name = input("Enter <promotions> or <requests>: ")
+            name = input("Enter service name: ")
+            town = input("Enter town name(or all): ")
 
-        
-        filtered_objs = db.filter(model_name, name, town)
-        print(f'Found {len(filtered_objs)} results:\n{filtered_objs}')
-        
+            
+            filtered_objs = db.filter(model_name, name, town)
+            print(f'\nFound {len(filtered_objs)} results:\n{filtered_objs}')
+            response = input('\n\nIf you dont want to filter again press <q>: ')
+            if response == 'q':
+                on = 0
+
 
     def do_delete(self, args):
         """
@@ -100,6 +105,32 @@ class DBConsole(cmd.Cmd):
         else:
             print("Invalid input. Please provide a model name, object ID, and key-value pairs.")
 
+    def do_search(self, args):
+        """
+        Search for an object based on its class model and ID.
+        Usage: search
+        """
+        class_name = input("Enter the class name: ")
+        obj_id = input("Enter the object ID: ")
+
+        obj = db.search(class_name, obj_id)
+        if obj:
+            obj_dict = obj.all_columns()
+            print (obj_dict)
+        else:
+            print(f"No {class_name} object found with ID {obj_id}")
+
+    # def do_all(self, args):
+    #     """
+    #     Retrieve all objects in the database
+    #     """
+    #     class_name = input("Enter the class model: ")
+    #     objs = db.search_all_objects(class_name)
+    #     if objs:
+    #         for obj in objs:
+    #             print(obj.all_columns())
+    #     else:
+    #         print(f"No {class_name} objects found")
 
     def do_login(self, args):
         """
@@ -115,6 +146,7 @@ class DBConsole(cmd.Cmd):
             db.login(email=email, pwd=password)
         else:
             print("Invalid input. Usage: login <email> <password>")
+
 
     def do_quit(self, args):
         """Quit the console"""
