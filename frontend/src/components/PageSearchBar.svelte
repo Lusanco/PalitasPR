@@ -8,6 +8,7 @@
   let errorMessage = ""; // Added to store error messages
   let hidden = true;
   let loaded = false;
+  let reload = false;
   let search = "all"; // service
   let model = "promotions";
   let town = "all";
@@ -15,6 +16,7 @@
 
   async function handleExplore() {
     hidden = false;
+    reload = true;
 
     axios
       .get(`/api/explore?search=${search}&model=${model}&town=${town}`)
@@ -25,8 +27,9 @@
         // Loop through each service in the response
         for (const serviceId in services) {
           const service = services[serviceId];
-          loaded = true;
         }
+        loaded = true;
+        reload = false;
       })
       .catch((error) => {
         console.log(error);
@@ -100,7 +103,7 @@
   </div>
   {#if hidden === true}
     <div class="hidden"></div>
-  {:else if hidden === false && loaded === false}
+  {:else if (hidden === false && loaded === false) || reload === true}
     <LoadingSpinner />
   {:else}
     <a
