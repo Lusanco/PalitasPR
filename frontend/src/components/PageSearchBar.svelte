@@ -8,8 +8,8 @@
   let errorMessage = ""; // Added to store error messages
   let hidden = true;
   let loaded = false;
-  let search; // service
-  let model = "requests";
+  let search = "all"; // service
+  let model = "promotions";
   let town = "all";
   const towns = Object.values(listTowns);
 
@@ -57,8 +57,8 @@
           bind:value={model}
           class="block w-full overflow-y-auto border-0 border-b-2 border-gray-200 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
         >
-          <option value="requests">Requests</option>
           <option value="promotions">Promotions</option>
+          <option value="requests">Requests</option>
         </select>
         <!-- Model Filter End -->
         <!-- Town Filter Start -->
@@ -70,10 +70,6 @@
           {#each towns as town}
             <option value={town}>{town}</option>
           {/each}
-          <!-- 
-          <option value="ponce">Ponce</option>
-          <option value="aguadilla">Aguadilla</option>
-          <option value="san juan">San Juan</option> -->
         </select>
         <!-- Town Filter End -->
         <button
@@ -107,19 +103,11 @@
   {:else if hidden === false && loaded === false}
     <LoadingSpinner />
   {:else}
-    <div
+    <a
+      href="##"
       class="flex py-2 flex-col min-h-20 max-h-[50%] gap-4 rounded-md w-[95%] sm:w-[90%] md:w-[80%] overflow-y-scroll bg-teal-50"
     >
       {#each services as service}
-        <!-- <div class="w-full p-2 border-teal-800 rounded-md border-1">
-              {service.first_name}
-              {service.last_name}
-              {service.service}
-              {#each service.towns as town, index}
-                {town}{index < service.towns.length - 1 ? ", " : ""}
-              {/each}
-            </div> -->
-        <!-- {service.name} -->
         <div
           class="relative block w-full p-4 border border-teal-100 rounded-lg shadow-lg sm:p-6 lg:p-8"
         >
@@ -167,7 +155,7 @@
           </dl>
         </div>
       {/each}
-    </div>
+    </a>
   {/if}
 </div>
 <!-- PageSearchBar End -->
