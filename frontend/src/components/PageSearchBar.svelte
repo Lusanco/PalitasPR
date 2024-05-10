@@ -10,7 +10,7 @@
   let loaded = false;
   let reload = false;
   let error = false;
-  let search = "all"; // service
+  let search = ""; // service
   let model = "promotions";
   let town = "all";
   const towns = Object.values(listTowns);
