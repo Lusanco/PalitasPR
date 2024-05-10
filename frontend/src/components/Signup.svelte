@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { link } from "svelte-routing";
   import axios from "axios";
+  import LoadingSpinnerFull from "./LoadingSpinnerFull.svelte";
 
   let first_name,
     last_name,
@@ -10,7 +11,13 @@
     errorMessage,
     email = "";
 
-  async function handleSignup() {
+  let hidden = true;
+  let loaded = false;
+  let reload = false;
+
+  function signupLogic() {
+    hidden = false;
+    reload = true;
     if (password !== confirmPassword) {
       errorMessage = "Passwords do not match!";
       return; // Prevent unnecessary API call
@@ -29,13 +36,26 @@
       .post("/api/create_object", data)
       //   .get("https://jsonplaceholder.typicode.com/users")
       .then((response) => {
-        console.log(response);
+        loaded = true;
+        reload = false;
         window.location.href = "/success";
       })
       .catch((error) => {
         console.log(error);
         errorMessage = error;
       });
+  }
+
+  function handleKeydown(event) {
+    if (event.key === "Enter") {
+      email = email;
+      password = password;
+      signupLogic();
+    }
+  }
+
+  async function handleSignup() {
+    signupLogic();
   }
 
   onMount(() => {
@@ -57,6 +77,7 @@
           <label for="first_name" class="block mb-2 text-sm">First Name</label>
           <input
             bind:value={first_name}
+            on:keydown={handleKeydown}
             type="text"
             name="first_name"
             id="first_name"
@@ -68,6 +89,7 @@
           <label for="last_name" class="block mb-2 text-sm">Last Name</label>
           <input
             bind:value={last_name}
+            on:keydown={handleKeydown}
             type="text"
             name="last_name"
             id="last_name"
@@ -80,6 +102,7 @@
         <label for="email" class="block mb-2 text-sm">Email address</label>
         <input
           bind:value={email}
+          on:keydown={handleKeydown}
           type="email"
           name="email"
           id="email"
@@ -93,6 +116,7 @@
         </div>
         <input
           bind:value={password}
+          on:keydown={handleKeydown}
           type="password"
           name="password"
           id="password"
@@ -106,6 +130,7 @@
         </div>
         <input
           bind:value={confirmPassword}
+          on:keydown={handleKeydown}
           type="password"
           name="confirm"
           id="confirm"
@@ -136,3 +161,8 @@
     </div>
   </form>
 </div>
+{#if hidden === true}
+  <div class="hidden"></div>
+{:else if (hidden === false && loaded === false) || reload === true}
+  <LoadingSpinnerFull />
+{/if}
