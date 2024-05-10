@@ -115,13 +115,11 @@ def sign_up():
         and "email" in form_data
         and "password" in form_data
     ):
-        new_obj = DBOperations().sign_up(form_data)
-
-    if new_obj:
-        return {"response": "success"}
+        message, status = DBOperations().sign_up(form_data)
+        return make_response(jsonify(message), status)
     else:
-        pass
-    return jsonify({"error": "Error creating a new object"})
+        return make_response(jsonify({'message': 'Missing a required field'}), 400)
+
 
 @api_bp.route("/Promotion/<id>", methods=["GET"])
 def show_promo(id):

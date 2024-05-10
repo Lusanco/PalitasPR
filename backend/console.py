@@ -38,10 +38,9 @@ class DBConsole(cmd.Cmd):
                     'email': email,
                     'password': password
                 }
-                new_obj = db.sign_up(data)
-                if new_obj:
-                    print(f"\nNew {model_name} object created: '{first_name} {last_name}' with email: '{email}'.\n")
-            
+                response = db.sign_up(data)
+                print(response)
+        
             else:
                 data = {model_name: dict(pair.split('=') for pair in arg_list[1:])}
                 new_obj = db.new(data)
