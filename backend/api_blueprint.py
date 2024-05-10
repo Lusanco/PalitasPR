@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, render_template
+from flask import Blueprint, jsonify, request, render_template, make_response
 from db_operations import DBOperations
 from emails import confirm_email
 import emails
@@ -83,8 +83,8 @@ def login():
     data = request.json
     email = data.get("email")
     password = data.get("password")
-    response = DBOperations().login(email, password)
-    return jsonify(response), 200
+    response, status = DBOperations().login(email, password)
+    return make_response(jsonify(response), status)
 
 
 # @api_bp.route("/<class_name>/<id>", methods=["GET"])

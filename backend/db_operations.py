@@ -401,7 +401,8 @@ class DBOperations():
         '''
         Session = sessionmaker(bind=self.engine)
         session = Session()
-        
+
+        response = {"message": "Null Email or Password"}, 400 # BAd request, NULL email or pawd
         if email and pwd:
             user = session.query(User).filter_by(email=email).first()
 
@@ -411,14 +412,13 @@ class DBOperations():
 
                 # Verify the password using bcrypt
                 if bcrypt.checkpw(pwd.encode('utf-8'), hashed_password):
-                    return {"response":"success"}
+                    response = {"message": "Login successful"}, 200
                 else:
-                    return {"response":"error"}
+                    response = {"message": "Invalid credentials"}, 401
             else:
-                return {"response":"userNotFound"}
-        
+                response = {"message": "Invalid credentials"}, 404  # Email not found
         session.close()
-
+        return response
 
     def sign_up(self, data):
         '''
