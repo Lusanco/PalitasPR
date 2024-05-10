@@ -126,8 +126,8 @@ def create_model_folder(user_id: str, model: str, model_id: str) -> dict:
 
             # Attempt a head_object to check if user folder exists
             s3_client.head_object(Bucket='palitas-pics', Key=user_folder)
-            print(f"Folder '{user_folder}' exists.")
-            print(f'Making /{model}/{model_id}/ folder now')
+            print(f"User Root Folder '{user_folder}' exists.")
+            print(f'Making /{models_dict[model]}/{model_id}/ folder now')
 
         except ClientError as e:
             # User base folder for the model doesnt exist
