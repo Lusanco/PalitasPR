@@ -53,7 +53,7 @@ class Review(BaseModel, Base):
 
     description = Column(String, nullable=False)
     rating = Column(Integer, nullable=False)
-    picture_paths = Column(String)
+    pictures = Column(String(255))
 
 class Task(BaseModel, Base):
     __tablename__ = 'tasks'
@@ -73,6 +73,7 @@ class Promotion(BaseModel, Base):
     description = Column(String(255), nullable=False)
     price_min = Column(Integer, default=0)
     price_max = Column(Integer, default=0)
+    pictures = Column(String(255))
 
 class Request(BaseModel, Base):
     __tablename__ = 'requests'
@@ -80,3 +81,4 @@ class Request(BaseModel, Base):
     service_id = Column(String(255), ForeignKey('services.id'), nullable=False)
     title = Column(String(100), nullable=False)
     description = Column(String(255), nullable=False)
+    pictures = Column(String())

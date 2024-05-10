@@ -21,6 +21,7 @@ import random
 import datetime
 from sqlalchemy.dialects.postgresql import UUID
 from unidecode import unidecode
+from aws_bucket import create_model_folder
 
 
 class DBOperations():
@@ -75,10 +76,22 @@ class DBOperations():
 
             # Create a new object of the model class using the attribute-value
             new_object = model_class(**dict) # new_object = User(first_name="Louis", last_name="Toro")
-            
-            # Add the new object to the session
+
             session.add(new_object)
-            # Commit changes
+
+            # check if object needs aws folder
+            aws_folders = {
+                Promotion: 'Promotion',
+                Request: 'Request',
+                Review: 'Review'
+                }
+            if model_class in aws_folders:
+                response = create_model_folder(
+                    new_object.user_id,
+                    aws_folders[model_class],
+                    new_object.id)
+                print(response)
+
             session.commit()
             session.close()
             return new_object
@@ -388,7 +401,8 @@ class DBOperations():
         '''
         Session = sessionmaker(bind=self.engine)
         session = Session()
-        
+
+        response = {"message": "Null Email or Password"}, 400 # BAd request, NULL email or pawd
         if email and pwd:
             user = session.query(User).filter_by(email=email).first()
 
@@ -398,14 +412,13 @@ class DBOperations():
 
                 # Verify the password using bcrypt
                 if bcrypt.checkpw(pwd.encode('utf-8'), hashed_password):
-                    return {"response":"success"}
+                    response = {"message": "Login successful"}, 200
                 else:
-                    return {"response":"error"}
+                    response = {"message": "Invalid credentials"}, 401
             else:
-                return {"response":"userNotFound"}
-        
+                response = {"message": "Invalid credentials"}, 404  # Email not found
         session.close()
-
+        return response
 
     def sign_up(self, data):
         '''

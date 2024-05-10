@@ -39,7 +39,7 @@ CREATE TABLE reviews (
     id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
     description Text NOT NULL,
     rating NUMERIC(2, 1) CHECK (rating >= 1 AND rating <= 5),
-    picture_paths VARCHAR,
+    pictures varchar(255),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -77,6 +77,7 @@ CREATE TABLE promotions (
     description Text NOT NULL,
     price_min INT DEFAULT 0,
     price_max INT DEFAULT 0,
+    pictures varchar(255),
     created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
@@ -88,6 +89,7 @@ CREATE TABLE requests (
     service_id INT REFERENCES services(id) NOT NULL,
     title VARCHAR(100) not NULL,
     description Text NOT NULL,
+    pictures varchar(255),
     created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
