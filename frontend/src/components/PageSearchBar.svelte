@@ -9,6 +9,7 @@
   let hidden = true;
   let loaded = false;
   let reload = false;
+  let error = false;
   let search = "all"; // service
   let model = "promotions";
   let town = "all";
@@ -16,7 +17,9 @@
 
   function exploreLogic() {
     hidden = false;
+    loaded = false;
     reload = true;
+    error = false;
 
     axios
       .get(`/api/explore?search=${search}&model=${model}&town=${town}`)
@@ -24,10 +27,15 @@
         services = response.data;
         loaded = true;
         reload = false;
+        error = false;
       })
-      .catch((error) => {
-        console.log(error);
-        errorMessage = error;
+      .catch((err) => {
+        console.log(err);
+        errorMessage = err;
+        hidden = false;
+        loaded = true;
+        reload = false;
+        error = true;
       });
   }
 
@@ -111,6 +119,8 @@
     <div class="hidden"></div>
   {:else if (hidden === false && loaded === false) || reload === true}
     <LoadingSpinner />
+  {:else if error}
+    <span class="font-bold text-teal-600">No results found, try again.</span>
   {:else}
     <a
       href="##"
