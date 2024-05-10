@@ -22,6 +22,7 @@ import datetime
 from sqlalchemy.dialects.postgresql import UUID
 from unidecode import unidecode
 from aws_bucket import create_model_folder
+from email_validator import validate_email, EmailNotValidError
 
 
 class DBOperations():
@@ -442,16 +443,23 @@ class DBOperations():
         if not (email and first_name and last_name and pwd):
             print("Error: Missing required fields.")
             session.close()
-            return None
-
+            return {'message': 'Missing a required field'}, 400
+        
+            # Validate email format
+        try:
+            validate_email(email)
+        except EmailNotValidError as e:
+            print(f"Error: Invalid email format - {e}")
+            session.close()
+            return {'message': f'{e}'}, 400
 
         # Check if email doesnt exist in db
         user = session.query(User).filter_by(email=email).first()
         if user:
             print("Email is already in use")
             session.close()
-            return None
-        
+            return {'message': 'Email already in use'}, 409
+
         # Check if passwords match
         # if pwd != confirm_pwd:
         #     print("Passwords do not match")
@@ -477,9 +485,12 @@ class DBOperations():
         send_confirm_email(email, first_name, verification_token)
         obj = self.new({'User': dict_of_user})
         session.close()
-        return (obj)
+        if obj:
+            return {'message': 'OK'}, 201
+        else:
+            return {'message': 'Error in signup logic'}, 500
 
-    
+
     def confirm_password(self, user_obj, password):
         """
         Confirm the password for the given user object.
