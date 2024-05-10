@@ -86,112 +86,15 @@ def create_user_folder(user_id: str = None) -> None:
 
     return profile_folder # Reurns the path of the profile folder
 
-def get_picture(user_id: str, model: str, key: str) -> dict:
-    """
-    Retrieve an object (picture) from an AWS S3 bucket based on the specified user ID, model (Promotion, Request, Task, Review),
-    and key (object key/path).
-
-    Parameters:
-    - user_id (str): User identifier used to construct the folder path.
-    - model (str): Model or folder name where the object is stored (e.g., 'Promotion').
-    - key (str): Key or path of the object within the specified model's folder.
-
-    Returns:
-    - dict: A dictionary containing the response status or retrieved object details.
-
-    Usage:
-    Call this function with the user ID, model name, and key to retrieve an object from the S3 bucket.
-    - Example: get_picture('101', 'Promotion', '001/Palitas_logo_pitch.png')
-    """
-
-    models_dict = {
-        'Promotion': f'{user_id}/promotions/{key}',
-        'Request': f'{user_id}/requests/{key}',
-        'Task': f'{user_id}/tasks/{key}',
-        'Review': f'{user_id}/reviews/{key}'
-        }
-    if model in models_dict:
-        path = f'users/{models_dict[model]}' # This pastes users/101/promotions/001/Palitas_logo_pitch.png
-    else:
-        return {'response': 'Model(Folder) does not not exist'}
-    try:
-        # Attempt to get the object
-        response = s3_client.get_object(Bucket='palitas-pics', Key=path)
-        
-        return {'response': response}
-
-    except ClientError as e:
-
-        if e.response['Error']['Code'] == 'NoSuchKey':
-            # Object does not exist, return an empty response
-            return {'response': 'Picture not found'}
-        else:
-            # Other error occurred, raise or handle accordingly
-            return {'response': e.response['Error']['Code']}
-
-def delete_picture(user_id: str, model: str, key: str) -> dict:
-        """
-        Delete an object (picture) from an AWS S3 bucket based on the specified user ID, model, and key.
-
-        Parameters:
-        - user_id (str): User identifier used to construct the folder path.
-        - model (str): Model or folder name where the object is stored (example: 'Promotion' = /promotions/).
-        - key (str): Key or path of the object within the specified model's folder (promotions/<key>)
-
-        Returns:
-        - dict: A dictionary containing the response status of the delete operation.
-
-        Usage:
-        Call this function with the user ID, model name, and key to delete an object from the S3 bucket.
-        - Example: delete_picture('101', 'Promotion', '001/Palitas_logo_pitch.png')
-        """
-
-        # Define the models and their respective paths
-        models_dict = {
-            'Promotion': f'{user_id}/promotions/{key}',
-            'Request': f'{user_id}/requests/{key}',
-            'Task': f'{user_id}/tasks/{key}',
-            'Review': f'{user_id}/reviews/{key}'
-        }
-
-        # Check if the specified model is valid
-        if model in models_dict:
-            path = f'users/{models_dict[model]}'  # Construct the full path of the object
-        else:
-            return {'response': 'Model (Folder) does not exist'}
-
-        # Check if object exists
-        try:
-            s3_client.head_object(Bucket='palitas-pics', Key=path)
-            print(f'Object found {path}')
-
-        except ClientError as e: # Not found object
-
-            if e.response['Error']['Code'] == "404":
-                return {'response': f'No object found {path}'}
-
-
-        try:
-            # Attempt to delete the object from the S3 bucket
-            print(f'\nPAth to delete object from: {path}\n')
-            response = s3_client.delete_object(Bucket='palitas-pics', Key=path)
-            return {'response': 'ok'}
-
-        except ClientError as e:
-            # Handle the specific error codes
-            if e.response['Error']['Code'] == 'NoSuchKey':
-                return {'response': 'Object not found'}
-            else:
-                return {'response': e.response['Error']['Code']}
 
 def create_model_folder(user_id: str, model: str, model_id: str) -> dict:
     '''
     Create a folder structure in an AWS S3 bucket based on a specified model Python class (Promotion, Request, Task, Review).
 
     Parameters:
-    - user_id (str): The ID of the user associated with the model.
-    - model (str): The type of model (e.g., 'Promotion', 'Request', 'Task', 'Review').
-    - model_id (str): The ID of the specific model instance.
+    - user_id: The ID of the user associated with the model.
+    - model: The type of model (e.g., 'Promotion', 'Request', 'Task', 'Review').
+    - model_id: The ID of the specific model instance.
 
     Returns:
     - dict: A dictionary containing a response message indicating the outcome of the folder creation.
@@ -256,3 +159,157 @@ def create_model_folder(user_id: str, model: str, model_id: str) -> dict:
     else:
         print(f'{model} doesnt exist in: {models_dict}')
         return {'response': f'{model} doesnt exist in: {models_dict}'}
+
+
+def get_picture(user_id: str, model: str, model_id: str, pic_name: str) -> dict:
+    """
+    Retrieve an object (picture) from an AWS S3 bucket based on the specified user ID, model (Promotion, Request, Task, Review),
+    and pic_name (object pic_name/path).
+
+    Parameters:
+    - user_id: User identifier used to construct the folder path.
+    - model: Model or folder name where the object is stored (e.g., 'Promotion').
+    - model_id: Model or folder name where the object is stored (e.g., 'Promotion').
+    - pic_name: pic_name or path of the object within the specified model's folder.
+
+    Returns:
+    - dict: A dictionary containing the response status or retrieved object details.
+
+    Usage:
+    Call this function with the user ID, model name, and pic_name to retrieve an object from the S3 bucket.
+    - Example: get_picture('101', 'Promotion', '001', 'Palitas_logo_pitch.png')
+    """
+
+    models_dict = {
+        'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
+        'Request': f'{user_id}/requests/{model_id}/{pic_name}',
+        'Task': f'{user_id}/tasks/{model_id}/{pic_name}',
+        'Review': f'{user_id}/reviews/{model_id}/{pic_name}'
+        }
+    if model in models_dict:
+        path = f'users/{models_dict[model]}' # This pastes users/101/promotions/001/Palitas_logo_pitch.png
+    else:
+        return {'response': 'Model(Folder) does not not exist'}
+    try:
+        # Attempt to get the object
+        response = s3_client.get_object(Bucket='palitas-pics', Key=path)
+        
+        return {'response': response}
+
+    except ClientError as e:
+
+        if e.response['Error']['Code'] == 'NoSuchKey':
+            # Object does not exist, return an empty response
+            return {'response': 'Picture not found'}
+        else:
+            # Other error occurred, raise or handle accordingly
+            return {'response': e.response['Error']['Code']}
+
+
+def delete_picture(user_id: str, model: str, model_id: str, pic_name: str) -> dict:
+        """
+        Delete a picture from an AWS S3 bucket based on the specified user ID, model,model_id and pic_name.
+
+        Parameters:
+        - user_id: User identifier used to construct the folder path.
+        - model: Model or folder name where the object is stored (example: 'Promotion' = /promotions/).
+        - model_id: Model or folder name where the object is stored (e.g., 'Promotion').
+        - pic_name: pic_name or path of the object within the specified model's folder (promotions/<pic_name>)
+
+        Returns:
+        - dict: A dictionary containing the response status of the delete operation.
+
+        Usage:
+        Call this function with the user ID, model name, and pic_name to delete an object from the S3 bucket.
+        - Example: delete_picture('101', 'Promotion', '001/Palitas_logo_pitch.png')
+        """
+
+        # Define the models and their respective paths
+        models_dict = {
+        'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
+        'Request': f'{user_id}/requests/{model_id}/{pic_name}',
+        'Task': f'{user_id}/tasks/{model_id}/{pic_name}',
+        'Review': f'{user_id}/reviews/{model_id}/{pic_name}'
+        }
+    
+        if model in models_dict:
+            path = f'users/{models_dict[model]}'  # Construct the full path of the object
+        else:
+            return {'response': 'Model (Folder) does not exist'}
+
+        # Check if object exists
+        try:
+            s3_client.head_object(Bucket='palitas-pics', Key=path)
+            print(f'Object found {path}')
+
+        except ClientError as e: # Not found object
+
+            if e.response['Error']['Code'] == "404":
+                return {'response': f'No object found {path}'}
+
+
+        try:
+            # Attempt to delete the object from the S3 bucket
+            print(f'\nPAth to delete object from: {path}\n')
+            response = s3_client.delete_object(Bucket='palitas-pics', Key=path)
+            return {'response': 'ok'}
+
+        except ClientError as e:
+            # Handle the specific error codes
+            if e.response['Error']['Code'] == 'NoSuchKey':
+                return {'response': 'Object not found'}
+            else:
+                return {'response': e.response['Error']['Code']}
+
+def put_picture(user_id: str, model: str, model_id: str, pic_name: str) -> dict:
+        """
+        Delete a picture from an AWS S3 bucket based on the specified user ID, model, model_id and pic_name.
+
+        Parameters:
+        - user_id: User identifier used to construct the folder path.
+        - model: Model or folder name where the object is stored (example: 'Promotion' = /promotions/).
+        - model_id: Model or folder name where the object is stored (e.g., 'Promotion').
+        - pic_name: pic_name or path of the object within the specified model's folder (promotions/<pic_name>)
+
+        Returns:
+        - dict: A dictionary containing the response status of the delete operation.
+
+        Usage:
+        Call this function with the user ID, model name, and pic_name to delete an object from the S3 bucket.
+        - Example: delete_picture('101', 'Promotion', '001/Palitas_logo_pitch.png')
+        """
+
+        # Define the models and their respective paths
+        models_dict = {
+        'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
+        'Request': f'{user_id}/requests/{model_id}/{pic_name}',
+        'Task': f'{user_id}/tasks/{model_id}/{pic_name}',
+        'Review': f'{user_id}/reviews/{model_id}/{pic_name}'
+        }
+        # Check if the specified model is valid
+        if model in models_dict:
+            path = f'users/{models_dict[model]}'  # Construct the full path of the object
+        else:
+            return {'response': 'Model (Folder) does not exist'}
+
+        # Check if object exists
+        try:
+            s3_client.head_object(Bucket='palitas-pics', Key=path)
+            print(f'Object -{path}- already exists')
+            return {'response': f'Object {path} already exists'}
+
+        except ClientError as e: # Not found object, proceed to put
+
+            if e.response['Error']['Code'] == "404":
+                try:
+                    # Attempt to put object
+                    print(f'\nPAth to put object: {path}\n')
+                    response = s3_client.put_object(Bucket='palitas-pics', Key=path)
+                    return {'response': 'ok'}
+
+                except ClientError as e:
+                    # Handle the specific error codes
+                    if e.response['Error']['Code'] == 'NoSuchKey':
+                        return {'response': 'Object not found'}
+                    else:
+                        return {'response': e.response['Error']['Code']}
