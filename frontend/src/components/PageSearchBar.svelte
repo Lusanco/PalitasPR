@@ -13,7 +13,6 @@
   let model = "promotions";
   let town = "all";
   const towns = Object.values(listTowns);
-  let keydownEvent;
 
   function exploreLogic() {
     hidden = false;

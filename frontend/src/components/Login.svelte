@@ -2,11 +2,16 @@
   import { link } from "svelte-routing";
   import { onMount } from "svelte";
   import axios from "axios";
+  import LoadingSpinnerFull from "./LoadingSpinnerFull.svelte";
 
   let password, errorMessage, email;
-  let success = { response: "success" };
+  let hidden = true;
+  let loaded = false;
+  let reload = false;
 
-  async function handleLogin() {
+  function loginLogic() {
+    hidden = false;
+    reload = true;
     const data = {
       email: email,
       password: password,
@@ -14,10 +19,9 @@
 
     axios
       .post("/api/login", data)
-      //   .get("https://jsonplaceholder.typicode.com/users")
       .then((response) => {
-        console.log(response);
-        // console.log(response.data.message);
+        loaded = true;
+        reload = false;
         if (response.data.response === "success") {
           window.location.href = "/";
         }
@@ -26,6 +30,18 @@
         console.log(error);
         errorMessage = error;
       });
+  }
+
+  function handleKeydown(event) {
+    if (event.key === "Enter") {
+      email = email;
+      password = password;
+      loginLogic();
+    }
+  }
+
+  async function handleLogin() {
+    loginLogic();
   }
 
   onMount(() => {
@@ -46,6 +62,7 @@
         <label for="email" class="block mb-2 text-sm">Email address</label>
         <input
           bind:value={email}
+          on:keydown={handleKeydown}
           type="email"
           name="email"
           id="email"
@@ -64,6 +81,7 @@
         </div>
         <input
           bind:value={password}
+          on:keydown={handleKeydown}
           type="password"
           name="password"
           id="password"
@@ -92,3 +110,9 @@
     </div>
   </form>
 </div>
+
+{#if hidden === true}
+  <div class="hidden"></div>
+{:else if (hidden === false && loaded === false) || reload === true}
+  <LoadingSpinnerFull />
+{/if}
