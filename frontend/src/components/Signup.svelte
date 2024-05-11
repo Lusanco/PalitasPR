@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, afterUpdate } from "svelte";
   import { link } from "svelte-routing";
   import axios from "axios";
   import LoadingSpinnerFull from "./LoadingSpinnerFull.svelte";
@@ -14,10 +14,13 @@
   let hidden = true;
   let loaded = false;
   let reload = false;
+  let error = false;
 
   function signupLogic() {
     hidden = false;
+    loaded = false;
     reload = true;
+    error = false;
     if (password !== confirmPassword) {
       errorMessage = "Passwords do not match!";
       return; // Prevent unnecessary API call
@@ -33,16 +36,23 @@
     // let user = JSON.stringify(data);
 
     axios
-      .post("/api/create_object", data)
-      //   .get("https://jsonplaceholder.typicode.com/users")
+      .post("/api/signup", data)
       .then((response) => {
         loaded = true;
         reload = false;
-        window.location.href = "/success";
+        error = false;
+        console.log(response);
+        if (response.status === 201) {
+          window.location.href = "/success";
+        }
       })
-      .catch((error) => {
-        console.log(error);
-        errorMessage = error;
+      .catch((err) => {
+        hidden = false;
+        loaded = true;
+        reload = false;
+        error = true;
+        console.log(err);
+        errorMessage = err;
       });
   }
 
@@ -60,6 +70,12 @@
 
   onMount(() => {
     errorMessage = ""; // Clear any previous error messages on component mount
+  });
+  afterUpdate(() => {
+    if (error) {
+      const errorElement = document.getElementById("err-msg");
+      errorElement.scrollIntoView({ behavior: "smooth" });
+    }
   });
 </script>
 
@@ -159,10 +175,17 @@
         >
       </p>
     </div>
+    {#if hidden === true}
+      <div class="hidden"></div>
+    {:else if (hidden === false && loaded === false) || reload === true}
+      <LoadingSpinnerFull />
+    {:else if error}
+      <div
+        id="err-msg"
+        class="w-full mx-auto font-bold text-center text-teal-600"
+      >
+        Unsuccessful atempt to create account, try again.
+      </div>
+    {/if}
   </form>
 </div>
-{#if hidden === true}
-  <div class="hidden"></div>
-{:else if (hidden === false && loaded === false) || reload === true}
-  <LoadingSpinnerFull />
-{/if}

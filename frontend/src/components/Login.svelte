@@ -4,38 +4,51 @@
   import axios from "axios";
   import LoadingSpinnerFull from "./LoadingSpinnerFull.svelte";
 
-  let password, errorMessage, email;
+  let af2, errorMessage, af1;
   let hidden = true;
   let loaded = false;
   let reload = false;
+  let error = false;
 
   function loginLogic() {
+    if (typeof af1 === "undefined" || typeof af2 === "undefined") {
+      af1 = null;
+      af2 = null;
+    }
     hidden = false;
+    loaded = false;
     reload = true;
-    const data = {
-      email: email,
-      password: password,
-    };
+    error = false;
 
+    // .post("/api/login", data)
     axios
-      .post("/api/login", data)
+      .get(`/api/login?af1=${af1}&af2=${af2}`)
+      // .get(`/api/login?e=${af1}&p=${af2}`)
       .then((response) => {
         loaded = true;
         reload = false;
-        if (response.data.response === "success") {
+        error = false;
+        console.log(response);
+        if (response.status === 200) {
+          // Write logic for real life cases
+          // as in flask_login appropiate
           window.location.href = "/";
         }
       })
-      .catch((error) => {
-        console.log(error);
-        errorMessage = error;
+      .catch((err) => {
+        hidden = false;
+        loaded = true;
+        reload = false;
+        error = true;
+        console.log(err);
+        errorMessage = err;
       });
   }
 
   function handleKeydown(event) {
     if (event.key === "Enter") {
-      email = email;
-      password = password;
+      af1 = af1;
+      af2 = af2;
       loginLogic();
     }
   }
@@ -59,20 +72,20 @@
   <form action="" class="w-full space-y-12">
     <div class="space-y-4">
       <div>
-        <label for="email" class="block mb-2 text-sm">Email address</label>
+        <label for="af1" class="block mb-2 text-sm">Email address</label>
         <input
-          bind:value={email}
+          bind:value={af1}
           on:keydown={handleKeydown}
           type="email"
           name="email"
-          id="email"
+          id="af1"
           placeholder="user@email.com"
           class="w-full px-3 py-2 text-teal-800 border border-teal-300 rounded-md bg-teal-50"
         />
       </div>
       <div>
         <div class="flex justify-between mb-2">
-          <label for="password" class="text-sm">Password</label>
+          <label for="af2" class="text-sm">Password</label>
           <a
             rel="noopener noreferrer"
             href="/forgot-password"
@@ -80,11 +93,11 @@
           >
         </div>
         <input
-          bind:value={password}
+          bind:value={af2}
           on:keydown={handleKeydown}
           type="password"
-          name="password"
-          id="password"
+          name="af2"
+          id="af2"
           placeholder="************"
           class="w-full px-3 py-2 text-teal-800 border border-teal-300 rounded-md bg-teal-50"
         />
@@ -108,11 +121,14 @@
         >
       </p>
     </div>
+    {#if hidden === true}
+      <div class="hidden"></div>
+    {:else if (hidden === false && loaded === false) || reload === true}
+      <LoadingSpinnerFull />
+    {:else if error}
+      <div class="w-full mx-auto font-bold text-center text-teal-600">
+        Incorrect email or password, try again.
+      </div>
+    {/if}
   </form>
 </div>
-
-{#if hidden === true}
-  <div class="hidden"></div>
-{:else if (hidden === false && loaded === false) || reload === true}
-  <LoadingSpinnerFull />
-{/if}
