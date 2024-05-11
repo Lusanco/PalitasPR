@@ -413,7 +413,7 @@ class DBOperations():
 
                 # Verify the password using bcrypt
                 if bcrypt.checkpw(pwd.encode('utf-8'), hashed_password):
-                    response = {"message": "Login successful"}, 200
+                    response = {"message": user}, 200
                 else:
                     response = {"message": "Invalid credentials"}, 401
             else:
@@ -486,7 +486,7 @@ class DBOperations():
         obj = self.new({'User': dict_of_user})
         session.close()
         if obj:
-            return {'message': 'OK'}, 201
+            return {'message': 'Account created'}, 201
         else:
             return {'message': 'Error in signup logic'}, 500
 

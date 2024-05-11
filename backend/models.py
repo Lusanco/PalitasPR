@@ -6,6 +6,7 @@
 from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, Integer, Boolean
 from sqlalchemy.orm import relationship
 from base_model import BaseModel, Base, BaseModelSerial
+from flask_login import UserMixin
 
 # ASSOCIATION USER & SERVICE & TOWN CLASS
 class Promo_Towns(BaseModel, Base):
@@ -31,7 +32,7 @@ class Service(BaseModelSerial, Base):
     name = Column(String(50), unique=True, nullable=False)
 
 # USER CLASS
-class User(BaseModel, Base):
+class User(BaseModel, UserMixin, Base):
     __tablename__ = 'users'
 
     first_name = Column(String(255), nullable=False)

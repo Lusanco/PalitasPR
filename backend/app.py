@@ -9,10 +9,12 @@ from db_operations import DBOperations
 from blueprints import main_bp
 from api_blueprint import api_bp
 from flask_mail import Mail
+from flask_login import LoginManager, login_user
 
 
 # Create Flask app instance
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "demo_dev_pwd"
 # Configure Flask app for sending emails using Flask-Mail
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 587
@@ -22,6 +24,7 @@ app.config["MAIL_PASSWORD"] = "syhk sijd eoli tgba"
 app.register_blueprint(main_bp)
 app.register_blueprint(api_bp, url_prefix='/api')
 mail = Mail(app)
+login_manager = LoginManager(app)
 
 
 CORS(app)
@@ -29,6 +32,13 @@ CORS(app)
 engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')
 
 Base.metadata.bind = engine
+
+@login_manager.user_loader
+def load_user(user_id):
+    # Assuming `user_id` is the primary key of the user in your database
+    # Implement your logic to load a user from the database based on `user_id`
+    user = DBOperations().search('User', user_id)
+    return user
 
 
 @app.route("/")
