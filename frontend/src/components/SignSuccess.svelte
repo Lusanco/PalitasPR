@@ -1,52 +1,9 @@
 <script>
-  import { onMount } from "svelte";
   import { link } from "svelte-routing";
-  import axios from "axios";
-
-  let password,
-    confirmPassword,
-    errorMessage,
-    email = "";
-  // let accEmail = "livanhernandez9@gmail.com";
-
-  async function handleSignup() {
-    if (password !== confirmPassword) {
-      errorMessage = "Passwords do not match!";
-      return; // Prevent unnecessary API call
-    }
-
-    const data = {
-      first_name: "N/A",
-      last_name: "N/A",
-      email: email,
-      password: password,
-    };
-
-    // let user = JSON.stringify(data);
-    axios
-      .post("/api/create_object", data)
-      // .get("https://jsonplaceholder.typicode.com/users")
-      .then((response) => {
-        console.log(response);
-        // Update the UI with success message
-        errorMessage = `You have successfully created an account with the following email: ${email}`;
-        // Add another line with a link to login
-        errorMessage +=
-          "<br> To continue, login with your account, click below!";
-      })
-      .catch((error) => {
-        console.log(error);
-        errorMessage = error;
-      });
-  }
-
-  onMount(() => {
-    errorMessage = ""; // Clear any previous error messages on component mount
-  });
 </script>
 
 <div
-  class="flex flex-col items-center justify-center h-full max-w-lg p-6 m-auto text-teal-800 rounded-md sm:p-10"
+  class="flex flex-col items-center justify-center max-w-lg min-h-screen p-6 m-auto text-teal-800 rounded-md sm:p-10"
 >
   <div class="mb-8 text-center">
     <h1 class="my-3 text-3xl font-bold text-wrap">
