@@ -5,6 +5,8 @@ Command line interface for the DB Operations
 import cmd
 import shlex
 from db_operations import DBOperations
+import aws_bucket
+import time
 
 db = DBOperations()
 
@@ -150,6 +152,45 @@ class DBConsole(cmd.Cmd):
     def do_quit(self, args):
         """Quit the console"""
         return True
+
+    def do_aws(self, args):
+        options = {
+            '1': aws_bucket.get_picture,
+            '2': aws_bucket.delete_picture,
+            '3': 'q'
+            }
+
+        on = 1
+        while on == 1:
+            print('-AWS Testing-\n')  # Welcome
+
+            # print was too long made text variables
+            intro = '\nChoose a method to test:\n'
+            text1 = '1)-get_picture(user_id: str, model: str, model_id: str, pic_name: str) -> dict\n'
+            text2 = '2)-delete_picture(user_id: str, model: str, model_id: str, pic_name: str) -> dict\n'
+            option = input(f"{intro}{text1}{text2}3) quit\n choose option:")
+
+            if option in options:
+                response = options[option] # By deafault option 3: quit
+                if option != '3':
+                    print(f"Doing {option}")
+                    user_id = input("Enter User_id: ")
+                    model = input("Select Promotion, Request, Review: ")
+                    model_id = input("Enter Model_id: ")
+                    pic_name = input("Enter Pic_name: ") 
+                    result = options[option](user_id, model, model_id, pic_name)
+                    print(result)
+
+                    time.sleep(2)
+                    response = input('\n\nIf you dont want to test aws again again press <q>: ')
+
+                if response == 'q':
+                    print('\n-Exiting AWS Testing, returning to console, BYE-\n\n')
+                    on = 0
+            else:
+                print('\nChoose a valid option\n') # starts loop again
+                time.sleep(1)
+                
 
 if __name__ == '__main__':
     DBConsole().cmdloop()
