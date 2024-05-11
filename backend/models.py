@@ -3,10 +3,11 @@
     All classes for tables(DataBase)
 """
 
-from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, Integer, Boolean
+from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, Integer, Boolean, DateTime
 from sqlalchemy.orm import relationship
 from base_model import BaseModel, Base, BaseModelSerial
 from flask_login import UserMixin
+from datetime import datetime
 
 # ASSOCIATION USER & SERVICE & TOWN CLASS
 class Promo_Towns(BaseModel, Base):
@@ -42,6 +43,22 @@ class User(BaseModel, UserMixin, Base):
     verified = Column(Boolean, default=False)
     verification_token = Column(String(128), unique=True)
     profile_pic = Column(String(255)) # Testing with one folder here for AWS only profile
+    # suspended = Column(Boolean, default=False)
+    # banned = Column(Boolean, default=False)
+    # status = Column(String(255), nullable=False, default='active')
+    # expiration_date = Column(DateTime)
+    # def is_active(self):
+    #     """
+    #     Returns True if the user is active (verified, not suspended, not banned, and not expired).
+    #     """
+    #     now = datetime.utcnow()
+    #     return (
+    #         self.verified  # Check if the user is verified
+    #         and not self.suspended  # Check if the user is not suspended
+    #         and not self.banned  # Check if the user is not banned
+    #         and self.status == 'active'  # Check if the user's status is 'active'
+    #         and (self.expiration_date is None or self.expiration_date > now)  # Check if the user's account is not expired
+    #     )
 
 # TOWN CLASS (Serial)
 class Town(BaseModelSerial, Base):

@@ -3,7 +3,9 @@ from db_operations import DBOperations
 from emails import confirm_email
 import emails
 import uuid
-from flask_login import login_user, logout_user, login_required, current_user,LoginManager
+from flask_login import login_user, logout_user, login_required, current_user, LoginManager
+from user_activity import update_last_activity
+
 
 api_bp = Blueprint('api', __name__)
 
@@ -24,7 +26,6 @@ def verify_email(token):
 @api_bp.route('/explore', methods=['GET'])
 @login_required
 def explore():
-    print(current_user.id)
     model = request.args.get('model')
     service = request.args.get('search')
     town = request.args.get('town')
@@ -34,32 +35,10 @@ def explore():
     else:
         return jsonify("No Results"), 404
 
-@api_bp.route("/logout")
-@login_required
-def logout():
-    # Log out the current user
-    logout_user()
-    return 'Logged out'
-
 @api_bp.route("/create_object", methods=["POST"])
 def create_object():
     form_data = request.get_json()
-
-    if (
-        "first_name" in form_data
-        and "last_name" in form_data
-        and "email" in form_data
-        and "password" in form_data
-    ):
-        user_data = {
-            "first_name": form_data["first_name"],
-            "last_name": form_data["last_name"],
-            "email": form_data["email"],
-            "password": form_data["password"],
-        }
-        new_obj = DBOperations().sign_up(user_data)
-    else:
-        new_obj = DBOperations().new(form_data)
+    new_obj = DBOperations().new(form_data)
 
     if new_obj:
         return {"response": "success"}
@@ -97,7 +76,15 @@ def login():
         user = response['message']
         response['message'] = 'OK'
         login_user(user)
+        update_last_activity(user) 
     return make_response(jsonify(response), status)
+
+@api_bp.route("/logout")
+@login_required
+def logout():
+    # Log out the current user
+    logout_user()
+    return 'Logged out'
 
 # @api_bp.route("/<class_name>/<id>", methods=["GET"])
 # def search_object(class_name, id):
