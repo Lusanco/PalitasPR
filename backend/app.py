@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """MAIN APP WITH FLASK"""
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, session
 from flask_cors import CORS
 from sqlalchemy import create_engine
 from base_model import Base
@@ -10,6 +10,7 @@ from blueprints import main_bp
 from api_blueprint import api_bp
 from flask_mail import Mail
 from flask_login import LoginManager, login_user
+from datetime import timedelta
 
 
 # Create Flask app instance
@@ -21,6 +22,7 @@ app.config["MAIL_PORT"] = 587
 app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USERNAME"] = "antoniofdjs@gmail.com"
 app.config["MAIL_PASSWORD"] = "syhk sijd eoli tgba"
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=15) # Session expires in 15 seconds
 app.register_blueprint(main_bp)
 app.register_blueprint(api_bp, url_prefix='/api')
 mail = Mail(app)
@@ -32,6 +34,10 @@ CORS(app)
 engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')
 
 Base.metadata.bind = engine
+
+@app.before_request
+def keep_session_alive():
+    session.modified = True  # Before requests, keep alive session if it hasnt expired
 
 @login_manager.user_loader
 def load_user(user_id):
