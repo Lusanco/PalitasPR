@@ -13,6 +13,7 @@
   import Faq from "./components/FAQ.svelte";
   import NotFound from "./components/NotFound.svelte";
   import LoadingSpinnerFull from "./components/LoadingSpinnerFull.svelte";
+  import UploadImage from "./components/UploadImage.svelte";
 </script>
 
 <div class="flex flex-col">
@@ -28,7 +29,7 @@
       <Route path="/about" component={AboutUs} />
       <Route path="/faq" component={Faq} />
       <Route path="/404" component={NotFound} />
-      <Route path="/full" component={LoadingSpinnerFull} />
+      <Route path="/upload" component={UploadImage} />
     </Router>
   </Main>
   <Footer></Footer>

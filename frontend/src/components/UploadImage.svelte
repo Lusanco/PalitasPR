@@ -1,59 +1,58 @@
 <script>
-  function handleFileUpload(event) {
-    const files = event.target.files;
-    // Handle the selected files here
-    console.log("Selected files:", files);
-  }
+  import axios from "axios";
+  let imageFile;
+  const uploadImage = async (event) => {
+    const selectedFile = event.target.files[0];
+
+    if (!selectedFile) {
+      console.error("No file selected");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", selectedFile, selectedFile.name); // Use original filename
+
+    // try {
+    //   const response = await axios.post("/upload-image", formData, {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data", // Set appropriate content type
+    //     },
+    //   });
+    //   console.log("Image uploaded successfully:", response.data);
+    // } catch (error) {
+    //   console.error("Error uploading image:", error);
+    // }
+
+    axios
+      .post("/upload-image", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Set appropriate content type
+        },
+      })
+      .then((response) => {
+        console.log("Image uploaded successfully:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error);
+      });
+  };
+
+  // imageInput.addEventListener("change", uploadImage);
 </script>
 
-<div class="flex flex-col items-center justify-center h-screen">
-  <div class="max-w-xs p-5 mx-auto rounded-xl bg-slate-100">
-    <label
-      for="file-upload"
-      class="block mb-2 text-sm font-medium text-center text-gray-700"
-      >Upload file</label
-    >
-    <label
-      for="file-upload"
-      class="flex items-center justify-center w-full p-6 transition-all border-2 rounded-md cursor-pointer"
-    >
-      <div class="space-y-2 text-center">
-        <div
-          class="inline-flex items-center justify-center w-10 h-10 mx-auto rounded-full bg-slate-100"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-6 h-6 text-gray-500"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-            />
-          </svg>
-        </div>
-        <div class="text-gray-600">
-          <p
-            class="font-medium text-primary-500 hover:text-primary-700 text-balance"
-          >
-            Click to uploador drag and drop
-          </p>
-        </div>
-        <p class="text-sm text-gray-500 text-balance">
-          SVG, PNG, JPG or GIF (max. 1080x720px)
-        </p>
-      </div>
+<div
+  class="flex flex-col items-center justify-center min-h-screen m-auto bg-red-600"
+>
+  <fieldset class="w-full space-y-1 text-gray-800">
+    <label for="files" class="block text-sm font-medium">Attachments</label>
+    <div class="flex">
       <input
-        id="file-upload"
         type="file"
-        accept=".svg,.png,.jpg,.gif"
-        class="sr-only"
-        on:change={handleFileUpload}
+        name="files"
+        id="imageInput"
+        bind:files={imageFile}
+        class="px-8 py-12 text-gray-600 bg-gray-100 border-2 border-gray-300 border-dashed rounded-md"
       />
-    </label>
-  </div>
+    </div>
+  </fieldset>
 </div>
