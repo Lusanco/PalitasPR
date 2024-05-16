@@ -40,10 +40,10 @@
   // imageInput.addEventListener("change", uploadImage);
 </script>
 
-<div
-  class="flex flex-col items-center justify-center min-h-screen m-auto bg-red-600"
->
-  <fieldset class="w-full space-y-1 text-gray-800">
+<div class="flex flex-col min-h-screen">
+  <div
+    class="flex flex-col items-center justify-center w-full h-full min-h-screen m-auto space-y-1 text-gray-800"
+  >
     <label for="files" class="block text-sm font-medium">Attachments</label>
     <div class="flex">
       <input
@@ -54,5 +54,5 @@
         class="px-8 py-12 text-gray-600 bg-gray-100 border-2 border-gray-300 border-dashed rounded-md"
       />
     </div>
-  </fieldset>
+  </div>
 </div>
