@@ -1,9 +1,37 @@
 <script>
+  import { onMount, onDestroy } from "svelte";
+  import { fade, scale } from "svelte/transition";
+
   let activeTab = "Posts";
+  let showModal = false;
 
   function selectTab(tab) {
     activeTab = tab;
   }
+
+  function toggleModal() {
+    showModal = !showModal;
+  }
+
+  function closeModalOnOutsideClick(event) {
+    if (event.target.classList.contains("modal-overlay")) {
+      showModal = false;
+    }
+  }
+
+  function handleKeyDown(event) {
+    if (event.key === "Escape") {
+      showModal = false;
+    }
+  }
+
+  onMount(() => {
+    document.addEventListener("keydown", handleKeyDown);
+  });
+
+  onDestroy(() => {
+    document.removeEventListener("keydown", handleKeyDown);
+  });
 
   let posts = [
     { id: 1, title: "Post 1", content: "Content for post 1." },
@@ -54,7 +82,7 @@
 
 <div class="flex flex-col">
   <div class="m-5 mb-0">
-    <div class="flex gap-2">
+    <div class="flex gap-2 SearchActions">
       <input
         id="searchBar"
         type="text"
@@ -66,6 +94,7 @@
         ><i class="text-white fa-solid fa-magnifying-glass"></i></button
       >
       <button
+        on:click={toggleModal}
         class="w-10 h-10 transition-colors duration-300 bg-white rounded-md shadow-sm hover:bg-opacity-70"
         ><i class="fa-solid fa-bars"></i></button
       >
@@ -133,6 +162,42 @@
       </div>
     {/if}
   </div>
+  {#if showModal}
+    <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div
+      transition:fade
+      on:click={closeModalOnOutsideClick}
+      role="dialog"
+      aria-modal="true"
+      class="fixed inset-0 flex items-center justify-center duration-200 bg-gray-800 bg-opacity-85 modal-overlay"
+    >
+      <div
+        transition:scale
+        class="gap-2 p-8 duration-100 rounded-lg shadow-lg bg-slate-100 w-96"
+      >
+        <h2 class="mb-2 text-2xl font-semibold text-center">Filters</h2>
+        <input
+          id="modalSearchBar"
+          type="text"
+          placeholder="Search..."
+          class="flex-grow w-full h-12 mb-4 text-gray-700 border-none rounded-lg outline-none placeholder:opacity-85 hover:cursor-pointer focus:ring-0"
+        />
+        <div class="flex gap-2">
+          <button
+            on:click={toggleModal}
+            class="w-full h-10 text-center transition-colors duration-300 bg-white rounded-md shadow-sm hover:bg-opacity-70"
+            ><i class="fa-solid fa-check"></i> Apply</button
+          >
+          <button
+            on:click={toggleModal}
+            class="w-full h-10 text-center transition-colors duration-300 bg-white rounded-md shadow-sm hover:bg-opacity-70"
+            ><i class="fa-solid fa-xmark"></i> Cancel</button
+          >
+        </div>
+      </div>
+    </div>
+  {/if}
 </div>
 
 <style>
