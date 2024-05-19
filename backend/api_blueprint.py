@@ -182,6 +182,7 @@ def put_pic():
         return make_response(respose)
 
 @api_bp.route('/promotion-request/<id>', methods=['GET'])
+@login_required
 def promo_request(id=None):
     '''
         Route to get all promo and request posted by a user
@@ -192,7 +193,7 @@ def promo_request(id=None):
             print(f'My promos: {results[0]}\nMy requests: {results[1]}')
             return(make_response({'body': results}), 200)
     else:
-        return(make_response({'message': 'Acces denied'}), 403)
+        return(make_response({'message': 'Access denied'}), 403)
 
 # @api_bp.route("/Promotion", methods=["GET"])
 # def get_all_promotion():
