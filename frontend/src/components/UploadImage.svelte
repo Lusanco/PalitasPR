@@ -1,8 +1,12 @@
 <script>
   import axios from "axios";
 
-  let imageFile;
+  let imageFile = null;
   let errorMessage;
+
+  function handleFileChange(event) {
+    imageFile = event.target.files[0];
+  }
 
   async function handleUpload() {
     if (!imageFile) {
@@ -10,11 +14,11 @@
       return;
     }
 
-    const formData = new FormData();
-    formData.append("image", imageFile);
+    const formDataImage = new FormData();
+    formDataImage.append("image", imageFile);
 
     try {
-      const response = await axios.post("/api/pic", formData, {
+      const response = await axios.post("/api/pic", formDataImage, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -23,6 +27,7 @@
     } catch (error) {
       console.error("Error uploading image:", error);
       errorMessage = "An error occurred while uploading the image";
+      console.log(formDataImage);
     }
   }
 </script>
@@ -38,7 +43,7 @@
         type="file"
         name="image"
         id="imageInput"
-        bind:files={imageFile}
+        on:change={handleFileChange}
         class="px-8 py-12 text-gray-600 bg-gray-100 border-2 border-gray-300 border-dashed rounded-md"
         accept="image/*"
       />
