@@ -14,6 +14,7 @@
   import NotFound from "./components/NotFound.svelte";
   import LoadingSpinnerFull from "./components/LoadingSpinnerFull.svelte";
   import UploadImage from "./components/UploadImage.svelte";
+  import PromotionsRequests from "./components/Promotions_Requests.svelte";
 </script>
 
 <div class="flex flex-col">
@@ -30,6 +31,7 @@
       <Route path="/faq" component={Faq} />
       <Route path="/404" component={NotFound} />
       <Route path="/upload" component={UploadImage} />
+      <Route path="/promotions-requests" component={PromotionsRequests} />
     </Router>
   </Main>
   <Footer></Footer>
