@@ -28,24 +28,15 @@ def verify_email(token):
 
 @api_bp.route('/explore', methods=['GET'])
 def explore():
-    if not current_user.is_anonymous:
-        print(current_user)
-        if current_user.is_authenticated:
-            print(current_user.id)
-            model = request.args.get('model')
-            service = request.args.get('search')
-            town = request.args.get('town')
-            search_results = DBOperations().filter(model, service, town)
-            if search_results:
-                return jsonify(search_results)
-            else:
-                return jsonify("No Results"), 404
-        else:
-            print('Session Expired')
-            return jsonify("Session Expired"), 409
+
+    model = request.args.get('model')
+    service = request.args.get('search')
+    town = request.args.get('town')
+    search_results = DBOperations().filter(model, service, town)
+    if search_results:
+        return jsonify(search_results)
     else:
-        print('Anonimo using device')
-        return jsonify("Anonimo using device"), 404
+        return jsonify("No Results"), 404
 @api_bp.route("/logout")
 @login_required
 def logout():
@@ -170,6 +161,7 @@ def show_review(id):
     else:
         return jsonify({"error": f"No Review object found with ID {id}"}), 404
 
+# pic route does put pictures in aws, furthing testing needed and we can use for other routes
 @api_bp.route('/pic', methods=['POST'])
 def put_pic():    
     print("Pic ROUTE ACTIVATED")
@@ -188,6 +180,19 @@ def put_pic():
         print(content)
         respose = aws_bucket.put_picture('007', 'Promotion', '005', filename, content)
         return make_response(respose)
+
+@api_bp.route('/promotion-request/<id>', methods=['GET'])
+def promo_request(id=None):
+    '''
+        Route to get all promo and request posted by a user
+    '''
+    if current_user.id == id:
+        if request.method == 'GET':
+            results = DBOperations().promo_request(id)
+            print(f'My promos: {results[0]}\nMy requests: {results[1]}')
+            return(make_response({'body': results}), 200)
+    else:
+        return(make_response({'message': 'Acces denied'}), 403)
 
 # @api_bp.route("/Promotion", methods=["GET"])
 # def get_all_promotion():

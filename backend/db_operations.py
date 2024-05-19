@@ -281,6 +281,118 @@ class DBOperations():
             .all()
             return rows
 
+    def promo_request(self, user_id):
+        """
+            Query promotions and requests from a specified user
+        """
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+
+        promotions = self.my_promos(session, user_id)
+        requests = self.my_requests(session, user_id)
+
+        # List to put inside all dicts
+        promos_dict = []
+        requests_dict = []
+
+        for row in promotions:
+            inner_dict = {
+                'promo_id': str(row.promo_id),
+                'service': row.name,
+                'title': row.title,
+                'description': row.description,
+                'price_min': row.price_min,
+                'price_max': row.price_max,
+                'first_name': row.first_name,
+                'last_name': row.last_name,
+                'towns': row[3],
+                'created_at': row.created_at.strftime("%Y-%m-%d")
+            }
+            promos_dict.append(inner_dict)
+            for row in requests:
+                inner_dict = {
+                    'request_id': str(row.request_id),
+                    'service': row.name,
+                    'title': row.title,
+                    'description': row.description,
+                    'first_name': row.first_name,
+                    'last_name': row.last_name,
+                    'towns': row[3],
+                    'created_at': row.created_at.strftime("%Y-%m-%d")
+                }
+
+                requests_dict.append(inner_dict)
+
+        session.close()
+        return(promos_dict, requests_dict)
+
+    def my_promos(self, session, my_user_id):
+        '''
+            Main query to filter promotions
+        '''
+        print(f'Inside my_promos def, my user id is: {my_user_id}')
+        rows = session.query(Promo_Towns.promo_id,
+                            User.first_name,
+                            User.last_name,
+                            func.array_agg(Town.name),
+                            Promotion.created_at,
+                            Promotion.title,
+                            Promotion.description,
+                            Promotion.price_min,
+                            Promotion.price_max,
+                            Service.name
+                            ) \
+        .select_from(Promotion)\
+        .join(User, Promotion.user_id == User.id)\
+        .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)\
+        .join(Town, Promo_Towns.town_id == Town.id)\
+        .join(Service, Promotion.service_id == Service.id)\
+        .filter((Promotion.user_id == my_user_id))\
+        .group_by(Promo_Towns.promo_id,
+                User.first_name,
+                User.last_name,
+                Promotion.created_at,
+                Promotion.description,
+                Promotion.title,
+                Promotion.price_min,
+                Promotion.price_max,
+                Service.name
+                )\
+        .order_by(Promo_Towns.promo_id)\
+        .all()
+        return rows
+
+    def my_requests(self, session, my_user_id):
+        '''
+            Main query to filter promotions
+        '''
+        print(f'Inside my_promos def, my user id is: {my_user_id}')
+        rows = session.query(Request_Towns.request_id,
+                            User.first_name,
+                            User.last_name,
+                            func.array_agg(Town.name),
+                           Request.created_at,
+                           Request.title,
+                           Request.description,
+                           Service.name
+                            ) \
+        .select_from(Request)\
+        .join(User, Request.user_id == User.id)\
+        .join(Request_Towns, Request.id == Request_Towns.request_id)\
+        .join(Town, Request_Towns.town_id == Town.id)\
+        .join(Service, Request.service_id == Service.id)\
+        .filter((Request.user_id == my_user_id))\
+        .group_by(Request_Towns.request_id,
+                User.first_name,
+                User.last_name,
+                Request.created_at,
+                Request.description,
+                Request.title,
+                Service.name
+                )\
+        .order_by(Request_Towns.request_id)\
+        .all()
+        return rows
 
     # def delete(self, data):
     #     """
