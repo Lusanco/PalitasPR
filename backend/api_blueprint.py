@@ -168,6 +168,14 @@ def show_review(id):
     else:
         return jsonify({"error": f"No Review object found with ID {id}"}), 404
 
+@api_bp.route('/pic', methods=['POST'])
+def put_pic():    
+    print("Pic ROUTE ACTIVATED")
+    data = request.files
+    print(data)
+    return make_response({'message': 'OK'}, 200)
+
+
 # @api_bp.route("/Promotion", methods=["GET"])
 # def get_all_promotion():
 #     """
