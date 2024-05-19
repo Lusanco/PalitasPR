@@ -261,7 +261,7 @@ def delete_picture(user_id: str, model: str, model_id: str, pic_name: str) -> di
             else:
                 return {'response': e.response['Error']['Code']}
 
-def put_picture(user_id: str, model: str, model_id: str, pic_name: str) -> dict:
+def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content: bytes) -> dict:
         """
         Delete a picture from an AWS S3 bucket based on the specified user ID, model, model_id and pic_name.
 
@@ -304,7 +304,7 @@ def put_picture(user_id: str, model: str, model_id: str, pic_name: str) -> dict:
                 try:
                     # Attempt to put object
                     print(f'\nPAth to put object: {path}\n')
-                    response = s3_client.put_object(Bucket='palitas-pics', Key=path)
+                    response = s3_client.put_object(Bucket='palitas-pics', Key=path, Body=content)
                     return {'response': 'ok'}
 
                 except ClientError as e:

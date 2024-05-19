@@ -4,7 +4,9 @@ from emails import confirm_email
 import emails
 import uuid
 from flask_login import login_user, logout_user, login_required, current_user,LoginManager
-
+import os
+from werkzeug.utils import secure_filename
+import aws_bucket
 api_bp = Blueprint('api', __name__)
 
 @api_bp.before_request
@@ -171,10 +173,21 @@ def show_review(id):
 @api_bp.route('/pic', methods=['POST'])
 def put_pic():    
     print("Pic ROUTE ACTIVATED")
-    data = request.files
-    print(data)
-    return make_response({'message': 'OK'}, 200)
-
+    if 'image' not in request.files:
+        return make_response({'message': 'No file part'}, 400)
+        
+    file = request.files['image']
+    print(file)
+    if file.filename == '':
+        return make_response({'message': 'No selected file'}, 400)
+        
+    if file:
+        filename = secure_filename(file.filename)  # Secure the filename
+        content = file.read()
+        print('My content: ')
+        print(content)
+        respose = aws_bucket.put_picture('007', 'Promotion', '005', filename, content)
+        return make_response(respose)
 
 # @api_bp.route("/Promotion", methods=["GET"])
 # def get_all_promotion():
