@@ -52,7 +52,9 @@
 </script>
 
 <!-- PageSearchBar Start -->
-<div class="flex flex-col items-center justify-center h-full gap-8">
+<div
+  class="flex flex-col items-center justify-center h-full min-h-screen gap-8"
+>
   <LogoSlogan></LogoSlogan>
   <!-- SearchBar Start -->
   <div class="items-center justify-center w-full max-w-md mx-2 md:mx-auto">
