@@ -421,7 +421,7 @@ class DBOperations():
         session.close()
         return response
 
-    def sign_up(self, data):
+    def   sign_up(self, data):
         '''
             user signs up THIS IS A ROUGH SKETCH IDEA
             USAGE: Send a dict of the user to create {name: ..., email:...,...}

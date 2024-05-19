@@ -46,8 +46,7 @@ def check_user_inactivity():
             user = DBOperations().search('User', user_id)
             if user and user.is_authenticated:
                 if (now - last_activity).total_seconds() > inactive_threshold.total_seconds():
-                    with app.test_request_context():  # Ensure request context is available
-                        logout_user()  # Logout the user
+                    logout_user()  # Logout the user
                     print(f"User {user.email} logged out due to inactivity.")
 
 # Create and configure scheduler within a function that runs in app context
