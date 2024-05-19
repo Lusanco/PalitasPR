@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, render_template, make_response
+from flask import Blueprint, jsonify, request, render_template, make_response, session
 from db_operations import DBOperations
 from emails import confirm_email
 import emails
@@ -9,6 +9,9 @@ from user_activity import update_last_activity
 
 api_bp = Blueprint('api', __name__)
 
+@api_bp.before_request
+def keep_session_alive():
+    session.modified = True # Before requests, keep alive session if it hasnt expired
 
 @api_bp.route("/verify_email/<token>", methods=["GET"])
 def verify_email(token):
@@ -24,16 +27,31 @@ def verify_email(token):
 
 
 @api_bp.route('/explore', methods=['GET'])
-@login_required
 def explore():
-    model = request.args.get('model')
-    service = request.args.get('search')
-    town = request.args.get('town')
-    search_results = DBOperations().filter(model, service, town)
-    if search_results:
-        return jsonify(search_results)
+    if not current_user.is_anonymous:
+        print(current_user)
+        if current_user.is_authenticated:
+            print(current_user.id)
+            model = request.args.get('model')
+            service = request.args.get('search')
+            town = request.args.get('town')
+            search_results = DBOperations().filter(model, service, town)
+            if search_results:
+                return jsonify(search_results)
+            else:
+                return jsonify("No Results"), 404
+        else:
+            print('Session Expired')
+            return jsonify("Session Expired"), 409
     else:
-        return jsonify("No Results"), 404
+        print('Anonimo using device')
+        return jsonify("Anonimo using device"), 404
+@api_bp.route("/logout")
+@login_required
+def logout():
+    # Log out the current user
+    logout_user()
+    return 'Logged out'
 
 @api_bp.route("/create_object", methods=["POST"])
 def create_object():
