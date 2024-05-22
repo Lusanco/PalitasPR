@@ -296,7 +296,7 @@ def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content:
         try:
             s3_client.head_object(Bucket='palitas-pics', Key=path)
             print(f'Object -{path}- already exists')
-            return {'response': f'Object {path} already exists'}
+            return ({'response': f'Object {path} already exists'}, 400)
 
         except ClientError as e: # Not found object, proceed to put
 
@@ -305,11 +305,11 @@ def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content:
                     # Attempt to put object
                     print(f'\nPAth to put object: {path}\n')
                     response = s3_client.put_object(Bucket='palitas-pics', Key=path, Body=content)
-                    return {'response': 'ok'}
+                    return ({'response': 'ok'}, 200)
 
                 except ClientError as e:
                     # Handle the specific error codes
                     if e.response['Error']['Code'] == 'NoSuchKey':
-                        return {'response': 'Object not found'}
+                        return ({'response': 'Object not found'}, 404)
                     else:
                         return {'response': e.response['Error']['Code']}
