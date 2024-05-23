@@ -498,12 +498,12 @@ class DBOperations():
                 else:
                     print(f"{class_name} object with ID {obj_id} not found.")
             else:
-                return "Object ID not provided."
+                return ({'message':"Object ID not provided."}, 400)
         else:
-            return "Class Not Found"
+            return ({'message':"Class not found"}, 400)
 
         session.close()
-        return "Object updated"
+        return ({'message': "ok"}, 200)
 
 
     def login(self, email=None, pwd=None):

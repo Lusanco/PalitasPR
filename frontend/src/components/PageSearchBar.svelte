@@ -24,7 +24,7 @@
     axios
       .get(`/api/explore?search=${search}&model=${model}&town=${town}`)
       .then((response) => {
-        services = response.data;
+        services = response.data.results;
         loaded = true;
         reload = false;
         error = false;
