@@ -28,15 +28,21 @@ def verify_email(token):
 
 @api_bp.route('/explore', methods=['GET'])
 def explore():
-
+    """
+        FRONT END send: {
+            'model': <'Promotion'> or <'Request'>,
+            'search': '<service_name>',
+            'town' : <'town_name'> or <null>    
+            }
+    """
     model = request.args.get('model')
     service = request.args.get('search')
     town = request.args.get('town')
     search_results = DBOperations().filter(model, service, town)
     if search_results:
-        return jsonify(search_results)
+        return make_response(jsonify({'results': search_results}), 200)
     else:
-        return jsonify("No Results"), 404
+        return make_response(jsonify({'message':"No Results"}), 404)
 @api_bp.route("/logout")
 @login_required
 def logout():
@@ -178,8 +184,8 @@ def put_pic():
         content = file.read()
         print('My content: ')
         print(content)
-        respose = aws_bucket.put_picture('007', 'Promotion', '005', filename, content)
-        return make_response(respose)
+        response = aws_bucket.put_picture('007', 'Promotion', '005', filename, content)
+        return make_response(response)
 
 @api_bp.route('/promotion-request/<id>', methods=['GET'])
 def promo_request(id=None):
