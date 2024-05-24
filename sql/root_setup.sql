@@ -6,6 +6,7 @@ DROP Table IF EXISTS promotions;
 DROP Table IF EXISTS requests;
 DROP TABLE IF EXISTS tasks;
 DROP TABLE IF EXISTS reviews;
+DROP TABLE IF EXISTS profiles;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS services;
 DROP TABLE IF EXISTS towns;
@@ -110,6 +111,18 @@ CREATE TABLE request_towns (
     town_id  INT REFERENCES towns(id) ON DELETE CASCADE NOT NULL,
     created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create table for Profiles
+CREATE TABLE profiles (
+    id VARCHAR(50) PRIMARY KEY,
+    bio TEXT,
+    profile_pic VARCHAR(255),
+    gallery VARCHAR(255),
+    social_links TEXT,
+    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insert sample data into users table with simulated email addresses

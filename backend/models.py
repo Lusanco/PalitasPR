@@ -83,3 +83,12 @@ class Request(BaseModel, Base):
     title = Column(String(100), nullable=False)
     description = Column(String(255), nullable=False)
     pictures = Column(String())
+
+class Profile(BaseModel, Base):
+    __tablename__ = 'profiles'
+
+    id = Column(String(50), ForeignKey('users.id'), primary_key=True)
+    bio = Column(String)
+    profile_pic = Column(String(255))
+    gallery = Column(String(255))
+    social_links = Column(String)

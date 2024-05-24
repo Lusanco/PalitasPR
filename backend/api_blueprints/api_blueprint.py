@@ -1,10 +1,7 @@
-from flask import Blueprint, jsonify, request, render_template, make_response, session
+from flask import Blueprint, jsonify, request, make_response, session
 from db_operations import DBOperations
-from emails import confirm_email
 import emails
-import uuid
 from flask_login import login_user, logout_user, login_required, current_user,LoginManager
-import os
 from werkzeug.utils import secure_filename
 import aws_bucket
 api_bp = Blueprint('api', __name__)
@@ -187,74 +184,6 @@ def put_pic():
         response = aws_bucket.put_picture('007', 'Promotion', '005', filename, content)
         return make_response(response)
 
-@api_bp.route('/promotion-request/<id>', methods=['GET'])
-@login_required
-def promo_request(id=None):
-    '''
-        Route to get all promo and request posted by a user
-    '''
-    if current_user.id == id:
-        # GET
-        if request.method == 'GET':
-            results = DBOperations().promo_request(id)
-            return(make_response({'body': results}), 200) # 2 dicts, (<{promos}>, <{requests}>)
-
-        # POST 
-        if request.method == 'POST':
-            if not request.get_json():
-                return (make_response({'message': 'No data received'}), 400)
-
-            data = request.get_json()
-            picture = request.files['image']
-
-            # Picture upload only
-            if ('model_id') in data and picture:
-                model = data['model']
-                model_id = ['model_id']
-                pic_name = secure_filename(picture.filename)
-                pic_bytes = picture.read()
-
-                response = aws_bucket.put_picture(current_user.id, model, model_id, pic_name, pic_bytes)
-
-                if response[1] == 200:
-                    # Put pic name in database for the model column 'pictures'
-                    response = DBOperations.update({model_id: {'pictures': pic_name}})
-
-                    if response[1] == 200:
-                        make_response({'message': 'ok'}, 200)
-                    # Data Base error
-                    else:
-                        make_response({'message': 'error in database'}, 500)
-                # AWS error
-                else:
-                    make_response(response)
-            # Make new (promo or request), folder in aws made in DBOperations.new() and then upload pic
-            if ('model_id') not in data and picture:
-                pic_name = secure_filename(picture.filename)
-                pic_bytes = picture.read()
-                model = data['model']
-                data.pop('model')
-                newModel = DBOperations().new({model: data}) # Data should be a dictionary
-
-                response = aws_bucket.put_picture(current_user.id, model, newModel.id, pic_name, pic_bytes)
-
-                if response[1] == 200: # OK, procceed to put name of pic in database for the <promo> or <request>
-                    response = DBOperations.update({newModel.id: {'pictures': pic_name}})
-
-                    if response[1] == 200:
-                        return(make_response({'message': 'ok'}, 200))
-                    # error from DBOperations
-                    else:
-                        return make_response(response) # Fail error
-                # error from aws bucket
-                else:
-                    return make_response(response) # Fail error
-
-            # Make folder only
-            if ('model_id') not in data and not picture:
-                print('Make logic for creating folder only')
-    else:
-        return(make_response({'message': 'Access denied'}), 403)
 
 # @api_bp.route("/Promotion", methods=["GET"])
 # def get_all_promotion():

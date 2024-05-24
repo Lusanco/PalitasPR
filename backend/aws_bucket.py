@@ -69,6 +69,7 @@ def create_user_folder(user_id: str = None) -> None:
             # Attempt a head_object to check if it already exists
             s3_client.head_object(Bucket=bucket_name, Key=folder)
             print(f"Folder '{folder}' already exists.")
+            return f'Folder {folder} already exists. Terminating AWS connection'
 
         except ClientError as e:
 
@@ -133,7 +134,7 @@ def create_model_folder(user_id: str, model: str, model_id: str) -> dict:
             # User base folder for the model doesnt exist
             if e.response['Error']['Code'] == "404":
                 print(f'\nRoot folder {user_folder} doesnt exist.\n')
-                return {'response': f'Root Folder {user_folder} doesnt exist'}
+                return ({'response': f'Root Folder {user_folder} doesnt exist'}, 404)
 
         # Proceed to make model folder /model/<model_id/
         try:
@@ -151,10 +152,10 @@ def create_model_folder(user_id: str, model: str, model_id: str) -> dict:
                 # Check the response to determine the outcome
                 if response['ResponseMetadata']['HTTPStatusCode'] == 200:
                     print(f"Folder '{folder_to_make}' created successfully''.")
-                    return {'response': 'ok'} # Folder created OK
+                    return ({'response': 'ok'}, 201) # Folder created OK
                 else:
                     print(f"Failed to create folder '{folder_to_make}")
-                    return {'response': f'Failed to create folder {folder_to_make}'}
+                    return ({'response': f'Failed to create folder {folder_to_make}'}, 500)
 
     else:
         print(f'{model} doesnt exist in: {models_dict}')
