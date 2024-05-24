@@ -49,7 +49,7 @@
     priceMax = "";
   const towns = Object.entries(townsID);
   const services = Object.entries(servicesID);
-  let town = "all";
+  let town;
   let service = "";
 
   let image = null;
@@ -69,10 +69,10 @@
       model,
       title,
       town,
-      serviceID,
+      service_id: serviceID,
       description,
-      priceMin,
-      priceMax,
+      price_min: priceMin,
+      price_max: priceMax,
     };
 
     axios
@@ -158,7 +158,7 @@
       bind:value={town}
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
-      <option value="all">---</option>
+      <option value="0">---</option>
       {#each towns as [town, id]}
         <option value={id}>{town}</option>
       {/each}
