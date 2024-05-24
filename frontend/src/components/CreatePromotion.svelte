@@ -44,7 +44,7 @@
     };
 
     axios
-      .post("/api/dashboard", data)
+      .post("/api/dashboard/promotion-request", data)
       .then((response) => {
         loaded = true;
         reload = false;
