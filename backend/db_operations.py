@@ -91,11 +91,13 @@ class DBOperations():
                     new_object.user_id,
                     aws_folders[model_class],
                     new_object.id)
-                print(response)
+                if response[1] != 201:
+                    session.close()
+                    return response
 
             session.commit()
             session.close()
-            return new_object
+            return (new_object, 201)
         else:
             print("Not a valid class")
             session.close()
