@@ -6,6 +6,7 @@
     USING LOCAL POSTGRES DB NEED TO CHAMGE TO AWS
 
 """
+from sqlalchemy.exc import SQLAlchemyError
 from os import getenv
 from time import time
 from sqlalchemy import create_engine, func
@@ -81,6 +82,15 @@ class DBOperations():
 
             session.add(new_object)
 
+            object_dict = new_object.all_columns()
+
+            try:
+                session.commit()
+            except SQLAlchemyError as e:
+                session.rollback()
+                session.close()
+                return ({'response': e}, 500)
+
             # check if object needs aws folder
             aws_folders = {
                 Promotion: 'Promotion',
@@ -93,11 +103,10 @@ class DBOperations():
                     aws_folders[model_class],
                     new_object.id)
                 if response[1] != 201:
+                    session.rollback()
                     session.close()
                     return response
-            object_dict = new_object.all_columns()
-            session.commit()
-            session.close()
+
             return (object_dict, 201)
         else:
             print("Not a valid class")
