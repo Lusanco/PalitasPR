@@ -69,6 +69,7 @@ def create_user_folder(user_id: str = None) -> None:
             # Attempt a head_object to check if it already exists
             s3_client.head_object(Bucket=bucket_name, Key=folder)
             print(f"Folder '{folder}' already exists.")
+            return f'Folder {folder} already exists. Terminating AWS connection'
 
         except ClientError as e:
 
