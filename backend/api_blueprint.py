@@ -184,74 +184,88 @@ def put_pic():
         response = aws_bucket.put_picture('007', 'Promotion', '005', filename, content)
         return make_response(response)
 
-@api_bp.route('/promotion-request/<id>', methods=['GET'])
+@api_bp.route('/promotion-request', methods=['GET'])
 @login_required
-def promo_request(id=None):
+def promo_request():
     '''
         Route to get all promo and request posted by a user
     '''
-    if current_user.id == id:
-        # GET Method
-        if request.method == 'GET':
-            results = DBOperations().promo_request(id)
-            return(make_response({'results': results}), 200) # 2 dicts, (<{promos}>, <{requests}>)
+    # # GET Method
+    # if request.method == 'GET':
+    #     results = DBOperations().promo_request(current_user.id)
+    #     return(make_response({'results': results}), 200) # 2 dicts, (<{promos}>, <{requests}>)
 
-        # POST Method
-        if request.method == 'POST':
-            if not request.get_json():
-                return (make_response({'message': 'No data received'}), 400)
+    # POST Method
+    # if request.method == 'POST':
+    #     if not request.get_json():
+    #         return (make_response({'message': 'No data received'}), 400)
 
-            data = request.get_json()
-            picture = request.files['image']
+    #     data = request.get_json()
+    #     picture = request.files['image']
 
-            # A): Picture upload only
-            if ('model_id') in data and picture:
-                model = data['model']
-                model_id = ['model_id']
-                pic_name = secure_filename(picture.filename)
-                pic_bytes = picture.read()
+    #     # A): Picture upload only
+    #     if ('model_id') in data and picture:
+    #         model = data['model']
+    #         model_id = ['model_id']
+    #         pic_name = secure_filename(picture.filename)
+    #         pic_bytes = picture.read()
 
-                response = aws_bucket.put_picture(current_user.id, model, model_id, pic_name, pic_bytes)
+    #         response = aws_bucket.put_picture(current_user.id, model, model_id, pic_name, pic_bytes)
 
-                if response[1] == 200:
-                    # Put pic name in database for the model column 'pictures'
-                    response = DBOperations.update({model_id: {'pictures': pic_name}})
+    #         if response[1] == 200:
+    #             # Put pic name in database for the model column 'pictures'
+    #             response = DBOperations.update({model_id: {'pictures': pic_name}})
 
-                    if response[1] == 200:
-                        make_response({'message': 'ok'}, 200)
-                    # Data Base error
-                    else:
-                        make_response({'message': 'error in database'}, 500)
-                # AWS error
-                else:
-                    make_response(response)
-            # B): Make new (promo or request), folder in aws made in DBOperations.new() and then upload pic
-            if ('model_id') not in data and picture:
-                pic_name = secure_filename(picture.filename)
-                pic_bytes = picture.read()
-                model = data['model']
-                data.pop('model')
-                newModel = DBOperations().new({model: data}) # Data should be a dictionary
+    #             if response[1] == 200:
+    #                 make_response({'message': 'ok'}, 200)
+    #             # Data Base error
+    #             else:
+    #                 make_response({'message': 'error in database'}, 500)
+    #         # AWS error
+    #         else:
+    #             make_response(response)
+    #     # B): Make new (promo or request), folder in aws made in DBOperations.new() and then upload pic
+    #     if ('model_id') not in data and picture:
+    #         pic_name = secure_filename(picture.filename)
+    #         pic_bytes = picture.read()
+    #         model = data['model']
+    #         data.pop('model')
+    #         newModel = DBOperations().new({model: data}) # Data should be a dictionary
 
-                response = aws_bucket.put_picture(current_user.id, model, newModel.id, pic_name, pic_bytes)
+    #         response = aws_bucket.put_picture(current_user.id, model, newModel.id, pic_name, pic_bytes)
 
-                if response[1] == 200: # OK, procceed to put name of pic in database for the <promo> or <request>
-                    response = DBOperations.update({newModel.id: {'pictures': pic_name}})
+    #         if response[1] == 200: # OK, procceed to put name of pic in database for the <promo> or <request>
+    #             response = DBOperations.update({newModel.id: {'pictures': pic_name}})
 
-                    if response[1] == 200:
-                        return(make_response({'message': 'ok'}, 200))
-                    # error from DBOperations
-                    else:
-                        return make_response(response) # Fail error
-                # error from aws bucket
-                else:
-                    return make_response(response) # Fail error
+    #             if response[1] == 200:
+    #                 return(make_response({'message': 'ok'}, 200))
+    #             # error from DBOperations
+    #             else:
+    #                 return make_response(response) # Fail error
+    #         # error from aws bucket
+    #         else:
+    #             return make_response(response) # Fail error
 
-            # C) Make folder only
-            if ('model_id') not in data and not picture:
-                print('Make logic for creating folder only')
+        # C) Make folder only
+        # if ('model_id') not in data and not picture:
+    frontend_data= {
+        'user_id': current_user.id,
+        'model': 'Promotion',
+        'service_id': 8, # Plumbing
+        'title': 'NEW PLUMBING SERVICE',
+        'description': 'New specials for our new customers up to $50 discounts',
+        'price_min': 40,
+        'price_max': 120
+        }
+    model = frontend_data.get('model')
+    frontend_data.pop('model')
+
+    newObject = DBOperations().new({model:frontend_data})
+
+    if newObject:
+        return make_response({'results': 'ok'}, 201)
     else:
-        return(make_response({'message': 'Acces denied'}), 403)
+        return make_response({'error': 'Backend Error'}, 500)
 
 # @api_bp.route("/Promotion", methods=["GET"])
 # def get_all_promotion():
