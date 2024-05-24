@@ -4,7 +4,7 @@
   import { link } from "svelte-routing";
   import axios from "axios";
   import LoadingSpinnerFull from "./LoadingSpinnerFull.svelte";
-  import listTowns from "../listTowns";
+  import townsID from "../townsID";
   import servicesID from "../servicesID";
 
   const service = Object.values(servicesID);
@@ -49,7 +49,8 @@
     description,
     priceMin,
     priceMax = "";
-  const towns = Object.values(listTowns);
+  const towns = Object.entries(townsID);
+  const services = Object.entries(servicesID);
   let town = "all";
 
   let image = null;
@@ -98,7 +99,7 @@
 
   async function handleCreate() {
     createLogic();
-    handleLogic();
+    // handleUpload();
   }
 
   onMount(() => {
@@ -136,6 +137,20 @@
       <label for="service">Tipo de Servicio</label>
       <input class="w-full" type="text" name="service" bind:value={serviceID} />
     </div>
+
+    <!-- Service Filter Start -->
+    <label for="service">Seleccione Servicio a Brindar</label>
+    <select
+      name="service"
+      class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
+    >
+      <option value="">---</option>
+      {#each services as [service, id]}
+        <option value={id}>{service}</option>
+      {/each}
+    </select>
+    <!-- Service Filter End -->
+
     <!-- Town Filter Start -->
     <label for="town">Seleccione un Pueblo</label>
     <select
@@ -143,9 +158,9 @@
       bind:value={town}
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
-      <option value="all" disabled>Town</option>
-      {#each towns as town}
-        <option value={town}>{town}</option>
+      <option value="all">---</option>
+      {#each towns as [town, id]}
+        <option value={id}>{town}</option>
       {/each}
     </select>
     <!-- Town Filter End -->
@@ -163,10 +178,10 @@
       <label for="price-max">Precio Maximo (Opcional)</label>
       <input class="w-full" type="number" name="price-max" id="" />
     </div>
-    <div>
+    <!-- <div>
       <label for="imageInput">Subir Imagenes (Opcional)</label>
       <UploadImage></UploadImage>
-    </div>
+    </div> -->
     <button
       on:click={handleCreate}
       type="button"

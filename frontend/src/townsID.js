@@ -1,4 +1,4 @@
-const listTowns = {
+const townsID = {
   Adjuntas: 1,
   Aguada: 2,
   Aguadilla: 3,
@@ -79,4 +79,4 @@ const listTowns = {
   Yauco: 78,
 };
 
-export default listTowns;
+export default townsID;
