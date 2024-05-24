@@ -5,8 +5,44 @@
   import axios from "axios";
   import LoadingSpinnerFull from "./LoadingSpinnerFull.svelte";
   import listTowns from "../listTowns";
+  import servicesID from "../servicesID";
 
-  let errorMessage = "";
+  const service = Object.values(servicesID);
+
+  let imageFile = null;
+  let errorMessage;
+
+  function handleFileChange(event) {
+    imageFile = event.target.files[0];
+  }
+
+  async function handleLogic() {
+    if (!imageFile) {
+      errorMessage = "Please select an image file";
+      return;
+    }
+
+    const formDataImage = new FormData();
+    formDataImage.append("image", imageFile);
+
+    try {
+      const response = await axios.post("/api/pic", formDataImage, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("Image uploaded successfully:", response.data);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      errorMessage = "An error occurred while uploading the image";
+      console.log(formDataImage);
+    }
+  }
+  async function handleUpload() {
+    handleLogic();
+  }
+
+  // let errorMessage = "";
   const model = "Promotion";
   let title,
     serviceID,
@@ -28,10 +64,6 @@
     loaded = false;
     reload = true;
     error = false;
-    // if (password !== confirmPassword) {
-    //   errorMessage = "Passwords do not match!";
-    //   return; // Prevent unnecessary API call
-    // }
 
     const data = {
       model,
@@ -64,27 +96,20 @@
       });
   }
 
-  // function handleKeydown(event) {
-  //   if (event.key === "Enter") {
-  //     // email = email;
-  //     // password = password;
-  //     createLogic();
-  //   }
-  // }
+  async function handleCreate() {
+    createLogic();
+    handleLogic();
+  }
 
-  // async function handleCreate() {
-  //   createLogic();
-  // }
-
-  // onMount(() => {
-  //   errorMessage = ""; // Clear any previous error messages on component mount
-  // });
-  // afterUpdate(() => {
-  //   if (error) {
-  //     const errorElement = document.getElementById("err-msg");
-  //     errorElement.scrollIntoView({ behavior: "smooth" });
-  //   }
-  // });
+  onMount(() => {
+    errorMessage = ""; // Clear any previous error messages on component mount
+  });
+  afterUpdate(() => {
+    if (error) {
+      const errorElement = document.getElementById("err-msg");
+      errorElement.scrollIntoView({ behavior: "smooth" });
+    }
+  });
 </script>
 
 <div
@@ -143,7 +168,7 @@
       <UploadImage></UploadImage>
     </div>
     <button
-      on:click={createLogic}
+      on:click={handleCreate}
       type="button"
       class="w-full px-8 py-3 font-semibold bg-teal-600 rounded-md text-teal-50"
       >Crear</button

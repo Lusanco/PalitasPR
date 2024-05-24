@@ -2,7 +2,7 @@
   import axios from "axios";
   import LogoSlogan from "./LogoSlogan.svelte";
   import LoadingSpinner from "./LoadingSpinner.svelte";
-  import listTowns from "../listTowns";
+  import townsID from "../townsID";
 
   let services = [];
   let errorMessage = "";
@@ -13,7 +13,7 @@
   let search = ""; // service
   let model = "promotions";
   let town = "all";
-  const towns = Object.values(listTowns);
+  let towns = Object.entries(townsID);
 
   function exploreLogic() {
     hidden = false;
@@ -86,8 +86,8 @@
           class="block w-full overflow-y-auto border-0 border-b-2 border-gray-200 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
         >
           <option value="all" disabled>Town</option>
-          {#each towns as town}
-            <option value={town}>{town}</option>
+          {#each towns as [town, id]}
+            <option value={id}>{town}</option>
           {/each}
         </select>
         <!-- Town Filter End -->
