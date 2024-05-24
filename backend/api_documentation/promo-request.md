@@ -43,7 +43,7 @@ Create Promotion:
     "model": "Promotion",
     "title": "Spring Cleaning Discount",
     "description": "Get 20% off your first spring cleaning.",
-    "service": "Cleaning Service",
+    "service_id": "Cleaning Service",
     "price_min": 50(optional),
     "price_max": 100(optional),
 }
@@ -54,7 +54,7 @@ Create Request:
     "model": "Request",
     "title": "In need of a plumber",
     "description": "Kitchen sink needs a major work, it is leaking constantly",
-    "service": "Plumbing",
+    "service_id": "Plumbing",
 }
 multipart file format: image(optional)
 ```
