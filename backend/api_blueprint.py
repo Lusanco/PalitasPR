@@ -5,13 +5,37 @@ import emails
 import uuid
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from user_activity import update_last_activity
+import logging
+
 
 
 api_bp = Blueprint('api', __name__)
 
+
+session_expired = False  # Flag to track session expiration
+
+
+@api_bp.before_request
+def check_session_expiration():
+    if current_user.is_authenticated:
+        if session.get('user_id') != current_user.id:
+            # If session user_id does not match the current user's ID, assume session expired
+            logout_user()  # Log out the current user
+            print("Logged out")
+            return jsonify({"message": "Session Expired"}), 401
+    elif request.endpoint not in ['login', 'static', None]:
+        # For non-authenticated users trying to access protected endpoints
+        if not current_user.is_anonymous:
+            return jsonify({"message": "Unauthorized"}), 401                                       
+
+
 @api_bp.before_request
 def keep_session_alive():
     session.modified = True # Before requests, keep alive session if it hasnt expired
+
+@api_bp.route('/session_status')
+def session_status():
+    return jsonify({"session_expired": session_expired})
 
 @api_bp.route("/verify_email/<token>", methods=["GET"])
 def verify_email(token):
@@ -28,30 +52,22 @@ def verify_email(token):
 
 @api_bp.route('/explore', methods=['GET'])
 def explore():
-    if not current_user.is_anonymous:
-        print(current_user)
-        if current_user.is_authenticated:
-            print(current_user.id)
-            model = request.args.get('model')
-            service = request.args.get('search')
-            town = request.args.get('town')
-            search_results = DBOperations().filter(model, service, town)
-            if search_results:
-                return jsonify(search_results)
-            else:
-                return jsonify("No Results"), 404
-        else:
-            print('Session Expired')
-            return jsonify("Session Expired"), 409
+    model = request.args.get('model')
+    service = request.args.get('search')
+    town = request.args.get('town')
+    search_results = DBOperations().filter(model, service, town)
+    if search_results:
+        return jsonify(search_results)
     else:
-        print('Anonimo using device')
-        return jsonify("Anonimo using device"), 404
+        return jsonify("No Results"), 404
+
 @api_bp.route("/logout")
 @login_required
 def logout():
     # Log out the current user
     logout_user()
-    return 'Logged out'
+    session.pop('user_id', None)  # Clear user ID from session
+    return jsonify({"message": "Logged out"}), 200
 
 @api_bp.route("/create_object", methods=["POST"])
 def create_object():
@@ -62,7 +78,7 @@ def create_object():
         return {"response": "success"}
     else:
         pass
-    return jsonify({"error": "Error creating a new object"})
+    return jsonify({"error": "Error creating a new object"}), 500
 
 
 @api_bp.route("/filter", methods=["POST"])
@@ -89,20 +105,14 @@ def login():
     email = request.args.get('af1')
     password = request.args.get('af2')
     response, status = DBOperations().login(email, password)
-    print("After login response fetched")
     if status == 200:
         user = response['message']
         response['message'] = 'OK'
         login_user(user)
-        update_last_activity(user) 
+        session['user_id'] = user.id  # Set user ID in session
+        update_last_activity(user)
     return make_response(jsonify(response), status)
 
-@api_bp.route("/logout")
-@login_required
-def logout():
-    # Log out the current user
-    logout_user()
-    return 'Logged out'
 
 # @api_bp.route("/<class_name>/<id>", methods=["GET"])
 # def search_object(class_name, id):
@@ -125,24 +135,19 @@ def logout():
 @api_bp.route("/signup", methods=["POST"])
 def sign_up():
     form_data = request.get_json()
+    required_fields = ["first_name", "last_name", "email", "password"]
 
-    if (
-        "first_name" in form_data
-        and "last_name" in form_data
-        and "email" in form_data
-        and "password" in form_data
-    ):
-        message, status = DBOperations().sign_up(form_data)
-        return make_response(jsonify(message), status)
-    else:
-        return make_response(jsonify({'message': 'Missing a required field'}), 400)
+    if not all(field in form_data for field in required_fields):
+        return jsonify({"message": "Missing a required field"}), 400
+    
+    message, status = DBOperations().sign_up(form_data)
+    return make_response(jsonify(message), status)
 
 
 @api_bp.route("/Promotion/<id>", methods=["GET"])
 def show_promo(id):
     promo_obj = DBOperations().search('Promotion', id)
     if promo_obj:
-        # obj_dict = promo_obj.all_columns()
         return jsonify(promo_obj), 200
     else:
         return jsonify({"error": f"No Promotion object found with ID {id}"}), 404
