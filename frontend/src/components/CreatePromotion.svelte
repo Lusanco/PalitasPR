@@ -1,5 +1,90 @@
 <script>
   import UploadImage from "./UploadImage.svelte";
+  import { onMount, afterUpdate } from "svelte";
+  import { link } from "svelte-routing";
+  import axios from "axios";
+  import LoadingSpinnerFull from "./LoadingSpinnerFull.svelte";
+  import listTowns from "../listTowns";
+
+  let errorMessage = "";
+  const model = "Promotion";
+  let title,
+    serviceID,
+    description,
+    priceMin,
+    priceMax = "";
+  const towns = Object.values(listTowns);
+  let town = "all";
+
+  let image = null;
+
+  let hidden = true;
+  let loaded = false;
+  let reload = false;
+  let error = false;
+
+  function createLogic() {
+    hidden = false;
+    loaded = false;
+    reload = true;
+    error = false;
+    // if (password !== confirmPassword) {
+    //   errorMessage = "Passwords do not match!";
+    //   return; // Prevent unnecessary API call
+    // }
+
+    const data = {
+      model,
+      title,
+      town,
+      serviceID,
+      description,
+      priceMin,
+      priceMax,
+    };
+
+    axios
+      .post("/api/dashboard", data)
+      .then((response) => {
+        loaded = true;
+        reload = false;
+        error = false;
+        console.log(response);
+        // if (response.status === 201) {
+        //   window.location.href = "/success";
+        // }
+      })
+      .catch((err) => {
+        hidden = false;
+        loaded = true;
+        reload = false;
+        error = true;
+        console.log(err);
+        errorMessage = err;
+      });
+  }
+
+  // function handleKeydown(event) {
+  //   if (event.key === "Enter") {
+  //     // email = email;
+  //     // password = password;
+  //     createLogic();
+  //   }
+  // }
+
+  // async function handleCreate() {
+  //   createLogic();
+  // }
+
+  // onMount(() => {
+  //   errorMessage = ""; // Clear any previous error messages on component mount
+  // });
+  // afterUpdate(() => {
+  //   if (error) {
+  //     const errorElement = document.getElementById("err-msg");
+  //     errorElement.scrollIntoView({ behavior: "smooth" });
+  //   }
+  // });
 </script>
 
 <div
@@ -14,12 +99,31 @@
     <!-- Crear Solicitud de Servicio -->
     <div class="">
       <label for="title">Titulo de su Oferta</label>
-      <input class="w-full" type="text" name="titulo" id="" />
+      <input
+        class="w-full"
+        type="text"
+        name="titulo"
+        id=""
+        bind:value={title}
+      />
     </div>
     <div class="">
       <label for="service">Tipo de Servicio</label>
-      <input class="w-full" type="text" name="service" />
+      <input class="w-full" type="text" name="service" bind:value={serviceID} />
     </div>
+    <!-- Town Filter Start -->
+    <label for="town">Seleccione un Pueblo</label>
+    <select
+      name="town"
+      bind:value={town}
+      class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
+    >
+      <option value="all" disabled>Town</option>
+      {#each towns as town}
+        <option value={town}>{town}</option>
+      {/each}
+    </select>
+    <!-- Town Filter End -->
     <div class="max-h-96">
       <label for="description">Descripcion de su Oferta</label>
 
@@ -39,6 +143,7 @@
       <UploadImage></UploadImage>
     </div>
     <button
+      on:click={createLogic}
       type="button"
       class="w-full px-8 py-3 font-semibold bg-teal-600 rounded-md text-teal-50"
       >Crear</button
