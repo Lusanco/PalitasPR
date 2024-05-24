@@ -42,11 +42,7 @@
 
   // let errorMessage = "";
   const model = "Promotion";
-  let title,
-    serviceID,
-    description,
-    priceMin,
-    priceMax = "";
+  let title, serviceID, description, priceMin, priceMax;
   const towns = Object.entries(townsID);
   const services = Object.entries(servicesID);
   let town;
