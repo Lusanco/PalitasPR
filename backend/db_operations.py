@@ -31,7 +31,8 @@ class DBOperations():
                 'User': User,
                 'Service': Service,
                 'Town': Town,
-                'UserServiceAssoc': Promo_Towns,
+                'Promo_Towns': Promo_Towns,
+                'Request_Towns': Request_Towns,
                 'Review': Review,
                 'Task': Task,
                 'Promotion': Promotion,
@@ -94,10 +95,10 @@ class DBOperations():
                 if response[1] != 201:
                     session.close()
                     return response
-
+            object_dict = new_object.all_columns()
             session.commit()
             session.close()
-            return (new_object, 201)
+            return (object_dict, 201)
         else:
             print("Not a valid class")
             session.close()
@@ -468,7 +469,7 @@ class DBOperations():
     def update(self, data):
         """
             Update an object from Data Base
-            Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
+            Usage:  {'Model': {''parameter1': 'value1', 'parameter2': 'value2'}}
         """
         Session = sessionmaker(bind=self.engine)
         session = Session()
