@@ -1,10 +1,7 @@
-from flask import Blueprint, jsonify, request, render_template, make_response, session
+from flask import Blueprint, jsonify, request, make_response, session
 from db_operations import DBOperations
-from emails import confirm_email
 import emails
-import uuid
 from flask_login import login_user, logout_user, login_required, current_user,LoginManager
-import os
 from werkzeug.utils import secure_filename
 import aws_bucket
 api_bp = Blueprint('api', __name__)
@@ -188,17 +185,18 @@ def put_pic():
         return make_response(response)
 
 @api_bp.route('/promotion-request/<id>', methods=['GET'])
+@login_required
 def promo_request(id=None):
     '''
         Route to get all promo and request posted by a user
     '''
     if current_user.id == id:
-        # GET
+        # GET Method
         if request.method == 'GET':
             results = DBOperations().promo_request(id)
-            return(make_response({'body': results}), 200) # 2 dicts, (<{promos}>, <{requests}>)
+            return(make_response({'results': results}), 200) # 2 dicts, (<{promos}>, <{requests}>)
 
-        # POST 
+        # POST Method
         if request.method == 'POST':
             if not request.get_json():
                 return (make_response({'message': 'No data received'}), 400)
@@ -206,7 +204,7 @@ def promo_request(id=None):
             data = request.get_json()
             picture = request.files['image']
 
-            # Picture upload only
+            # A): Picture upload only
             if ('model_id') in data and picture:
                 model = data['model']
                 model_id = ['model_id']
@@ -227,7 +225,7 @@ def promo_request(id=None):
                 # AWS error
                 else:
                     make_response(response)
-            # Make new (promo or request), folder in aws made in DBOperations.new() and then upload pic
+            # B): Make new (promo or request), folder in aws made in DBOperations.new() and then upload pic
             if ('model_id') not in data and picture:
                 pic_name = secure_filename(picture.filename)
                 pic_bytes = picture.read()
@@ -249,7 +247,7 @@ def promo_request(id=None):
                 else:
                     return make_response(response) # Fail error
 
-            # Make folder only
+            # C) Make folder only
             if ('model_id') not in data and not picture:
                 print('Make logic for creating folder only')
     else:
