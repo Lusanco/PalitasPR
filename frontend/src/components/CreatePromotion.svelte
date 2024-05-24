@@ -7,8 +7,6 @@
   import townsID from "../townsID";
   import servicesID from "../servicesID";
 
-  const service = Object.values(servicesID);
-
   let imageFile = null;
   let errorMessage;
 
@@ -52,6 +50,7 @@
   const towns = Object.entries(townsID);
   const services = Object.entries(servicesID);
   let town = "all";
+  let service = "";
 
   let image = null;
 
@@ -142,6 +141,7 @@
     <label for="service">Seleccione Servicio a Brindar</label>
     <select
       name="service"
+      bind:value={service}
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
       <option value="">---</option>
