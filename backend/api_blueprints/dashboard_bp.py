@@ -16,11 +16,43 @@ def promo_request():
     '''
         Route to get all promo and request posted by a user
     '''
-    print('promo request route')
     # GET Method
     if request.method == 'GET':
         results = DBOperations().promo_request(current_user.id)
         return(make_response({'results': results}), 200) # 2 dicts, (<{promos}>, <{requests}>)
+
+
+@my_bp.route('/promotion-request', methods=['POST'])
+@login_required
+def promo_request():
+    '''
+        Route to get all promo and request posted by a user
+    '''
+    frontend_data= {
+        'user_id': current_user.id,
+        'model': 'Promotion',
+        'service_id': 8, # Plumbing
+        'title': 'NEW PLUMBING SERVICE',
+        'description': 'New specials for our new customers up to $50 discounts',
+        'price_min': 40,
+        'price_max': 120,
+        'towns': [22, 23]
+        }
+    model = frontend_data.get('model')
+    frontend_data.pop('model')
+
+    newObject = DBOperations().new({model:frontend_data})
+
+    if newObject[1] == 201: # (object, statusCode)
+        return make_response({'results': 'ok'}, 201)
+    else:
+        return make_response({'error': newObject[0]}, 500)
+
+
+    # # GET Method
+    # if request.method == 'GET':
+    #     results = DBOperations().promo_request(current_user.id)
+    #     return(make_response({'results': results}), 200) # 2 dicts, (<{promos}>, <{requests}>)
 
     # POST Method
     # if request.method == 'POST':
@@ -75,21 +107,3 @@ def promo_request():
 
         # C) Make folder only
         # if ('model_id') not in data and not picture:
-    # frontend_data= {
-    #     'user_id': current_user.id,
-    #     'model': 'Promotion',
-    #     'service_id': 8, # Plumbing
-    #     'title': 'NEW PLUMBING SERVICE',
-    #     'description': 'New specials for our new customers up to $50 discounts',
-    #     'price_min': 40,
-    #     'price_max': 120
-    #     }
-    # model = frontend_data.get('model')
-    # frontend_data.pop('model')
-
-    # newObject = DBOperations().new({model:frontend_data})
-
-    # if newObject:
-    #     return make_response({'results': 'ok'}, 201)
-    # else:
-    #     return make_response({'error': 'Backend Error'}, 500)
