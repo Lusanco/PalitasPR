@@ -6,8 +6,8 @@ from flask_cors import CORS
 from sqlalchemy import create_engine
 from base_model import Base
 from db_operations import DBOperations
-from blueprints import main_bp
-from api_blueprint import api_bp
+from api_blueprints.api_blueprint import api_bp
+from api_blueprints.dashboard_bp import my_bp
 from flask_mail import Mail
 from flask_login import LoginManager, login_user
 from datetime import timedelta
@@ -23,8 +23,8 @@ app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USERNAME"] = "antoniofdjs@gmail.com"
 app.config["MAIL_PASSWORD"] = "syhk sijd eoli tgba"
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15) # Session expires in 15 minutes
-app.register_blueprint(main_bp)
 app.register_blueprint(api_bp, url_prefix='/api')
+app.register_blueprint(my_bp, url_prefix='/api/dashboard')
 mail = Mail(app)
 login_manager = LoginManager(app)
 
