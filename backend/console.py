@@ -190,7 +190,16 @@ class DBConsole(cmd.Cmd):
             else:
                 print('\nChoose a valid option\n') # starts loop again
                 time.sleep(1)
-                
+    def do_userAws(self, args):
+        '''
+            Test for aws user folder creation (all folders promo, request, review, tasks, profile)
+        '''
+        user_id = input("Enter User_id: ")
+        print('-----------------\n')
+        response = aws_bucket.create_user_folder(user_id)
+        print(response)
+        print('-----------------\n')
+        
 
 if __name__ == '__main__':
     DBConsole().cmdloop()
