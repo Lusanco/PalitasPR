@@ -55,21 +55,28 @@ def promo_request():
     # POST METHOD:
     if request.method == "POST":
 
-        # frontend_data= {
-        # 'user_id': current_user.id,
-        # 'model': 'Promotion',
-        # 'service_id': 8, # Plumbing
-        # 'title': 'NEW PLUMBING SERVICE',
-        # 'description': 'New specials for our new customers up to $50 discounts',
-        # 'price_min': 40,
-        # 'price_max': 120,
-        # 'town': [1, 2]
-        # }
+        keys_required = [
+            'service_id',
+            'model',
+            'title',
+            'description',
+            'town'
+        ]
+
         data = request.get_json()
-        print(f"Data from front: {data}")
+        if not data:
+            return (make_response(jsonify({'error': 'No data sent via json'}), 400))
+
+        # Check if missing keys from request
+        for key in keys_required:
+            if key not in data:
+                return make_response(jsonify({'error': f'Field: {key} not detected'}), 400)
+
+        # Add user id to dict and pop unwanted data
         data["user_id"] = current_user.id
         model = data.get("model")
         town_id = data.get("town")
+
         data.pop("town")
         data.pop("model")
 
@@ -79,15 +86,19 @@ def promo_request():
         if status == 201:  # Ok status
             objectDict = response
 
-            response, status = DBOperations().new(
-                {"Promo_Towns": {"promo_id": objectDict["id"], "town_id": town_id}}
-            )
-
-            # Check status code, exit loop of towns
+            # Associate town with <promo/request> just made
+            response, status = DBOperations().new({"Promo_Towns": {"promo_id": objectDict["id"], "town_id": town_id}})
             if status != 201:
                 return make_response(jsonify({"error": "Adding town error"}), 500)
 
-            # Success
+            # # Check if image is received
+            # if 'image' in request.files:
+
+            #     file = request.files['image']
+            #     if file.filename == '':
+            #         return make_response({'message': 'No selected file'}, 400)
+
+            
             return make_response(jsonify(response), 201)
         else:
             return make_response(jsonify({"error": response}), status)
