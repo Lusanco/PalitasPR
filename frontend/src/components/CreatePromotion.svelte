@@ -66,11 +66,11 @@
     error = false;
 
     const data = {
-      model,
-      title,
-      town,
+      model: model,
+      title: title,
+      town: town,
       service_id: serviceID,
-      description,
+      description: description,
       price_min: priceMin,
       price_max: priceMax,
     };
@@ -132,16 +132,16 @@
         bind:value={title}
       />
     </div>
-    <div class="">
+    <!-- <div class="">
       <label for="service">Tipo de Servicio</label>
       <input class="w-full" type="text" name="service" bind:value={serviceID} />
-    </div>
+    </div> -->
 
     <!-- Service Filter Start -->
     <label for="service">Seleccione Servicio a Brindar</label>
     <select
       name="service"
-      bind:value={service}
+      bind:value={serviceID}
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
       <option value="">---</option>
@@ -167,16 +167,32 @@
     <div class="max-h-96">
       <label for="description">Descripcion de su Oferta</label>
 
-      <textarea class="w-full min-h-20 max-h-20" name="description" id=""
+      <textarea
+        bind:value={description}
+        class="w-full min-h-20 max-h-20"
+        name="description"
+        id=""
       ></textarea>
     </div>
     <div>
       <label for="price-min">Precio Minimo (Opcional)</label>
-      <input class="w-full" type="number" name="price-min" id="" />
+      <input
+        class="w-full"
+        type="number"
+        name="price-min"
+        id=""
+        bind:value={priceMin}
+      />
     </div>
     <div>
       <label for="price-max">Precio Maximo (Opcional)</label>
-      <input class="w-full" type="number" name="price-max" id="" />
+      <input
+        class="w-full"
+        type="number"
+        name="price-max"
+        id=""
+        bind:value={priceMax}
+      />
     </div>
     <!-- <div>
       <label for="imageInput">Subir Imagenes (Opcional)</label>
