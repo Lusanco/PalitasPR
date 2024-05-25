@@ -312,19 +312,19 @@ class DBOperations():
                 'created_at': row.created_at.strftime("%Y-%m-%d")
             }
             promos_dict.append(inner_dict)
-            for row in requests:
-                inner_dict = {
-                    'request_id': str(row.request_id),
-                    'service': row.name,
-                    'title': row.title,
-                    'description': row.description,
-                    'first_name': row.first_name,
-                    'last_name': row.last_name,
-                    'towns': row[3],
-                    'created_at': row.created_at.strftime("%Y-%m-%d")
-                }
+        for row in requests:
+            inner_dict = {
+                'request_id': str(row.request_id),
+                'service': row.name,
+                'title': row.title,
+                'description': row.description,
+                'first_name': row.first_name,
+                'last_name': row.last_name,
+                'towns': row[3],
+                'created_at': row.created_at.strftime("%Y-%m-%d")
+            }
 
-                requests_dict.append(inner_dict)
+            requests_dict.append(inner_dict)
 
         session.close()
         return(promos_dict, requests_dict)
