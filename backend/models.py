@@ -25,7 +25,7 @@ class Request_Towns(BaseModel, Base):
 
     __table_args__ = (UniqueConstraint('request_id', 'town_id'),)
 
-# SERVICE CLASS (Serial)
+# SERVICE CLASS (Serial id int)
 class Service(BaseModelSerial, Base):
     __tablename__ = 'services'
 
@@ -41,9 +41,8 @@ class User(BaseModel, UserMixin, Base):
     password = Column(String(255), nullable=False)
     verified = Column(Boolean, default=False)
     verification_token = Column(String(128), unique=True)
-    profile_pic = Column(String(255)) # Testing with one folder here for AWS only profile
 
-# TOWN CLASS (Serial)
+# TOWN CLASS (Serial id int)
 class Town(BaseModelSerial, Base):
     __tablename__ = 'towns'
 
