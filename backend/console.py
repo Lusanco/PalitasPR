@@ -197,7 +197,7 @@ class DBConsole(cmd.Cmd):
             Must have user id adn folders in aws
         '''
         service_names = {1: 'Nails', 2: 'Gardening', 3: 'Barber'}
-        for i in range(10):
+        for i in range(500):
             model = 'Promotion'
             service_id = random.randint(1, 3)
             title = service_names[service_id]
@@ -220,7 +220,7 @@ class DBConsole(cmd.Cmd):
             else:
                 print(response)
 
-        for i in range(10):
+        for i in range(500):
             model = 'Request'
             service_id = random.randint(1, 3)
             title = service_names[service_id]
