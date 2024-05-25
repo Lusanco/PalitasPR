@@ -15,7 +15,8 @@ from flask_login import (
 )
 from werkzeug.utils import secure_filename
 import aws_bucket
-
+import asyncio
+import time
 my_bp = Blueprint("my", __name__)
 
 
@@ -33,13 +34,22 @@ def promo_request():
 
     # GET METHOD:
     if request.method == "GET":
+        start = time.time()
+        # async
+        async def get_promo_request():
+            # Asynchronously retrieve all promotions and requests from a user
+            return await DBOperations().promo_request(current_user.id)
 
-        # Retrieve all promotions and requests from a user
-        results = DBOperations().promo_request(current_user.id)
-        return (
-            make_response({"results": results}),
-            200,
-        )  # 2 dicts, (<{promos}>, <{requests}>)
+        # Synchronously call the asynchronous function using asyncio.run()
+        results = asyncio.run(get_promo_request())
+        end_time = time.time()
+
+        # Calculate the elapsed time
+        print(end_time - start)
+
+        # Return the results as a JSON response
+        return make_response(jsonify({"results": results}), 200)
+
 
     # PUT METHOD:
     if request.method == "PUT":

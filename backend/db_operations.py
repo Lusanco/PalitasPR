@@ -5,6 +5,7 @@
     USING LOCAL POSTGRES DB NEED TO CHAMGE TO AWS
 
 """
+import asyncio
 from sqlalchemy.exc import SQLAlchemyError
 from os import getenv
 from time import time
@@ -336,51 +337,22 @@ class DBOperations:
             )
             return rows
 
-    def promo_request(self, user_id):
+    async def promo_request(self, user_id):
         """
         Query promotions and requests from a specified user
         """
         session = Session()
 
-        promotions = self.my_promos(session, user_id)
-        requests = self.my_requests(session, user_id)
-
-        # List to put inside all dicts
-        promos_dict = []
-        requests_dict = []
-
-        for row in promotions:
-            inner_dict = {
-                "promo_id": str(row.promo_id),
-                "service": row.name,
-                "title": row.title,
-                "description": row.description,
-                "price_min": row.price_min,
-                "price_max": row.price_max,
-                "first_name": row.first_name,
-                "last_name": row.last_name,
-                "towns": row[3],
-                "created_at": row.created_at.strftime("%Y-%m-%d"),
-            }
-            promos_dict.append(inner_dict)
-        for row in requests:
-            inner_dict = {
-                'request_id': str(row.request_id),
-                'service': row.name,
-                'title': row.title,
-                'description': row.description,
-                'first_name': row.first_name,
-                'last_name': row.last_name,
-                'towns': row[3],
-                'created_at': row.created_at.strftime("%Y-%m-%d")
-            }
-
-            requests_dict.append(inner_dict)
+        tasks = [
+            self.my_promos(session, user_id),
+            self.my_requests(session, user_id)
+        ]
+        promotions, requests = await asyncio.gather(*tasks)
 
         session.close()
-        return (promos_dict, requests_dict)
+        return (promotions, requests)
 
-    def my_promos(self, session, my_user_id):
+    async def my_promos(self, session, my_user_id):
         """
         Main query to filter promotions
         """
@@ -418,9 +390,24 @@ class DBOperations:
             .order_by(Promo_Towns.promo_id)
             .all()
         )
-        return rows
+        promos_dict = []
+        for row in rows:
+            inner_dict = {
+                "promo_id": str(row.promo_id),
+                "service": row.name,
+                "title": row.title,
+                "description": row.description,
+                "price_min": row.price_min,
+                "price_max": row.price_max,
+                "first_name": row.first_name,
+                "last_name": row.last_name,
+                "towns": row[3],
+                "created_at": row.created_at.strftime("%Y-%m-%d"),
+            }
+            promos_dict.append(inner_dict)
+        return promos_dict
 
-    def my_requests(self, session, my_user_id):
+    async def my_requests(self, session, my_user_id):
         """
         Main query to filter promotions
         """
@@ -454,7 +441,22 @@ class DBOperations:
             .order_by(Request_Towns.request_id)
             .all()
         )
-        return rows
+        requests_dict = []
+        for row in rows:
+            inner_dict = {
+                'request_id': str(row.request_id),
+                'service': row.name,
+                'title': row.title,
+                'description': row.description,
+                'first_name': row.first_name,
+                'last_name': row.last_name,
+                'towns': row[3],
+                'created_at': row.created_at.strftime("%Y-%m-%d")
+            }
+
+            requests_dict.append(inner_dict)
+
+        return requests_dict
 
     # def delete(self, data):
     #     """
