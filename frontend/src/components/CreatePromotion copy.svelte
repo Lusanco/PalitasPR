@@ -6,91 +6,114 @@
   import LoadingSpinnerFull from "./LoadingSpinnerFull.svelte";
   import townsID from "../townsID";
   import servicesID from "../servicesID";
-  import Button from "./Button.svelte";
 
+  let imageFile = null;
   let errorMessage;
+  let clicked = false;
 
-  // Data points for data
-  let model = "Promotion",
-    title,
-    town,
-    serviceID,
-    description,
-    priceMin,
-    priceMax;
+  function handleFileChange(event) {
+    imageFile = event.target.files[0];
+  }
 
-  // For iterating town and service name and ids
+  async function handleLogic(model, modelID) {
+    if (!imageFile) {
+      errorMessage = "Please select an image file";
+      return;
+    }
+
+    const formDataImage = new FormData();
+    formDataImage.append("image", imageFile);
+
+    try {
+      const response = await axios.post("/api/pic", formDataImage, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("Image uploaded successfully:", response.data);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      errorMessage = "An error occurred while uploading the image";
+      console.log(formDataImage);
+    }
+  }
+  async function handleUpload() {
+    handleLogic();
+  }
+
+  // let errorMessage = "";
+  const model = "Promotion";
+  let title, serviceID, description, priceMin, priceMax;
   const towns = Object.entries(townsID);
   const services = Object.entries(servicesID);
+  let town;
+  let service = "";
 
-  // let hidden = true;
-  // let loaded = false;
-  // let reload = false;
-  // let error = false;
+  let image = null;
 
-  // let data = {
-  //   model: model,
-  //   title: title,
-  //   town: town,
-  //   service_id: serviceID,
-  //   description: description,
-  //   price_min: priceMin,
-  //   price_max: priceMax,
-  // };
-  let btn = "Create Promotion";
-  let location = "/api/dashboard/promotion-request";
-  let verb = "POST";
-  let data = [];
+  let hidden = true;
+  let loaded = false;
+  let reload = false;
+  let error = false;
 
-  // let data = [model, title, town, serviceID, description, priceMin, priceMax];
-  // function createLogic() {
-  //   hidden = false;
-  //   loaded = false;
-  //   reload = true;
-  //   error = false;
+  function createLogic() {
+    hidden = false;
+    loaded = false;
+    reload = true;
+    error = false;
 
-  //   axios
-  //     .post("/api/dashboard/promotion-request", data)
-  //     .then((response) => {
-  //       loaded = true;
-  //       reload = false;
-  //       error = false;
-  //       console.log(response);
-  //       // if (response.status === 201) {
-  //       //   window.location.href = "/success";
-  //       // }
-  //     })
-  //     .catch((err) => {
-  //       hidden = false;
-  //       loaded = true;
-  //       reload = false;
-  //       error = true;
-  //       console.log(err);
-  //       errorMessage = err;
-  //     });
-  // }
+    const jsonData = {
+      model: model,
+      title: title,
+      town: town,
+      service_id: serviceID,
+      description: description,
+      price_min: priceMin,
+      price_max: priceMax,
+    };
 
-  // async function handleCreate() {
-  //   createLogic();
-  //   // handleUpload();
-  // }
+    axios
+      .post("/api/dashboard/promotion-request", jsonData)
+      .then((response) => {
+        loaded = true;
+        reload = false;
+        error = false;
+        console.log(response);
+        // if (response.status === 201) {
+        //   window.location.href = "/success";
+        // return response.id
+        // }
+      })
+      .then((id) => {
+        let modelID = id;
+        handleLogic(model, modelID);
+      })
+      .catch((err) => {
+        hidden = false;
+        loaded = true;
+        reload = false;
+        error = true;
+        console.log(err);
+        errorMessage = err;
+      });
+  }
 
-  // onMount(() => {
-  //   errorMessage = ""; // Clear any previous error messages on component mount
-  // });
-  function clicked() {
-    let innerData = [
-      { name: "model", value: model },
-      { name: "title", value: title },
-      { name: "town", value: town },
-      { name: "service_id", value: serviceID },
-      { name: "description", value: description },
-      { name: "price_min", value: priceMin },
-      { name: "price_max", value: priceMax },
-    ];
-    data.push(innerData);
-    console.log(data);
-    return data;
+  async function handleCreate() {
+    createLogic();
+    handleLogic();
+  }
+
+  onMount(() => {
+    errorMessage = ""; // Clear any previous error messages on component mount
+  });
+  afterUpdate(() => {
+    if (error) {
+      const errorElement = document.getElementById("err-msg");
+      errorElement.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+  function sendJsonData() {
+    clicked = !clicked;
   }
 </script>
 
@@ -178,20 +201,13 @@
     </div>
     <div>
       <label for="imageInput">Subir Imagenes (Opcional)</label>
-      <UploadImage></UploadImage>
+      <UploadImage jsonData clicked></UploadImage>
     </div>
-    <!-- <button
-      on:click={handleCreate}
+    <button
+      on:click={sendJsonData}
       type="button"
       class="w-full px-8 py-3 font-semibold bg-teal-600 rounded-md text-teal-50"
       >Crear</button
-    > -->
-    <Button
-      on:clicked={clicked}
-      buttonName={btn}
-      crudVERB={verb}
-      locationURL={location}
-      axiosDATA={data}
-    ></Button>
+    >
   </div>
 </div>
