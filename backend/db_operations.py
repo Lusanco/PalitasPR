@@ -34,26 +34,23 @@ from sqlalchemy.dialects.postgresql import UUID
 from unidecode import unidecode
 from aws_bucket import create_model_folder
 from email_validator import validate_email, EmailNotValidError
+from db_init import Session
 
 
 class DBOperations:
 
     classes_dict = {
-        "User": User,
-        "Service": Service,
-        "Town": Town,
-        "Promo_Towns": Promo_Towns,
-        "Request_Towns": Request_Towns,
-        "Review": Review,
-        "Task": Task,
-        "Promotion": Promotion,
-        "Request": Request,
-    }
+                'User': User,
+                'Service': Service,
+                'Town': Town,
+                'Promo_Towns': Promo_Towns,
+                'Request_Towns': Request_Towns,
+                'Review': Review,
+                'Task': Task,
+                'Promotion': Promotion,
+                'Request': Request
+                }
 
-    def __init__(self):
-        self.engine = create_engine(
-            "postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres"
-        )
 
     def new(self, front_data):
         """
@@ -74,7 +71,6 @@ class DBOperations:
         # Extract the inner dictionary containing attribute-value
         inner_dict = front_data[model_name]  # inner_dict = {"name": "Nails"}
 
-        Session = sessionmaker(bind=self.engine)
         session = Session()
 
         # Get the model class corresponding to the model name
@@ -128,7 +124,6 @@ class DBOperations:
 
         Returns: List of dict of the post details
         """
-        Session = sessionmaker(bind=self.engine)
         session = Session()
 
         my_service_id = None
@@ -344,7 +339,6 @@ class DBOperations:
         """
         Query promotions and requests from a specified user
         """
-        Session = sessionmaker(bind=self.engine)
         session = Session()
 
         promotions = self.my_promos(session, user_id)
@@ -368,19 +362,19 @@ class DBOperations:
                 "created_at": row.created_at.strftime("%Y-%m-%d"),
             }
             promos_dict.append(inner_dict)
-            for row in requests:
-                inner_dict = {
-                    "request_id": str(row.request_id),
-                    "service": row.name,
-                    "title": row.title,
-                    "description": row.description,
-                    "first_name": row.first_name,
-                    "last_name": row.last_name,
-                    "towns": row[3],
-                    "created_at": row.created_at.strftime("%Y-%m-%d"),
-                }
+        for row in requests:
+            inner_dict = {
+                'request_id': str(row.request_id),
+                'service': row.name,
+                'title': row.title,
+                'description': row.description,
+                'first_name': row.first_name,
+                'last_name': row.last_name,
+                'towns': row[3],
+                'created_at': row.created_at.strftime("%Y-%m-%d")
+            }
 
-                requests_dict.append(inner_dict)
+            requests_dict.append(inner_dict)
 
         session.close()
         return (promos_dict, requests_dict)
@@ -466,7 +460,6 @@ class DBOperations:
     #         Delete objects and handle if the object has relationship
     #         Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
     #     """
-    #     session = sessionmaker(bind=self.engine)
     #     session = session()
 
     #     model_name = list(data.keys())[0]
@@ -534,7 +527,6 @@ class DBOperations:
         Update an object from Data Base
         Usage:  {'Model': {''parameter1': 'value1', 'parameter2': 'value2'}}
         """
-        Session = sessionmaker(bind=self.engine)
         session = Session()
 
         class_name = list(data.keys())[0]  # First key, class name
@@ -576,8 +568,7 @@ class DBOperations:
         Validate login for a user
         If valid,  db.new() will be called to handle the user creation
         USAGE: Receive pwd and email of user
-        """
-        Session = sessionmaker(bind=self.engine)
+        '''
         session = Session()
 
         response = {
@@ -610,7 +601,6 @@ class DBOperations:
         import bcrypt
         import secrets
 
-        Session = sessionmaker(bind=self.engine)
         session = Session()
 
         print("Data received:", data)
@@ -695,7 +685,6 @@ class DBOperations:
         """
         if class_name in self.classes_dict:
             model_class = self.classes_dict[class_name]
-            Session = sessionmaker(bind=self.engine)
             session = Session()
             obj = session.query(model_class).filter_by(id=obj_id).first()
             session.close()
@@ -713,7 +702,6 @@ class DBOperations:
     #     if class_name in self.classes_dict:
     #         model_class = self.classes_dict[class_name]
 
-    #         Session = sessionmaker(bind=self.engine)
     #         session = Session()
 
     #         if service_id:
