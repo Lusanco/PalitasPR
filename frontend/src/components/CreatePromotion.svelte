@@ -8,8 +8,6 @@
   import servicesID from "../servicesID";
   import Button from "./Button.svelte";
 
-  let errorMessage;
-
   // Data points for data
   let model = "Promotion",
     title,
@@ -26,15 +24,7 @@
   let btn = "Create Promotion";
   let location = "/api/dashboard/promotion-request";
   let verb = "POST";
-  // let data = [
-  //   { name: "model", value: model }, // 0
-  //   { name: "title", value: title }, // 1
-  //   { name: "town", value: town }, // 2
-  //   { name: "service_id", value: serviceID }, // 3
-  //   { name: "description", value: description }, // 4
-  //   { name: "price_min", value: priceMin }, // 5
-  //   { name: "price_max", value: priceMax }, // 6
-  // ];
+
   let data = {
     model: model,
     title: title,
@@ -44,7 +34,6 @@
     price_min: priceMin,
     price_max: priceMax,
   };
-  // console.log(data);
 </script>
 
 <div
@@ -66,16 +55,10 @@
         id=""
         bind:value={data.title}
       />
-      <!-- bind:value={data[1].value} -->
     </div>
-    <!-- <div class="">
-      <label for="service">Tipo de Servicio</label>
-      <input class="w-full" type="text" name="service" bind:value={serviceID} />
-    </div> -->
 
     <!-- Service Filter Start -->
     <label for="service">Seleccione Servicio a Brindar</label>
-    <!-- bind:value={data[3].value} -->
     <select
       bind:value={data.service_id}
       name="service"
@@ -90,7 +73,6 @@
 
     <!-- Town Filter Start -->
     <label for="town">Seleccione un Pueblo</label>
-    <!-- bind:value={data[2].value} -->
     <select
       bind:value={data.town}
       name="town"
@@ -104,8 +86,6 @@
     <!-- Town Filter End -->
     <div class="max-h-96">
       <label for="description">Descripcion de su Oferta</label>
-
-      <!-- bind:value={data[4].value} -->
       <textarea
         bind:value={data.description}
         class="w-full min-h-20 max-h-20"
@@ -122,7 +102,6 @@
         id=""
         bind:value={data.price_min}
       />
-      <!-- bind:value={data[5].value} -->
     </div>
     <div>
       <label for="price-max">Precio Maximo (Opcional)</label>
@@ -133,18 +112,8 @@
         id=""
         bind:value={data.price_max}
       />
-      <!-- bind:value={data[6].value} -->
     </div>
-    <!-- <div>
-      <label for="imageInput">Subir Imagenes (Opcional)</label>
-      <UploadImage></UploadImage>
-    </div> -->
-    <!-- <button
-      on:click={handleCreate}
-      type="button"
-      class="w-full px-8 py-3 font-semibold bg-teal-600 rounded-md text-teal-50"
-      >Crear</button
-    > -->
+
     <Button
       buttonName={btn}
       crudVERB={verb}
