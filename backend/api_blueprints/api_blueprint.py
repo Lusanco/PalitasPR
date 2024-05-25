@@ -13,15 +13,10 @@ def keep_session_alive():
 @api_bp.route("/verify_email/<token>", methods=["GET"])
 def verify_email(token):
     if not token:
-        return "Verification token is missing"
+        return make_response(jsonify({'error':'Verification token is missing'}), 400)
 
-    response = emails.confirm_email(token)
-
-    if not response:
-        return "Invalid verification token or error"
-
-    return "Email verification successful"
-
+    response, status = emails.confirm_email(token)
+    return(make_response(jsonify(response)), status)
 
 @api_bp.route('/explore', methods=['GET'])
 def explore():
@@ -40,39 +35,13 @@ def explore():
         return make_response(jsonify({'results': search_results}), 200)
     else:
         return make_response(jsonify({'message':"No Results"}), 404)
+
 @api_bp.route("/logout")
 @login_required
 def logout():
     # Log out the current user
     logout_user()
-    return 'Logged out'
-
-@api_bp.route("/create_object", methods=["POST"])
-def create_object():
-    form_data = request.get_json()
-
-    if (
-        "first_name" in form_data
-        and "last_name" in form_data
-        and "email" in form_data
-        and "password" in form_data
-    ):
-        user_data = {
-            "first_name": form_data["first_name"],
-            "last_name": form_data["last_name"],
-            "email": form_data["email"],
-            "password": form_data["password"],
-        }
-        new_obj = DBOperations().sign_up(user_data)
-    else:
-        new_obj = DBOperations().new(form_data)
-
-    if new_obj:
-        return {"response": "success"}
-    else:
-        pass
-    return jsonify({"error": "Error creating a new object"})
-
+    return make_response(jsonify({'results':'Logged out'}), 200)
 
 @api_bp.route("/filter", methods=["POST"])
 def search_filter():
