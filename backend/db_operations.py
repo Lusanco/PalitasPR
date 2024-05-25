@@ -110,13 +110,13 @@ class DBOperations:
                     session.close()
                     return response
 
-            return (object_dict, 201)
+            return ({'results': object_dict}, 201)
         else:
             print("Not a valid class")
             session.close()
-            return None
+            return ({'error': 'Not valid class'}, 400)
 
-    def filter(self, model=None, service=None, town="all"):
+    def filter(self, model=None, service=None, town_id = 0):
         """
         Retrieve objects based on specified criteria from url query
 
@@ -125,18 +125,18 @@ class DBOperations:
         Returns: List of dict of the post details
         """
         session = Session()
-
+        if town_id == 'all':
+            town_id = 0
         my_service_id = None
 
         if model:
-            town_name = unidecode(town).lower()
+            # Normalize text of service
             if service:
                 service_name = unidecode(service).lower()
             else:
                 print("no service name provided")
                 session.close()
                 return {}
-
             # Check if service exists
             service = (
                 session.query(Service)
@@ -152,11 +152,10 @@ class DBOperations:
                 return {}
 
         if my_service_id is not None:
-
             if model == "promotions":
-                rows = self.explore_promos(session, my_service_id, town_name)
+                rows = self.explore_promos(session, my_service_id, town_id)
             if model == "requests":
-                rows = self.explore_requests(session, my_service_id, town_name)
+                rows = self.explore_requests(session, my_service_id, town_id)
 
             # List to put inside all dicts
             list_of_dict = []
@@ -190,17 +189,19 @@ class DBOperations:
                 list_of_dict.append(inner_dict)
 
             session.close()
+            print(len(list_of_dict))
             return list_of_dict
         else:
             session.close()
             return {}
 
-    def explore_promos(self, session, my_service_id, town_name):
+    def explore_promos(self, session, my_service_id, town_id):
         """
         Main query to filter promotions
         """
-        if town_name == "all":  # Get all promotions of a service in all towns
-            print("Doing all")
+        print(f'My town id {town_id}')
+        if town_id == 0:  # Get all promotions of a service in all towns
+            print("Doing all Towns")
             rows = (
                 session.query(
                     Promo_Towns.promo_id,
@@ -252,7 +253,7 @@ class DBOperations:
                 .join(Town, Promo_Towns.town_id == Town.id)
                 .filter(
                     (Promotion.service_id == my_service_id)
-                    & (func.lower(Town.name).op("~")(f"{town_name}"))
+                    & ((Town.id == town_id))
                 )
                 .group_by(
                     Promo_Towns.promo_id,
@@ -269,11 +270,11 @@ class DBOperations:
             )
             return rows
 
-    def explore_requests(self, session, my_service_id, town_name):
+    def explore_requests(self, session, my_service_id, town_id):
         """
         Main query to filter requests
         """
-        if town_name == "all":  # Get all promotions of a service in all towns
+        if town_id == 0:  # Get all promotions of a service in all towns
             print("Doing all")
             rows = (
                 session.query(
@@ -320,7 +321,7 @@ class DBOperations:
                 .join(Town, Request_Towns.town_id == Town.id)
                 .filter(
                     (Request.service_id == my_service_id)
-                    & (func.lower(Town.name).op("~")(f"{town_name}"))
+                    & (Town.id == town_id)
                 )
                 .group_by(
                     Request_Towns.request_id,
@@ -657,12 +658,9 @@ class DBOperations:
             "verification_token": verification_token,
         }
         send_confirm_email(email, first_name, verification_token)
-        obj = self.new({"User": dict_of_user})
+        response, status = self.new({"User": dict_of_user})
         session.close()
-        if obj:
-            return {"message": "Account created"}, 201
-        else:
-            return {"message": "Error in signup logic"}, 500
+        return response, status
 
     def confirm_password(self, user_obj, password):
         """
