@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 """MAIN APP WITH FLASK"""
 
-from flask import Flask, jsonify, render_template, request, session
+from flask import Flask, jsonify, render_template, request, session, g
 from flask_cors import CORS
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
 from base_model import Base
 from db_operations import DBOperations
 from api_blueprints.api_blueprint import api_bp
@@ -11,6 +12,7 @@ from api_blueprints.dashboard_bp import my_bp
 from flask_mail import Mail
 from flask_login import LoginManager, login_user
 from datetime import timedelta
+from db_init import Session, init_db
 
 
 # Create Flask app instance
@@ -31,9 +33,6 @@ login_manager = LoginManager(app)
 
 CORS(app)
 
-engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')
-
-Base.metadata.bind = engine
 
 @app.before_request
 def keep_session_alive():
@@ -63,4 +62,5 @@ def serve_static(filename):
 
 
 if __name__ == "__main__":
+    init_db()
     app.run(debug=True)

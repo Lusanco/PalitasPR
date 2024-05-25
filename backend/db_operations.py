@@ -23,6 +23,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from unidecode import unidecode
 from aws_bucket import create_model_folder
 from email_validator import validate_email, EmailNotValidError
+from db_init import Session
 
 
 class DBOperations():
@@ -38,10 +39,6 @@ class DBOperations():
                 'Promotion': Promotion,
                 'Request': Request
                 }
-
-
-    def __init__(self):
-        self.engine = create_engine('postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')    
 
 
     def new(self, front_data):
@@ -63,7 +60,6 @@ class DBOperations():
         # Extract the inner dictionary containing attribute-value
         inner_dict = front_data[model_name] # inner_dict = {"name": "Nails"}
 
-        Session = sessionmaker(bind=self.engine)
         session = Session()
 
         # Get the model class corresponding to the model name
@@ -113,7 +109,6 @@ class DBOperations():
 
         Returns: List of dict of the post details
         """
-        Session = sessionmaker(bind=self.engine)
         session = Session()
 
         my_service_id = None
@@ -288,7 +283,6 @@ class DBOperations():
         """
             Query promotions and requests from a specified user
         """
-        Session = sessionmaker(bind=self.engine)
         session = Session()
 
         promotions = self.my_promos(session, user_id)
@@ -402,7 +396,6 @@ class DBOperations():
     #         Delete objects and handle if the object has relationship
     #         Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
     #     """
-    #     session = sessionmaker(bind=self.engine)
     #     session = session()
 
     #     model_name = list(data.keys())[0]
@@ -471,7 +464,6 @@ class DBOperations():
             Update an object from Data Base
             Usage:  {'Model': {''parameter1': 'value1', 'parameter2': 'value2'}}
         """
-        Session = sessionmaker(bind=self.engine)
         session = Session()
 
         class_name = list(data.keys())[0]  # First key, class name
@@ -515,7 +507,6 @@ class DBOperations():
         If valid,  db.new() will be called to handle the user creation
         USAGE: Receive pwd and email of user
         '''
-        Session = sessionmaker(bind=self.engine)
         session = Session()
 
         response = {"message": "Null Email or Password"}, 400 # BAd request, NULL email or pawd
@@ -543,7 +534,7 @@ class DBOperations():
         '''
         import bcrypt
         import secrets
-        Session = sessionmaker(bind=self.engine)
+
         session = Session()
 
         print("Data received:", data)
@@ -626,7 +617,6 @@ class DBOperations():
         """
         if class_name in self.classes_dict:
             model_class = self.classes_dict[class_name]
-            Session = sessionmaker(bind=self.engine)
             session = Session()
             obj = session.query(model_class).filter_by(id=obj_id).first()
             session.close()
@@ -644,7 +634,6 @@ class DBOperations():
     #     if class_name in self.classes_dict:
     #         model_class = self.classes_dict[class_name]
 
-    #         Session = sessionmaker(bind=self.engine)
     #         session = Session()
 
     #         if service_id:
