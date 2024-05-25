@@ -1,8 +1,9 @@
-'''
+"""
     Routes for Dashboard(User's personal items, posts, etc).
     These routes allow modifications for anything related to
     the user that is signed in
-'''
+"""
+
 from flask import Blueprint, jsonify, request, make_response, session
 from db_operations import DBOperations
 import emails
@@ -55,26 +56,22 @@ def promo_request():
 
         return make_response(jsonify(response), status)
 
-
     # POST METHOD:
     if request.method == "POST":
 
-        keys_required = [
-            'service_id',
-            'model',
-            'title',
-            'description',
-            'town'
-        ]
+        keys_required = ["service_id", "model", "title", "description", "town"]
 
         data = request.get_json()
+        print(data)
         if not data:
-            return (make_response(jsonify({'error': 'No data sent via json'}), 400))
+            return make_response(jsonify({"error": "No data sent via json"}), 400)
 
         # Check if missing keys from request
         for key in keys_required:
             if key not in data:
-                return make_response(jsonify({'error': f'Field: {key} not detected'}), 400)
+                return make_response(
+                    jsonify({"error": f"Field: {key} not detected"}), 400
+                )
 
         # Add user id to dict and pop unwanted data
         data["user_id"] = current_user.id
@@ -91,7 +88,9 @@ def promo_request():
             objectDict = response
 
             # Associate town with <promo/request> just made
-            response, status = DBOperations().new({"Promo_Towns": {"promo_id": objectDict["id"], "town_id": town_id}})
+            response, status = DBOperations().new(
+                {"Promo_Towns": {"promo_id": objectDict["id"], "town_id": town_id}}
+            )
             if status != 201:
                 return make_response(jsonify({"error": "Adding town error"}), 500)
 
@@ -102,7 +101,6 @@ def promo_request():
             #     if file.filename == '':
             #         return make_response({'message': 'No selected file'}, 400)
 
-            
             return make_response(jsonify(response), 201)
         else:
             return make_response(jsonify({"error": response}), status)

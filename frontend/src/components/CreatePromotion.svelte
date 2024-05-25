@@ -23,75 +23,28 @@
   const towns = Object.entries(townsID);
   const services = Object.entries(servicesID);
 
-  // let hidden = true;
-  // let loaded = false;
-  // let reload = false;
-  // let error = false;
-
-  // let data = {
-  //   model: model,
-  //   title: title,
-  //   town: town,
-  //   service_id: serviceID,
-  //   description: description,
-  //   price_min: priceMin,
-  //   price_max: priceMax,
-  // };
   let btn = "Create Promotion";
   let location = "/api/dashboard/promotion-request";
   let verb = "POST";
-  let data = [];
-
-  // let data = [model, title, town, serviceID, description, priceMin, priceMax];
-  // function createLogic() {
-  //   hidden = false;
-  //   loaded = false;
-  //   reload = true;
-  //   error = false;
-
-  //   axios
-  //     .post("/api/dashboard/promotion-request", data)
-  //     .then((response) => {
-  //       loaded = true;
-  //       reload = false;
-  //       error = false;
-  //       console.log(response);
-  //       // if (response.status === 201) {
-  //       //   window.location.href = "/success";
-  //       // }
-  //     })
-  //     .catch((err) => {
-  //       hidden = false;
-  //       loaded = true;
-  //       reload = false;
-  //       error = true;
-  //       console.log(err);
-  //       errorMessage = err;
-  //     });
-  // }
-
-  // async function handleCreate() {
-  //   createLogic();
-  //   // handleUpload();
-  // }
-
-  // onMount(() => {
-  //   errorMessage = ""; // Clear any previous error messages on component mount
-  // });
-  function clicked() {
-    let innerData = [
-      { name: "model", value: model },
-      { name: "title", value: title },
-      { name: "town", value: town },
-      { name: "service_id", value: serviceID },
-      { name: "description", value: description },
-      { name: "price_min", value: priceMin },
-      { name: "price_max", value: priceMax },
-    ];
-    data.push(innerData);
-    console.log(data);
-    return data;
-  }
+  // let data = [
+  //   { name: "model", value: model }, // 0
+  //   { name: "title", value: title }, // 1
+  //   { name: "town", value: town }, // 2
+  //   { name: "service_id", value: serviceID }, // 3
+  //   { name: "description", value: description }, // 4
+  //   { name: "price_min", value: priceMin }, // 5
+  //   { name: "price_max", value: priceMax }, // 6
+  // ];
+  let data = {
+    model: model,
+    title: title,
+    town: town,
+    service_id: serviceID,
+    description: description,
+    price_min: priceMin,
+    price_max: priceMax,
+  };
+  // console.log(data);
 </script>
 
 <div
@@ -111,8 +64,9 @@
         type="text"
         name="titulo"
         id=""
-        bind:value={title}
+        bind:value={data.title}
       />
+      <!-- bind:value={data[1].value} -->
     </div>
     <!-- <div class="">
       <label for="service">Tipo de Servicio</label>
@@ -121,9 +75,10 @@
 
     <!-- Service Filter Start -->
     <label for="service">Seleccione Servicio a Brindar</label>
+    <!-- bind:value={data[3].value} -->
     <select
+      bind:value={data.service_id}
       name="service"
-      bind:value={serviceID}
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
       <option value="">---</option>
@@ -135,9 +90,10 @@
 
     <!-- Town Filter Start -->
     <label for="town">Seleccione un Pueblo</label>
+    <!-- bind:value={data[2].value} -->
     <select
+      bind:value={data.town}
       name="town"
-      bind:value={town}
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
       <option value="0">---</option>
@@ -149,8 +105,9 @@
     <div class="max-h-96">
       <label for="description">Descripcion de su Oferta</label>
 
+      <!-- bind:value={data[4].value} -->
       <textarea
-        bind:value={description}
+        bind:value={data.description}
         class="w-full min-h-20 max-h-20"
         name="description"
         id=""
@@ -163,8 +120,9 @@
         type="number"
         name="price-min"
         id=""
-        bind:value={priceMin}
+        bind:value={data.price_min}
       />
+      <!-- bind:value={data[5].value} -->
     </div>
     <div>
       <label for="price-max">Precio Maximo (Opcional)</label>
@@ -173,13 +131,14 @@
         type="number"
         name="price-max"
         id=""
-        bind:value={priceMax}
+        bind:value={data.price_max}
       />
+      <!-- bind:value={data[6].value} -->
     </div>
-    <div>
+    <!-- <div>
       <label for="imageInput">Subir Imagenes (Opcional)</label>
       <UploadImage></UploadImage>
-    </div>
+    </div> -->
     <!-- <button
       on:click={handleCreate}
       type="button"
@@ -187,7 +146,6 @@
       >Crear</button
     > -->
     <Button
-      on:clicked={clicked}
       buttonName={btn}
       crudVERB={verb}
       locationURL={location}
