@@ -98,6 +98,7 @@ class DBOperations:
             except SQLAlchemyError as e:
                 session.rollback()
                 session.close()
+                print(e)
                 return ({"Error": "Error"}, 500)
 
             # check if object needs aws folder

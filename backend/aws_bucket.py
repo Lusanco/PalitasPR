@@ -113,6 +113,7 @@ def create_model_folder(user_id, model, model_id):
       - reviews/<model_id>/
 
     '''
+    print(f'\n\nInside createfolder: user_id:{user_id}, model:{model}, model_id:{model_id}\n\n')
     models_dict = {
         'Promotion': 'promotions',
         'Request': 'requests',
@@ -126,16 +127,18 @@ def create_model_folder(user_id, model, model_id):
 
             # STEP 1: Check if user root folder exists <user_id>/model/
             user_folder = f'users/{user_id}/{models_dict[model]}/'
-            if model != 'gallery' and model != 'profile':
+            if model != 'Gallery' and model != 'Profile':
                 folder_to_make = f'users/{user_id}/{models_dict[model]}/{model_id}/'
-            folder_to_make = f'users/{user_id}/{models_dict[model]}/'
+            else:
+                folder_to_make = f'users/{user_id}/{models_dict[model]}/'
 
             # Attempt a head_object to check if user folder exists
             s3_client.head_object(Bucket='palitas-pics', Key=user_folder)
             print(f"User Root Folder '{user_folder}' exists.")
-            if model != 'gallery' and model != 'profile':
-                print(f'Making /{models_dict[model]}/{model_id}/ ...')
-            print(f'Making /{models_dict[model]}/ ...')
+            if model != 'Gallery' and model != 'Profile':
+                print(f'Making /{models_dict[model]}/{model_id}/\n')
+            else:
+                print(f'Making /{models_dict[model]}/\n')
 
         except ClientError as e:
             # User base folder for the model doesnt exist

@@ -45,7 +45,7 @@ def promo_request():
         end_time = time.time()
 
         # Calculate the elapsed time
-        print(end_time - start)
+        print(f'\nTime Elapsed: {end_time - start}\n')
 
         # Return the results as a JSON response
         return make_response(jsonify({"results": results}), 200)
