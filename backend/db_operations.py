@@ -568,7 +568,7 @@ class DBOperations:
         Validate login for a user
         If valid,  db.new() will be called to handle the user creation
         USAGE: Receive pwd and email of user
-        '''
+        """
         session = Session()
 
         response = {
@@ -595,8 +595,7 @@ class DBOperations:
 
     def sign_up(self, data):
         """
-        user signs up THIS IS A ROUGH SKETCH IDEA
-        USAGE: Send a dict of the user to create {name: ..., email:...,...}
+        This method handles user registration or sign-up process.
         """
         import bcrypt
         import secrets
