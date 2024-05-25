@@ -1,3 +1,8 @@
+'''
+    Routes for Dashboard(User's personal items, posts, etc).
+    These routes allow modifications for anything related to
+    the user that is signed in
+'''
 from flask import Blueprint, jsonify, request, make_response, session
 from db_operations import DBOperations
 import emails
@@ -47,10 +52,9 @@ def promo_request():
         model = frontend_data.get("model")
         frontend_data.pop("model")
         response, status = DBOperations().update({model: frontend_data})
-        if status == 200:
-            return make_response(jsonify(response), 200)
-        else:
-            return make_response(jsonify(response), status)
+
+        return make_response(jsonify(response), status)
+
 
     # POST METHOD:
     if request.method == "POST":
