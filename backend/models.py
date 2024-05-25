@@ -28,7 +28,7 @@ class Request_Towns(BaseModel, Base):
     __table_args__ = (UniqueConstraint("request_id", "town_id"),)
 
 
-# SERVICE CLASS (Serial)
+# SERVICE CLASS (Serial id int)
 class Service(BaseModelSerial, Base):
     __tablename__ = "services"
 
@@ -46,8 +46,7 @@ class User(BaseModel, UserMixin, Base):
     verified = Column(Boolean, default=False)
     verification_token = Column(String(128), unique=True)
 
-
-# TOWN CLASS (Serial)
+# TOWN CLASS (Serial id int)
 class Town(BaseModelSerial, Base):
     __tablename__ = "towns"
 
