@@ -197,37 +197,37 @@ class DBConsole(cmd.Cmd):
             Must have user id adn folders in aws
         '''
         service_names = {1: 'Nails', 2: 'Gardening', 3: 'Barber'}
-        # for i in range(1000):
-        #     model = 'Promotion'
-        #     service_id = random.randint(1, 3)
-        #     title = service_names[service_id]
-        #     my_dict = {'user_id': '5e46f4f7-1f4a-4bfa-9fc9-e936961bd856',
-        #     'title': f'{title}-{i}',
-        #     'description': f'description {title} {i}',
-        #     'service_id': random.randint(1, 3)
-        #     }
-        #     response, status = DBOperations().new({model: my_dict})
-        #     if status == 201:
-        #         objDict = response['results']
-        #         print(objDict)
-        #         object_id = objDict['id']
-        #         print(f'My object id is : {object_id}')
-        #         for x in range(10):
-        #             response, status = DBOperations().new({'Promo_Towns': {'town_id': random.randint(1,10),'promo_id':object_id}})
-        #             if status != 201:
-        #                 print(response)
-        #                 return
-        #     else:
-        #         print(response)
+        for i in range(10):
+            model = 'Promotion'
+            service_id = random.randint(1, 3)
+            title = service_names[service_id]
+            my_dict = {'user_id': '05e22474-4509-483e-aae0-2456003ff273',
+            'title': f'{title}-{i}',
+            'description': f'description {title} {i}',
+            'service_id': service_id
+            }
+            response, status = DBOperations().new({model: my_dict})
+            if status == 201:
+                objDict = response['results']
+                print(objDict)
+                object_id = objDict['id']
+                print(f'My object id is : {object_id}')
+                for x in range(10):
+                    response, status = DBOperations().new({'Promo_Towns': {'town_id': random.randint(1,10),'promo_id':object_id}})
+                    if status != 201:
+                        print(response)
+                        return
+            else:
+                print(response)
 
-        for i in range(1000):
+        for i in range(10):
             model = 'Request'
             service_id = random.randint(1, 3)
             title = service_names[service_id]
-            my_dict = {'user_id': '5e46f4f7-1f4a-4bfa-9fc9-e936961bd856',
+            my_dict = {'user_id': '05e22474-4509-483e-aae0-2456003ff273',
             'title': f'{title}-{i}',
             'description': f'description {title} {i}',
-            'service_id': random.randint(1, 3)
+            'service_id': service_id
             }
             response, status = DBOperations().new({model: my_dict})
             if status == 201:
