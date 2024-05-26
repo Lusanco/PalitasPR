@@ -49,8 +49,7 @@ class DBOperations:
                 'Review': Review,
                 'Task': Task,
                 'Promotion': Promotion,
-                'Request': Request,
-                'Request_Towns': Request_Towns
+                'Request': Request
                 }
 
 
@@ -715,35 +714,3 @@ class DBOperations:
     #         return obj
     #     else:
     #         return None
-
-
-    def _build_results(self, rows, model, service_name):
-        logging.debug(f"Starting _build_results with model: {model}, service_name: {service_name}, rows: {rows}")
-
-        results = {'service': service_name, model: []}
-
-        for row in rows:
-            logging.debug(f"Processing row: {row}")
-
-            if model == 'promotions':
-                item = {
-                    'promo_id': row[0],
-                    'user_first_name': row[1],
-                    'user_last_name': row[2],
-                    'towns': row[3],
-                    'created_at': row[4],
-                    'title': row[5],
-                    'description': row[6],
-                    'price_min': row[7],
-                    'price_max': row[8]
-                }
-            else:
-                logging.warning(f"Model {model} not recognized")
-                continue
-
-            logging.debug(f"Formatted item: {item}")
-            results[model].append(item)
-
-        logging.debug(f"Final results: {results}")
-        return results
-
