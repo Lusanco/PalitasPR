@@ -4,11 +4,34 @@ import emails
 from flask_login import login_user, logout_user, login_required, current_user,LoginManager
 from werkzeug.utils import secure_filename
 import aws_bucket
+import logging
+from datetime import datetime
+from flask import current_app
 api_bp = Blueprint('api', __name__)
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 @api_bp.before_request
 def keep_session_alive():
-    session.modified = True # Before requests, keep alive session if it hasnt expired
+    now = datetime.utcnow()
+    if 'last_activity' in session:
+        last_activity = session['last_activity']
+        if isinstance(last_activity, str):
+            last_activity = datetime.fromisoformat(last_activity)
+
+        # Convert to naive datetime by stripping timezone info
+        if last_activity.tzinfo is not None:
+            last_activity = last_activity.replace(tzinfo=None)
+
+        expiration_time = last_activity + current_app.config['PERMANENT_SESSION_LIFETIME']
+        if now > expiration_time:
+            logging.info(f"Session expired for user {session.get('user_id', 'unknown')}")
+            session.clear()
+
+    session['last_activity'] = now.isoformat()
+    session.modified = True  # Keep session alive if it hasn't expired
 
 @api_bp.route("/verify_email/<token>", methods=["GET"])
 def verify_email(token):
