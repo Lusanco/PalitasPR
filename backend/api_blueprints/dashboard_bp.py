@@ -18,6 +18,7 @@ from werkzeug.utils import secure_filename
 import aws_bucket
 import asyncio
 import time
+
 my_bp = Blueprint("my", __name__)
 
 
@@ -36,6 +37,7 @@ def promo_request():
     # GET METHOD:
     if request.method == "GET":
         start = time.time()
+
         # async
         async def get_promo_request():
             # Asynchronously retrieve all promotions and requests from a user
@@ -46,11 +48,10 @@ def promo_request():
         end_time = time.time()
 
         # Calculate the elapsed time
-        print(f'\nTime Elapsed: {end_time - start}\n')
+        print(f"\nTime Elapsed: {end_time - start}\n")
 
         # Return the results as a JSON response
         return make_response(jsonify({"results": results}), 200)
-
 
     # PUT METHOD:
     if request.method == "PUT":
@@ -68,19 +69,21 @@ def promo_request():
 
     # POST METHOD:
     if request.method == "POST":
-        print('Inside POST')
+        print("Inside POST")
         keys_required = ["service_id", "model", "title", "description", "town"]
-        print('Data below:')
+        print("Data below:")
         data = dict(request.form)
+        print("Pic:")
+        print(request.files)
 
         # Now you have the entire data as a dictionary
         print(data)
 
         # You can access individual keys and values as needed
-        model = data.get('model')
-        title = data.get('title')
-        print(f'My MOdel: {model}')
-        print(f'My title: {title}')
+        model = data.get("model")
+        title = data.get("title")
+        print(f"My MOdel: {model}")
+        print(f"My title: {title}")
 
         if not data:
             return make_response(jsonify({"error": "No data sent via json"}), 400)
@@ -97,7 +100,6 @@ def promo_request():
         model = data.get("model")
         town_id = data.get("town")
 
-        
         data.pop("town")
         data.pop("model")
 
@@ -105,10 +107,12 @@ def promo_request():
         response, status = DBOperations().new({model: data})
 
         if status == 201:  # Ok status
-            objectDict = response['results']
-            model_id = objectDict['id']
+            objectDict = response["results"]
+            model_id = objectDict["id"]
             # Associate town with <promo/request> just made
-            response, status = DBOperations().new({"Promo_Towns": {"promo_id": model_id, "town_id": town_id}})
+            response, status = DBOperations().new(
+                {"Promo_Towns": {"promo_id": model_id, "town_id": town_id}}
+            )
 
             if status != 201:
                 return make_response(jsonify({"error": "Adding town error"}), 500)

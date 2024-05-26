@@ -24,8 +24,9 @@
   let headerTYPE = {
     "Content-Type": "multipart/form-data",
   };
+  const axiosDATA = new FormData();
 
-  let axiosDATA = {
+  let data = {
     model,
     title,
     town,
@@ -36,32 +37,31 @@
   };
 
   function handleFileChange(event) {
+    console.log("Changed");
     imageFile = event.target.files[0];
+    axiosDATA.append("image", imageFile);
+  }
 
-    const formData = new FormData();
-    formData.append("image", imageFile);
-
-    if (formData && axiosDATA) {
-      // Add axiosData object to formData
-      const axiosDataString = JSON.stringify(axiosDATA);
-      formData.append("axiosDATA", axiosDataString);
+  function handleInputChange() {
+    const allTrue = Object.values(data).every((value) => Boolean(value));
+    if (allTrue) {
+      for (const [key, value] of Object.entries(data)) {
+        axiosDATA.append(key, value);
+      }
     }
   }
 
-  function handleUpload() {
-    // if (!imageFile) {
-    //   errorMessage = "Please select an image file";
-    //   return;
-    // }
+  // function handleUpload() {
+  //   // if (!imageFile) {
+  //   //   errorMessage = "Please select an image file";
+  //   //   return;
+  //   // }
 
-    const formData = new FormData();
-    formData.append("image", imageFile);
+  //   const axiosDATA = new FormData();
+  //   axiosDATA.append("image", imageFile);
 
-    // Add axiosData object to formData
-    for (const [key, value] of Object.entries(axiosDATA)) {
-      formData.append(key, value);
-    }
-  }
+  //   // Add axiosData object to axiosDATA
+  // }
 </script>
 
 <div
@@ -81,18 +81,20 @@
         type="text"
         name="titulo"
         id=""
-        bind:value={axiosDATA.title}
+        bind:value={data.title}
+        on:change={handleInputChange}
       />
     </div>
 
     <!-- Service Filter Start -->
     <label for="service">Seleccione Servicio a Brindar</label>
     <select
-      bind:value={axiosDATA.service_id}
+      bind:value={data.service_id}
+      on:change={handleInputChange}
       name="service"
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
-      <option value="">---</option>
+      <option value={-1} disabled>---</option>
       {#each services as [service, id]}
         <option value={id}>{service}</option>
       {/each}
@@ -102,11 +104,12 @@
     <!-- Town Filter Start -->
     <label for="town">Seleccione un Pueblo</label>
     <select
-      bind:value={axiosDATA.town}
+      bind:value={data.town}
+      on:change={handleInputChange}
       name="town"
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
-      <option value="0">---</option>
+      <option value={-1} disabled>---</option>
       {#each towns as [town, id]}
         <option value={id}>{town}</option>
       {/each}
@@ -115,7 +118,8 @@
     <div class="max-h-96">
       <label for="description">Descripcion de su Oferta</label>
       <textarea
-        bind:value={axiosDATA.description}
+        bind:value={data.description}
+        on:change={handleInputChange}
         class="w-full min-h-20 max-h-20"
         name="description"
         id=""
@@ -128,7 +132,8 @@
         type="number"
         name="price-min"
         id=""
-        bind:value={axiosDATA.price_min}
+        bind:value={data.price_min}
+        on:change={handleInputChange}
       />
     </div>
     <div>
@@ -138,7 +143,8 @@
         type="number"
         name="price-max"
         id=""
-        bind:value={axiosDATA.price_max}
+        bind:value={data.price_max}
+        on:change={handleInputChange}
       />
     </div>
     <div
