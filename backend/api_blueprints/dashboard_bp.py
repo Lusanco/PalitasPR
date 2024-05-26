@@ -95,14 +95,14 @@ def promo_request():
         response, status = DBOperations().new({model: data})
 
         if status == 201:  # Ok status
-            objectDict = response
-
+            objectDict = response['results']
+            model_id = objectDict['id']
             # Associate town with <promo/request> just made
-            response, status = DBOperations().new(
-                {"Promo_Towns": {"promo_id": objectDict["id"], "town_id": town_id}}
-            )
+            response, status = DBOperations().new({"Promo_Towns": {"promo_id": model_id, "town_id": town_id}})
+
             if status != 201:
                 return make_response(jsonify({"error": "Adding town error"}), 500)
+            return make_response(jsonify(response), 201)
 
             # # Check if image is received
             # if 'image' in request.files:
