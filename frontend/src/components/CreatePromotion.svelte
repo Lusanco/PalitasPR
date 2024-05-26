@@ -43,9 +43,8 @@
 
     if (formData && axiosDATA) {
       // Add axiosData object to formData
-      for (const [key, value] of Object.entries(axiosDATA)) {
-        formData.append(key, value);
-      }
+      const axiosDataString = JSON.stringify(axiosDATA);
+      formData.append("axiosDATA", axiosDataString);
     }
   }
 

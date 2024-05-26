@@ -68,11 +68,20 @@ def promo_request():
 
     # POST METHOD:
     if request.method == "POST":
-
+        print('Inside POST')
         keys_required = ["service_id", "model", "title", "description", "town"]
         print('Data below:')
-        data = request.form
+        data = dict(request.form)
+
+        # Now you have the entire data as a dictionary
         print(data)
+
+        # You can access individual keys and values as needed
+        model = data.get('model')
+        title = data.get('title')
+        print(f'My MOdel: {model}')
+        print(f'My title: {title}')
+
         if not data:
             return make_response(jsonify({"error": "No data sent via json"}), 400)
 
