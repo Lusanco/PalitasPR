@@ -71,7 +71,8 @@ def promo_request():
 
         keys_required = ["service_id", "model", "title", "description", "town"]
 
-        data = request.get_json()
+        data = request.files
+        print('Below the data from Front End:')
         print(data)
         if not data:
             return make_response(jsonify({"error": "No data sent via json"}), 400)
