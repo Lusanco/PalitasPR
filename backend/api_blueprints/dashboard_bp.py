@@ -70,9 +70,8 @@ def promo_request():
     if request.method == "POST":
 
         keys_required = ["service_id", "model", "title", "description", "town"]
-
-        data = request.files
-        print('Below the data from Front End:')
+        print('Data below:')
+        data = request.form
         print(data)
         if not data:
             return make_response(jsonify({"error": "No data sent via json"}), 400)
@@ -89,6 +88,7 @@ def promo_request():
         model = data.get("model")
         town_id = data.get("town")
 
+        
         data.pop("town")
         data.pop("model")
 
