@@ -8,7 +8,7 @@
     imageFile = event.target.files[0];
   }
 
-  async function handleUpload() {
+  function handleUpload() {
     if (!imageFile) {
       errorMessage = "Please select an image file";
       return;
@@ -17,18 +17,35 @@
     const formDataImage = new FormData();
     formDataImage.append("image", imageFile);
 
-    try {
-      const response = await axios.post("/api/pic", formDataImage, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+    axios({
+      method: "post",
+      url: "/api/pic",
+      data: formDataImage,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+      .then((response) => {
+        console.log(".then() Response Log: ", response);
+        console.log(".then() Data Log: ", formDataImage);
+      })
+      .catch((err) => {
+        console.log(".catch() Error Log: ", err);
+        console.log(".catch() Data Log: ", formDataImage);
       });
-      console.log("Image uploaded successfully:", response.data);
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      errorMessage = "An error occurred while uploading the image";
-      console.log(formDataImage);
-    }
+
+    // try {
+    //   const response = await axios.post("/api/pic", formDataImage, {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //     },
+    //   });
+    //   console.log("Image uploaded successfully:", response.data);
+    // } catch (error) {
+    //   console.error("Error uploading image:", error);
+    //   errorMessage = "An error occurred while uploading the image";
+    //   console.log(formDataImage);
+    // }
   }
 </script>
 
@@ -45,12 +62,12 @@
       class="w-full px-8 py-12 text-gray-600 bg-gray-100 border-2 border-gray-300 border-dashed rounded-md"
       accept="image/*"
     />
-    <!-- <button
+    <button
       class="px-8 py-12 bg-teal-800 border-2 border-gray-300 rounded-md shadow-lg text-teal-50"
       on:click={handleUpload}
     >
       Upload
-    </button> -->
+    </button>
   </div>
   {#if errorMessage}
     <p class="text-red-500">{errorMessage}</p>
