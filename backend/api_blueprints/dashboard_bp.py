@@ -69,26 +69,12 @@ def promo_request():
 
     # POST METHOD:
     if request.method == "POST":
-        print("Inside POST")
         keys_required = ["service_id", "model", "title", "description", "town"]
-        print("Data below:")
         data = dict(request.form)
-        print("Pic:")
-        print(request.files)
-
-        # Now you have the entire data as a dictionary
-        print(data)
-
-        # You can access individual keys and values as needed
-        model = data.get("model")
-        title = data.get("title")
-        print(f"My MOdel: {model}")
-        print(f"My title: {title}")
 
         if not data:
             return make_response(jsonify({"error": "No data sent via json"}), 400)
 
-        # Check if missing keys from request
         for key in keys_required:
             if key not in data:
                 return make_response(
@@ -116,14 +102,25 @@ def promo_request():
 
             if status != 201:
                 return make_response(jsonify({"error": "Adding town error"}), 500)
-            return make_response(jsonify(response), 201)
 
-            # # Check if image is received
-            # if 'image' in request.files:
+            # Check if image is received
+            if 'image' in request.files:
+                image = request.files
+                image = image['image']
+                pic_name =  secure_filename(image.filename)
+                pic_bytes = image.read()
+                print(f'Checking my pic content {pic_name}:')
+                if pic_name == '':
+                    return make_response({'error': 'Empty File Name'}, 400)
+                
+                response, status = aws_bucket.put_picture('007', 'Promotion', '005',pic_name, pic_bytes)
+                print('After AWS putting picture')
+                print(status)
+                print(response)
+                if status != 201:
+                    return make_response(jsonify(response), status)
 
-            #     file = request.files['image']
-            #     if file.filename == '':
-            #         return make_response({'message': 'No selected file'}, 400)
+            return make_response(jsonify({'results': 'Created Succesfully'}), 201)
 
             return make_response(jsonify(response), 201)
         else:

@@ -320,7 +320,7 @@ def put_picture(user_id, model, model_id, pic_name, content):
                     # Attempt to put object
                     print(f'\nPAth to put object: {path}\n')
                     response = s3_client.put_object(Bucket='palitas-pics', Key=path, Body=content)
-                    return ({'response': 'ok'}, 200)
+                    return ({'response': 'ok'}, 201)
 
                 except ClientError as e:
                     # Handle the specific error codes
