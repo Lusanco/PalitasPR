@@ -12,7 +12,6 @@
   let reload = false;
   let error = false;
 
-  //   console.log(axiosDATA);
   function buttonLogic() {
     hidden = false;
     loaded = false;
@@ -27,15 +26,16 @@
         loaded = true;
         reload = false;
         error = false;
-        console.log(response);
-        console.log(axiosDATA);
+        console.log(".then() Response Log: ", response);
+        console.log(".then() Data Log: ", axiosDATA);
       })
       .catch((err) => {
         hidden = false;
         loaded = true;
         reload = false;
         error = true;
-        console.log(axiosDATA);
+        console.log(".catch() Error Log: ", err);
+        console.log(".catch() Data Log: ", axiosDATA);
       });
   }
 </script>

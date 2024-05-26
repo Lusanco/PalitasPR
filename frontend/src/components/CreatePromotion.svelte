@@ -1,38 +1,33 @@
 <script>
-  import UploadImage from "./UploadImage.svelte";
-  import { onMount, afterUpdate } from "svelte";
-  import { link } from "svelte-routing";
-  import axios from "axios";
-  import LoadingSpinnerFull from "./LoadingSpinnerFull.svelte";
   import townsID from "../townsID";
   import servicesID from "../servicesID";
   import Button from "./Button.svelte";
 
-  // Data points for data
+  // Data points for axiosDATA
   let model = "Promotion",
     title,
     town,
-    serviceID,
+    service_id,
     description,
-    priceMin,
-    priceMax;
+    price_min,
+    price_max;
 
   // For iterating town and service name and ids
   const towns = Object.entries(townsID);
   const services = Object.entries(servicesID);
 
-  let btn = "Create Promotion";
-  let location = "/api/dashboard/promotion-request";
-  let verb = "POST";
+  let buttonName = "Create Promotion";
+  let locationURL = "/api/dashboard/promotion-request";
+  let crudVERB = "POST";
 
-  let data = {
-    model: model,
-    title: title,
-    town: town,
-    service_id: serviceID,
-    description: description,
-    price_min: priceMin,
-    price_max: priceMax,
+  let axiosDATA = {
+    model,
+    title,
+    town,
+    service_id,
+    description,
+    price_min,
+    price_max,
   };
 </script>
 
@@ -53,14 +48,14 @@
         type="text"
         name="titulo"
         id=""
-        bind:value={data.title}
+        bind:value={axiosDATA.title}
       />
     </div>
 
     <!-- Service Filter Start -->
     <label for="service">Seleccione Servicio a Brindar</label>
     <select
-      bind:value={data.service_id}
+      bind:value={axiosDATA.service_id}
       name="service"
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
@@ -74,7 +69,7 @@
     <!-- Town Filter Start -->
     <label for="town">Seleccione un Pueblo</label>
     <select
-      bind:value={data.town}
+      bind:value={axiosDATA.town}
       name="town"
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
@@ -87,7 +82,7 @@
     <div class="max-h-96">
       <label for="description">Descripcion de su Oferta</label>
       <textarea
-        bind:value={data.description}
+        bind:value={axiosDATA.description}
         class="w-full min-h-20 max-h-20"
         name="description"
         id=""
@@ -100,7 +95,7 @@
         type="number"
         name="price-min"
         id=""
-        bind:value={data.price_min}
+        bind:value={axiosDATA.price_min}
       />
     </div>
     <div>
@@ -110,15 +105,10 @@
         type="number"
         name="price-max"
         id=""
-        bind:value={data.price_max}
+        bind:value={axiosDATA.price_max}
       />
     </div>
 
-    <Button
-      buttonName={btn}
-      crudVERB={verb}
-      locationURL={location}
-      axiosDATA={data}
-    ></Button>
+    <Button {buttonName} {crudVERB} {locationURL} {axiosDATA}></Button>
   </div>
 </div>
