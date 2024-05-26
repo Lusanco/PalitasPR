@@ -1,85 +1,47 @@
-from flask import Blueprint, jsonify, request, render_template, make_response, session
+from flask import Blueprint, jsonify, request, make_response, session
 from db_operations import DBOperations
-from emails import confirm_email
 import emails
-import uuid
-from flask_login import login_user, logout_user, login_required, current_user, LoginManager
-from user_activity import update_last_activity
-import logging
-
-
-
+from flask_login import login_user, logout_user, login_required, current_user,LoginManager
+from werkzeug.utils import secure_filename
+import aws_bucket
 api_bp = Blueprint('api', __name__)
-
-
-session_expired = False  # Flag to track session expiration
-
-
-@api_bp.before_request
-def check_session_expiration():
-    if current_user.is_authenticated:
-        if session.get('user_id') != current_user.id:
-            # If session user_id does not match the current user's ID, assume session expired
-            logout_user()  # Log out the current user
-            print("Logged out")
-            return jsonify({"message": "Session Expired"}), 401
-    elif request.endpoint not in ['login', 'static', None]:
-        # For non-authenticated users trying to access protected endpoints
-        if not current_user.is_anonymous:
-            return jsonify({"message": "Unauthorized"}), 401                                       
-
 
 @api_bp.before_request
 def keep_session_alive():
     session.modified = True # Before requests, keep alive session if it hasnt expired
 
-@api_bp.route('/session_status')
-def session_status():
-    return jsonify({"session_expired": session_expired})
-
 @api_bp.route("/verify_email/<token>", methods=["GET"])
 def verify_email(token):
     if not token:
-        return "Verification token is missing"
+        return make_response(jsonify({'error':'Verification token is missing'}), 400)
 
-    response = emails.confirm_email(token)
-
-    if not response:
-        return "Invalid verification token or error"
-
-    return "Email verification successful"
-
+    response, status = emails.confirm_email(token)
+    return(make_response(jsonify(response)), status)
 
 @api_bp.route('/explore', methods=['GET'])
 def explore():
+    """
+        FRONT END send: {
+            'model': <'Promotion'> or <'Request'>,
+            'search': '<service_name>',
+            'town' : <'town_name'> or <null>    
+            }
+    """
     model = request.args.get('model')
     service = request.args.get('search')
     town = request.args.get('town')
     search_results = DBOperations().filter(model, service, town)
     if search_results:
-        return jsonify(search_results)
+        return make_response(jsonify({'results': search_results}), 200)
     else:
-        return jsonify("No Results"), 404
+        return make_response(jsonify({'message':"No Results"}), 404)
 
 @api_bp.route("/logout")
 @login_required
 def logout():
     # Log out the current user
     logout_user()
-    session.pop('user_id', None)  # Clear user ID from session
-    return jsonify({"message": "Logged out"}), 200
-
-@api_bp.route("/create_object", methods=["POST"])
-def create_object():
-    form_data = request.get_json()
-    new_obj = DBOperations().new(form_data)
-
-    if new_obj:
-        return {"response": "success"}
-    else:
-        pass
-    return jsonify({"error": "Error creating a new object"}), 500
-
+    return make_response(jsonify({'results':'Logged out'}), 200)
 
 @api_bp.route("/filter", methods=["POST"])
 def search_filter():
@@ -105,14 +67,12 @@ def login():
     email = request.args.get('af1')
     password = request.args.get('af2')
     response, status = DBOperations().login(email, password)
+    print("After login response fetched")
     if status == 200:
         user = response['message']
         response['message'] = 'OK'
         login_user(user)
-        session['user_id'] = user.id  # Set user ID in session
-        update_last_activity(user)
     return make_response(jsonify(response), status)
-
 
 # @api_bp.route("/<class_name>/<id>", methods=["GET"])
 # def search_object(class_name, id):
@@ -135,19 +95,24 @@ def login():
 @api_bp.route("/signup", methods=["POST"])
 def sign_up():
     form_data = request.get_json()
-    required_fields = ["first_name", "last_name", "email", "password"]
 
-    if not all(field in form_data for field in required_fields):
-        return jsonify({"message": "Missing a required field"}), 400
-    
-    message, status = DBOperations().sign_up(form_data)
-    return make_response(jsonify(message), status)
+    if (
+        "first_name" in form_data
+        and "last_name" in form_data
+        and "email" in form_data
+        and "password" in form_data
+    ):
+        message, status = DBOperations().sign_up(form_data)
+        return make_response(jsonify(message), status)
+    else:
+        return make_response(jsonify({'message': 'Missing a required field'}), 400)
 
 
 @api_bp.route("/Promotion/<id>", methods=["GET"])
 def show_promo(id):
     promo_obj = DBOperations().search('Promotion', id)
     if promo_obj:
+        # obj_dict = promo_obj.all_columns()
         return jsonify(promo_obj), 200
     else:
         return jsonify({"error": f"No Promotion object found with ID {id}"}), 404
@@ -168,12 +133,25 @@ def show_review(id):
     else:
         return jsonify({"error": f"No Review object found with ID {id}"}), 404
 
+# pic route does put pictures in aws, furthing testing needed and we can use for other routes
 @api_bp.route('/pic', methods=['POST'])
 def put_pic():    
     print("Pic ROUTE ACTIVATED")
-    data = request.files
-    print(data)
-    return make_response({'message': 'OK'}, 200)
+    if 'image' not in request.files:
+        return make_response({'message': 'No file part'}, 400)
+        
+    file = request.files['image']
+    print(file)
+    if file.filename == '':
+        return make_response({'message': 'No selected file'}, 400)
+        
+    if file:
+        filename = secure_filename(file.filename)  # Secure the filename
+        content = file.read()
+        print('My content: ')
+        print(content)
+        response = aws_bucket.put_picture('007', 'Promotion', '005', filename, content)
+        return make_response(response)
 
 
 # @api_bp.route("/Promotion", methods=["GET"])

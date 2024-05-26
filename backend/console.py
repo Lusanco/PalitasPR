@@ -7,6 +7,7 @@ import shlex
 from db_operations import DBOperations
 import aws_bucket
 import time
+import random
 
 db = DBOperations()
 
@@ -190,7 +191,63 @@ class DBConsole(cmd.Cmd):
             else:
                 print('\nChoose a valid option\n') # starts loop again
                 time.sleep(1)
-                
+    def do_1000(self, args):
+        '''
+            Populate with a 1000 promos, request and alos towns
+            Must have user id adn folders in aws
+        '''
+        service_names = {1: 'Nails', 2: 'Gardening', 3: 'Barber'}
+        for i in range(500):
+            model = 'Promotion'
+            service_id = random.randint(1, 3)
+            title = service_names[service_id]
+            my_dict = {'user_id': '05e22474-4509-483e-aae0-2456003ff273',
+            'title': f'{title}-{i}',
+            'description': f'description {title} {i}',
+            'service_id': service_id
+            }
+            response, status = DBOperations().new({model: my_dict})
+            if status == 201:
+                objDict = response['results']
+                print(objDict)
+                object_id = objDict['id']
+                print(f'My object id is : {object_id}')
+                for x in range(10):
+                    response, status = DBOperations().new({'Promo_Towns': {'town_id': random.randint(1,10),'promo_id':object_id}})
+                    if status != 201:
+                        print(response)
+                        return
+            else:
+                print(response)
+
+        for i in range(500):
+            model = 'Request'
+            service_id = random.randint(1, 3)
+            title = service_names[service_id]
+            my_dict = {'user_id': '05e22474-4509-483e-aae0-2456003ff273',
+            'title': f'{title}-{i}',
+            'description': f'description {title} {i}',
+            'service_id': service_id
+            }
+            response, status = DBOperations().new({model: my_dict})
+            if status == 201:
+                objDict = response['results']
+                object_id = objDict['id']
+                for x in range(10):
+                    DBOperations().new({'Request_Towns': {'town_id': random.randint(1,10), 'request_id':object_id}})
+            else:
+                print(response)
+
+    def do_userAws(self, args):
+        '''
+            Test for aws user folder creation (all folders promo, request, review, tasks, profile)
+        '''
+        user_id = input("Enter User_id: ")
+        print('-----------------\n')
+        response = aws_bucket.create_user_folder(user_id)
+        print(response)
+        print('-----------------\n')
+        
 
 if __name__ == '__main__':
     DBConsole().cmdloop()

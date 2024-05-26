@@ -63,7 +63,7 @@
 </script>
 
 <div
-  class="flex flex-col items-center justify-center h-full max-w-md p-6 m-auto text-teal-800 rounded-md sm:p-10"
+  class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto text-teal-800 rounded-md sm:p-10"
 >
   <div class="mb-8 text-center">
     <h1 class="my-3 text-4xl font-bold">Login</h1>

@@ -53,14 +53,14 @@ def confirm_email(token):
     print(token)
     user = session.query(User).filter_by(verification_token = token).first()
     if user:
-        folder_path = aws_bucket.create_user_folder(user.id)
-        if folder_path:
+        response, status = aws_bucket.create_user_folder(user.id)
+        if status == 201:
+            # Eliminate the user token and validate him 'True'
             user.verification_token = None
             user.verified = True
-            user.profile_pic = folder_path
         session.commit()
     else:
-        return False # No user with that token
+        return ({'error': 'No user with that token'}, 404) # No user with that token
 
     session.close()
-    return True
+    return (response, 200) # OK

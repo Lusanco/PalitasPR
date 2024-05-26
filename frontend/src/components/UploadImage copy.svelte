@@ -45,12 +45,12 @@
       class="w-full px-8 py-12 text-gray-600 bg-gray-100 border-2 border-gray-300 border-dashed rounded-md"
       accept="image/*"
     />
-    <!-- <button
+    <button
       class="px-8 py-12 bg-teal-800 border-2 border-gray-300 rounded-md shadow-lg text-teal-50"
       on:click={handleUpload}
     >
       Upload
-    </button> -->
+    </button>
   </div>
   {#if errorMessage}
     <p class="text-red-500">{errorMessage}</p>
