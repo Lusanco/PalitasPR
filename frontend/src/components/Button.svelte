@@ -1,10 +1,11 @@
 <script>
   import axios from "axios";
 
-  export let buttonName;
+  export let buttonNAME;
   export let locationURL;
   export let crudVERB;
   export let axiosDATA;
+  export let headerTYPE;
 
   //   State Control Variables
   let hidden = true;
@@ -21,6 +22,7 @@
       method: crudVERB,
       url: locationURL,
       data: axiosDATA,
+      headers: headerTYPE,
     })
       .then((response) => {
         loaded = true;
@@ -44,5 +46,5 @@
   on:click={buttonLogic}
   type="button"
   class="px-8 py-3 font-semibold text-teal-100 bg-teal-800 rounded"
-  >{buttonName}</button
+  >{buttonNAME}</button
 >

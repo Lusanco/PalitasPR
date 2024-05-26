@@ -33,19 +33,6 @@
         console.log(".catch() Error Log: ", err);
         console.log(".catch() Data Log: ", formDataImage);
       });
-
-    // try {
-    //   const response = await axios.post("/api/pic", formDataImage, {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //     },
-    //   });
-    //   console.log("Image uploaded successfully:", response.data);
-    // } catch (error) {
-    //   console.error("Error uploading image:", error);
-    //   errorMessage = "An error occurred while uploading the image";
-    //   console.log(formDataImage);
-    // }
   }
 </script>
 
