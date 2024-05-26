@@ -37,6 +37,16 @@
 
   function handleFileChange(event) {
     imageFile = event.target.files[0];
+
+    const formData = new FormData();
+    formData.append("image", imageFile);
+
+    if (formData && axiosDATA) {
+      // Add axiosData object to formData
+      for (const [key, value] of Object.entries(axiosDATA)) {
+        formData.append(key, value);
+      }
+    }
   }
 
   function handleUpload() {
