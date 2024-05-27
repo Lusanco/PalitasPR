@@ -2,7 +2,7 @@
   import { onMount, afterUpdate } from "svelte";
   import { link } from "svelte-routing";
   import axios from "axios";
-  import LoadingSpinnerFull from "./LoadingSpinnerFull.svelte";
+  import LoadingSpinnerFull from "../components/LoadingSpinnerFull.svelte";
 
   let first_name,
     last_name,

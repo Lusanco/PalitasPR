@@ -1,11 +1,11 @@
 <script>
   import { Router, Route } from "svelte-routing";
   import Index from "./routes/Index.svelte";
+  import Login from "./routes/Login.svelte";
+  import Signup from "./routes/Signup.svelte";
   import Header from "./components/Header.svelte";
   import Main from "./components/Main.svelte";
-  import Login from "./components/Login.svelte";
   import Footer from "./components/Footer.svelte";
-  import Signup from "./components/Signup.svelte";
   import SignSuccess from "./components/SignSuccess.svelte";
   import Profile from "./components/Profile.svelte";
   import ContactUs from "./components/ContactUs.svelte";
