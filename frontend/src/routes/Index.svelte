@@ -1,7 +1,7 @@
 <script>
   import axios from "axios";
-  import LogoSlogan from "./LogoSlogan.svelte";
-  import LoadingSpinner from "./LoadingSpinner.svelte";
+  import LogoSlogan from "../components/LogoSlogan.svelte";
+  import LoadingSpinner from "../components/LoadingSpinner.svelte";
   import townsID from "../scripts/townsID";
 
   let services = [];
