@@ -4,12 +4,12 @@
   import Login from "./routes/Login.svelte";
   import Signup from "./routes/Signup.svelte";
   import About from "./routes/About.svelte";
+  import Contact from "./routes/Contact.svelte";
   import Header from "./components/Header.svelte";
   import Main from "./components/Main.svelte";
   import Footer from "./components/Footer.svelte";
   import SignupSuccess from "./routes/SignupSuccess.svelte";
   import Profile from "./components/Profile.svelte";
-  import ContactUs from "./components/ContactUs.svelte";
   import Faq from "./components/FAQ.svelte";
   import NotFound from "./components/NotFound.svelte";
   import LoadingSpinnerFull from "./components/LoadingSpinnerFull.svelte";
@@ -28,8 +28,8 @@
       <Route path="/signup" component={Signup} />
       <Route path="/signup-success" component={SignupSuccess} />
       <Route path="/about" component={About} />
+      <Route path="/contact" component={Contact} />
       <Route path="/profile" component={Profile} />
-      <Route path="/contact" component={ContactUs} />
       <Route path="/faq" component={Faq} />
       <Route path="/404" component={NotFound} />
       <Route path="/upload" component={UploadImage} />
