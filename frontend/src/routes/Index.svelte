@@ -1,9 +1,8 @@
 <script>
   import axios from "axios";
   import LogoSlogan from "../components/LogoSlogan.svelte";
-  import LoadingSpinner from "../components/LoadingSpinner.svelte";
   import townsID from "../scripts/townsID";
-  import LoadingSpinnerFull from "../components/LoadingSpinnerFull.svelte";
+  import LoadingSpinner from "../components/LoadingSpinner.svelte";
 
   let services = [];
   let errorMessage = "";
@@ -56,7 +55,7 @@
 <div
   class="flex flex-col items-center justify-center h-full min-h-screen gap-8"
 >
-  <LogoSlogan></LogoSlogan>
+  <LogoSlogan />
   <!-- SearchBar Start -->
   <div class="items-center justify-center w-full max-w-md mx-2 md:mx-auto">
     <div class="grid grid-cols-2 grid-rows-2 bg-white rounded-lg overflow-clip">
@@ -121,7 +120,7 @@
   {#if hidden === true}
     <div class="hidden"></div>
   {:else if (hidden === false && loaded === false) || reload === true}
-    <LoadingSpinnerFull />
+    <LoadingSpinner />
   {:else if error}
     <span class="font-bold text-teal-600">No results found, try again.</span>
   {:else}

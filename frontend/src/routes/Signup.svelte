@@ -2,7 +2,7 @@
   import { onMount, afterUpdate } from "svelte";
   import { link } from "svelte-routing";
   import axios from "axios";
-  import LoadingSpinnerFull from "../components/LoadingSpinnerFull.svelte";
+  import LoadingSpinner from "../components/LoadingSpinner.svelte";
 
   let first_name,
     last_name,
@@ -178,7 +178,7 @@
     {#if hidden === true}
       <div class="hidden"></div>
     {:else if (hidden === false && loaded === false) || reload === true}
-      <LoadingSpinnerFull />
+      <LoadingSpinner />
     {:else if error}
       <div
         id="err-msg"

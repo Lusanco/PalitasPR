@@ -2,7 +2,7 @@
   import { link } from "svelte-routing";
   import { onMount } from "svelte";
   import axios from "axios";
-  import LoadingSpinnerFull from "../components/LoadingSpinnerFull.svelte";
+  import LoadingSpinner from "../components/LoadingSpinner.svelte";
 
   let af2, errorMessage, af1;
   let hidden = true;
@@ -124,7 +124,7 @@
     {#if hidden === true}
       <div class="hidden"></div>
     {:else if (hidden === false && loaded === false) || reload === true}
-      <LoadingSpinnerFull />
+      <LoadingSpinner />
     {:else if error}
       <div class="w-full mx-auto font-bold text-center text-teal-600">
         Incorrect email or password, try again.
