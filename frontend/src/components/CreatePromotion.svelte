@@ -37,7 +37,7 @@
   };
 
   function handleFileChange(event) {
-    console.log("Changed");
+    console.log("Selected Image");
     imageFile = event.target.files[0];
     axiosDATA.append("image", imageFile);
   }
@@ -45,23 +45,12 @@
   function handleInputChange() {
     const allTrue = Object.values(data).every((value) => Boolean(value));
     if (allTrue) {
+      console.log("Form Completed");
       for (const [key, value] of Object.entries(data)) {
         axiosDATA.append(key, value);
       }
     }
   }
-
-  // function handleUpload() {
-  //   // if (!imageFile) {
-  //   //   errorMessage = "Please select an image file";
-  //   //   return;
-  //   // }
-
-  //   const axiosDATA = new FormData();
-  //   axiosDATA.append("image", imageFile);
-
-  //   // Add axiosData object to axiosDATA
-  // }
 </script>
 
 <div
@@ -160,12 +149,6 @@
           class="w-full px-8 py-12 text-gray-600 bg-gray-100 border-2 border-gray-300 border-dashed rounded-md"
           accept="image/*"
         />
-        <!-- <button
-          class="px-8 py-12 bg-teal-800 border-2 border-gray-300 rounded-md shadow-lg text-teal-50"
-          on:click={handleUpload}
-        >
-          Upload
-        </button> -->
       </div>
       {#if errorMessage}
         <p class="text-red-500">{errorMessage}</p>
