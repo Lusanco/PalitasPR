@@ -369,6 +369,7 @@ class DBOperations:
                 Promotion.description,
                 Promotion.price_min,
                 Promotion.price_max,
+                Promotion.pictures,
                 Service.name,
             )
             .select_from(Promotion)
@@ -386,6 +387,7 @@ class DBOperations:
                 Promotion.title,
                 Promotion.price_min,
                 Promotion.price_max,
+                Promotion.pictures,
                 Service.name,
             )
             .order_by(Promo_Towns.promo_id)
@@ -403,6 +405,7 @@ class DBOperations:
                 "first_name": row.first_name,
                 "last_name": row.last_name,
                 "towns": row[3],
+                'pictures': row.pictures,
                 "created_at": row.created_at.strftime("%Y-%m-%d"),
             }
             promos_dict.append(inner_dict)
@@ -422,6 +425,7 @@ class DBOperations:
                 Request.created_at,
                 Request.title,
                 Request.description,
+                Request.pictures,
                 Service.name,
             )
             .select_from(Request)
@@ -437,7 +441,8 @@ class DBOperations:
                 Request.created_at,
                 Request.description,
                 Request.title,
-                Service.name,
+                Request.pictures,
+                Service.name
             )
             .order_by(Request_Towns.request_id)
             .all()
@@ -452,6 +457,7 @@ class DBOperations:
                 'first_name': row.first_name,
                 'last_name': row.last_name,
                 'towns': row[3],
+                'pictures': row.pictures,
                 'created_at': row.created_at.strftime("%Y-%m-%d")
             }
 
