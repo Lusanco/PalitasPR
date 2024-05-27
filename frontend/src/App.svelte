@@ -1,13 +1,20 @@
 <script>
+  // Svelte Routing
   import { Router, Route } from "svelte-routing";
+
+  // PalitasPR Layouts
+  import Header from "./layouts/Header.svelte";
+  import Main from "./layouts/Main.svelte";
+  import Footer from "./layouts/Footer.svelte";
+
+  // PalitasPR Routes
   import Index from "./routes/Index.svelte";
   import Login from "./routes/Login.svelte";
   import Signup from "./routes/Signup.svelte";
   import About from "./routes/About.svelte";
   import Contact from "./routes/Contact.svelte";
-  import Header from "./components/Header.svelte";
-  import Main from "./components/Main.svelte";
-  import Footer from "./components/Footer.svelte";
+
+  // PalitasPR Components
   import SignupSuccess from "./routes/SignupSuccess.svelte";
   import Profile from "./components/Profile.svelte";
   import Faq from "./components/FAQ.svelte";
