@@ -6,7 +6,7 @@
   import Header from "./components/Header.svelte";
   import Main from "./components/Main.svelte";
   import Footer from "./components/Footer.svelte";
-  import SignSuccess from "./components/SignSuccess.svelte";
+  import SignupSuccess from "./routes/SignupSuccess.svelte";
   import Profile from "./components/Profile.svelte";
   import ContactUs from "./components/ContactUs.svelte";
   import AboutUs from "./components/AboutUs.svelte";
@@ -26,7 +26,7 @@
       <Route path="/" component={Index} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
-      <Route path="/success" component={SignSuccess} />
+      <Route path="/signup-success" component={SignupSuccess} />
       <Route path="/profile" component={Profile} />
       <Route path="/contact" component={ContactUs} />
       <Route path="/about" component={AboutUs} />
