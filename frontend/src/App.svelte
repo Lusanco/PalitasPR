@@ -1,8 +1,8 @@
 <script>
   import { Router, Route } from "svelte-routing";
+  import Index from "./routes/Index.svelte";
   import Header from "./components/Header.svelte";
   import Main from "./components/Main.svelte";
-  import PageSearchBar from "./components/PageSearchBar.svelte";
   import Login from "./components/Login.svelte";
   import Footer from "./components/Footer.svelte";
   import Signup from "./components/Signup.svelte";
@@ -20,10 +20,10 @@
 </script>
 
 <div class="flex flex-col">
-  <Header></Header>
+  <Header />
   <Main>
     <Router>
-      <Route path="/" component={PageSearchBar} />
+      <Route path="/" component={Index} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       <Route path="/success" component={SignSuccess} />
@@ -37,5 +37,5 @@
       <Route path="/create-promotion" component={CreatePromotion} />
     </Router>
   </Main>
-  <Footer></Footer>
+  <Footer />
 </div>
