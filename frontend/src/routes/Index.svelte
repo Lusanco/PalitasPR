@@ -3,6 +3,7 @@
   import LogoSlogan from "../components/LogoSlogan.svelte";
   import LoadingSpinner from "../components/LoadingSpinner.svelte";
   import townsID from "../scripts/townsID";
+  import LoadingSpinnerFull from "../components/LoadingSpinnerFull.svelte";
 
   let services = [];
   let errorMessage = "";
@@ -120,7 +121,7 @@
   {#if hidden === true}
     <div class="hidden"></div>
   {:else if (hidden === false && loaded === false) || reload === true}
-    <LoadingSpinner />
+    <LoadingSpinnerFull />
   {:else if error}
     <span class="font-bold text-teal-600">No results found, try again.</span>
   {:else}
