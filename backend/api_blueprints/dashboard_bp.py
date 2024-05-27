@@ -31,29 +31,23 @@ def keep_session_alive():
 @login_required
 def promo_request():
     """
-    Route to get all promo and request posted by a user
+        Handle every object related to the user from
+        Promotion,Request, and pictures for these.
+        All C.R.U.D methods
     """
+    user_id = current_user.id
 
-    # GET METHOD:
+    # ---------------GET METHOD--------------------------------------------- 
     if request.method == "GET":
-        start = time.time()
-
-        # async
         async def get_promo_request():
-            # Asynchronously retrieve all promotions and requests from a user
-            return await DBOperations().promo_request(current_user.id)
+            return await DBOperations().promo_request(user_id)
 
-        # Synchronously call the asynchronous function using asyncio.run()
         results = asyncio.run(get_promo_request())
-        end_time = time.time()
-
-        # Calculate the elapsed time
-        print(f"\nTime Elapsed: {end_time - start}\n")
-
-        # Return the results as a JSON response
         return make_response(jsonify({"results": results}), 200)
+    # -----------------------------------------------------------------
 
-    # PUT METHOD:
+    # ----------------PUT METHOD-----------------------------------
+    # NOT BEEN TESTED
     if request.method == "PUT":
         frontend_data = {
             "model": "Promotion",
@@ -66,10 +60,18 @@ def promo_request():
         response, status = DBOperations().update({model: frontend_data})
 
         return make_response(jsonify(response), status)
+    # -----------------------------------------------------------
 
-    # POST METHOD:
+    # --------------POST METHOD---------------------------------------
     if request.method == "POST":
+        """
+            Used to create Promotion or Request and Promo_Towns or Request_Towns
+            Also can upload pictures to aws for said Classes before.
+            Example: Makes promotion, associate towns, and also put pictures
+        """
         keys_required = ["service_id", "model", "title", "description", "town"]
+
+        # Get list of tuples from .form, cast into a 'dict'
         data = dict(request.form)
 
         if not data:
@@ -81,50 +83,53 @@ def promo_request():
                     jsonify({"error": f"Field: {key} not detected"}), 400
                 )
 
-        # Add user id to dict and pop unwanted data
-        data["user_id"] = current_user.id
+        # Get model and towns, add user id to put into data dict
+        data["user_id"] = user_id
         model = data.get("model")
         town_id = data.get("town")
 
         data.pop("town")
         data.pop("model")
 
-        # Create (Promo or Request)
+        # 1) Create (Promo or Request)
         response, status = DBOperations().new({model: data})
 
-        if status == 201:  # Ok status
-            objectDict = response["results"]
-            model_id = objectDict["id"]
-            # Associate town with <promo/request> just made
-            response, status = DBOperations().new(
-                {"Promo_Towns": {"promo_id": model_id, "town_id": town_id}}
-            )
-
-            if status != 201:
-                return make_response(jsonify({"error": "Adding town error"}), 500)
-
-            # Check if image is received
-            if 'image' in request.files:
-                image = request.files
-                image = image['image']
-                pic_name =  secure_filename(image.filename)
-                pic_bytes = image.read()
-                print(f'Checking my pic content {pic_name}:')
-                if pic_name == '':
-                    return make_response({'error': 'Empty File Name'}, 400)
-                
-                response, status = aws_bucket.put_picture('007', 'Promotion', '005',pic_name, pic_bytes)
-                print('After AWS putting picture')
-                print(status)
-                print(response)
-                if status != 201:
-                    return make_response(jsonify(response), status)
-
-            return make_response(jsonify({'results': 'Created Succesfully'}), 201)
-
-            return make_response(jsonify(response), 201)
-        else:
+        if status != 201:
             return make_response(jsonify({"error": response}), status)
+
+        objectDict = response["results"]
+        model_id = objectDict["id"]
+
+        # 2) Associate town(s) with <promo/request> just made in step: 1)
+        response, status = DBOperations().new(
+            {"Promo_Towns": {"promo_id": model_id, "town_id": town_id}}
+        )
+
+        if status != 201:
+            return make_response(jsonify({"error": "Adding town error"}), 500)
+
+        # 3) Check if image(s) is received and put into AWS
+        if 'image' in request.files:
+            image = request.files
+            image = image['image']
+            pic_name =  secure_filename(image.filename)
+            pic_bytes = image.read()
+
+            if pic_name == '':
+                return make_response(jsonify({'error': 'Empty File Name'}), 400)
+
+            response, status = aws_bucket.put_picture(user_id, model, model_id, pic_name, pic_bytes)
+            if status != 201:
+                return make_response(jsonify(response), status)
+            
+            # 4) Save picture path name
+            response, status = DBOperations().update({model: {'id': model_id, 'pictures': pic_name}})
+            if status != 200:
+                return make_response(jsonify(response), status)
+
+        return make_response(jsonify({'results': 'Created Succesfully'}), 201)
+
+    # -----------------------END-------------------------------------------
 
     # POST Method
     # if request.method == 'POST':
