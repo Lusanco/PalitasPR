@@ -139,7 +139,7 @@
     <div
       class="flex flex-col items-center justify-center w-full m-auto mx-auto space-y-1 text-gray-800"
     >
-      <!-- <label for="imageInput" class="block text-sm font-medium">Attachments</label> -->
+      <label for="imageInput" class="block text-sm font-medium"></label>
       <div class="flex w-full">
         <input
           type="file"

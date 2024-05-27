@@ -11,19 +11,12 @@
   import Index from "./routes/Index.svelte";
   import Login from "./routes/Login.svelte";
   import Signup from "./routes/Signup.svelte";
+  import SignupSuccess from "./routes/SignupSuccess.svelte";
   import About from "./routes/About.svelte";
   import Contact from "./routes/Contact.svelte";
 
   // PalitasPR Components
-  import SignupSuccess from "./routes/SignupSuccess.svelte";
-  import Profile from "./components/Profile.svelte";
-  import Faq from "./components/FAQ.svelte";
-  import NotFound from "./components/NotFound.svelte";
-  import LoadingSpinnerFull from "./components/LoadingSpinnerFull.svelte";
-  import UploadImage from "./components/UploadImage.svelte";
-  import PromotionsRequests from "./components/Promotions_Requests.svelte";
-  import CreatePromotionRequest from "./components/CreatePromotion.svelte";
-  import CreatePromotion from "./components/CreatePromotion.svelte";
+  import PromoteService from "./components/PromoteService.svelte";
 </script>
 
 <div class="flex flex-col">
@@ -36,12 +29,7 @@
       <Route path="/signup-success" component={SignupSuccess} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/faq" component={Faq} />
-      <Route path="/404" component={NotFound} />
-      <Route path="/upload" component={UploadImage} />
-      <Route path="/promotions-requests" component={PromotionsRequests} />
-      <Route path="/create-promotion" component={CreatePromotion} />
+      <Route path="/promote-service" component={PromoteService} />
     </Router>
   </Main>
   <Footer />
