@@ -274,22 +274,17 @@ def delete_picture(user_id, model, model_id, pic_name):
             else:
                 return {'response': e.response['Error']['Code']}
 
-def put_picture(user_id, model, model_id, pic_name, content):
+def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content: str):
         """
-        Delete a picture from an AWS S3 bucket based on the specified user ID, model, model_id and pic_name.
-
-        Parameters:
-        - user_id: User identifier used to construct the folder path.
-        - model: Model or folder name where the object is stored (example: 'Promotion' = /promotions/).
-        - model_id: Model or folder name where the object is stored (e.g., 'Promotion').
-        - pic_name: pic_name or path of the object within the specified model's folder (promotions/<pic_name>)
+        Put a picture into AWS S3 bucket based on the
+        specified user_ID, model, model_id, pic_name, pic_bytes
 
         Returns:
         - dict: A dictionary containing the response status of the delete operation.
 
         Usage:
         Call this function with the user ID, model name, and pic_name to delete an object from the S3 bucket.
-        - Example: delete_picture('101', 'Promotion', '001/Palitas_logo_pitch.png')
+        - Example: delete_picture('101-ABC', 'Promotion', '005', 'Garden.jpg', '<..BYTES..>')
         """
 
         # Define the models and their respective paths
@@ -305,20 +300,17 @@ def put_picture(user_id, model, model_id, pic_name, content):
         if model in models_dict:
             path = f'users/{models_dict[model]}'  # Construct the full path of the object
         else:
-            return ({'error': 'Model (Folder) does not exist'}, 400)
+            return ({'error': f'Model {model}does not exist'}, 400)
 
-        # Check if object exists
+        # 1) Check if picture exists already
         try:
             s3_client.head_object(Bucket='palitas-pics', Key=path)
-            print(f'Object -{path}- already exists')
             return ({'response': f'Object {path} already exists'}, 400)
 
-        except ClientError as e: # Not found object, proceed to put
-
+        except ClientError as e: # Pic was not found, proceed to put Pic
+            # 2) Put picture
             if e.response['Error']['Code'] == "404":
                 try:
-                    # Attempt to put object
-                    print(f'\nPAth to put object: {path}\n')
                     response = s3_client.put_object(Bucket='palitas-pics', Key=path, Body=content)
                     return ({'response': 'ok'}, 201)
 
