@@ -1,6 +1,6 @@
 <script>
-  import townsID from "../townsID";
-  import servicesID from "../servicesID";
+  import townsID from "../scripts/townsID";
+  import servicesID from "../scripts/servicesID";
   import Button from "./Button.svelte";
 
   // Data points for axiosDATA

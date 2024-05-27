@@ -2,7 +2,7 @@
   import axios from "axios";
   import LogoSlogan from "./LogoSlogan.svelte";
   import LoadingSpinner from "./LoadingSpinner.svelte";
-  import townsID from "../townsID";
+  import townsID from "../scripts/townsID";
 
   let services = [];
   let errorMessage = "";
