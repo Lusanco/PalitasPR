@@ -1,5 +1,13 @@
+<!-- Footer Layout -->
 <script>
-  import { link } from "svelte-routing";
+  import List from "../components/List.svelte";
+
+  let classUL1 = "flex flex-wrap items-center space-x-4 sm:space-x-8";
+  let classUL2 = "flex flex-wrap pl-3 space-x-4 sm:space-x-8";
+  let linksARRAY1 = { "Terms of Use": "/terms-of-use", Privacy: "/privacy" };
+  let classLINKS1 = { "Terms of Use": "", Privacy: "" };
+  let linksARRAY2 = { About: "/about", Contact: "/contact", FAQ: "/faq" };
+  let classLINKS2 = { About: "", Contact: "", FAQ: "" };
 </script>
 
 <!-- Footer Start -->
@@ -22,28 +30,17 @@
           ></path>
         </svg>
       </div>
-      <ul class="flex flex-wrap items-center space-x-4 sm:space-x-8">
-        <li>
-          <a rel="noopener noreferrer" use:link href="/terms-of-use"
-            >Terms of Use</a
-          >
-        </li>
-        <li>
-          <a rel="noopener noreferrer" use:link href="/privacy">Privacy</a>
-        </li>
-      </ul>
+      <List
+        linksARRAY={linksARRAY1}
+        classLINKS={classLINKS1}
+        classUL={classUL1}
+      />
     </div>
-    <ul class="flex flex-wrap pl-3 space-x-4 sm:space-x-8">
-      <li>
-        <a rel="noopener noreferrer" use:link href="/about">About</a>
-      </li>
-      <li>
-        <a rel="noopener noreferrer" use:link href="/contact">Contact</a>
-      </li>
-      <li>
-        <a rel="noopener noreferrer" use:link href="/faq">FAQ</a>
-      </li>
-    </ul>
+    <List
+      linksARRAY={linksARRAY2}
+      classLINKS={classLINKS2}
+      classUL={classUL2}
+    />
   </div>
 </footer>
 <!-- Footer End -->
