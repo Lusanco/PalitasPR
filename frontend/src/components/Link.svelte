@@ -10,7 +10,10 @@
 </script>
 
 <!-- Link Start -->
-<li class={classLIST}>
-  <a {rel} use:link {href}>{linkNAME}</a>
+<li class={"list-none " + classLIST}>
+  <a {rel} use:link {href}
+    >{linkNAME}
+    <slot />
+  </a>
 </li>
 <!-- Link End -->
