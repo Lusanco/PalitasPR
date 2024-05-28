@@ -19,6 +19,7 @@
   const services = Object.entries(servicesID);
 
   let buttonNAME = "Create Promotion";
+  let classLIST = "px-8 py-3 font-semibold text-teal-100 bg-teal-800 rounded";
   let locationURL = "/api/dashboard/promotion-request";
   let crudVERB = "POST";
   let headerTYPE = {
@@ -154,6 +155,13 @@
         <p class="text-red-500">{errorMessage}</p>
       {/if}
     </div>
-    <Button {buttonNAME} {crudVERB} {locationURL} {axiosDATA} {headerTYPE} />
+    <Button
+      {buttonNAME}
+      {classLIST}
+      {crudVERB}
+      {locationURL}
+      {axiosDATA}
+      {headerTYPE}
+    />
   </div>
 </div>

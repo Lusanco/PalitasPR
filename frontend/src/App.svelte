@@ -1,5 +1,5 @@
 <script>
-  // Svelte Routing
+  // Svelte Routing Library
   import { Router, Route } from "svelte-routing";
 
   // PalitasPR Layouts
@@ -17,6 +17,9 @@
 
   // PalitasPR Components
   import PromoteService from "./components/PromoteService.svelte";
+
+  // PalitasPR Testing Imports
+  import OfferCard from "./components/OfferCard.svelte";
 </script>
 
 <div class="flex flex-col">
@@ -30,6 +33,9 @@
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/promote-service" component={PromoteService} />
+
+      <!-- Testing Layout/Route/Component Currently Work On -->
+      <Route path="/test" component={OfferCard} />
     </Router>
   </Main>
   <Footer />

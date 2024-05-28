@@ -2,6 +2,7 @@
   import axios from "axios";
 
   export let buttonNAME;
+  export let classLIST;
   export let locationURL;
   export let crudVERB;
   export let axiosDATA;
@@ -42,9 +43,6 @@
   }
 </script>
 
-<button
-  on:click={buttonLogic}
-  type="button"
-  class="px-8 py-3 font-semibold text-teal-100 bg-teal-800 rounded"
+<button on:click={buttonLogic} type="button" class={classLIST}
   >{buttonNAME}</button
 >
