@@ -5,13 +5,11 @@
   export let linkNAME;
   export let classLIST;
   export let href;
-
-  let rel = "noopener noreferrer";
 </script>
 
 <!-- Link Start -->
 <li class={"list-none " + classLIST}>
-  <a {rel} use:link {href}
+  <a rel="noopener noreferrer" use:link {href}
     >{linkNAME}
     <slot />
   </a>
