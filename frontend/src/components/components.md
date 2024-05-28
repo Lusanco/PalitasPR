@@ -1,5 +1,17 @@
 # TODO
 
-## Include Jona's DashBoardRef, PromoteServiceView, PromoteServiceView2,
+## Incorporate Jona's and Livan's Components
 
-## ReviewCards, ReviewView, etc.
+- DashBoardRef
+- PromoteServiceView
+- PromoteServiceView2
+- ReviewCards
+- ReviewView
+- Inbox
+- OfferCard
+- etc.
+
+## Fix About Component, Minor Fixes:
+
+- Needs more padding on the y axis
+- Team Components on certain width shifts the Members
