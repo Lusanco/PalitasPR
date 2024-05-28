@@ -19,7 +19,7 @@
   import PromoteService from "./components/PromoteService.svelte";
 
   // PalitasPR Testing Imports
-  import OfferCard from "./components/OfferCard.svelte";
+  import Team from "./components/Team.svelte";
 </script>
 
 <div class="flex flex-col">
@@ -35,7 +35,7 @@
       <Route path="/promote-service" component={PromoteService} />
 
       <!-- Testing Layout/Route/Component Currently Work On -->
-      <Route path="/test" component={OfferCard} />
+      <Route path="/test" component={Team} />
     </Router>
   </Main>
   <Footer />
