@@ -1,17 +1,16 @@
+<!-- List Component -->
 <script>
-  import { link } from "svelte-routing";
+  import Link from "./Link.svelte";
 
   export let classUL;
   export let linksARRAY;
   export let classLINKS;
-
-  let rel = "noopener noreferrer";
 </script>
 
+<!-- List Start -->
 <ul class={classUL}>
   {#each Object.entries(linksARRAY) as [key, value]}
-    <li class={classLINKS[key]}>
-      <a {rel} use:link href={value}>{key}</a>
-    </li>
+    <Link linkNAME={key} classLIST={classLINKS[key]} href={value} />
   {/each}
 </ul>
+<!-- List End -->
