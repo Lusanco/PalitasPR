@@ -16,10 +16,10 @@
   import Contact from "./routes/Contact.svelte";
 
   // PalitasPR Components
-  import PromoteService from "./components/PromoteService.svelte";
+  // import PromoteService from "./components/PromoteService.svelte";
 
   // PalitasPR Testing Imports
-  import Team from "./components/Team.svelte";
+  import Dashboard from "./routes/Dashboard.svelte";
 </script>
 
 <div class="flex flex-col">
@@ -32,10 +32,10 @@
       <Route path="/signup-success" component={SignupSuccess} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
-      <Route path="/promote-service" component={PromoteService} />
+      <!-- <Route path="/promote-service" component={PromoteService} /> -->
 
       <!-- Testing Layout/Route/Component Currently Work On -->
-      <Route path="/test" component={Team} />
+      <Route path="/test" component={Dashboard} />
     </Router>
   </Main>
   <Footer />
