@@ -110,8 +110,10 @@ def sign_up():
         and "password" in form_data
     ):
         response, status = DBOperations().sign_up(form_data)
-        obj = response["results"]
-        print(obj.id)
+
+        if status != 201:
+            return make_response(jsonify(response), status)
+
         return make_response(jsonify({"results": "ok"}), status)
     else:
         return make_response(jsonify({'message': 'Missing a required field'}), 400)
