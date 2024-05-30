@@ -2,16 +2,16 @@
 <script>
   import { link } from "svelte-routing";
 
-  export let linkNAME;
-  export let classLIST;
+  export let name;
+  export let twcss;
   export let href;
 </script>
 
 <!-- Link Start -->
-<li class={"list-none " + classLIST}>
-  <a rel="noopener noreferrer" use:link {href}
-    >{linkNAME}
+<a rel="noopener noreferrer" use:link {href}
+  ><li class={"list-none " + twcss}>
+    {name}
     <slot />
-  </a>
-</li>
+  </li>
+</a>
 <!-- Link End -->

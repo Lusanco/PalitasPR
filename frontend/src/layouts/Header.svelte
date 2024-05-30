@@ -11,7 +11,7 @@
 <!-- Header Start -->
 <header class="hidden p-1 text-teal-100 bg-teal-800 md:flex">
   <div class="container flex justify-between h-16 mx-auto">
-    <Link linkNAME="" classLIST="flex items-center p-2" href="/">
+    <Link name="" twcss="flex items-center p-2" href="/">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="currentColor"
@@ -24,14 +24,10 @@
     </Link>
 
     <div class="flex items-center">
+      <Link name="Login" twcss="self-center px-8 py-3 rounded" href="/login" />
       <Link
-        linkNAME="Login"
-        classLIST="self-center px-8 py-3 rounded"
-        href="/login"
-      />
-      <Link
-        linkNAME="Sign up"
-        classLIST="self-center px-8 py-3 font-semibold text-teal-800 bg-teal-400 rounded"
+        name="Sign up"
+        twcss="self-center px-8 py-3 font-semibold text-teal-800 bg-teal-400 rounded"
         href="/signup"
       />
     </div>

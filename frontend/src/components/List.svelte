@@ -10,7 +10,7 @@
 <!-- List Start -->
 <ul class={classUL}>
   {#each Object.entries(linksARRAY) as [key, value]}
-    <Link linkNAME={key} classLIST={classLINKS[key]} href={value} />
+    <Link name={key} twcss={classLINKS[key]} href={value} />
   {/each}
 </ul>
 <!-- List End -->
