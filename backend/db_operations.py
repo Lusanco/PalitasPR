@@ -545,6 +545,7 @@ class DBOperations:
             "verification_token": verification_token,
         }
         send_confirm_email(email, first_name, verification_token)
+        # Create user, await response and status
         response, status = self.new({"User": dict_of_user})
         return response, status
 
