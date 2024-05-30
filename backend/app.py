@@ -3,16 +3,13 @@
 
 from flask import Flask, jsonify, render_template, request, session, g
 from flask_cors import CORS
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
-from base_model import Base
 from db_operations import DBOperations
 from api_blueprints.api_blueprint import api_bp
 from api_blueprints.dashboard_bp import my_bp
 from flask_mail import Mail
-from flask_login import LoginManager, login_user
+from flask_login import LoginManager
 from datetime import timedelta
-from db_init import Session, init_db
+from db_init import init_db
 
 # Create Flask app instance
 app = Flask(__name__)
@@ -38,7 +35,6 @@ def keep_session_alive():
     session.modified = True  # Before requests, keep alive session if it hasnt expired
 
 
-
 @login_manager.user_loader
 def load_user(user_id):
     # Assuming `user_id` is the primary key of the user in your database
@@ -46,21 +42,6 @@ def load_user(user_id):
     user = DBOperations().search('User', user_id)
     return user
 
-
-@app.route("/")
-def index():
-    return app.send_static_file("index.html")
-
-
-@app.route("/<path:filename>")
-def serve_static(filename):
-    """Serves static files from the configured static directory, or returns a 404 for unmatched files."""
-    try:
-        return app.send_static_file(filename)
-    except FileNotFoundError:
-        # Handle non-existent files gracefully
-        return "File not found", 404
-    
 
 # This function will be called after each request to close the session
 @app.teardown_request
