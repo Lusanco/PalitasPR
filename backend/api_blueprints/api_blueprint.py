@@ -23,11 +23,9 @@ def verify_email(token):
 @api_bp.route('/explore', methods=['GET'])
 def explore():
     """
-        FRONT END send: {
-            'model': <'Promotion'> or <'Request'>,
-            'search': '<service_name>',
-            'town' : <'town_name'> or <null>    
-            }
+        Return al promotions or requests from a specific service
+        searched in the main search bar.
+        Filtered also by towns.
     """
     session = get_session()
     model = request.args.get('model')
@@ -47,25 +45,6 @@ def logout():
     logout_user()
     return make_response(jsonify({'results':'Logged out'}), 200)
 
-@api_bp.route("/filter", methods=["POST"])
-def search_filter():
-    """
-    Front has to send {'Service': {'name': 'Nails, 'town': 'Ponce'}}
-    town is an optional argument for dict
-
-    Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
-
-    example:
-        filtered_objs = db.filter({'User': {'name': 'service_name', 'town': 'town_name'}})
-    """
-    # session = get_session()
-    data = request.json
-    dictionary = DBOperations().filter(data)
-    if dictionary:
-        return jsonify(dictionary)
-    else:
-        return jsonify({"error": "Error filtering data"})
-
 
 @api_bp.route('/login', methods=['GET'])
 def login():
@@ -79,23 +58,6 @@ def login():
         response['message'] = 'OK'
         login_user(user)
     return make_response(jsonify(response), status)
-
-# @api_bp.route("/<class_name>/<id>", methods=["GET"])
-# def search_object(class_name, id):
-
-#     obj = DBOperations().search(class_name, id)
-#     if obj:
-#         # Convert the object to a dictionary
-#         obj_dict = obj.__dict__
-#         # Remove the '_sa_instance_state' key (SQLAlchemy internal state)
-#         obj_dict.pop('_sa_instance_state', None)
-#         return jsonify(obj_dict), 200
-#     else:
-#         return jsonify({"error": f"No {class_name} object found with ID {id}"}), 404
-
-
-
-#--------------------------------------------------------------------------
 
 
 @api_bp.route("/signup", methods=["POST"])
@@ -164,17 +126,3 @@ def put_pic():
         print(content)
         response = aws_bucket.put_picture('007', 'Promotion', '005', filename, content)
         return make_response(response)
-
-
-# @api_bp.route("/Promotion", methods=["GET"])
-# def get_all_promotion():
-#     """
-#     comment
-#     """
-#     promotions = DBOperations().search_all_objects()
-#     promotions_dicts = []
-
-#     for promo in promotions:
-#         promo_dict = promo.all_columns()
-#         promotions_dicts.append(promo_dict)
-#         return jsonify(promotions_dicts), 200
