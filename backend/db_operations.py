@@ -107,7 +107,6 @@ class DBOperations:
         if town_id == 'all':
             town_id = 0
         my_service_id = None
-
         if model:
             if service:
                 service_name = unidecode(service).lower()
@@ -120,8 +119,8 @@ class DBOperations:
                 .first()
             )
             if service_obj:
-                my_service_id = service.id
-                service_name = service.name
+                my_service_id = service_obj.id
+                service_name = service_obj.name
             else:
                 print(f"No service found with name: {service_name}")
                 return {}
