@@ -19,7 +19,7 @@ s3_client = boto3.client('s3',
                         aws_secret_access_key=aws_secret_access_key,
                         region_name=region_name)
 
-def create_user_folder(user_id: str = None) -> Tuple[Dict[str, str], int]:
+def create_user_folder(user_id: str = None):
     '''
     Creates user's folder structure in an AWS S3 bucket when a user is verified.
 
@@ -111,7 +111,7 @@ def create_model_folder(user_id: str, model: str, model_id: str):
         'Promotion': 'promotions',
         'Request': 'requests',
         'Task': 'tasks',
-        'Reviews': 'reviews'
+        'Review': 'reviews'
         }
     if model in models_dict:
         try:
