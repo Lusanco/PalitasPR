@@ -4,6 +4,8 @@ import emails
 from flask_login import login_user, logout_user, login_required, current_user,LoginManager
 from werkzeug.utils import secure_filename
 import aws_bucket
+from db_init import get_session
+
 api_bp = Blueprint('api', __name__)
 
 @api_bp.before_request
@@ -27,6 +29,7 @@ def explore():
             'town' : <'town_name'> or <null>    
             }
     """
+    session = get_session()
     model = request.args.get('model')
     service = request.args.get('search')
     town = request.args.get('town')
@@ -39,6 +42,7 @@ def explore():
 @api_bp.route("/logout")
 @login_required
 def logout():
+    # session = get_session()
     # Log out the current user
     logout_user()
     return make_response(jsonify({'results':'Logged out'}), 200)
@@ -54,6 +58,7 @@ def search_filter():
     example:
         filtered_objs = db.filter({'User': {'name': 'service_name', 'town': 'town_name'}})
     """
+    # session = get_session()
     data = request.json
     dictionary = DBOperations().filter(data)
     if dictionary:
@@ -64,6 +69,7 @@ def search_filter():
 
 @api_bp.route('/login', methods=['GET'])
 def login():
+    # session = get_session()
     email = request.args.get('af1')
     password = request.args.get('af2')
     response, status = DBOperations().login(email, password)
@@ -94,6 +100,7 @@ def login():
 
 @api_bp.route("/signup", methods=["POST"])
 def sign_up():
+    # session = get_session()
     form_data = request.get_json()
 
     if (
@@ -102,14 +109,17 @@ def sign_up():
         and "email" in form_data
         and "password" in form_data
     ):
-        message, status = DBOperations().sign_up(form_data)
-        return make_response(jsonify(message), status)
+        response, status = DBOperations().sign_up(form_data)
+        obj = response["results"]
+        print(obj.id)
+        return make_response(jsonify({"results": "ok"}), status)
     else:
         return make_response(jsonify({'message': 'Missing a required field'}), 400)
 
 
 @api_bp.route("/Promotion/<id>", methods=["GET"])
 def show_promo(id):
+    # session = get_session()
     promo_obj = DBOperations().search('Promotion', id)
     if promo_obj:
         # obj_dict = promo_obj.all_columns()
@@ -166,4 +176,3 @@ def put_pic():
 #         promo_dict = promo.all_columns()
 #         promotions_dicts.append(promo_dict)
 #         return jsonify(promotions_dicts), 200
-

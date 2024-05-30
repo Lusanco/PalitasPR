@@ -14,7 +14,6 @@ from flask_login import LoginManager, login_user
 from datetime import timedelta
 from db_init import Session, init_db
 
-
 # Create Flask app instance
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "demo_dev_pwd"
@@ -38,6 +37,8 @@ CORS(app)
 def keep_session_alive():
     session.modified = True  # Before requests, keep alive session if it hasnt expired
 
+
+
 @login_manager.user_loader
 def load_user(user_id):
     # Assuming `user_id` is the primary key of the user in your database
@@ -59,6 +60,21 @@ def serve_static(filename):
     except FileNotFoundError:
         # Handle non-existent files gracefully
         return "File not found", 404
+    
+
+# This function will be called after each request to close the session
+@app.teardown_request
+def remove_session(exception=None):
+    session = g.pop('session', None)
+    if session is not None:
+        session.close()
+
+# This function will be called when the application context is torn down
+# (e.g., when@app.teardown_appcontext
+def close_session(exception=None):
+    session = g.pop('session', None)
+    if session is not None:
+        session.close()
 
 
 if __name__ == "__main__":
