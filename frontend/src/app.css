@@ -1,23 +1,16 @@
+/* Import FontAwesome */
 @import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
+
+/* Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Custom Scrollbar Styles */
 .element::-webkit-scrollbar {
   width: 0 !important;
 }
 .element {
   overflow: -moz-scrollbars-none;
-}
-
-.element {
-  -ms-overflow-style: none;
-}
-
-.menu-enter-active, .menu-leave-active {
-  transition: opacity 0.5s;
-}
-
-.menu-enter, .menu-leave-to {
-  opacity: 0;
+  -ms-overflow-style: none; /* IE and Edge */
 }
