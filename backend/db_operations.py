@@ -127,7 +127,7 @@ class DBOperations:
         Returns: List of dict of the post details
         """
         session = Session()
-        if town_id == 'all':
+        if town_id == 'all' or town_id == -1:
             town_id = 0
         my_service_id = None
 
