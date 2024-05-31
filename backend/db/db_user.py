@@ -5,7 +5,7 @@
 from emails import send_confirm_email
 from email_validator import validate_email, EmailNotValidError
 from db_init import get_session
-from db_operations import DBOperations
+from db.db_operations import DBOperations
 import bcrypt
 from models import User
 
