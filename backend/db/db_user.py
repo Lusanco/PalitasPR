@@ -6,17 +6,8 @@ from emails import send_confirm_email
 from email_validator import validate_email, EmailNotValidError
 from db_init import get_session
 import bcrypt
-from models import (
-    User,
-    Service,
-    Town,
-    Promo_Towns,
-    Review,
-    Task,
-    Promotion,
-    Request,
-    Request_Towns,
-) 
+from models import User
+
 
 class Db_user:
     '''
