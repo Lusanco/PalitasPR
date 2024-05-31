@@ -20,6 +20,7 @@
 
   // PalitasPR Testing Imports
   import Dashboard from "./routes/Dashboard.svelte";
+  import PromoteServiceView from "./components/PromoteServiceView.svelte";
 </script>
 
 <div class="flex flex-col">
@@ -35,7 +36,7 @@
       <!-- <Route path="/promote-service" component={PromoteService} /> -->
 
       <!-- Testing Layout/Route/Component Currently Work On -->
-      <Route path="/test" component={Dashboard} />
+      <Route path="/test" component={PromoteServiceView} />
     </Router>
   </Main>
   <Footer />
