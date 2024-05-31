@@ -8,12 +8,9 @@
 import asyncio
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func
-import bcrypt
-from emails import send_confirm_email
 from sqlalchemy import func
 from unidecode import unidecode
 from aws_bucket import create_model_folder
-from email_validator import validate_email, EmailNotValidError
 from db_init import get_session
 from models import (
     User,
@@ -475,102 +472,18 @@ class DBOperations:
             return ({"message": "Class not found"}, 400)
         return ({"message": "ok"}, 200)
 
-    def login(self, email=None, pwd=None):
-        """
-        This function handles user login by verifying the provided email and password.
 
-        usage: email="abc@gmail.com", pwd="123"
-        """
-        session = get_session()
+    # def confirm_password(self, user_obj, password):
+    #     """
+    #     Confirm the password for the given user object.
+    #     """
 
-        response = {
-            "error": "Null Email or Password"
-        }, 400
-        if email and pwd:
-            user = session.query(User).filter_by(email=email).first()
+    #     hashed_password = user_obj.password.encode("utf-8")
 
-            if user:
-                hashed_password = user.password.encode(
-                    "utf-8"
-                )
-
-                if bcrypt.checkpw(pwd.encode("utf-8"), hashed_password):
-                    response = {"message": user}, 200
-                else:
-                    response = {"message": "Invalid credentials"}, 401
-            else:
-                response = {"message": "Invalid credentials"}, 404
-        return response
-
-    def sign_up(self, data):
-        """
-        This method handles user registration or sign-up process.
-
-        need to recieve email, first_name, last,name, pwd from user.
-        """
-        import bcrypt
-        import secrets
-
-        session = get_session()
-
-        email = data["email"]
-        first_name = data["first_name"]
-        last_name = data["last_name"]
-        pwd = data["password"]
-
-        if not (email and first_name and last_name and pwd):
-            print("error: Missing required fields.")
-            return {"error": "Missing a required field"}, 400
-
-        try:
-            validate_email(email)
-        except EmailNotValidError as e:
-            print(f"Error: Invalid email format - {e}")
-            return {"message": f"{e}"}, 400
-
-        user = session.query(User).filter_by(email=email).first()
-        if user:
-            print("Email is already in use")
-            return {"Error": "Email already in use"}, 409
-
-        # Check if passwords match
-        # if pwd != confirm_pwd:
-        #     print("Passwords do not match")
-        #     return
-
-
-        new_hashed_password = bcrypt.hashpw(
-            pwd.encode("utf-8"), bcrypt.gensalt(rounds=12)
-        )
-        new_hashed_password = new_hashed_password.decode(
-            "utf-8"
-        )
-
-        verification_token = secrets.token_urlsafe(32)
-
-        dict_of_user = {
-            "email": email,
-            "password": new_hashed_password,
-            "first_name": first_name,
-            "last_name": last_name,
-            "verification_token": verification_token,
-        }
-        send_confirm_email(email, first_name, verification_token)
-        # Create user, await response and status
-        response, status = self.new({"User": dict_of_user})
-        return response, status
-
-    def confirm_password(self, user_obj, password):
-        """
-        Confirm the password for the given user object.
-        """
-
-        hashed_password = user_obj.password.encode("utf-8")
-
-        if bcrypt.checkpw(password.encode("utf-8"), hashed_password):
-            return True
-        else:
-            return False
+    #     if bcrypt.checkpw(password.encode("utf-8"), hashed_password):
+    #         return True
+    #     else:
+    #         return False
 
     def search(self, class_name, obj_id):
         """

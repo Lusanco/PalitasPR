@@ -3,7 +3,7 @@
 
 from flask import Flask, jsonify, render_template, request, session, g
 from flask_cors import CORS
-from db_operations import DBOperations
+from db.db_operations import DBOperations
 from api_blueprints.api_blueprint import api_bp
 from api_blueprints.dashboard_bp import my_bp
 from flask_mail import Mail

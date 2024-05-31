@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, make_response, session
-from db_operations import DBOperations
+from db.db_operations import DBOperations
+from db.db_user import Db_user
 import emails
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
@@ -45,10 +46,10 @@ def logout():
 
 
 @api_bp.route('/login', methods=['GET'])
-def login():
+def user_login():
     email = request.args.get('af1')
     password = request.args.get('af2')
-    response, status = DBOperations().login(email, password)
+    response, status = Db_user().login(email, password)
     print("After login response fetched")
     if status == 200:
         user = response['message']
@@ -58,7 +59,7 @@ def login():
 
 
 @api_bp.route("/signup", methods=["POST"])
-def sign_up():
+def user_sign_up():
     form_data = request.get_json()
 
     if (
@@ -67,7 +68,7 @@ def sign_up():
         and "email" in form_data
         and "password" in form_data
     ):
-        response, status = DBOperations().sign_up(form_data)
+        response, status = Db_user().sign_up(form_data)
 
         if status != 201:
             return make_response(jsonify(response), status)
