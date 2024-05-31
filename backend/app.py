@@ -1,38 +1,36 @@
 #!/usr/bin/python3
 """MAIN APP WITH FLASK"""
 
-from flask import Flask, jsonify, render_template, request, session, g
+from flask import Flask, session, g
 from flask_cors import CORS
 from db.db_operations import DBOperations
 from api_blueprints.api_blueprint import api_bp
 from api_blueprints.dashboard_bp import my_bp
+from api_blueprints.user_routes import user_bp
 from flask_mail import Mail
 from flask_login import LoginManager
 from datetime import timedelta
 from db_init import init_db
 
-# Create Flask app instance
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "demo_dev_pwd"
-# Configure Flask app for sending emails using Flask-Mail
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 587
 app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USERNAME"] = "antoniofdjs@gmail.com"
 app.config["MAIL_PASSWORD"] = "syhk sijd eoli tgba"
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15) # Session expires in 15 minutes
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15)
 app.register_blueprint(api_bp, url_prefix='/api')
 app.register_blueprint(my_bp, url_prefix='/api/dashboard')
+app.register_blueprint(user_bp, url_prefix='/api/user')
 mail = Mail(app)
 login_manager = LoginManager(app)
 
-
 CORS(app)
-
 
 @app.before_request
 def keep_session_alive():
-    session.modified = True  # Before requests, keep alive session if it hasnt expired
+    session.modified = True
 
 
 @login_manager.user_loader
@@ -51,7 +49,7 @@ def remove_session(exception=None):
         session.close()
 
 # This function will be called when the application context is torn down
-# (e.g., when@app.teardown_appcontext
+# e.g., when@app.teardown_appcontext
 def close_session(exception=None):
     session = g.pop('session', None)
     if session is not None:
