@@ -7,7 +7,7 @@
 -->
 
 <script>
-  import OffersCards from "./OffersCards.svelte";
+  import OfferCard from "./OfferCard.svelte";
 
   /**
    * ! Test data
@@ -131,7 +131,7 @@
               <!-- 
                 * Offers Cards Component 
               -->
-              <OffersCards name={offer.name} id={offer.id} {viewOffer} />
+              <OfferCard name={offer.name} id={offer.id} {viewOffer} />
             {/each}
           </div>
         </div>
