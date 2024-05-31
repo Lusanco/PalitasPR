@@ -1,41 +1,42 @@
 <script>
+  // Svelte Routing Library
   import { Router, Route } from "svelte-routing";
-  import Header from "./components/Header.svelte";
-  import Main from "./components/Main.svelte";
-  import PageSearchBar from "./components/PageSearchBar.svelte";
-  import Login from "./components/Login.svelte";
-  import Footer from "./components/Footer.svelte";
-  import Signup from "./components/Signup.svelte";
-  import SignSuccess from "./components/SignSuccess.svelte";
-  import Profile from "./components/Profile.svelte";
-  import ContactUs from "./components/ContactUs.svelte";
-  import AboutUs from "./components/AboutUs.svelte";
-  import Faq from "./components/FAQ.svelte";
-  import NotFound from "./components/NotFound.svelte";
-  import LoadingSpinnerFull from "./components/LoadingSpinnerFull.svelte";
-  import UploadImage from "./components/UploadImage.svelte";
-  import PromotionsRequests from "./components/Promotions_Requests.svelte";
-  import CreatePromotionRequest from "./components/CreatePromotion.svelte";
-  import CreatePromotion from "./components/CreatePromotion.svelte";
+
+  // PalitasPR Layouts
+  import Header from "./layouts/Header.svelte";
+  import Main from "./layouts/Main.svelte";
+  import Footer from "./layouts/Footer.svelte";
+
+  // PalitasPR Routes
+  import Index from "./routes/Index.svelte";
+  import Login from "./routes/Login.svelte";
+  import Signup from "./routes/Signup.svelte";
+  import SignupSuccess from "./routes/SignupSuccess.svelte";
+  import About from "./routes/About.svelte";
+  import Contact from "./routes/Contact.svelte";
+
+  // PalitasPR Components
+  // import PromoteService from "./components/PromoteService.svelte";
+
+  // PalitasPR Testing Imports
+  import Dashboard from "./routes/Dashboard.svelte";
 </script>
 
 <div class="flex flex-col">
-  <Header></Header>
+  <Header />
   <Main>
     <Router>
-      <Route path="/" component={PageSearchBar} />
+      <Route path="/" component={Index} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
-      <Route path="/success" component={SignSuccess} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/contact" component={ContactUs} />
-      <Route path="/about" component={AboutUs} />
-      <Route path="/faq" component={Faq} />
-      <Route path="/404" component={NotFound} />
-      <Route path="/upload" component={UploadImage} />
-      <Route path="/promotions-requests" component={PromotionsRequests} />
-      <Route path="/create-promotion" component={CreatePromotion} />
+      <Route path="/signup-success" component={SignupSuccess} />
+      <Route path="/about" component={About} />
+      <Route path="/contact" component={Contact} />
+      <!-- <Route path="/promote-service" component={PromoteService} /> -->
+
+      <!-- Testing Layout/Route/Component Currently Work On -->
+      <Route path="/test" component={Dashboard} />
     </Router>
   </Main>
-  <Footer></Footer>
+  <Footer />
 </div>

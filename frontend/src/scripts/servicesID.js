@@ -1,4 +1,5 @@
 const servicesID = {
+  All: -1,
   Nails: 1,
   Gardening: 2,
   Barber: 3,

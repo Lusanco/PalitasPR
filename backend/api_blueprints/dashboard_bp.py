@@ -5,7 +5,7 @@
 """
 
 from flask import Blueprint, jsonify, request, make_response, session
-from db_operations import DBOperations
+from db.db_operations import DBOperations
 import emails
 from flask_login import (
     login_user,

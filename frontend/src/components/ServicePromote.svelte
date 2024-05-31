@@ -1,39 +1,57 @@
 <script>
-  import UploadImage from "./UploadImage.svelte";
-  import { onMount, afterUpdate } from "svelte";
-  import { link } from "svelte-routing";
-  import axios from "axios";
-  import LoadingSpinnerFull from "./LoadingSpinnerFull.svelte";
-  import townsID from "../townsID";
-  import servicesID from "../servicesID";
+  import townsID from "../scripts/townsID";
+  import servicesID from "../scripts/servicesID";
   import Button from "./Button.svelte";
 
-  // Data points for data
+  // Data points for axiosDATA
   let model = "Promotion",
     title,
     town,
-    serviceID,
+    service_id,
     description,
-    priceMin,
-    priceMax;
+    price_min,
+    price_max,
+    imageFile,
+    errorMessage;
 
   // For iterating town and service name and ids
   const towns = Object.entries(townsID);
   const services = Object.entries(servicesID);
 
-  let btn = "Create Promotion";
-  let location = "/api/dashboard/promotion-request";
-  let verb = "POST";
+  let buttonNAME = "Create Promotion";
+  let classLIST = "px-8 py-3 font-semibold text-teal-100 bg-teal-800 rounded";
+  let locationURL = "/api/dashboard/promotion-request";
+  let crudVERB = "POST";
+  let headerTYPE = {
+    "Content-Type": "multipart/form-data",
+  };
+  const axiosDATA = new FormData();
 
   let data = {
-    model: model,
-    title: title,
-    town: town,
-    service_id: serviceID,
-    description: description,
-    price_min: priceMin,
-    price_max: priceMax,
+    model,
+    title,
+    town,
+    service_id,
+    description,
+    price_min,
+    price_max,
   };
+
+  function handleFileChange(event) {
+    console.log("Selected Image");
+    imageFile = event.target.files[0];
+    axiosDATA.append("image", imageFile);
+  }
+
+  function handleInputChange() {
+    const allTrue = Object.values(data).every((value) => Boolean(value));
+    if (allTrue) {
+      console.log("Form Completed");
+      for (const [key, value] of Object.entries(data)) {
+        axiosDATA.append(key, value);
+      }
+    }
+  }
 </script>
 
 <div
@@ -54,6 +72,7 @@
         name="titulo"
         id=""
         bind:value={data.title}
+        on:change={handleInputChange}
       />
     </div>
 
@@ -61,10 +80,11 @@
     <label for="service">Seleccione Servicio a Brindar</label>
     <select
       bind:value={data.service_id}
+      on:change={handleInputChange}
       name="service"
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
-      <option value="">---</option>
+      <option value={-1} disabled>---</option>
       {#each services as [service, id]}
         <option value={id}>{service}</option>
       {/each}
@@ -75,10 +95,11 @@
     <label for="town">Seleccione un Pueblo</label>
     <select
       bind:value={data.town}
+      on:change={handleInputChange}
       name="town"
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
-      <option value="0">---</option>
+      <option value={-1} disabled>---</option>
       {#each towns as [town, id]}
         <option value={id}>{town}</option>
       {/each}
@@ -88,6 +109,7 @@
       <label for="description">Descripcion de su Oferta</label>
       <textarea
         bind:value={data.description}
+        on:change={handleInputChange}
         class="w-full min-h-20 max-h-20"
         name="description"
         id=""
@@ -101,6 +123,7 @@
         name="price-min"
         id=""
         bind:value={data.price_min}
+        on:change={handleInputChange}
       />
     </div>
     <div>
@@ -111,14 +134,34 @@
         name="price-max"
         id=""
         bind:value={data.price_max}
+        on:change={handleInputChange}
       />
     </div>
-
+    <div
+      class="flex flex-col items-center justify-center w-full m-auto mx-auto space-y-1 text-gray-800"
+    >
+      <label for="imageInput" class="block text-sm font-medium"></label>
+      <div class="flex w-full">
+        <input
+          type="file"
+          name="image"
+          id="imageInput"
+          on:change={handleFileChange}
+          class="w-full px-8 py-12 text-gray-600 bg-gray-100 border-2 border-gray-300 border-dashed rounded-md"
+          accept="image/*"
+        />
+      </div>
+      {#if errorMessage}
+        <p class="text-red-500">{errorMessage}</p>
+      {/if}
+    </div>
     <Button
-      buttonName={btn}
-      crudVERB={verb}
-      locationURL={location}
-      axiosDATA={data}
-    ></Button>
+      {buttonNAME}
+      {classLIST}
+      {crudVERB}
+      {locationURL}
+      {axiosDATA}
+      {headerTYPE}
+    />
   </div>
 </div>
