@@ -1,11 +1,3 @@
-<!-- ? Promotion/Request after Search View -->
-<!-- 
-  TODO: 
-    * Implement data from backend
-    * Implement functions with real logic to handle the buttons
-    * Implement Card(Component) close logic
--->
-
 <script>
   import OfferCard from "./OfferCard.svelte";
 
@@ -71,6 +63,15 @@
   function viewOffer() {
     alert("View Review button is working!");
   }
+
+  /**
+   * ? Function to toggle the dropdown menu
+   */
+
+  function toggleDropdown(event) {
+    const menu = event.currentTarget.nextElementSibling;
+    menu.classList.toggle("hidden");
+  }
 </script>
 
 <!-- 
@@ -106,9 +107,31 @@
             alt={image.alt}
             class="object-cover w-full h-64 mt-3 rounded-md"
           />
-          <div class="mt-2">
-            <h2 class="text-lg">John Smith</h2>
-            <p class="mb-1 text-sm">Service requested: {service}</p>
+          <div class="flex justify-between mt-2">
+            <div>
+              <h2 class="text-lg">John Smith</h2>
+              <p class="mb-1 text-sm">Service requested: {service}</p>
+            </div>
+            <div class="relative mt-3 mr-2 dropdown-top">
+              <button on:click={toggleDropdown} class="m-1"
+                ><i class="fa-solid fa-ellipsis"></i></button
+              >
+              <ul
+                class="absolute z-10 hidden p-2 shadow menu dropdown-content bg-slate-100 rounded-box w-52"
+              >
+                <li>
+                  <a href="/"
+                    ><i class="text-yellow-400 fa-solid fa-pencil"></i> Edit</a
+                  >
+                </li>
+                <li>
+                  <a href="/"
+                    ><i class="text-red-600 fa-solid fa-trash"></i>
+                    <span class="">Delete</span></a
+                  >
+                </li>
+              </ul>
+            </div>
           </div>
         </figure>
         <p class="mt-2 text-sm lg:text-base">{description}</p>
