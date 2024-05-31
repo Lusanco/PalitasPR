@@ -19,9 +19,9 @@ s3_client = boto3.client('s3',
                         aws_secret_access_key=aws_secret_access_key,
                         region_name=region_name)
 
-def create_user_folder(user_id: str = None) -> Tuple[Dict[str, str], int]:
+def create_user_folder(user_id: str = None):
     '''
-    Creates user's folder structure in an AWS S3 bucket when a user is added to the database.
+    Creates user's folder structure in an AWS S3 bucket when a user is verified.
 
     Parameters:
     - user_id (str): The ID of the user for whom the folder structure will be created.
@@ -40,12 +40,17 @@ def create_user_folder(user_id: str = None) -> Tuple[Dict[str, str], int]:
       - requests/
       - tasks/
       - reviews/
+      -gallery/
+      -profile/
 
     Note:
-    - Folders in AWS S3 must end with '/'..
+    - Folders in AWS S3 must end with '/'.
 
     '''
     bucket_name = 'palitas-pics' # Root for all folders
+
+    if user_id is None:
+        return ({'error': 'no user id provided'}, 400) # OK
 
     # user_folder will always have the '/' at the end
     user_folder = f'users/{user_id}/'
@@ -69,17 +74,17 @@ def create_user_folder(user_id: str = None) -> Tuple[Dict[str, str], int]:
     for folder in folders:
         try:
 
-            # Attempt a head_object to check if it already exists
+            # Attempt a head_object to check if folder doesnt exist
             s3_client.head_object(Bucket=bucket_name, Key=folder)
             print(f"Folder '{folder}' already exists.")
             return ({'error':f'Folder {folder} already exists'}, 400)
 
         except ClientError as e:
-
+            # Proceed to create folders
             if e.response['Error']['Code'] == "404":
-                print(f'\n{folder} doesnt exist.\nCreating folder\n')
+                print(f'\nCreating folder: {folder}\n')
 
-                # Put_object creates objects in the aws specified path
+                # Create folder
                 response = s3_client.put_object(Bucket=bucket_name, Key=folder)
 
                 if response['ResponseMetadata']['HTTPStatusCode'] != 200:
@@ -89,38 +94,24 @@ def create_user_folder(user_id: str = None) -> Tuple[Dict[str, str], int]:
     return ({'results': 'Created AWS folders'}, 201) # OK
 
 
-def create_model_folder(user_id, model, model_id):
+def create_model_folder(user_id: str, model: str, model_id: str):
     '''
-    Create a folder structure in an AWS S3 bucket based on a specified model Python class (Promotion, Request, Task, Review).
+    Create a folder in AWS S3 bucket based on a specified model Python class (Promotion, Request, Task, Review)
+    This is for making the folder of a new <Promotion> or <Request> as an example...
+    After this folder is created we can put the pictures inside
 
-    Parameters:
-    - user_id: The ID of the user associated with the model.
-    - model: The type of model (e.g., 'Promotion', 'Request', 'Task', 'Review', 'Gallery').
-    - model_id: The ID of the specific model instance.
-
-    Returns:
-    - dict: A dictionary containing a response message indicating the outcome of the folder creation.
+    Example folder for new Promotion;
+    users/007/promotion/<model_id/
 
     Example Usage:
-    - When a Promotion, Request, or Review is created in the database, this function is called to create corresponding folders in AWS S3.
-
-    AWS S3 Folder Structure:
-    - Root: users/<user_id>/
-    - Subfolders:
-      - promotions/<model_id>/
-      - requests/<model_id>/
-      - tasks/<model_id>/
-      - reviews/<model_id>/
-
+     - Example: delete_picture('101', 'Promotion', '001')
     '''
     print(f'\n\nInside createfolder: user_id:{user_id}, model:{model}, model_id:{model_id}\n\n')
     models_dict = {
         'Promotion': 'promotions',
         'Request': 'requests',
         'Task': 'tasks',
-        'Reviews': 'reviews',
-        'Gallery': 'gallery',
-        'Profile': 'profile'
+        'Review': 'reviews'
         }
     if model in models_dict:
         try:
@@ -172,22 +163,13 @@ def create_model_folder(user_id, model, model_id):
         return ({'error': f'{model} doesnt exist in: {models_dict}'}, 400)
 
 
-def get_picture(user_id, model, model_id, pic_name):
+def get_picture(user_id: str, model: str, model_id: str, pic_name: str):
     """
-    Retrieve an object (picture) from an AWS S3 bucket based on the specified user ID, model (Promotion, Request, Task, Review),
+    Retrieve a picture from an AWS S3 bucket.
     and pic_name (object pic_name/path).
 
-    Parameters:
-    - user_id: User identifier used to construct the folder path.
-    - model: Model or folder name where the object is stored (e.g., 'Promotion').
-    - model_id: Model or folder name where the object is stored (e.g., 'Promotion').
-    - pic_name: pic_name or path of the object within the specified model's folder.
-
-    Returns:
-    - dict: A dictionary containing the response status or retrieved object details.
-
     Usage:
-    Call this function with the user ID, model name, and pic_name to retrieve an object from the S3 bucket.
+    Call this function with the user ID, model name, model_id, and pic_name to retrieve a picture from the S3 bucket.
     - Example: get_picture('101', 'Promotion', '001', 'Palitas_logo_pitch.png')
     """
 
@@ -219,18 +201,9 @@ def get_picture(user_id, model, model_id, pic_name):
             return ({'error': 'Internal error aws'}, 500)
 
 
-def delete_picture(user_id, model, model_id, pic_name):
+def delete_picture(user_id: str, model: str, model_id: str, pic_name: str):
         """
         Delete a picture from an AWS S3 bucket based on the specified user ID, model,model_id and pic_name.
-
-        Parameters:
-        - user_id: User identifier used to construct the folder path.
-        - model: Model or folder name where the object is stored (example: 'Promotion' = /promotions/).
-        - model_id: Model or folder name where the object is stored (e.g., 'Promotion').
-        - pic_name: pic_name or path of the object within the specified model's folder (promotions/<pic_name>)
-
-        Returns:
-        - dict: A dictionary containing the response status of the delete operation.
 
         Usage:
         Call this function with the user ID, model name, and pic_name to delete an object from the S3 bucket.
@@ -242,11 +215,13 @@ def delete_picture(user_id, model, model_id, pic_name):
         'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
         'Request': f'{user_id}/requests/{model_id}/{pic_name}',
         'Task': f'{user_id}/tasks/{model_id}/{pic_name}',
-        'Review': f'{user_id}/reviews/{model_id}/{pic_name}'
+        'Review': f'{user_id}/reviews/{model_id}/{pic_name}',
+        'Profile': f'{user_id}/profile/{pic_name}',
+        'Gallery': f'{user_id}/gallery/{pic_name}' 
         }
-    
+
         if model in models_dict:
-            path = f'users/{models_dict[model]}'  # Construct the full path of the object
+            path = f'users/{models_dict[model]}'  # Construct the full path of the picture
         else:
             return {'response': 'Model (Folder) does not exist'}
 
@@ -274,17 +249,13 @@ def delete_picture(user_id, model, model_id, pic_name):
             else:
                 return {'response': e.response['Error']['Code']}
 
-def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content: str):
+def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content: bytes):
         """
-        Put a picture into AWS S3 bucket based on the
-        specified user_ID, model, model_id, pic_name, pic_bytes
-
-        Returns:
-        - dict: A dictionary containing the response status of the delete operation.
+        Put a picture from AWS S3 bucket based on the specified user ID, model, model_id and pic_name, pic <bytes>
 
         Usage:
         Call this function with the user ID, model name, and pic_name to delete an object from the S3 bucket.
-        - Example: delete_picture('101-ABC', 'Promotion', '005', 'Garden.jpg', '<..BYTES..>')
+        - Example: delete_picture('101', 'Promotion', '001/Palitas_logo_pitch.png', <bytes>)
         """
 
         # Define the models and their respective paths
@@ -296,23 +267,24 @@ def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content:
         'Gallery': f'{user_id}/gallery/{pic_name}',
         'Profile': f'{user_id}/profile/{pic_name}'
         }
-        # Check if the specified model is valid
+        # Construct path of picture
         if model in models_dict:
             path = f'users/{models_dict[model]}'  # Construct the full path of the object
         else:
-            return ({'error': f'Model {model}does not exist'}, 400)
+            return ({'error': 'Model (Folder) does not exist'}, 400)
 
-        # 1) Check if picture exists already
+        # Check if picture doesnt exist already, we will not overwrtie pictures yet...
         try:
             s3_client.head_object(Bucket='palitas-pics', Key=path)
+            print(f'Object -{path}- already exists')
             return ({'response': f'Object {path} already exists'}, 400)
 
-        except ClientError as e: # Pic was not found, proceed to put Pic
-            # 2) Put picture
+        except ClientError as e: # 
             if e.response['Error']['Code'] == "404":
                 try:
+                    # Put picture
                     response = s3_client.put_object(Bucket='palitas-pics', Key=path, Body=content)
-                    return ({'response': 'ok'}, 201)
+                    return ({'response': 'ok'}, 200)
 
                 except ClientError as e:
                     # Handle the specific error codes

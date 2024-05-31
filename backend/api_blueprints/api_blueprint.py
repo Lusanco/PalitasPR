@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify, request, make_response, session
 from db_operations import DBOperations
 import emails
-from flask_login import login_user, logout_user, login_required, current_user,LoginManager
+from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 import aws_bucket
+from db_init import get_session
+
 api_bp = Blueprint('api', __name__)
 
 @api_bp.before_request
@@ -21,11 +23,9 @@ def verify_email(token):
 @api_bp.route('/explore', methods=['GET'])
 def explore():
     """
-        FRONT END send: {
-            'model': <'Promotion'> or <'Request'>,
-            'search': '<service_name>',
-            'town' : <'town_name'> or <null>    
-            }
+        Return al promotions or requests from a specific service
+        searched in the main search bar.
+        Filtered also by towns.
     """
     model = request.args.get('model')
     service = request.args.get('search')
@@ -43,24 +43,6 @@ def logout():
     logout_user()
     return make_response(jsonify({'results':'Logged out'}), 200)
 
-@api_bp.route("/filter", methods=["POST"])
-def search_filter():
-    """
-    Front has to send {'Service': {'name': 'Nails, 'town': 'Ponce'}}
-    town is an optional argument for dict
-
-    Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
-
-    example:
-        filtered_objs = db.filter({'User': {'name': 'service_name', 'town': 'town_name'}})
-    """
-    data = request.json
-    dictionary = DBOperations().filter(data)
-    if dictionary:
-        return jsonify(dictionary)
-    else:
-        return jsonify({"error": "Error filtering data"})
-
 
 @api_bp.route('/login', methods=['GET'])
 def login():
@@ -74,23 +56,6 @@ def login():
         login_user(user)
     return make_response(jsonify(response), status)
 
-# @api_bp.route("/<class_name>/<id>", methods=["GET"])
-# def search_object(class_name, id):
-
-#     obj = DBOperations().search(class_name, id)
-#     if obj:
-#         # Convert the object to a dictionary
-#         obj_dict = obj.__dict__
-#         # Remove the '_sa_instance_state' key (SQLAlchemy internal state)
-#         obj_dict.pop('_sa_instance_state', None)
-#         return jsonify(obj_dict), 200
-#     else:
-#         return jsonify({"error": f"No {class_name} object found with ID {id}"}), 404
-
-
-
-#--------------------------------------------------------------------------
-
 
 @api_bp.route("/signup", methods=["POST"])
 def sign_up():
@@ -102,8 +67,12 @@ def sign_up():
         and "email" in form_data
         and "password" in form_data
     ):
-        message, status = DBOperations().sign_up(form_data)
-        return make_response(jsonify(message), status)
+        response, status = DBOperations().sign_up(form_data)
+
+        if status != 201:
+            return make_response(jsonify(response), status)
+
+        return make_response(jsonify({"results": "ok"}), status)
     else:
         return make_response(jsonify({'message': 'Missing a required field'}), 400)
 
@@ -112,10 +81,10 @@ def sign_up():
 def show_promo(id):
     promo_obj = DBOperations().search('Promotion', id)
     if promo_obj:
-        # obj_dict = promo_obj.all_columns()
-        return jsonify(promo_obj), 200
+        obj_dict = promo_obj.all_columns()
+        return make_response(jsonify({'results': obj_dict}), 200)
     else:
-        return jsonify({"error": f"No Promotion object found with ID {id}"}), 404
+        return make_response(jsonify({"error": f"No Promotion object found with ID {id}"}), 404)
 
 @api_bp.route("/Request/<id>", methods=["GET"])
 def show_request(id):
@@ -152,18 +121,3 @@ def put_pic():
         print(content)
         response = aws_bucket.put_picture('007', 'Promotion', '005', filename, content)
         return make_response(response)
-
-
-# @api_bp.route("/Promotion", methods=["GET"])
-# def get_all_promotion():
-#     """
-#     comment
-#     """
-#     promotions = DBOperations().search_all_objects()
-#     promotions_dicts = []
-
-#     for promo in promotions:
-#         promo_dict = promo.all_columns()
-#         promotions_dicts.append(promo_dict)
-#         return jsonify(promotions_dicts), 200
-
