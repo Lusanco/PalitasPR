@@ -5,6 +5,7 @@
 from emails import send_confirm_email
 from email_validator import validate_email, EmailNotValidError
 from db_init import get_session
+from db_operations import DBOperations
 import bcrypt
 from models import User
 
@@ -87,5 +88,5 @@ class Db_user:
         }
         send_confirm_email(email, first_name, verification_token)
         # Assuming self.new is a method that handles the creation of a new user
-        response, status = self.new({"User": dict_of_user})
+        response, status = DBOperations().new({"User": dict_of_user})
         return response, status
