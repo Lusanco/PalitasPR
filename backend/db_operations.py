@@ -435,7 +435,15 @@ class DBOperations:
 
     def update(self, data):
         """
+        Update an object in the database based on the provided data.
 
+        usage: data = {
+                "User": {
+                    "id": 123,
+                    "name": "New Name",
+                    "email": "newemail@hotmail.com"
+                }
+            }
         """
         session = get_session()
 
@@ -469,12 +477,14 @@ class DBOperations:
 
     def login(self, email=None, pwd=None):
         """
+        This function handles user login by verifying the provided email and password.
 
+        usage: email="abc@gmail.com", pwd="123"
         """
         session = get_session()
 
         response = {
-            "message": "Null Email or Password"
+            "error": "Null Email or Password"
         }, 400
         if email and pwd:
             user = session.query(User).filter_by(email=email).first()
@@ -495,6 +505,8 @@ class DBOperations:
     def sign_up(self, data):
         """
         This method handles user registration or sign-up process.
+
+        need to recieve email, first_name, last,name, pwd from user.
         """
         import bcrypt
         import secrets
@@ -507,8 +519,8 @@ class DBOperations:
         pwd = data["password"]
 
         if not (email and first_name and last_name and pwd):
-            print("Error: Missing required fields.")
-            return {"message": "Missing a required field"}, 400
+            print("error: Missing required fields.")
+            return {"error": "Missing a required field"}, 400
 
         try:
             validate_email(email)
@@ -519,7 +531,7 @@ class DBOperations:
         user = session.query(User).filter_by(email=email).first()
         if user:
             print("Email is already in use")
-            return {"message": "Email already in use"}, 409
+            return {"Error": "Email already in use"}, 409
 
         # Check if passwords match
         # if pwd != confirm_pwd:
@@ -563,6 +575,8 @@ class DBOperations:
     def search(self, class_name, obj_id):
         """
         Search for an object based on its class model and ID.
+
+        usage: class_name="User", obj_id=001
         """
         if class_name in self.classes_dict:
             model_class = self.classes_dict[class_name]
