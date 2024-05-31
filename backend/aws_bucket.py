@@ -42,7 +42,7 @@ def create_user_folder(user_id: str = None) -> Tuple[Dict[str, str], int]:
       - reviews/
 
     Note:
-    - Folders in AWS S3 must end with '/'.
+    - Folders in AWS S3 must end with '/'..
 
     '''
     bucket_name = 'palitas-pics' # Root for all folders

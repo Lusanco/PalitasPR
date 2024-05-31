@@ -8,7 +8,7 @@
 
 ### Description
 
-This route allows the frontend to create a new promotion or request and upload a picture for it.
+This route allows frontend to create a new promotion or request and upload a picture for it.
 
 ### Request Body
 
