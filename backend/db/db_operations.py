@@ -5,7 +5,6 @@
     USING LOCAL POSTGRES DB NEED TO CHAMGE TO AWS
 
 """
-import asyncio
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func
 from unidecode import unidecode
@@ -85,124 +84,6 @@ class DBOperations:
                 return response
 
         return ({'results': new_object}, 201)
-
-
-    async def promo_request(self, user_id):
-        """
-        Query promotions and requests from a specified user
-        """
-
-        tasks = [
-            self.my_promos(self.session, user_id),
-            self.my_requests(self.session, user_id)
-        ]
-        promotions, requests = await asyncio.gather(*tasks)
-
-        return (promotions, requests)
-
-    async def my_promos(self, session, my_user_id):
-        """
-        Main query to filter promotions
-        """
-        rows = (
-            session.query(
-                Promo_Towns.promo_id,
-                User.first_name,
-                User.last_name,
-                func.array_agg(Town.name),
-                Promotion.created_at,
-                Promotion.title,
-                Promotion.description,
-                Promotion.price_min,
-                Promotion.price_max,
-                Service.name,
-            )
-            .select_from(Promotion)
-            .join(User, Promotion.user_id == User.id)
-            .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)
-            .join(Town, Promo_Towns.town_id == Town.id)
-            .join(Service, Promotion.service_id == Service.id)
-            .filter((Promotion.user_id == my_user_id))
-            .group_by(
-                Promo_Towns.promo_id,
-                User.first_name,
-                User.last_name,
-                Promotion.created_at,
-                Promotion.description,
-                Promotion.title,
-                Promotion.price_min,
-                Promotion.price_max,
-                Service.name,
-            )
-            .order_by(Promo_Towns.promo_id)
-            .all()
-        )
-        promos_dict = []
-        for row in rows:
-            inner_dict = {
-                "promo_id": str(row.promo_id),
-                "service": row.name,
-                "title": row.title,
-                "description": row.description,
-                "price_min": row.price_min,
-                "price_max": row.price_max,
-                "first_name": row.first_name,
-                "last_name": row.last_name,
-                "towns": row[3],
-                "created_at": row.created_at.strftime("%Y-%m-%d"),
-            }
-            promos_dict.append(inner_dict)
-        return promos_dict
-
-    async def my_requests(self, session, my_user_id):
-        """
-        Main query to filter promotions
-        """
-        rows = (
-            session.query(
-                Request_Towns.request_id,
-                User.first_name,
-                User.last_name,
-                func.array_agg(Town.name),
-                Request.created_at,
-                Request.title,
-                Request.description,
-                Service.name,
-            )
-            .select_from(Request)
-            .join(User, Request.user_id == User.id)
-            .join(Request_Towns, Request.id == Request_Towns.request_id)
-            .join(Town, Request_Towns.town_id == Town.id)
-            .join(Service, Request.service_id == Service.id)
-            .filter((Request.user_id == my_user_id))
-            .group_by(
-                Request_Towns.request_id,
-                User.first_name,
-                User.last_name,
-                Request.created_at,
-                Request.description,
-                Request.title,
-                Service.name,
-            )
-            .order_by(Request_Towns.request_id)
-            .all()
-        )
-        requests_dict = []
-        for row in rows:
-            inner_dict = {
-                'request_id': str(row.request_id),
-                'service': row.name,
-                'title': row.title,
-                'description': row.description,
-                'first_name': row.first_name,
-                'last_name': row.last_name,
-                'towns': row[3],
-                'created_at': row.created_at.strftime("%Y-%m-%d")
-            }
-
-            requests_dict.append(inner_dict)
-
-        return requests_dict
 
     def update(self, data):
         """

@@ -100,3 +100,57 @@ class Db_promotion:
                 .all()
             )
             return rows
+
+    async def get_user_promos(self, session, my_user_id):
+        """
+        Main query to filter promotions
+        """
+        rows = (
+            session.query(
+                Promo_Towns.promo_id,
+                User.first_name,
+                User.last_name,
+                func.array_agg(Town.name),
+                Promotion.created_at,
+                Promotion.title,
+                Promotion.description,
+                Promotion.price_min,
+                Promotion.price_max,
+                Service.name,
+            )
+            .select_from(Promotion)
+            .join(User, Promotion.user_id == User.id)
+            .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)
+            .join(Town, Promo_Towns.town_id == Town.id)
+            .join(Service, Promotion.service_id == Service.id)
+            .filter((Promotion.user_id == my_user_id))
+            .group_by(
+                Promo_Towns.promo_id,
+                User.first_name,
+                User.last_name,
+                Promotion.created_at,
+                Promotion.description,
+                Promotion.title,
+                Promotion.price_min,
+                Promotion.price_max,
+                Service.name,
+            )
+            .order_by(Promo_Towns.promo_id)
+            .all()
+        )
+        promos_dict = []
+        for row in rows:
+            inner_dict = {
+                "promo_id": str(row.promo_id),
+                "service": row.name,
+                "title": row.title,
+                "description": row.description,
+                "price_min": row.price_min,
+                "price_max": row.price_max,
+                "first_name": row.first_name,
+                "last_name": row.last_name,
+                "towns": row[3],
+                "created_at": row.created_at.strftime("%Y-%m-%d"),
+            }
+            promos_dict.append(inner_dict)
+        return promos_dict

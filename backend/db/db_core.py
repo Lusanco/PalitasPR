@@ -15,7 +15,7 @@ from db.db_promotion import Db_promotion
 from db.db_request import Db_request
 from models import User
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import func
+import asyncio
 from sqlalchemy import func
 from unidecode import unidecode
 from aws_bucket import create_model_folder
@@ -109,3 +109,16 @@ class Db_core:
                 list_of_models.append(model_dict)
 
         return list_of_models
+
+    async def dashboard_promos_requests(self, user_id):
+        """
+        Query promotions and requests from a specified user to
+        present on his dashboard
+        """
+
+        tasks = [
+            Db_promotion().get_user_promos(self.session, user_id),
+            Db_request().get_user_requests(self.session, user_id)
+        ]
+        promotions, requests = await asyncio.gather(*tasks)
+        return (promotions, requests)
