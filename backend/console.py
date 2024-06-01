@@ -4,12 +4,14 @@ Command line interface for the DB Operations
 """
 import cmd
 import shlex
-from db_operations import DBOperations
+from db.db_operations import DBOperations
+from db.db_user import Db_user
 import aws_bucket
 import time
 import random
 
 db = DBOperations()
+db_user = Db_user()
 
 class DBConsole(cmd.Cmd):
     """Simple command line interpreter for DB Operations"""
@@ -41,7 +43,7 @@ class DBConsole(cmd.Cmd):
                     'email': email,
                     'password': password
                 }
-                response = db.sign_up(data)
+                response = db_user.sign_up(data)
                 print(response)
         
             else:
@@ -145,7 +147,7 @@ class DBConsole(cmd.Cmd):
 
         # Validate inputs and perform login
         if email and password:
-            db.login(email=email, pwd=password)
+            db_user.login(email=email, pwd=password)
         else:
             print("Invalid input. Usage: login <email> <password>")
 
