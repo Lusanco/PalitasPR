@@ -43,13 +43,6 @@ def load_user(user_id):
 
 # This function will be called after each request to close the session
 @app.teardown_request
-def remove_session(exception=None):
-    session = g.pop('session', None)
-    if session is not None:
-        session.close()
-
-# This function will be called when the application context is torn down
-# e.g., when@app.teardown_appcontext
 def close_session(exception=None):
     session = g.pop('session', None)
     if session is not None:
