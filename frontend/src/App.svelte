@@ -16,6 +16,7 @@
   import Contact from "./routes/Contact.svelte";
   import ConfirmLogin from "./routes/ConfirmLogin.svelte";
   import PostConfirmation from "./routes/PostConfirmation.svelte";
+  import Offers from "./routes/Offers.svelte";
 
   // PalitasPR Components
   // import PromoteService from "./components/PromoteService.svelte";
@@ -25,9 +26,9 @@
   import PromoteServiceView from "./components/PromoteServiceView.svelte";
 </script>
 
-<div class="flex flex-col">
+<div class="flex flex-col min-h-screen">
   <Header />
-  <Main>
+  <Main >
     <Router>
       <Route path="/" component={Index} />
       <Route path="/login" component={Login} />
