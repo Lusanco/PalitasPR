@@ -7,11 +7,11 @@
 """
 import asyncio
 from sqlalchemy.exc import SQLAlchemyError
-from os import getenv
-from time import time
-from sqlalchemy import create_engine, func
-from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.orm.relationships import RelationshipProperty
+from sqlalchemy import func
+from sqlalchemy import func
+from unidecode import unidecode
+from aws_bucket import create_model_folder
+from db_init import get_session
 from models import (
     User,
     Service,
@@ -23,19 +23,7 @@ from models import (
     Request,
     Request_Towns,
     Promotion,
-)
-from base_model import BaseModel, Base
-from werkzeug.security import generate_password_hash, check_password_hash
-import bcrypt
-from emails import send_confirm_email
-from sqlalchemy import func
-import random
-import datetime
-from sqlalchemy.dialects.postgresql import UUID
-from unidecode import unidecode
-from aws_bucket import create_model_folder
-from email_validator import validate_email, EmailNotValidError
-from db_init import Session
+) 
 
 
 class DBOperations:
@@ -49,108 +37,89 @@ class DBOperations:
                 'Review': Review,
                 'Task': Task,
                 'Promotion': Promotion,
-                'Request': Request
+                'Request': Request 
                 }
-
 
     def new(self, front_data):
         """
-        Add new obj to database
+        Create a new instance of a model and save it to the database.
 
-        get():
-            retrieves the value associated with the model_name key from the self.classes_dict dictionary.
-            If model_name is found in the dictionary, model_class will be assigned the corresponding value
+        Args:
+            front_data (dict): A dictionary containing the model name as key and its attributes as value.
+
+        Returns:
+            dict: A dictionary with the created object if successful, or an error message.
+
+        Example:
+            front_data = {'User': {'name': 'John Doe', 'email': 'john@example.com', 'password': '12345'}}
         """
         if front_data is None:
             return None
 
-        # print(front_data)
-        dict = {}
-        # Extract the model name from the received data
-        model_name = list(front_data.keys())[0]  # model_name = "User"
+        model_name, inner_dict = list(front_data.items())[0]
+        session = get_session()
+        model_class = self.classes_dict.get(model_name)
 
-        # Extract the inner dictionary containing attribute-value
-        inner_dict = front_data[model_name]  # inner_dict = {"name": "Nails"}
+        if not model_class:
+            return {'error': 'Not valid class'}, 400
+        
+        new_object = model_class(**inner_dict)
+        session.add(new_object)
 
-        session = Session()
+        try:
+            session.commit()
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(e)
+            return ({"Error": "Error"}, 500)
 
-        # Get the model class corresponding to the model name
-        model_class = self.classes_dict.get(model_name)  # model_class = User
-
-        if model_class:
-            # Iterate over the attribute-value in the inner dictionary
-            for key, value in inner_dict.items():
-
-                # Add each attribute-value to the dictionary
-                dict[key] = value  # dict = {"first_name": "Louis", "last_name": "Toro"}
-
-            # Create a new object of the model class using the attribute-value
-            new_object = model_class(
-                **dict
-            )  # new_object = User(first_name="Louis", last_name="Toro")
-
-            session.add(new_object)
-
-            object_dict = new_object.all_columns()
-
-            try:
-                session.commit()
-            except SQLAlchemyError as e:
+        # check if object needs aws folder
+        aws_folders = {Promotion: "Promotion", Request: "Request", Review: "Review"}
+        if model_class in aws_folders:
+            response = create_model_folder(
+                new_object.user_id, aws_folders[model_class], new_object.id
+            )
+            if response[1] != 201:
                 session.rollback()
-                session.close()
-                print(e)
-                return ({"Error": "Error"}, 500)
+                return response
 
-            # check if object needs aws folder
-            aws_folders = {Promotion: "Promotion", Request: "Request", Review: "Review"}
-            if model_class in aws_folders:
-                response = create_model_folder(
-                    new_object.user_id, aws_folders[model_class], new_object.id
-                )
-                if response[1] != 201:
-                    session.rollback()
-                    session.close()
-                    return response
-
-            return ({'results': object_dict}, 201)
-        else:
-            print("Not a valid class")
-            session.close()
-            return ({'error': 'Not valid class'}, 400)
+        return ({'results': new_object}, 201)
 
     def filter(self, model=None, service=None, town_id = 0):
         """
-        Retrieve objects based on specified criteria from url query
+        Filter and retrieve objects based on the provided model, service, and town ID.
 
-        Usage: model=promotions or model=<requests>, service=<DJ>, town=<all> or specific <town>
+        Args:
+            model (str): The model to filter (example, "promotions", "requests").
+            service (str): The name of the service to filter.
+            town_id (int or str): The ID of the town to filter, or 'all' for all towns.
 
-        Returns: List of dict of the post details
+        Returns:
+            list: A list of dictionaries containing filtered objects.
+
+        Example:
+            result = DBOperations().filter(model='promotions', service='cleaning', town_id=1)
         """
-        session = Session()
-        if town_id == 'all':
+        session = get_session()
+        if town_id == 'all' or town_id == '-1':
             town_id = 0
         my_service_id = None
-
         if model:
-            # Normalize text of service
             if service:
                 service_name = unidecode(service).lower()
             else:
                 print("no service name provided")
-                session.close()
                 return {}
-            # Check if service exists
-            service = (
+            service_obj = (
                 session.query(Service)
                 .filter(func.lower(Service.name).op("~")(f"{service_name}"))
                 .first()
             )
-            if service:
-                my_service_id = service.id
-                service_name = service.name
+            if service_obj:
+                my_service_id = service_obj.id
+                service_name = service_obj.name
             else:
                 print(f"No service found with name: {service_name}")
-                session.close()
                 return {}
 
         if my_service_id is not None:
@@ -159,11 +128,10 @@ class DBOperations:
             if model == "requests":
                 rows = self.explore_requests(session, my_service_id, town_id)
 
-            # List to put inside all dicts
             list_of_dict = []
 
             for row in rows:
-                if model == "promotions":  # Promotions dictionary data
+                if model == "promotions":
                     inner_dict = {
                         "promo_id": str(row.promo_id),
                         "service": service_name,
@@ -176,7 +144,7 @@ class DBOperations:
                         "towns": row[3],
                         "created_at": row.created_at.strftime("%Y-%m-%d"),
                     }
-                else:  # Requests dictionary data
+                else:
                     inner_dict = {
                         "request_id": str(row.request_id),
                         "service": service_name,
@@ -187,23 +155,24 @@ class DBOperations:
                         "towns": row[3],
                         "created_at": row.created_at.strftime("%Y-%m-%d"),
                     }
-
                 list_of_dict.append(inner_dict)
-
-            session.close()
-            print(len(list_of_dict))
             return list_of_dict
         else:
-            session.close()
             return {}
 
     def explore_promos(self, session, my_service_id, town_id):
         """
-        Main query to filter promotions
+        Query promotions based on service ID and town ID.
+
+        Args:
+            session: The database session.
+            my_service_id (int): The service ID to filter promotions.
+            town_id (int): The town ID to filter promotions.
+
+        Returns:
+            list: A list of filtered promotions.
         """
-        print(f'My town id {town_id}')
-        if town_id == 0:  # Get all promotions of a service in all towns
-            print("Doing all Towns")
+        if town_id == 0:
             rows = (
                 session.query(
                     Promo_Towns.promo_id,
@@ -235,8 +204,7 @@ class DBOperations:
                 .all()
             )
             return rows
-        else:  # Get all promotions of a service in a single town
-            print("Doing Specific town")
+        else:
             rows = (
                 session.query(
                     Promo_Towns.promo_id,
@@ -274,10 +242,17 @@ class DBOperations:
 
     def explore_requests(self, session, my_service_id, town_id):
         """
-        Main query to filter requests
+        Query requests based on service ID and town ID.
+
+        Args:
+            session: The database session.
+            my_service_id (int): The service ID to filter requests.
+            town_id (int): The town ID to filter requests.
+
+        Returns:
+            list: A list of filtered requests.
         """
-        if town_id == 0:  # Get all promotions of a service in all towns
-            print("Doing all")
+        if town_id == 0:
             rows = (
                 session.query(
                     Request_Towns.request_id,
@@ -305,8 +280,7 @@ class DBOperations:
                 .all()
             )
             return rows
-        else:  # Get all Requests of a service in a single town
-            print("Doing Specific town")
+        else:
             rows = (
                 session.query(
                     Request_Towns.request_id,
@@ -342,7 +316,7 @@ class DBOperations:
         """
         Query promotions and requests from a specified user
         """
-        session = Session()
+        session = get_session()
 
         tasks = [
             self.my_promos(session, user_id),
@@ -350,14 +324,12 @@ class DBOperations:
         ]
         promotions, requests = await asyncio.gather(*tasks)
 
-        session.close()
         return (promotions, requests)
 
     async def my_promos(self, session, my_user_id):
         """
         Main query to filter promotions
         """
-        print(f"Inside my_promos def, my user id is: {my_user_id}")
         rows = (
             session.query(
                 Promo_Towns.promo_id,
@@ -412,7 +384,6 @@ class DBOperations:
         """
         Main query to filter promotions
         """
-        print(f"Inside my_promos def, my user id is: {my_user_id}")
         rows = (
             session.query(
                 Request_Towns.request_id,
@@ -459,18 +430,90 @@ class DBOperations:
 
         return requests_dict
 
-    # def delete(self, data):
+    def update(self, data):
+        """
+        Update an object in the database based on the provided data.
+
+        usage: data = {
+                "User": {
+                    "id": 123,
+                    "name": "New Name",
+                    "email": "newemail@hotmail.com"
+                }
+            }
+        """
+        session = get_session()
+
+        class_name = list(data.keys())[0]
+        if class_name in self.classes_dict:
+            update_dict = {}
+            update_dict.update(data[class_name])
+
+            obj_id = update_dict.pop("id", None)
+
+            if obj_id:
+                model_class = self.classes_dict[class_name]
+                obj = session.query(model_class).filter_by(id=obj_id).first()
+
+                if obj:
+                    for key, value in update_dict.items():
+                        if hasattr(model_class, key):
+                            setattr(obj, key, value)
+                        else:
+                            print(f"Attribute '{key}' not found in {class_name} model.")
+
+                    session.commit()
+                    print(f"{class_name} object with ID {obj_id} updated successfully.")
+                else:
+                    print(f"{class_name} object with ID {obj_id} not found.")
+            else:
+                return ({"message": "Object ID not provided."}, 400)
+        else:
+            return ({"message": "Class not found"}, 400)
+        return ({"message": "ok"}, 200)
+
+
+    # def confirm_password(self, user_obj, password):
     #     """
+    #     Confirm the password for the given user object.
+    #     """
+
+    #     hashed_password = user_obj.password.encode("utf-8")
+
+    #     if bcrypt.checkpw(password.encode("utf-8"), hashed_password):
+    #         return True
+    #     else:
+    #         return False
+
+    def search(self, class_name, obj_id):
+        """
+        Search for an object based on its class model and ID.
+
+        usage: class_name="User", obj_id=001
+        """
+        if class_name in self.classes_dict:
+            model_class = self.classes_dict[class_name]
+            session = get_session()
+            obj = session.query(model_class).filter_by(id=obj_id).first()
+            if obj:
+                return obj
+            else:
+                return None
+        else:
+            return None
+
+
+    # def delete(self, data):
+    #       """
     #         Delete objects and handle if the object has relationship
     #         Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
     #     """
-    #     session = session()
+    #     session = get_session()
 
     #     model_name = list(data.keys())[0]
     #     model_class = self.classes_dict.get(model_name)
     #     if not model_class:
     #         print("\nInvalid model name.\n")
-    #         session.close()
     #         return None
 
     #     inner_dict = data[model_name]
@@ -482,13 +525,11 @@ class DBOperations:
     #             query = query.filter(getattr(model_class, key) == value)
     #         else:
     #             print(f"\nInvalid attribute '{key}' for model '{model_name}'.\n")
-    #             session.close()
     #             return None
 
     #     objs_to_delete = query.all()
     #     if not objs_to_delete:
     #         print("No object found to delete.\n")
-    #         session.close()
     #         return True
 
     #     for obj in objs_to_delete:
@@ -496,7 +537,6 @@ class DBOperations:
     #             password = input("Enter your password to confirm delete: ")
     #             if not self.confirm_password(obj, password):
     #                 print("Incorrect password.")
-    #                 session.close()
     #                 return False
     #             else:
     #                 # Print the user's first name and last name when deleted
@@ -523,194 +563,53 @@ class DBOperations:
     #             session.delete(obj)
 
     #     session.commit()
-    #     session.close()
     #     return True
 
-    def update(self, data):
-        """
-        Update an object from Data Base
-        Usage:  {'Model': {''parameter1': 'value1', 'parameter2': 'value2'}}
-        """
-        session = Session()
 
-        class_name = list(data.keys())[0]  # First key, class name
-        if class_name in self.classes_dict:
-            update_dict = {}
-            update_dict.update(data[class_name])
-
-            # Get the object ID from the update_dict
-            obj_id = update_dict.pop("id", None)
-
-            if obj_id:
-                # Retrieve the object from the database
-                model_class = self.classes_dict[class_name]
-                obj = session.query(model_class).filter_by(id=obj_id).first()
-
-                if obj:
-                    # Iterate over the remaining key-value pairs in update_dict
-                    for key, value in update_dict.items():
-                        # Check if the attribute exists in the model
-                        if hasattr(model_class, key):
-                            setattr(obj, key, value)
-                        else:
-                            print(f"Attribute '{key}' not found in {class_name} model.")
-
-                    session.commit()
-                    print(f"{class_name} object with ID {obj_id} updated successfully.")
-                else:
-                    print(f"{class_name} object with ID {obj_id} not found.")
-            else:
-                return ({"message": "Object ID not provided."}, 400)
-        else:
-            return ({"message": "Class not found"}, 400)
-
-        session.close()
-        return ({"message": "ok"}, 200)
-
-    def login(self, email=None, pwd=None):
-        """
-        Validate login for a user
-        If valid,  db.new() will be called to handle the user creation
-        USAGE: Receive pwd and email of user
-        """
-        session = Session()
-
-        response = {
-            "message": "Null Email or Password"
-        }, 400  # BAd request, NULL email or pawd
-        if email and pwd:
-            user = session.query(User).filter_by(email=email).first()
-
-            if user:
-                # Retrieve the hashed password from the database
-                hashed_password = user.password.encode(
-                    "utf-8"
-                )  # Ensure it's encoded as bytes
-
-                # Verify the password using bcrypt
-                if bcrypt.checkpw(pwd.encode("utf-8"), hashed_password):
-                    response = {"message": user}, 200
-                else:
-                    response = {"message": "Invalid credentials"}, 401
-            else:
-                response = {"message": "Invalid credentials"}, 404  # Email not found
-        session.close()
-        return response
-
-    def sign_up(self, data):
-        """
-        This method handles user registration or sign-up process.
-        """
-        import bcrypt
-        import secrets
-
-        session = Session()
-
-        print("Data received:", data)
-
-        email = data["email"]
-        first_name = data["first_name"]
-        last_name = data["last_name"]
-        pwd = data["password"]
-
-        # Check if all required fields are present
-        if not (email and first_name and last_name and pwd):
-            print("Error: Missing required fields.")
-            session.close()
-            return {"message": "Missing a required field"}, 400
-
-            # Validate email format
-        try:
-            validate_email(email)
-        except EmailNotValidError as e:
-            print(f"Error: Invalid email format - {e}")
-            session.close()
-            return {"message": f"{e}"}, 400
-
-        # Check if email doesnt exist in db
-        user = session.query(User).filter_by(email=email).first()
-        if user:
-            print("Email is already in use")
-            session.close()
-            return {"message": "Email already in use"}, 409
-
-        # Check if passwords match
-        # if pwd != confirm_pwd:
-        #     print("Passwords do not match")
-        #     session.close()
-        #     return
-
-        # Generate a new password hash with bcrypt and 12 rounds
-        # .encode is needed to hash properly, but we need to decode before saving to db
-        # we use this for sensitive data
-        new_hashed_password = bcrypt.hashpw(
-            pwd.encode("utf-8"), bcrypt.gensalt(rounds=12)
-        )
-        new_hashed_password = new_hashed_password.decode(
-            "utf-8"
-        )  # Decode bytes to string for SQLAlchemy
-
-        # Generate a verification token for the user
-        verification_token = secrets.token_urlsafe(32)  # Generate a URL-safe token
-
-        dict_of_user = {
-            "email": email,
-            "password": new_hashed_password,
-            "first_name": first_name,
-            "last_name": last_name,
-            "verification_token": verification_token,
-        }
-        send_confirm_email(email, first_name, verification_token)
-        response, status = self.new({"User": dict_of_user})
-        session.close()
-        return response, status
-
-    def confirm_password(self, user_obj, password):
-        """
-        Confirm the password for the given user object.
-        """
-
-        # Retrieve the hashed password from the database
-        hashed_password = user_obj.password.encode("utf-8")
-
-        # Verify the password using bcrypt
-        if bcrypt.checkpw(password.encode("utf-8"), hashed_password):
-            return True
-        else:
-            return False
-
-    def search(self, class_name, obj_id):
-        """
-        Search for an object based on its class model and ID.
-        """
-        if class_name in self.classes_dict:
-            model_class = self.classes_dict[class_name]
-            session = Session()
-            obj = session.query(model_class).filter_by(id=obj_id).first()
-            session.close()
-            if obj:
-                return obj
-            else:
-                return None
-        else:
-            return None
-
-    # def search_all_objects(self, class_name, service_id=None):
+    # async def reset_password(self, data):
     #     """
-    #     Retrieve all Promotion objects from the database.
+    #     Reset password for a user.
     #     """
-    #     if class_name in self.classes_dict:
-    #         model_class = self.classes_dict[class_name]
+    #     session = get_session()
+    #     email = data.get('email')
+    #     try:
+    #         valid = validate_email(email)
+    #         email = valid.email
+    #     except EmailNotValidError:
+    #         return {"error": "Invalid email"}
 
-    #         session = Session()
+    #     user = session.query(User).filter_by(email=email).first()
+    #     if not user:
+    #         return {"error": "User not found"}
 
-    #         if service_id:
-    #             obj = session.query(model_class).filter_by(service_id=service_id).all()
-    #         else:
-    #             obj = session.query(model_class).all()
+    #     hashed = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt())
+    #     user.pwd = hashed
+    #     session.add(user)
 
-    #         session.close()
+    #     try:
+    #         session.commit()
+    #     except SQLAlchemyError as e:
+    #         session.rollback()
+    #         print(e)
+    #         return {"error": "Password reset failed"}, 500
 
-    #         return obj
-    #     else:
-    #         return None
+    #     asyncio.create_task(send_confirm_email(user.email, "Your password has been reset"))
+    #     return {"result": "Password reset successfully"}, 200
+
+
+    # async def my_reviews(self, user_id):
+    #     """
+    #     Retrieve reviews for a user.
+    #     """
+    #     session = get_session()
+    #     rows = session.query(
+    #         Review.id,
+    #         Review.comment,
+    #         Review.rating,
+    #         Review.created_at,
+    #         Service.name,
+    #     ).select_from(Review).join(Service, Review.service_id == Service.id).filter(
+    #         Review.user_id == user_id
+    #     ).order_by(Review.created_at).all()
+
+    #     return [{"id": row.id, "comment": row.comment, "rating": row.rating, "created_at": row.created_at, "service": row.name} for row in rows]

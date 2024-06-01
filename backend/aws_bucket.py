@@ -19,7 +19,7 @@ s3_client = boto3.client('s3',
                         aws_secret_access_key=aws_secret_access_key,
                         region_name=region_name)
 
-def create_user_folder(user_id: str = None) -> Tuple[Dict[str, str], int]:
+def create_user_folder(user_id: str = None):
     '''
     Creates user's folder structure in an AWS S3 bucket when a user is verified.
 
@@ -40,6 +40,8 @@ def create_user_folder(user_id: str = None) -> Tuple[Dict[str, str], int]:
       - requests/
       - tasks/
       - reviews/
+      -gallery/
+      -profile/
 
     Note:
     - Folders in AWS S3 must end with '/'.
@@ -109,7 +111,7 @@ def create_model_folder(user_id: str, model: str, model_id: str):
         'Promotion': 'promotions',
         'Request': 'requests',
         'Task': 'tasks',
-        'Reviews': 'reviews'
+        'Review': 'reviews'
         }
     if model in models_dict:
         try:
@@ -265,7 +267,7 @@ def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content:
         'Gallery': f'{user_id}/gallery/{pic_name}',
         'Profile': f'{user_id}/profile/{pic_name}'
         }
-        # Oonstruct path of picture
+        # Construct path of picture
         if model in models_dict:
             path = f'users/{models_dict[model]}'  # Construct the full path of the object
         else:

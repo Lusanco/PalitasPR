@@ -1,6 +1,6 @@
 <script>
-  import townsID from "../townsID";
-  import servicesID from "../servicesID";
+  import townsID from "../scripts/townsID";
+  import servicesID from "../scripts/servicesID";
   import Button from "./Button.svelte";
 
   // Data points for axiosDATA
@@ -10,17 +10,24 @@
     service_id,
     description,
     price_min,
-    price_max;
+    price_max,
+    imageFile,
+    errorMessage;
 
   // For iterating town and service name and ids
   const towns = Object.entries(townsID);
   const services = Object.entries(servicesID);
 
-  let buttonName = "Create Promotion";
+  let buttonNAME = "Create Promotion";
+  let classLIST = "px-8 py-3 font-semibold text-teal-100 bg-teal-800 rounded";
   let locationURL = "/api/dashboard/promotion-request";
   let crudVERB = "POST";
+  let headerTYPE = {
+    "Content-Type": "multipart/form-data",
+  };
+  const axiosDATA = new FormData();
 
-  let axiosDATA = {
+  let data = {
     model,
     title,
     town,
@@ -29,6 +36,22 @@
     price_min,
     price_max,
   };
+
+  function handleFileChange(event) {
+    console.log("Selected Image");
+    imageFile = event.target.files[0];
+    axiosDATA.append("image", imageFile);
+  }
+
+  function handleInputChange() {
+    const allTrue = Object.values(data).every((value) => Boolean(value));
+    if (allTrue) {
+      console.log("Form Completed");
+      for (const [key, value] of Object.entries(data)) {
+        axiosDATA.append(key, value);
+      }
+    }
+  }
 </script>
 
 <div
@@ -48,18 +71,20 @@
         type="text"
         name="titulo"
         id=""
-        bind:value={axiosDATA.title}
+        bind:value={data.title}
+        on:change={handleInputChange}
       />
     </div>
 
     <!-- Service Filter Start -->
     <label for="service">Seleccione Servicio a Brindar</label>
     <select
-      bind:value={axiosDATA.service_id}
+      bind:value={data.service_id}
+      on:change={handleInputChange}
       name="service"
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
-      <option value="">---</option>
+      <option value={-1} disabled>---</option>
       {#each services as [service, id]}
         <option value={id}>{service}</option>
       {/each}
@@ -69,11 +94,12 @@
     <!-- Town Filter Start -->
     <label for="town">Seleccione un Pueblo</label>
     <select
-      bind:value={axiosDATA.town}
+      bind:value={data.town}
+      on:change={handleInputChange}
       name="town"
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
-      <option value="0">---</option>
+      <option value={-1} disabled>---</option>
       {#each towns as [town, id]}
         <option value={id}>{town}</option>
       {/each}
@@ -82,7 +108,8 @@
     <div class="max-h-96">
       <label for="description">Descripcion de su Oferta</label>
       <textarea
-        bind:value={axiosDATA.description}
+        bind:value={data.description}
+        on:change={handleInputChange}
         class="w-full min-h-20 max-h-20"
         name="description"
         id=""
@@ -95,7 +122,8 @@
         type="number"
         name="price-min"
         id=""
-        bind:value={axiosDATA.price_min}
+        bind:value={data.price_min}
+        on:change={handleInputChange}
       />
     </div>
     <div>
@@ -105,10 +133,35 @@
         type="number"
         name="price-max"
         id=""
-        bind:value={axiosDATA.price_max}
+        bind:value={data.price_max}
+        on:change={handleInputChange}
       />
     </div>
-
-    <Button {buttonName} {crudVERB} {locationURL} {axiosDATA}></Button>
+    <div
+      class="flex flex-col items-center justify-center w-full m-auto mx-auto space-y-1 text-gray-800"
+    >
+      <label for="imageInput" class="block text-sm font-medium"></label>
+      <div class="flex w-full">
+        <input
+          type="file"
+          name="image"
+          id="imageInput"
+          on:change={handleFileChange}
+          class="w-full px-8 py-12 text-gray-600 bg-gray-100 border-2 border-gray-300 border-dashed rounded-md"
+          accept="image/*"
+        />
+      </div>
+      {#if errorMessage}
+        <p class="text-red-500">{errorMessage}</p>
+      {/if}
+    </div>
+    <Button
+      {buttonNAME}
+      {classLIST}
+      {crudVERB}
+      {locationURL}
+      {axiosDATA}
+      {headerTYPE}
+    />
   </div>
 </div>
