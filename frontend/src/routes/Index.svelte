@@ -1,5 +1,4 @@
 <script>
-  import axios from "axios";
   import Slogan from "../components/Slogan.svelte";
   import townsID from "../scripts/townsID";
   import Loading from "../components/Loading.svelte";
@@ -30,44 +29,31 @@
       "w-full h-full font-bold text-teal-100 bg-teal-800 hover:bg-teal-700 hover:text-teal-300",
   };
 
-  // $: {
-  //   // This runs whenever miscDATA changes
-  //   buttonDATA = {
-  //     ...buttonDATA,
-  //     url: `/api/explore?search=${miscDATA.search}&model=${miscDATA.model}&town=${miscDATA.town}`,
-  //   };
-  // }
+  function handleResults(event) {
+    const { success, data, error, state: newState } = event.detail;
 
-  // function updateButtonData() {
-  //   buttonDATA = {
-  //     ...buttonDATA,
-  //     url: `/api/explore?search=${miscDATA.search}&model=${miscDATA.model}&town=${miscDATA.town}`,
-  //   };
-  // }
+    state = newState;
 
-  // function handleResults(event) {
-  //   const { success, data, error, state: newState } = event.detail;
-
-  //   state = newState;
-
-  //   if (success && data) {
-  //     services = data;
-  //     console.log("Updated services:", services);
-  //   } else {
-  //     errorMessage = error?.message || "An error occurred";
-  //     console.log("Error Message:", errorMessage);
-  //   }
-  // }
+    if (success && data) {
+      services = data;
+      console.log("Updated services:", services);
+    } else {
+      errorMessage = error?.message || "An error occurred";
+      console.log("Error Message:", errorMessage);
+    }
+  }
+  $: {
+    // This runs whenever miscDATA changes
+    buttonDATA = {
+      ...buttonDATA,
+      url: `/api/explore?search=${miscDATA.search}&model=${miscDATA.model}&town=${miscDATA.town}`,
+    };
+  }
 
   // function handleKeydown(event) {
   //   if (event.key === "Enter") {
   //     updateButtonData();
   //   }
-  // }
-
-  // $: {
-  //   // Reactively update buttonDATA when search, model, or town changes
-  //   updateButtonData();
   // }
 </script>
 
@@ -112,8 +98,7 @@
         </select>
         <!-- Town Filter End -->
 
-        <Button {axiosDATA} {buttonDATA} {miscDATA}>
-          <!-- on:results={handleResults} -->
+        <Button {axiosDATA} {buttonDATA} {miscDATA} on:results={handleResults}>
           <span class="sr-only">Search</span>
 
           <svg
@@ -142,59 +127,60 @@
   {:else if state.error}
     <span class="font-bold text-teal-600">No results found, try again.</span>
   {:else}
-    <a
-      href="##"
-      class="flex py-2 flex-col min-h-20 max-h-[50%] gap-4 rounded-md w-[95%] sm:w-[90%] md:w-[80%] overflow-y-scroll bg-teal-50"
+    <div
+      class="flex py-2 flex-col gap-4 rounded-md w-[95%] sm:w-[90%] md:w-[80%] overflow-y-scroll overflow-hidden h-96 bg-teal-50"
     >
       {#each services as service}
-        <div
-          class="relative block w-full p-4 border border-teal-100 rounded-lg shadow-lg sm:p-6 lg:p-8"
-        >
-          <span
-            class="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-teal-200 via-teal-400 to-teal-600"
-          ></span>
+        <a href="##">
+          <div
+            class="relative block w-full p-4 border border-teal-100 rounded-lg shadow-lg sm:p-6 lg:p-8"
+          >
+            <span
+              class="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-teal-200 via-teal-400 to-teal-600"
+            ></span>
 
-          <div class="sm:flex sm:justify-between sm:gap-4">
-            <div>
-              <h3 class="text-lg font-bold text-gray-900 sm:text-xl">
-                {service.title}
-              </h3>
+            <div class="sm:flex sm:justify-between sm:gap-4">
+              <div>
+                <h3 class="text-lg font-bold text-gray-900 sm:text-xl">
+                  {service.title}
+                </h3>
 
-              <p class="mt-1 text-xs font-medium text-gray-600">
-                By {service.first_name}
-                {service.last_name}
+                <p class="mt-1 text-xs font-medium text-gray-600">
+                  By {service.first_name}
+                  {service.last_name}
+                </p>
+              </div>
+
+              <div class="hidden sm:block sm:shrink-0">
+                <img
+                  alt=""
+                  src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80"
+                  class="object-cover rounded-lg shadow-sm size-16"
+                />
+              </div>
+            </div>
+
+            <div class="">
+              <p class="text-sm text-gray-500 text-pretty">
+                {service.description}
               </p>
             </div>
 
-            <div class="hidden sm:block sm:shrink-0">
-              <img
-                alt=""
-                src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80"
-                class="object-cover rounded-lg shadow-sm size-16"
-              />
-            </div>
+            <dl class="flex gap-4 sm:gap-6">
+              <div class="flex flex-col-reverse">
+                <dt class="text-sm font-medium text-gray-600">Published</dt>
+                <dd class="text-xs text-gray-500">{service.created_at}</dd>
+              </div>
+
+              <div class="flex flex-col-reverse">
+                <dt class="text-sm font-medium text-gray-600">Rated</dt>
+                <dd class="text-xs text-gray-500">{service.rating}/5</dd>
+              </div>
+            </dl>
           </div>
-
-          <div class="">
-            <p class="text-sm text-gray-500 text-pretty">
-              {service.description}
-            </p>
-          </div>
-
-          <dl class="flex gap-4 sm:gap-6">
-            <div class="flex flex-col-reverse">
-              <dt class="text-sm font-medium text-gray-600">Published</dt>
-              <dd class="text-xs text-gray-500">{service.created_at}</dd>
-            </div>
-
-            <div class="flex flex-col-reverse">
-              <dt class="text-sm font-medium text-gray-600">Rated</dt>
-              <dd class="text-xs text-gray-500">{service.rating}/5</dd>
-            </div>
-          </dl>
-        </div>
+        </a>
       {/each}
-    </a>
+    </div>
   {/if}
 </div>
 <!-- Index End -->
