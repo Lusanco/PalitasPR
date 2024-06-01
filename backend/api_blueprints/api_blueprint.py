@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, make_response
 from db.db_operations import DBOperations
+from db.db_core import Db_core
 from werkzeug.utils import secure_filename
 import aws_bucket
 
@@ -9,13 +10,13 @@ api_bp = Blueprint('api', __name__)
 def explore():
     """
         Return al promotions or requests from a specific service
-        searched in the main search bar.
+        searched in the landing search bar.
         Filtered also by towns.
     """
     model = request.args.get('model')
     service = request.args.get('search')
     town = request.args.get('town')
-    search_results = DBOperations().filter(model, service, town)
+    search_results = Db_core().landing_searchBar(model, service, town)
     if search_results:
         return make_response(jsonify({'results': search_results}), 200)
     else:
