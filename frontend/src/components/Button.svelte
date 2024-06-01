@@ -73,7 +73,8 @@
       });
   }
 
-  function buttonLogic() {
+  // Expose the buttonLogic function to be callable from the parent component
+  export function buttonLogic() {
     axiosLogic(buttonDATA, axiosDATA, miscDATA);
   }
 </script>

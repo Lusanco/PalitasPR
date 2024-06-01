@@ -23,28 +23,32 @@
       "w-full h-full font-bold text-teal-100 bg-teal-800 hover:bg-teal-700 hover:text-teal-300",
   };
 
+  // Define a reference for the Button component
+  let buttonRef;
+
+  // Function to handle the "Enter" key press
+  function handleKeydown(event) {
+    if (event.key === "Enter") {
+      // Trigger the button logic from the child component
+      buttonRef.buttonLogic();
+    }
+  }
+
   function handleResults(event) {
     const { success, data, error, state: newState } = event.detail;
     services = data;
     state.set(newState);
 
-    console.log("from index: ", services, newState);
-
     if (!success) {
       errorMessage = error?.message || "An error occurred";
-      console.log("Error Message:", errorMessage);
     }
   }
 
+  // Update buttonDATA when miscDATA changes
   $: buttonDATA = {
     ...buttonDATA,
     url: `/api/explore?search=${miscDATA.search.trim()}&model=${miscDATA.model}&town=${miscDATA.town}`,
   };
-  // function handleKeydown(event) {
-  //   if (event.key === "Enter") {
-  //     updateButtonData();
-  //   }
-  // }
 </script>
 
 <!-- Index Start -->
@@ -61,6 +65,7 @@
           type="text"
           id="search"
           bind:value={miscDATA.search}
+          on:keydown={handleKeydown}
           placeholder="Search for..."
           class="w-full col-span-2 rounded-md border-gray-200 py-2.5 pe-10 shadow-sm sm:text-sm"
         />
@@ -88,7 +93,14 @@
         </select>
         <!-- Town Filter End -->
 
-        <Button {axiosDATA} {buttonDATA} {miscDATA} on:results={handleResults}>
+        <!-- Bind the Button component to the reference variable -->
+        <Button
+          bind:this={buttonRef}
+          {axiosDATA}
+          {buttonDATA}
+          {miscDATA}
+          on:results={handleResults}
+        >
           <span class="sr-only">Search</span>
 
           <svg
