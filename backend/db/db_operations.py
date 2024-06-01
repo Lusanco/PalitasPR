@@ -40,6 +40,9 @@ class DBOperations:
                 'Request': Request 
                 }
 
+    def __init__(self):
+        self.session = get_session()
+
     def new(self, front_data):
         """
         Create a new instance of a model and save it to the database.
@@ -57,19 +60,18 @@ class DBOperations:
             return None
 
         model_name, inner_dict = list(front_data.items())[0]
-        session = get_session()
         model_class = self.classes_dict.get(model_name)
 
         if not model_class:
             return {'error': 'Not valid class'}, 400
         
         new_object = model_class(**inner_dict)
-        session.add(new_object)
+        self.session.add(new_object)
 
         try:
-            session.commit()
+            self.session.commit()
         except SQLAlchemyError as e:
-            session.rollback()
+            self.session.rollback()
             print(e)
             return ({"Error": "Error"}, 500)
 
@@ -80,7 +82,7 @@ class DBOperations:
                 new_object.user_id, aws_folders[model_class], new_object.id
             )
             if response[1] != 201:
-                session.rollback()
+                self.session.rollback()
                 return response
 
         return ({'results': new_object}, 201)
@@ -100,7 +102,6 @@ class DBOperations:
         Example:
             result = DBOperations().filter(model='promotions', service='cleaning', town_id=1)
         """
-        session = get_session()
         if town_id == 'all' or town_id == '-1':
             town_id = 0
         my_service_id = None
@@ -111,7 +112,7 @@ class DBOperations:
                 print("no service name provided")
                 return {}
             service_obj = (
-                session.query(Service)
+                self.session.query(Service)
                 .filter(func.lower(Service.name).op("~")(f"{service_name}"))
                 .first()
             )
@@ -124,9 +125,9 @@ class DBOperations:
 
         if my_service_id is not None:
             if model == "promotions":
-                rows = self.explore_promos(session, my_service_id, town_id)
+                rows = self.explore_promos(my_service_id, town_id)
             if model == "requests":
-                rows = self.explore_requests(session, my_service_id, town_id)
+                rows = self.explore_requests(my_service_id, town_id)
 
             list_of_dict = []
 
@@ -160,7 +161,7 @@ class DBOperations:
         else:
             return {}
 
-    def explore_promos(self, session, my_service_id, town_id):
+    def explore_promos(self, my_service_id, town_id):
         """
         Query promotions based on service ID and town ID.
 
@@ -174,7 +175,7 @@ class DBOperations:
         """
         if town_id == 0:
             rows = (
-                session.query(
+                self.session.query(
                     Promo_Towns.promo_id,
                     User.first_name,
                     User.last_name,
@@ -206,7 +207,7 @@ class DBOperations:
             return rows
         else:
             rows = (
-                session.query(
+                self.session.query(
                     Promo_Towns.promo_id,
                     User.first_name,
                     User.last_name,
@@ -240,7 +241,7 @@ class DBOperations:
             )
             return rows
 
-    def explore_requests(self, session, my_service_id, town_id):
+    def explore_requests(self, my_service_id, town_id):
         """
         Query requests based on service ID and town ID.
 
@@ -254,7 +255,7 @@ class DBOperations:
         """
         if town_id == 0:
             rows = (
-                session.query(
+                self.session.query(
                     Request_Towns.request_id,
                     User.first_name,
                     User.last_name,
@@ -282,7 +283,7 @@ class DBOperations:
             return rows
         else:
             rows = (
-                session.query(
+                self.session.query(
                     Request_Towns.request_id,
                     User.first_name,
                     User.last_name,
@@ -316,11 +317,10 @@ class DBOperations:
         """
         Query promotions and requests from a specified user
         """
-        session = get_session()
 
         tasks = [
-            self.my_promos(session, user_id),
-            self.my_requests(session, user_id)
+            self.my_promos(self.session, user_id),
+            self.my_requests(self.session, user_id)
         ]
         promotions, requests = await asyncio.gather(*tasks)
 
@@ -442,8 +442,6 @@ class DBOperations:
                 }
             }
         """
-        session = get_session()
-
         class_name = list(data.keys())[0]
         if class_name in self.classes_dict:
             update_dict = {}
@@ -453,7 +451,7 @@ class DBOperations:
 
             if obj_id:
                 model_class = self.classes_dict[class_name]
-                obj = session.query(model_class).filter_by(id=obj_id).first()
+                obj = self.session.query(model_class).filter_by(id=obj_id).first()
 
                 if obj:
                     for key, value in update_dict.items():
@@ -462,7 +460,7 @@ class DBOperations:
                         else:
                             print(f"Attribute '{key}' not found in {class_name} model.")
 
-                    session.commit()
+                    self.session.commit()
                     print(f"{class_name} object with ID {obj_id} updated successfully.")
                 else:
                     print(f"{class_name} object with ID {obj_id} not found.")
@@ -493,8 +491,7 @@ class DBOperations:
         """
         if class_name in self.classes_dict:
             model_class = self.classes_dict[class_name]
-            session = get_session()
-            obj = session.query(model_class).filter_by(id=obj_id).first()
+            obj = self.session.query(model_class).filter_by(id=obj_id).first()
             if obj:
                 return obj
             else:
