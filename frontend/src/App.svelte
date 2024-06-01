@@ -14,6 +14,7 @@
   import SignupSuccess from "./routes/SignupSuccess.svelte";
   import About from "./routes/About.svelte";
   import Contact from "./routes/Contact.svelte";
+  import ConfirmLogin from "./routes/ConfirmLogin.svelte";
 
   // PalitasPR Components
   // import PromoteService from "./components/PromoteService.svelte";
