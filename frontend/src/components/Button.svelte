@@ -23,12 +23,10 @@
   };
 
   function axiosLogic(buttonDATA, axiosDATA = {}, miscDATA = {}) {
-    state = {
-      hidden: false,
-      loaded: false,
-      reload: true,
-      error: false,
-    };
+    state.hidden = false;
+    state.loaded = false;
+    state.reload = true;
+    state.error = false;
 
     axios({
       method: buttonDATA.method,
@@ -37,12 +35,10 @@
       headers: buttonDATA.headers,
     })
       .then((response) => {
-        state = {
-          hidden: false,
-          loaded: true,
-          reload: false,
-          error: false,
-        };
+        state.hidden = false;
+        state.loaded = true;
+        state.reload = false;
+        state.error = false;
 
         dispatch("results", {
           success: true,
@@ -53,24 +49,24 @@
         console.log(".then() Response Log: ", response);
         console.log(".then() Data Log: ", axiosDATA);
         console.log(".then() Misc Log: ", miscDATA);
+        console.log(".then() State Log: ", state);
       })
-      .catch((error) => {
-        state = {
-          hidden: false,
-          loaded: true,
-          reload: false,
-          error: true,
-        };
+      .catch((err) => {
+        state.hidden = false;
+        state.loaded = true;
+        state.reload = false;
+        state.error = true;
 
         dispatch("results", {
           success: false,
-          error: error,
+          err: err,
           state: state,
         });
 
-        console.log(".catch() Error Log: ", error);
+        console.log(".catch() Error Log: ", err);
         console.log(".catch() Data Log: ", axiosDATA);
         console.log(".catch() Misc Log: ", miscDATA);
+        console.log(".catch() State Log: ", state);
       });
   }
 

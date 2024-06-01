@@ -23,7 +23,7 @@
   let buttonDATA = {
     name: "",
     method: "GET",
-    url: `/api/explore?search=${miscDATA.search}&model=${miscDATA.model}&town=${miscDATA.town}`,
+    url: `/api/explore?search=${miscDATA.search.trim()}&model=${miscDATA.model}&town=${miscDATA.town}`,
     headers: { "Content-Type": "application/json" },
     twcss:
       "w-full h-full font-bold text-teal-100 bg-teal-800 hover:bg-teal-700 hover:text-teal-300",
@@ -31,22 +31,23 @@
 
   function handleResults(event) {
     const { success, data, error, state: newState } = event.detail;
-
+    services = data;
     state = newState;
 
-    if (success && data) {
-      services = data;
-      console.log("Updated services:", services);
-    } else {
-      errorMessage = error?.message || "An error occurred";
-      console.log("Error Message:", errorMessage);
-    }
+    console.log("from index: ", services, state);
+
+    // if (success && data) {
+    //   console.log("Updated services:", services);
+    // } else {
+    //   errorMessage = error?.message || "An error occurred";
+    //   console.log("Error Message:", errorMessage);
+    // }
   }
   $: {
     // This runs whenever miscDATA changes
     buttonDATA = {
       ...buttonDATA,
-      url: `/api/explore?search=${miscDATA.search}&model=${miscDATA.model}&town=${miscDATA.town}`,
+      url: `/api/explore?search=${miscDATA.search.trim()}&model=${miscDATA.model}&town=${miscDATA.town}`,
     };
   }
 
