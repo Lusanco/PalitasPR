@@ -1,6 +1,7 @@
 <script>
   import axios from "axios";
   import { createEventDispatcher } from "svelte";
+  import { state } from "../scripts/stateStores";
 
   const dispatch = createEventDispatcher();
 
@@ -14,19 +15,14 @@
     twcss: "",
   };
 
-  //   State Control Object
-  let state = {
-    hidden: true,
-    loaded: false,
-    reload: false,
-    error: false,
-  };
-
   function axiosLogic(buttonDATA, axiosDATA = {}, miscDATA = {}) {
-    state.hidden = false;
-    state.loaded = false;
-    state.reload = true;
-    state.error = false;
+    state.update((s) => ({
+      ...s,
+      hidden: false,
+      loaded: false,
+      reload: true,
+      error: false,
+    }));
 
     axios({
       method: buttonDATA.method,
@@ -35,27 +31,34 @@
       headers: buttonDATA.headers,
     })
       .then((response) => {
-        state.hidden = false;
-        state.loaded = true;
-        state.reload = false;
-        state.error = false;
+        setTimeout;
+        state.update((s) => ({
+          ...s,
+          hidden: false,
+          loaded: true,
+          reload: false,
+          error: false,
+        }));
 
         dispatch("results", {
           success: true,
           data: response.data.results,
-          state: state,
+          state: $state,
         });
 
         console.log(".then() Response Log: ", response);
         console.log(".then() Data Log: ", axiosDATA);
         console.log(".then() Misc Log: ", miscDATA);
-        console.log(".then() State Log: ", state);
+        console.log(".then() State Log: ", $state);
       })
       .catch((err) => {
-        state.hidden = false;
-        state.loaded = true;
-        state.reload = false;
-        state.error = true;
+        state.update((s) => ({
+          ...s,
+          hidden: false,
+          loaded: true,
+          reload: false,
+          error: true,
+        }));
 
         dispatch("results", {
           success: false,
@@ -66,7 +69,7 @@
         console.log(".catch() Error Log: ", err);
         console.log(".catch() Data Log: ", axiosDATA);
         console.log(".catch() Misc Log: ", miscDATA);
-        console.log(".catch() State Log: ", state);
+        console.log(".catch() State Log: ", $state);
       });
   }
 

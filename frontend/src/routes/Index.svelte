@@ -3,16 +3,10 @@
   import townsID from "../scripts/townsID";
   import Loading from "../components/Loading.svelte";
   import Button from "../components/Button.svelte";
+  import { state } from "../scripts/stateStores";
 
   let services = [];
   let errorMessage = "";
-
-  let state = {
-    hidden: true,
-    loaded: false,
-    reload: false,
-    error: false,
-  };
 
   let axiosDATA;
   let miscDATA = {
@@ -32,25 +26,20 @@
   function handleResults(event) {
     const { success, data, error, state: newState } = event.detail;
     services = data;
-    state = newState;
+    state.set(newState);
 
-    console.log("from index: ", services, state);
+    console.log("from index: ", services, newState);
 
-    // if (success && data) {
-    //   console.log("Updated services:", services);
-    // } else {
-    //   errorMessage = error?.message || "An error occurred";
-    //   console.log("Error Message:", errorMessage);
-    // }
-  }
-  $: {
-    // This runs whenever miscDATA changes
-    buttonDATA = {
-      ...buttonDATA,
-      url: `/api/explore?search=${miscDATA.search.trim()}&model=${miscDATA.model}&town=${miscDATA.town}`,
-    };
+    if (!success) {
+      errorMessage = error?.message || "An error occurred";
+      console.log("Error Message:", errorMessage);
+    }
   }
 
+  $: buttonDATA = {
+    ...buttonDATA,
+    url: `/api/explore?search=${miscDATA.search.trim()}&model=${miscDATA.model}&town=${miscDATA.town}`,
+  };
   // function handleKeydown(event) {
   //   if (event.key === "Enter") {
   //     updateButtonData();
@@ -121,11 +110,11 @@
     </div>
     <!-- SearchBar End -->
   </div>
-  {#if state.hidden === true}
+  {#if $state.hidden}
     <div class="hidden"></div>
-  {:else if (state.hidden === false && state.loaded === false) || state.reload === true}
+  {:else if (!$state.hidden && !$state.loaded) || $state.reload}
     <Loading />
-  {:else if state.error}
+  {:else if $state.error}
     <span class="font-bold text-teal-600">No results found, try again.</span>
   {:else}
     <div
