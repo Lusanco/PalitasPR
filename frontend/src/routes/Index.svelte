@@ -3,55 +3,75 @@
   import Slogan from "../components/Slogan.svelte";
   import townsID from "../scripts/townsID";
   import Loading from "../components/Loading.svelte";
+  import Button from "../components/Button.svelte";
 
   let services = [];
   let errorMessage = "";
-  let hidden = true;
-  let loaded = false;
-  let reload = false;
-  let error = false;
-  let search = ""; // service
-  let model = "promotions";
-  let town = "all";
-  let towns = Object.entries(townsID);
 
-  function exploreLogic() {
-    hidden = false;
-    loaded = false;
-    reload = true;
-    error = false;
+  let state = {
+    hidden: true,
+    loaded: false,
+    reload: false,
+    error: false,
+  };
 
-    axios
-      .get(`/api/explore?search=${search}&model=${model}&town=${town}`)
-      .then((response) => {
-        services = response.data.results;
-        loaded = true;
-        reload = false;
-        error = false;
-      })
-      .catch((err) => {
-        console.log(err);
-        errorMessage = err;
-        hidden = false;
-        loaded = true;
-        reload = false;
-        error = true;
-      });
-  }
+  let axiosDATA;
+  let miscDATA = {
+    search: "",
+    model: "promotions",
+    town: "all",
+  };
+  let buttonDATA = {
+    name: "",
+    method: "GET",
+    url: `/api/explore?search=${miscDATA.search}&model=${miscDATA.model}&town=${miscDATA.town}`,
+    headers: { "Content-Type": "application/json" },
+    twcss:
+      "w-full h-full font-bold text-teal-100 bg-teal-800 hover:bg-teal-700 hover:text-teal-300",
+  };
 
-  function handleKeydown(event) {
-    if (event.key === "Enter") {
-      search = search;
-      exploreLogic();
-    }
-  }
+  // $: {
+  //   // This runs whenever miscDATA changes
+  //   buttonDATA = {
+  //     ...buttonDATA,
+  //     url: `/api/explore?search=${miscDATA.search}&model=${miscDATA.model}&town=${miscDATA.town}`,
+  //   };
+  // }
 
-  async function handleExplore() {
-    exploreLogic();
-  }
+  // function updateButtonData() {
+  //   buttonDATA = {
+  //     ...buttonDATA,
+  //     url: `/api/explore?search=${miscDATA.search}&model=${miscDATA.model}&town=${miscDATA.town}`,
+  //   };
+  // }
+
+  // function handleResults(event) {
+  //   const { success, data, error, state: newState } = event.detail;
+
+  //   state = newState;
+
+  //   if (success && data) {
+  //     services = data;
+  //     console.log("Updated services:", services);
+  //   } else {
+  //     errorMessage = error?.message || "An error occurred";
+  //     console.log("Error Message:", errorMessage);
+  //   }
+  // }
+
+  // function handleKeydown(event) {
+  //   if (event.key === "Enter") {
+  //     updateButtonData();
+  //   }
+  // }
+
+  // $: {
+  //   // Reactively update buttonDATA when search, model, or town changes
+  //   updateButtonData();
+  // }
 </script>
 
-<!-- PageSearchBar Start -->
+<!-- Index Start -->
 <div
   class="flex flex-col items-center justify-center h-full min-h-screen gap-8"
 >
@@ -64,16 +84,16 @@
         <input
           type="text"
           id="search"
-          bind:value={search}
+          bind:value={miscDATA.search}
           placeholder="Search for..."
           class="w-full col-span-2 rounded-md border-gray-200 py-2.5 pe-10 shadow-sm sm:text-sm"
-          on:keydown={handleKeydown}
         />
+        <!-- on:keydown={handleKeydown} -->
       </div>
       <div id="filters" class="grid grid-cols-3 col-span-2 row-span-1">
         <!-- Model Filter Start -->
         <select
-          bind:value={model}
+          bind:value={miscDATA.model}
           class="block w-full overflow-y-auto border-0 border-b-2 border-gray-200 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
         >
           <option value="promotions">Promotions</option>
@@ -82,20 +102,18 @@
         <!-- Model Filter End -->
         <!-- Town Filter Start -->
         <select
-          bind:value={town}
+          bind:value={miscDATA.town}
           class="block w-full overflow-y-auto border-0 border-b-2 border-gray-200 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
         >
           <option value="all" disabled>Town</option>
-          {#each towns as [town, id]}
+          {#each Object.entries(townsID) as [town, id]}
             <option value={id}>{town}</option>
           {/each}
         </select>
         <!-- Town Filter End -->
-        <button
-          on:click={handleExplore}
-          type="button"
-          class="w-full h-full font-bold text-teal-100 bg-teal-800 hover:bg-teal-700 hover:text-teal-300"
-        >
+
+        <Button {axiosDATA} {buttonDATA} {miscDATA}>
+          <!-- on:results={handleResults} -->
           <span class="sr-only">Search</span>
 
           <svg
@@ -112,16 +130,16 @@
               d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
             />
           </svg>
-        </button>
+        </Button>
       </div>
     </div>
     <!-- SearchBar End -->
   </div>
-  {#if hidden === true}
+  {#if state.hidden === true}
     <div class="hidden"></div>
-  {:else if (hidden === false && loaded === false) || reload === true}
+  {:else if (state.hidden === false && state.loaded === false) || state.reload === true}
     <Loading />
-  {:else if error}
+  {:else if state.error}
     <span class="font-bold text-teal-600">No results found, try again.</span>
   {:else}
     <a
@@ -179,4 +197,4 @@
     </a>
   {/if}
 </div>
-<!-- PageSearchBar End -->
+<!-- Index End -->
