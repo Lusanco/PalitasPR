@@ -46,13 +46,12 @@ class Db_core:
     def __init__(self):
         self.session = get_session()
 
-
     def landing_searchBar(self, model=None, service=None, town_id = 0):
         """
         Main search for services provided in specific towns based on the provided model, service, and town ID.
         This represents the user typing inside the landing page searchbar looking for a certain service.
         Example:
-            result = DBOperations().landing_searchbar(model='promotions', service='cleaning', town_id=1)
+            result = Db_core().landing_searchbar(model='promotions', service='cleaning', town_id=1)
         """
         if town_id == 'all' or town_id == '-1':
             town_id = 0
@@ -110,7 +109,7 @@ class Db_core:
 
         return list_of_models
 
-    async def dashboard_promos_requests(self, user_id):
+    async def dashboard_get_promos_requests(self, user_id):
         """
         Query promotions and requests from a specified user to
         present on his dashboard

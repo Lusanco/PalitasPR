@@ -13,12 +13,10 @@ from flask_login import (
     logout_user,
     login_required,
     current_user,
-    LoginManager,
 )
 from werkzeug.utils import secure_filename
 import aws_bucket
 import asyncio
-import time
 
 my_bp = Blueprint("my", __name__)
 
@@ -41,7 +39,7 @@ def promo_request():
     # ---------------GET METHOD--------------------------------------------- 
     if request.method == "GET":
         async def dashboard_handler():
-            return await Db_core().dashboard_promos_requests(user_id)
+            return await Db_core().dashboard_get_promos_requests(user_id)
 
         results = asyncio.run(dashboard_handler())
         return make_response(jsonify({"results": results}), 200)
