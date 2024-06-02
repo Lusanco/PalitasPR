@@ -1,6 +1,41 @@
 <!-- Main Layout -->
+<script>
+  import BurgerMenu from "../components/BurgerMenu.svelte";
+  import Button from "../components/Button.svelte";
+
+  let axiosDATA = {};
+  let miscDATA = { "Back Button": true };
+  let buttonDATA = {
+    name: "",
+    method: "",
+    url: "",
+    headers: {},
+    twcss:
+      "flex flex-col absolute items-center justify-center w-16 h-16 p-2 text-sm text-teal-600 rounded-lg hover:bg-teal-700 hover:text-teal-200 focus:outline-none focus:ring-0 m-2 z-50",
+  };
+</script>
+
 <!-- Main Start -->
 <main class="min-h-full overflow-y-scroll element">
+  <Button {axiosDATA} {buttonDATA} {miscDATA}>
+    <span class="sr-only">Go back</span>
+    <svg
+      class="w-5 h-5"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M15 19l-7-7 7-7"
+      />
+    </svg>
+  </Button>
+  <BurgerMenu></BurgerMenu>
   <slot />
 </main>
 <!-- Main End -->

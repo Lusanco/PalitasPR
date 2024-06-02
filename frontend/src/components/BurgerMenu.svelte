@@ -8,7 +8,7 @@
   }
 </script>
 
-<div class="flex justify-end bg-transparent md:hidden">
+<div class="flex justify-end m-2 bg-transparent md:hidden">
   <button
     type="button"
     class="inline-flex items-center justify-center w-16 h-16 p-2 text-sm text-teal-600 rounded-lg hover:text-teal-400 focus:outline-none focus:ring-0"
@@ -36,11 +36,11 @@
 </div>
 
 <div
-  class={`absolute left-0 right-0 ${menuOpen ? "block" : "hidden"} md:hidden bg-transparent`}
+  class={`z-50 bg-teal-50 absolute left-0 right-0 ${menuOpen ? "block" : "hidden"} md:hidden bg-transparent`}
   id="navbar-cta"
 >
   <ul
-    class="flex flex-col p-2 mt-1 space-y-2 font-medium rounded-lg rtl:space-x-reverse"
+    class="z-50 flex flex-col p-2 mt-1 space-y-2 font-medium rounded-b-lg bg-slate-200 rtl:space-x-reverse"
   >
     <li>
       <a
