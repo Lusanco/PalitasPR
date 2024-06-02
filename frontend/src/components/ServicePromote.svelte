@@ -1,3 +1,4 @@
+<!-- Alfre: Fix and test create promotions with new button -->
 <script>
   import townsID from "../scripts/townsID";
   import servicesID from "../scripts/servicesID";

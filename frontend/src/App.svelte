@@ -41,7 +41,7 @@
       <!-- <Route path="/promote-service" component={PromoteService} /> -->
 
       <!-- Testing Layout/Route/Component Currently Work On -->
-      <Route path="/test" component={ReviewView} />
+      <Route path="/test" component={ConfirmLogin} />
     </Router>
   </Main>
   <Footer />
