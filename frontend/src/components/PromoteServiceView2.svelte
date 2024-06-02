@@ -1,12 +1,4 @@
-<!-- ? Promotion/Request after Search View -->
-<!-- 
-  TODO:
-
-    * Implement data from backend
-    * Implement functions with real logic to handle the buttons
-    * Implement Card(Component) close logic
--->
-
+<!-- Revised: Alfre - Remember to move/rename this where it belongs: Promote from search -->
 <script>
   import ReviewCards from "./ReviewCards.svelte";
 
@@ -113,7 +105,7 @@
         * Left Side Section 
       -->
       <div class="col-span-1 p-2 m-1">
-        <h1 class="text-3xl text-center">Promotion</h1>
+        <h1 class="text-3xl text-center">Service</h1>
         <figure class="mb-2 border-b-2">
           <img
             src={image.img}
@@ -121,8 +113,8 @@
             class="object-cover w-full h-64 mt-3 rounded-md"
           />
           <div class="mt-2">
-            <h2 class="text-lg">John Smith</h2>
-            <p class="mb-1 text-sm">Lawn Mowing Services</p>
+            <h2 class="text-lg">Jardineria: rr43523454325</h2>
+            <p class="mb-1 text-sm">Juan del Pueblo: 11234fsd4421</p>
           </div>
         </figure>
         <p class="mt-2 text-sm lg:text-base">{description}</p>
