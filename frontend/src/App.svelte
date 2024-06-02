@@ -26,6 +26,7 @@
   import PromoteServiceView from "./components/PromoteServiceView.svelte";
   import PromoteServiceView2 from "./components/PromoteServiceView2.svelte";
   import ReviewView from "./components/ReviewView.svelte";
+  import Dashboard from "./routes/Dashboard.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -41,7 +42,7 @@
       <!-- <Route path="/promote-service" component={PromoteService} /> -->
 
       <!-- Testing Layout/Route/Component Currently Work On -->
-      <Route path="/test" component={PostConfirmation} />
+      <Route path="/test" component={Dashboard} />
     </Router>
   </Main>
   <Footer />
