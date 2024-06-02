@@ -1,65 +1,89 @@
 <script>
   import axios from "axios";
+  import { createEventDispatcher } from "svelte";
+  import { state } from "../scripts/stateStores";
 
-  export let axiosDATA;
+  const dispatch = createEventDispatcher();
+
+  export let axiosDATA = {};
+  export let miscDATA = {};
   export let buttonDATA = {
     name: "",
-    twcss: "",
-    verb: "",
+    method: "",
     url: "",
     headers: {},
+    twcss: "",
   };
-  // export let buttonCSS;
-  // export let buttonNAME;
-  // export let classLIST;
-  // export let locationURL;
-  // export let crudVERB;
-  // export let headerTYPE;
 
-  //   State Control Variables
-  let hidden = true;
-  let loaded = false;
-  let reload = false;
-  let error = false;
+  function axiosLogic(buttonDATA, axiosDATA = {}, miscDATA = {}) {
+    state.update((s) => ({
+      ...s,
+      hidden: false,
+      loaded: false,
+      reload: true,
+      error: false,
+    }));
 
-  function buttonLogic() {
-    hidden = false;
-    loaded = false;
-    reload = true;
-    error = false;
-    if (buttonDATA.url && buttonDATA.verb) {
-      axios({
-        method: buttonDATA.verb,
-        url: buttonDATA.url,
-        data: axiosDATA,
-        headers: buttonDATA.headers,
-      })
-        .then((response) => {
-          loaded = true;
-          reload = false;
-          error = false;
-          console.log(".then() Response Log: ", response);
-          console.log(".then() Data Log: ", axiosDATA);
-        })
-        .catch((err) => {
-          hidden = false;
-          loaded = true;
-          reload = false;
-          error = true;
-          console.log(".catch() Error Log: ", err);
-          console.log(".catch() Data Log: ", axiosDATA);
+    axios({
+      method: buttonDATA.method,
+      url: buttonDATA.url,
+      data: axiosDATA,
+      headers: buttonDATA.headers,
+    })
+      .then((response) => {
+        setTimeout;
+        state.update((s) => ({
+          ...s,
+          hidden: false,
+          loaded: true,
+          reload: false,
+          error: false,
+        }));
+
+        dispatch("results", {
+          success: true,
+          data: response.data.results,
+          state: $state,
         });
-    } else {
-      function scrollToTeam() {
-        const teamSection = document.getElementById("team");
-        teamSection.scrollIntoView({ behavior: "smooth" });
-      }
-      scrollToTeam();
-    }
+
+        console.log(".then() Response Log: ", response);
+        console.log(".then() Data Log: ", axiosDATA);
+        console.log(".then() Misc Log: ", miscDATA);
+        console.log(".then() State Log: ", $state);
+      })
+      .catch((err) => {
+        state.update((s) => ({
+          ...s,
+          hidden: false,
+          loaded: true,
+          reload: false,
+          error: true,
+        }));
+
+        dispatch("results", {
+          success: false,
+          err: err,
+          state: state,
+        });
+
+        console.log(".catch() Error Log: ", err);
+        console.log(".catch() Data Log: ", axiosDATA);
+        console.log(".catch() Misc Log: ", miscDATA);
+        console.log(".catch() State Log: ", $state);
+      });
+  }
+
+  // Expose the buttonLogic function to be callable from the parent component
+  export function buttonLogic() {
+    axiosLogic(buttonDATA, axiosDATA, miscDATA);
   }
 </script>
 
-<button on:click={buttonLogic} type="button" class={buttonDATA.twcss}>
+<button
+  on:click|preventDefault={buttonLogic}
+  type="button"
+  class={buttonDATA.twcss}
+>
   {buttonDATA.name}
   <slot />
 </button>

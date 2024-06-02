@@ -6,18 +6,17 @@
 
 from flask import Blueprint, jsonify, request, make_response, session
 from db.db_operations import DBOperations
+from db.db_core import Db_core
 import emails
 from flask_login import (
     login_user,
     logout_user,
     login_required,
     current_user,
-    LoginManager,
 )
 from werkzeug.utils import secure_filename
 import aws_bucket
 import asyncio
-import time
 
 my_bp = Blueprint("my", __name__)
 
@@ -39,10 +38,10 @@ def promo_request():
 
     # ---------------GET METHOD--------------------------------------------- 
     if request.method == "GET":
-        async def get_promo_request():
-            return await DBOperations().promo_request(user_id)
+        async def dashboard_handler():
+            return await Db_core().dashboard_get_promos_requests(user_id)
 
-        results = asyncio.run(get_promo_request())
+        results = asyncio.run(dashboard_handler())
         return make_response(jsonify({"results": results}), 200)
     # -----------------------------------------------------------------
 
