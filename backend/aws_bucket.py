@@ -162,6 +162,50 @@ def create_model_folder(user_id: str, model: str, model_id: str):
         print(f'{model} doesnt exist in: {models_dict}')
         return ({'error': f'{model} doesnt exist in: {models_dict}'}, 400)
 
+def delete_model_folder(user_id: str, model: str, model_id: str):
+        """
+        Delete a picture from an AWS S3 bucket based on the specified user ID, model,model_id and pic_name.
+
+        Usage:
+        Call this function with the user ID, model name, and pic_name to delete an object from the S3 bucket.
+        - Example: delete_model_folder('101', 'Promotion', '001')
+        """
+
+        # Define the models and their respective paths
+        models_dict = {
+        'Promotion': f'{user_id}/promotions/{model_id}/',
+        'Request': f'{user_id}/requests/{model_id}/',
+        'Task': f'{user_id}/tasks/{model_id}/',
+        'Review': f'{user_id}/reviews/{model_id}/'
+        }
+
+        if model in models_dict:
+            path = f'users/{models_dict[model]}'  # Construct the full path of the picture
+        else:
+            return {'response': 'Model (Folder) does not exist'}
+        
+        # Check if object exists
+        try:
+            s3_client.head_object(Bucket='palitas-pics', Key=path)
+
+        except ClientError as e: # Not found folder
+
+            if e.response['Error']['Code'] == "404":
+                return {'response': f'No object found {path}'}
+        try:
+            # If folder has pictures, delete them first
+            response = s3_client.list_objects_v2(Bucket='palitas-pics', Prefix=path)
+            for obj in response['Contents']:
+                print(obj['Key'])
+                s3_client.delete_object(Bucket='palitas-pics', Key=obj['Key'])
+
+        except ClientError as e:
+            # If no pictures inside where foud
+            if e.response['Error']['Code'] != 'NoSuchKey':
+                return {'response': e.response['Error']['Code']}
+
+            # No pictures inside, proceed to delete folder
+            response = s3_client.delete_object(Bucket='palitas-pics', Prefix=path)
 
 def get_picture(user_id: str, model: str, model_id: str, pic_name: str):
     """
@@ -240,7 +284,7 @@ def delete_picture(user_id: str, model: str, model_id: str, pic_name: str):
             # Attempt to delete the object from the S3 bucket
             print(f'\nPAth to delete object from: {path}\n')
             response = s3_client.delete_object(Bucket='palitas-pics', Key=path)
-            return {'response': 'ok'}
+            return response
 
         except ClientError as e:
             # Handle the specific error codes

@@ -249,7 +249,11 @@ class DBConsole(cmd.Cmd):
         response = aws_bucket.create_user_folder(user_id)
         print(response)
         print('-----------------\n')
-        
-
+    
+    def do_deleteModel(self, args):
+        '''
+            delete a model folder (Promotion, Request, Task, Review)
+        '''
+        response2 = aws_bucket.delete_model_folder('007', 'Promotion', '005')
 if __name__ == '__main__':
     DBConsole().cmdloop()
