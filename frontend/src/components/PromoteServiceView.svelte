@@ -1,3 +1,4 @@
+<!-- Revised: Alfre - Remember to move/rename this where it belongs: Promote from dashboard -->
 <script>
   import OfferCard from "./OfferCard.svelte";
 
@@ -100,7 +101,7 @@
         * Left Side Section 
       -->
       <div class="col-span-1 p-2 m-1">
-        <h1 class="text-3xl text-center">Request</h1>
+        <h1 class="text-3xl text-center">Service</h1>
         <figure class="mb-2 border-b-2">
           <img
             src={image.img}
@@ -109,8 +110,8 @@
           />
           <div class="flex justify-between mt-2">
             <div>
-              <h2 class="text-lg">John Smith</h2>
-              <p class="mb-1 text-sm">Service requested: {service}</p>
+              <h2 class="text-lg">Jardineria: rr43523454325</h2>
+              <p class="mb-1 text-sm">Juan del Pueblo: 11234fsd4421</p>
             </div>
             <div class="relative mt-3 mr-2 dropdown-top">
               <button on:click={toggleDropdown} class="m-1"
