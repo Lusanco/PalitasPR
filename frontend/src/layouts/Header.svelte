@@ -1,5 +1,6 @@
 <!-- Header Layout -->
 <script>
+  import BurgerMenu from "../components/BurgerMenu.svelte";
   import Link from "../components/Link.svelte";
 
   let svgPath1 =
@@ -34,3 +35,7 @@
   </div>
 </header>
 <!-- Header End -->
+
+<!-- BurgerMenu Start -->
+<BurgerMenu></BurgerMenu>
+<!-- BurgerMenu End -->

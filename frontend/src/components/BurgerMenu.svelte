@@ -1,3 +1,4 @@
+<!-- Revised: Livan - Instrucctions in Trello -->
 <script>
   import { link } from "svelte-routing";
   let menuOpen = false;
