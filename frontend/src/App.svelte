@@ -24,7 +24,7 @@
   // PalitasPR Testing Imports
   import Dashboard from "./routes/Dashboard.svelte";
   import PromoteServiceView from "./components/PromoteServiceView.svelte";
-  import BackButton from "./components/BackButton.svelte";
+  import BurgerMenu from "./components/BurgerMenu.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -40,7 +40,7 @@
       <!-- <Route path="/promote-service" component={PromoteService} /> -->
 
       <!-- Testing Layout/Route/Component Currently Work On -->
-      <Route path="/test" component={BackButton} />
+      <Route path="/test" component={BurgerMenu} />
     </Router>
   </Main>
   <Footer />
