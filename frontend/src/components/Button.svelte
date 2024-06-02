@@ -73,17 +73,24 @@
       });
   }
 
+  function backButton() {
+    window.history.back();
+    console.log("Back Button");
+  }
   // Expose the buttonLogic function to be callable from the parent component
   export function buttonLogic() {
-    axiosLogic(buttonDATA, axiosDATA, miscDATA);
+    if (buttonDATA.method && buttonDATA.url) {
+      axiosLogic(buttonDATA, axiosDATA, miscDATA);
+    } else {
+      if (miscDATA["Back Button"] === true) {
+        backButton();
+      }
+    }
   }
 </script>
 
-<button
-  on:click|preventDefault={buttonLogic}
-  type="button"
-  class={buttonDATA.twcss}
->
+<!-- on:click|preventDefault={buttonLogic} -->
+<button on:click={buttonLogic} type="button" class={buttonDATA.twcss}>
   {buttonDATA.name}
   <slot />
 </button>
