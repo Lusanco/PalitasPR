@@ -1,3 +1,8 @@
+<!-- Revised: Livan - No se que trataste de hacer con el Footer 
+  pero tenias dos clases conflictivas que deshabilitaba 
+  entre si, no se que resuelve ni que cambio, 
+  solo resolvi la clase confictiva.  -->
+
 <script>
   import List from "../components/List.svelte";
 
@@ -12,7 +17,7 @@
 </script>
 
 <!-- Footer Start -->
-<footer class="hidden px-4 py-4 mt-auto text-teal-100 bg-teal-800 md:flex md:block">
+<footer class="hidden px-4 py-4 mt-auto text-teal-100 bg-teal-800 md:flex">
   <div
     class="container flex flex-wrap items-center justify-center mx-auto space-y-4 sm:justify-between sm:space-y-0"
   >

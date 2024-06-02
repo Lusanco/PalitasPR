@@ -22,9 +22,7 @@
   // import PromoteService from "./components/PromoteService.svelte";
 
   // PalitasPR Testing Imports
-  import Dashboard from "./routes/Dashboard.svelte";
-  import PromoteServiceView from "./components/PromoteServiceView.svelte";
-  import BurgerMenu from "./components/BurgerMenu.svelte";
+  import Inbox from "./components/Inbox.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -40,7 +38,7 @@
       <!-- <Route path="/promote-service" component={PromoteService} /> -->
 
       <!-- Testing Layout/Route/Component Currently Work On -->
-      <Route path="/test" component={BurgerMenu} />
+      <Route path="/test" component={Offers} />
     </Router>
   </Main>
   <Footer />
