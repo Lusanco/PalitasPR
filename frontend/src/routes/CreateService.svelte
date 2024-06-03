@@ -1,4 +1,6 @@
-<!-- Alfre: Fix and test create promotions with new button -->
+<!-- Alfre: It seems button works correctly 
+  and missing towns as an array [] making 
+  the api request fail with status: 500 -->
 <script>
   import townsID from "../scripts/townsID";
   import servicesID from "../scripts/servicesID";
@@ -22,7 +24,7 @@
   const axiosDATA = new FormData();
   let miscDATA = { "Create Service": true };
   let buttonDATA = {
-    name: "Create Promotion",
+    name: "Create Service",
     method: "POST",
     url: "api/dashboard/promotion-request",
     headers: {

@@ -17,9 +17,11 @@
     <div
       class="grid w-full grid-cols-2 grid-rows-2 gap-2 p-4 m-4 md:p-8 md:gap-3 md:m-12"
     >
-      <Link name="Create Post" {twcss} href="/create-post"></Link>
-      <Link name="View Offers" {twcss} href="/view-offers"></Link>
-      <Link name="View Services" {twcss} href="/view-services"></Link>
+      <Link name="Create Service" {twcss} href="/create-service"></Link>
+      <Link name="Create Request" {twcss} href="/create-request"></Link>
+      <Link name="Offers" {twcss} href="/offers"></Link>
+      <Link name="Services" {twcss} href="/services"></Link>
+      <Link name="Profile" {twcss} href="/profile"></Link>
       <Link name="Settings" {twcss} href="/settings"></Link>
     </div>
   </div>

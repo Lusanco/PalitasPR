@@ -1,3 +1,4 @@
+<!-- Fix: link, layout for all bridge components -->
 <script>
   function redirectToHome() {
     window.location.href = "/";
