@@ -9,24 +9,19 @@
 
   // PalitasPR Routes
   import Index from "./routes/Index.svelte";
+  import LoginToContinue from "./routes/LoginToContinue.svelte";
   import Login from "./routes/Login.svelte";
   import Signup from "./routes/Signup.svelte";
   import SignupSuccess from "./routes/SignupSuccess.svelte";
   import About from "./routes/About.svelte";
   import Contact from "./routes/Contact.svelte";
-  import ConfirmLogin from "./routes/ConfirmLogin.svelte";
-  import PostConfirmation from "./routes/PostConfirmation.svelte";
-  import Offers from "./routes/Offers.svelte";
-
-  // PalitasPR Components
-  // import PromoteService from "./components/PromoteService.svelte";
+  import Dashboard from "./routes/Dashboard.svelte";
+  import CreateService from "./routes/CreateService.svelte";
+  import CreateServiceSuccess from "./routes/CreateServiceSuccess.svelte";
+  import CreateRequest from "./routes/CreateRequest.svelte";
 
   // PalitasPR Testing Imports
-  import Inbox from "./components/Inbox.svelte";
-  import PromoteServiceView from "./components/PromoteServiceView.svelte";
-  import PromoteServiceView2 from "./components/PromoteServiceView2.svelte";
-  import ReviewView from "./components/ReviewView.svelte";
-  import Dashboard from "./routes/Dashboard.svelte";
+  //
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -34,15 +29,20 @@
   <Main>
     <Router>
       <Route path="/" component={Index} />
+      <Route path="/login-to-continue" component={LoginToContinue} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       <Route path="/signup-success" component={SignupSuccess} />
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/create-service" component={CreateService} />
+      <Route path="/create-service-success" component={CreateServiceSuccess} />
+      <Route path="/create-request" component={CreateRequest} />
+
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
-      <!-- <Route path="/promote-service" component={PromoteService} /> -->
 
       <!-- Testing Layout/Route/Component Currently Work On -->
-      <Route path="/test" component={Dashboard} />
+      <Route path="/test" component={SignupSuccess} />
     </Router>
   </Main>
   <Footer />
