@@ -1,6 +1,5 @@
 <!-- Header Layout -->
 <script>
-  import BurgerMenu from "../components/BurgerMenu.svelte";
   import Link from "../components/Link.svelte";
 
   let svgPath1 =

@@ -1,8 +1,3 @@
-<!-- Revised: Livan - No se que trataste de hacer con el Footer 
-  pero tenias dos clases conflictivas que deshabilitaba 
-  entre si, no se que resuelve ni que cambio, 
-  solo resolvi la clase confictiva.  -->
-
 <script>
   import List from "../components/List.svelte";
 
