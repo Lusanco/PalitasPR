@@ -13,8 +13,6 @@
   import Login from "./routes/Login.svelte";
   import Signup from "./routes/Signup.svelte";
   import SignupSuccess from "./routes/SignupSuccess.svelte";
-  import About from "./routes/About.svelte";
-  import Contact from "./routes/Contact.svelte";
   import Dashboard from "./routes/Dashboard.svelte";
   import CreateService from "./routes/CreateService.svelte";
   import CreateServiceSuccess from "./routes/CreateServiceSuccess.svelte";
@@ -23,7 +21,8 @@
   import Offers from "./routes/Offers.svelte";
   import Services from "./routes/Services.svelte";
   import Profile from "./routes/Profile.svelte";
-
+  import About from "./routes/About.svelte";
+  import Contact from "./routes/Contact.svelte";
   import Faq from "./routes/FAQ.svelte";
 </script>
 
@@ -44,7 +43,6 @@
       <Route path="/offers" component={Offers} />
       <Route path="/services" component={Services} />
       <Route path="/profile" component={Profile} />
-
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/faq" component={Faq} />

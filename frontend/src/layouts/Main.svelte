@@ -1,6 +1,6 @@
 <!-- Main Layout -->
 <script>
-  import BurgerMenu from "../components/BurgerMenu.svelte";
+  import Menu from "../components/Menu.svelte";
   import Button from "../components/Button.svelte";
 
   let axiosDATA = {};
@@ -35,7 +35,7 @@
       />
     </svg>
   </Button>
-  <BurgerMenu></BurgerMenu>
+  <Menu></Menu>
   <slot />
 </main>
 <!-- Main End -->
