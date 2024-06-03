@@ -24,6 +24,7 @@
   import About from "./routes/About.svelte";
   import Contact from "./routes/Contact.svelte";
   import Faq from "./routes/FAQ.svelte";
+  import Inbox from "./routes/Inbox.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -46,6 +47,9 @@
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/faq" component={Faq} />
+
+      <!-- Test Route -->
+      <Route path="/test" component={Inbox} />
     </Router>
   </Main>
   <Footer />
