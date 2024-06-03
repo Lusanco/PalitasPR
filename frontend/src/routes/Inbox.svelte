@@ -77,7 +77,7 @@
 </script>
 
 <div class="max-h-full min-h-screen">
-  <h1 class="font-sans text-3xl text-center text-bold">Offers</h1>
+  <h1 class="font-sans text-3xl text-center text-bold">Inbox</h1>
   <br />
   <br />
   <div class="h-screen overflow-scroll overscroll-y-auto">
