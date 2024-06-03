@@ -1,6 +1,6 @@
 <!-- Revised: Alfre - Remember to move/rename this where it belongs: Promote from dashboard -->
 <script>
-  import OfferCard from "./OfferCard.svelte";
+  import OfferCard from "../components/OfferCard.svelte";
 
   /**
    * ! Test data
