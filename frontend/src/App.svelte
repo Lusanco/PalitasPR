@@ -19,6 +19,7 @@
   import CreateService from "./routes/CreateService.svelte";
   import CreateServiceSuccess from "./routes/CreateServiceSuccess.svelte";
   import CreateRequest from "./routes/CreateRequest.svelte";
+  import CreateRequestSuccess from "./routes/CreateRequestSuccess.svelte";
 
   // PalitasPR Testing Imports
   //
@@ -37,6 +38,7 @@
       <Route path="/create-service" component={CreateService} />
       <Route path="/create-service-success" component={CreateServiceSuccess} />
       <Route path="/create-request" component={CreateRequest} />
+      <Route path="/create-request-success" component={CreateRequestSuccess} />
 
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
