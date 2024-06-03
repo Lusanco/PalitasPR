@@ -1,4 +1,4 @@
-<!-- After click it should redirect to Service where the offer was made/tied to -->
+<!-- Same as Offers After click it should redirect to Service itself -->
 <script>
   let offers = [
     {
@@ -77,7 +77,7 @@
 </script>
 
 <div class="max-h-full min-h-screen">
-  <h1 class="font-sans text-3xl text-center text-bold">Offers</h1>
+  <h1 class="font-sans text-3xl text-center text-bold">Services</h1>
   <br />
   <br />
   <div class="h-screen overflow-scroll overscroll-y-auto">
