@@ -20,7 +20,6 @@
   import CreateRequestSuccess from "./routes/CreateRequestSuccess.svelte";
   import Offers from "./routes/Offers.svelte";
   import Services from "./routes/Services.svelte";
-  import ServiceDetails from "./routes/ServiceDetails.svelte";
   import Profile from "./routes/Profile.svelte";
   import About from "./routes/About.svelte";
   import Contact from "./routes/Contact.svelte";
@@ -49,7 +48,7 @@
       <Route path="/faq" component={Faq} />
 
       <!-- Testing Layout/Route/Component Currently Work On -->
-      <Route path="/test" component={ServiceDetails} />
+      <!-- <Route path="/test" component={ReviewView} /> -->
     </Router>
   </Main>
   <Footer />

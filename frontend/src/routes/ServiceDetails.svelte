@@ -1,6 +1,6 @@
 <!-- Revised: Alfre - Remember to move/rename this where it belongs: Promote from search -->
 <script>
-  import ReviewCards from "./ReviewCards.svelte";
+  import ReviewCard from "../components/ReviewCard.svelte";
 
   /**
    * ! Test data
@@ -137,7 +137,7 @@
               <!-- 
                 * Review Cards Component 
               -->
-              <ReviewCards
+              <ReviewCard
                 name={review.name}
                 id={review.id}
                 rating={review.rating}
