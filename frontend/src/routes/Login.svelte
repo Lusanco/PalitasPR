@@ -22,7 +22,7 @@
 
     // .post("/api/login", data)
     axios
-      .get(`/api/login?af1=${af1}&af2=${af2}`)
+      .get(`/api/user/login?af1=${af1}&af2=${af2}`)
       // .get(`/api/login?e=${af1}&p=${af2}`)
       .then((response) => {
         loaded = true;

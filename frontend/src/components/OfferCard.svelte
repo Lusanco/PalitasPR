@@ -1,30 +1,8 @@
-<!-- ? OffersCards.svelte -->
-<!--
-  TODO:
-
-    * Implement data from backend
-    * Implement functions with real logic to handle the buttons
--->
+<!-- Revised: Alfre - Remember to move/rename this where it belongs -->
 <script>
   export let name;
   export let id;
   export let viewOffer;
-
-  /**
-   * ! Test functions
-   */
-
-  function handleAccept() {
-    alert("Accept button is working!");
-  }
-
-  function handleReject() {
-    alert("Reject button is working!");
-  }
-
-  /**
-   * ! Test image
-   */
 
   let image = `https://picsum.photos/200/300?random=$Math.floor(Math.random() * 1000)`;
 </script>
@@ -73,7 +51,6 @@
           <div class="flex gap-2">
             <button
               class="w-full text-white bg-teal-500 rounded hover:bg-teal-600 sm:w-2/3"
-              on:click={handleAccept}
             >
               <div class="flex justify-center gap-2 mx-2">
                 <i class="my-[4px] fa-solid fa-check"></i>
@@ -82,7 +59,6 @@
             </button>
             <button
               class="w-full text-white bg-red-500 rounded hover:bg-red-600 sm:w-2/3"
-              on:click={handleReject}
             >
               <div class="flex justify-center gap-2 mx-2">
                 <i class="mt-[4px] fa-solid fa-xmark"></i>

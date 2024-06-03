@@ -1,7 +1,10 @@
+<!-- Alfre: It seems button works correctly 
+  and missing towns as an array [] making 
+  the api request fail with status: 500 -->
 <script>
   import townsID from "../scripts/townsID";
   import servicesID from "../scripts/servicesID";
-  import Button from "./Button.svelte";
+  import Button from "../components/Button.svelte";
 
   // Data points for axiosDATA
   let model = "Promotion",
@@ -18,14 +21,17 @@
   const towns = Object.entries(townsID);
   const services = Object.entries(servicesID);
 
-  let buttonNAME = "Create Promotion";
-  let classLIST = "px-8 py-3 font-semibold text-teal-100 bg-teal-800 rounded";
-  let locationURL = "/api/dashboard/promotion-request";
-  let crudVERB = "POST";
-  let headerTYPE = {
-    "Content-Type": "multipart/form-data",
-  };
   const axiosDATA = new FormData();
+  let miscDATA = { "Create Service": true };
+  let buttonDATA = {
+    name: "Create Service",
+    method: "POST",
+    url: "api/dashboard/promotion-request",
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    twcss: "px-8 py-3 font-semibold text-teal-100 bg-teal-800 rounded",
+  };
 
   let data = {
     model,
@@ -61,11 +67,11 @@
     class="w-full h-full max-w-2xl p-2 font-semibold rounded-lg md:shadow-lg md:p-8 bg-teal-50"
   >
     <h1 class="pt-4 text-2xl text-center md:text-3xl lg:text-4xl">
-      Crear Oferta de Servicio
+      Crear Servicio
     </h1>
     <!-- Crear Solicitud de Servicio -->
     <div class="">
-      <label for="title">Titulo de su Oferta</label>
+      <label for="title">Titulo</label>
       <input
         class="w-full"
         type="text"
@@ -106,7 +112,7 @@
     </select>
     <!-- Town Filter End -->
     <div class="max-h-96">
-      <label for="description">Descripcion de su Oferta</label>
+      <label for="description">Descripcion de su Servicio</label>
       <textarea
         bind:value={data.description}
         on:change={handleInputChange}
@@ -155,13 +161,6 @@
         <p class="text-red-500">{errorMessage}</p>
       {/if}
     </div>
-    <Button
-      {buttonNAME}
-      {classLIST}
-      {crudVERB}
-      {locationURL}
-      {axiosDATA}
-      {headerTYPE}
-    />
+    <Button {buttonDATA} {axiosDATA} {miscDATA} />
   </div>
 </div>

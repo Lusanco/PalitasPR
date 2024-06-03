@@ -1,5 +1,4 @@
 <script>
-  import Member from "../components/Member.svelte";
   import Team from "../components/Team.svelte";
 
   function scrollToTeam() {

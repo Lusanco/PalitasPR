@@ -36,7 +36,7 @@
     // let user = JSON.stringify(data);
 
     axios
-      .post("/api/signup", data)
+      .post("/api/user/signup", data)
       .then((response) => {
         loaded = true;
         reload = false;

@@ -1,13 +1,6 @@
-<!-- ? Promotion/Request after Search View -->
-<!-- 
-  TODO: 
-    * Implement data from backend
-    * Implement functions with real logic to handle the buttons
-    * Implement Card(Component) close logic
--->
-
+<!-- Revised: Alfre - Remember to move/rename this where it belongs: Promote from dashboard -->
 <script>
-  import OfferCard from "./OfferCard.svelte";
+  import OfferCard from "../components/OfferCard.svelte";
 
   /**
    * ! Test data
@@ -71,6 +64,15 @@
   function viewOffer() {
     alert("View Review button is working!");
   }
+
+  /**
+   * ? Function to toggle the dropdown menu
+   */
+
+  function toggleDropdown(event) {
+    const menu = event.currentTarget.nextElementSibling;
+    menu.classList.toggle("hidden");
+  }
 </script>
 
 <!-- 
@@ -99,16 +101,38 @@
         * Left Side Section 
       -->
       <div class="col-span-1 p-2 m-1">
-        <h1 class="text-3xl text-center">Request</h1>
+        <h1 class="text-3xl text-center">Service</h1>
         <figure class="mb-2 border-b-2">
           <img
             src={image.img}
             alt={image.alt}
             class="object-cover w-full h-64 mt-3 rounded-md"
           />
-          <div class="mt-2">
-            <h2 class="text-lg">John Smith</h2>
-            <p class="mb-1 text-sm">Service requested: {service}</p>
+          <div class="flex justify-between mt-2">
+            <div>
+              <h2 class="text-lg">Jardineria: rr43523454325</h2>
+              <p class="mb-1 text-sm">Juan del Pueblo: 11234fsd4421</p>
+            </div>
+            <div class="relative mt-3 mr-2 dropdown-top">
+              <button on:click={toggleDropdown} class="m-1"
+                ><i class="fa-solid fa-ellipsis"></i></button
+              >
+              <ul
+                class="absolute z-10 hidden p-2 shadow menu dropdown-content bg-slate-100 rounded-box w-52"
+              >
+                <li>
+                  <a href="/"
+                    ><i class="text-yellow-400 fa-solid fa-pencil"></i> Edit</a
+                  >
+                </li>
+                <li>
+                  <a href="/"
+                    ><i class="text-red-600 fa-solid fa-trash"></i>
+                    <span class="">Delete</span></a
+                  >
+                </li>
+              </ul>
+            </div>
           </div>
         </figure>
         <p class="mt-2 text-sm lg:text-base">{description}</p>

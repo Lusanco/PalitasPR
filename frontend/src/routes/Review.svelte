@@ -1,12 +1,4 @@
-<!-- ? Promotion/Request after Search View -->
-<!-- 
-  TODO:
-
-    * Implement data from backend
-    * Implement functions with real logic to handle the buttons
-    * Implement Card(Component) close logic
--->
-
+<!-- REVIEWS - JOB RATING: rename/move to it appropiate place -->
 <script>
   /**
    * ? User data

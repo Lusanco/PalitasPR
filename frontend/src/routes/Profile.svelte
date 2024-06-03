@@ -1,5 +1,8 @@
 <!-- Profile component -->
-
+<!-- Remove likes and the ability to leave messages
+    and add people, this is not a social app like
+    facebook, but retain the ability to follow/star
+    service or people, not both for mvp -->
 <script>
   import { slide } from "svelte/transition";
   import { onMount } from "svelte";
