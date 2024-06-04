@@ -48,7 +48,7 @@ def promo_request():
     # ----------------PUT METHOD-----------------------------------
     if request.method == "PUT":
 
-        data = request.form('model')
+        data = dict(request.form)
         model = data.get("model")
         data_to_update = data.pop('model')
         response, status = DBOperations().update({model:data_to_update})
