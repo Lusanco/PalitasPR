@@ -9,7 +9,6 @@
   // Data points for axiosDATA
   let model = "Promotion",
     title,
-    town,
     service_id,
     description,
     price_min,
@@ -33,15 +32,31 @@
     twcss: "px-8 py-3 font-semibold text-teal-100 bg-teal-800 rounded",
   };
 
+  let selectedTowns = []; // Array to store selected town IDs
+  let townList = "";
   let data = {
     model,
     title,
-    town,
+    townList,
     service_id,
     description,
     price_min,
     price_max,
   };
+
+  // Update selectedTowns based on checkbox changes
+  // (e.g., in checkbox `on:change` event)
+  function handleTownChange(event) {
+    const townId = event.target.value;
+    if (event.target.checked) {
+      selectedTowns.push(townId);
+    } else {
+      selectedTowns = selectedTowns.filter((id) => id !== townId);
+    }
+    console.log(selectedTowns);
+    data.townList = selectedTowns.join(", ");
+    console.log(data.townList);
+  }
 
   function handleFileChange(event) {
     console.log("Selected Image");
@@ -51,6 +66,16 @@
 
   function handleInputChange() {
     const allTrue = Object.values(data).every((value) => Boolean(value));
+    if (
+      data.description ||
+      data.price_max ||
+      data.price_min ||
+      data.service_id ||
+      data.selectedTown
+    ) {
+      console.log(data);
+    }
+
     if (allTrue) {
       console.log("Form Completed");
       for (const [key, value] of Object.entries(data)) {
@@ -64,7 +89,7 @@
   class="flex flex-col items-center justify-center h-full min-h-screen bg-teal-50 md:bg-none"
 >
   <div
-    class="w-full h-full max-w-2xl p-2 font-semibold rounded-lg md:shadow-lg md:p-8 bg-teal-50"
+    class="flex flex-col w-full h-full max-w-2xl gap-4 p-2 my-8 font-semibold rounded-lg md:shadow-lg md:p-8 bg-teal-50"
   >
     <h1 class="pt-4 text-2xl text-center md:text-3xl lg:text-4xl">
       Crear Servicio
@@ -98,38 +123,24 @@
     <!-- Service Filter End -->
 
     <!-- Town Filter Start -->
-    <!-- <label for="town">Seleccione un Pueblo</label> -->
-    <!-- <select
-      bind:value={data.town}
-      on:change={handleInputChange}
-      name="town"
-      class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
-    >
-      <option value={-1} disabled>---</option>
-      {#each towns as [town, id]}
-        <option value={id}>{town}</option>
-      {/each}
-    </select> -->
     <div class="w-full dropdown">
       <button tabindex="0" class="btn btn-base dropdown-toggle"
         >Seleccionar Pueblos</button
       >
       <ul
         tabindex="-1"
-        class="flex flex-wrap w-full h-40 min-w-full gap-4 p-4 overflow-y-auto shadow dropdown-content bg-base-100 rounded-box"
+        class="flex flex-wrap w-full h-40 min-w-full gap-4 p-4 overflow-y-auto shadow gap-x-10 dropdown-content bg-base-100 rounded-box"
       >
         {#each towns as [town, id]}
-          <!-- <option value={id}>{town}</option> -->
           <li class="menu-item" value={id}>
-            <label for={town}>
-              <input
-                type="checkbox"
-                id={`'${id}'`}
-                value={id}
-                class="mr-2 checkbox checkbox-base"
-              />
-              {town}
-            </label>
+            <input
+              bind:value={id}
+              on:change={handleTownChange}
+              type="checkbox"
+              id={`'${id}'`}
+              class="mr-2 checkbox checkbox-base"
+            />
+            {town}
           </li>
         {/each}
       </ul>
