@@ -85,7 +85,7 @@ def promo_request():
         # Get model and towns, add user id to put into data dict
         data["user_id"] = user_id
         model = data.get("model")
-        town_id = data.get("town")
+        towns = data.get("town")
 
         data.pop("town")
         data.pop("model")
@@ -100,12 +100,13 @@ def promo_request():
         model_id = objectDict["id"]
 
         # 2) Associate town(s) with <promo/request> just made in step: 1)
-        response, status = DBOperations().new(
-            {"Promo_Towns": {"promo_id": model_id, "town_id": town_id}}
-        )
+        for town_id in towns:
+            response, status = DBOperations().new(
+                {"Promo_Towns": {"promo_id": model_id, "town_id": town_id}}
+            )
 
-        if status != 201:
-            return make_response(jsonify({"error": "Adding town error"}), 500)
+            if status != 201:
+                return make_response(jsonify({"error": f"Adding town_id: {town_id} error"}), 500)
 
         # 3) Check if image(s) is received and put into AWS
         if 'image' in request.files:
