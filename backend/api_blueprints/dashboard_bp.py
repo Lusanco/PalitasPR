@@ -46,19 +46,35 @@ def promo_request():
     # -----------------------------------------------------------------
 
     # ----------------PUT METHOD-----------------------------------
-    # NOT BEEN TESTED
     if request.method == "PUT":
-        frontend_data = {
-            "model": "Promotion",
-            "id": "7533c8eb-6b8a-4bf5-a301-a064d1bc21c3",
-            "title": "Modified Title",
-            "price_min": 30,
-        }
-        model = frontend_data.get("model")
-        frontend_data.pop("model")
-        response, status = DBOperations().update({model: frontend_data})
 
-        return make_response(jsonify(response), status)
+        data = dict(request.form)
+        model = data.get("model")
+        data_to_update = data.pop('model')
+        response, status = DBOperations().update({model:data_to_update})
+        if status != 200:
+            return make_response(jsonify(response), status)
+
+        # Check if image(s) is received and put into AWS
+        if 'image' in request.files:
+            image = request.files
+            image = image['image']
+            pic_name =  secure_filename(image.filename)
+            pic_bytes = image.read()
+
+            if pic_name == '':
+                return make_response(jsonify({'error': 'Empty File Name'}), 400)
+
+            response, status = aws_bucket.put_picture(user_id, model, model_id, pic_name, pic_bytes)
+            if status != 201:
+                return make_response(jsonify(response), status)
+
+            # Save picture path name on the model object
+            response, status = DBOperations().update({model: {'id': model_id, 'pictures': pic_name}})
+            if status != 200:
+                return make_response(jsonify(response), status)
+
+        return make_response(jsonify({'results': 'ok'}), 200)
     # -----------------------------------------------------------
 
     # --------------POST METHOD---------------------------------------
