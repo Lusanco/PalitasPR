@@ -98,8 +98,8 @@
     <!-- Service Filter End -->
 
     <!-- Town Filter Start -->
-    <label for="town">Seleccione un Pueblo</label>
-    <select
+    <!-- <label for="town">Seleccione un Pueblo</label> -->
+    <!-- <select
       bind:value={data.town}
       on:change={handleInputChange}
       name="town"
@@ -109,7 +109,32 @@
       {#each towns as [town, id]}
         <option value={id}>{town}</option>
       {/each}
-    </select>
+    </select> -->
+    <div class="w-full dropdown">
+      <button tabindex="0" class="btn btn-base dropdown-toggle"
+        >Seleccionar Pueblos</button
+      >
+      <ul
+        tabindex="-1"
+        class="flex flex-wrap w-full h-40 min-w-full gap-4 p-4 overflow-y-auto shadow dropdown-content bg-base-100 rounded-box"
+      >
+        {#each towns as [town, id]}
+          <!-- <option value={id}>{town}</option> -->
+          <li class="menu-item" value={id}>
+            <label for={town}>
+              <input
+                type="checkbox"
+                id={`'${id}'`}
+                value={id}
+                class="mr-2 checkbox checkbox-base"
+              />
+              {town}
+            </label>
+          </li>
+        {/each}
+      </ul>
+    </div>
+
     <!-- Town Filter End -->
     <div class="max-h-96">
       <label for="description">Descripcion de su Servicio</label>
