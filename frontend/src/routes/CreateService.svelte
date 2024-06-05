@@ -1,28 +1,40 @@
-<!-- Alfre: It seems button works correctly 
-  and missing towns as an array [] making 
-  the api request fail with status: 500 -->
 <script>
+  import { state, data, image } from "../scripts/stateStores";
   import townsID from "../scripts/townsID";
   import servicesID from "../scripts/servicesID";
   import Button from "../components/Button.svelte";
 
-  // Data points for axiosDATA
-  let model = "Promotion",
-    title,
-    service_id,
-    description,
-    price_min,
-    price_max,
-    imageFile,
-    errorMessage;
+  let model = "Promotion";
+  let title = "";
+  let service_id = "";
+  let description = "";
+  let price_min = "";
+  let price_max = "";
+  let errorMessage = "";
 
-  // For iterating town and service name and ids
   const towns = Object.entries(townsID);
   const services = Object.entries(servicesID);
 
-  const axiosDATA = new FormData();
-  let miscDATA = { "Create Service": true };
-  let buttonDATA = {
+  let selectedTowns = [];
+  let townList = "";
+
+  // Reactive block to update $data
+  $: {
+    $data = {
+      model,
+      title,
+      townList,
+      service_id,
+      description,
+      price_min,
+      price_max,
+    };
+
+    console.log("Data updated:", $data);
+  }
+
+  // Button configuration
+  let button = {
     name: "Create Service",
     method: "POST",
     url: "api/dashboard/promotion-request",
@@ -30,22 +42,10 @@
       "Content-Type": "multipart/form-data",
     },
     twcss: "px-8 py-3 font-semibold text-teal-100 bg-teal-800 rounded",
+    misc: { "Create Service": true },
   };
 
-  let selectedTowns = []; // Array to store selected town IDs
-  let townList = "";
-  let data = {
-    model,
-    title,
-    townList,
-    service_id,
-    description,
-    price_min,
-    price_max,
-  };
-
-  // Update selectedTowns based on checkbox changes
-  // (e.g., in checkbox `on:change` event)
+  // Function to handle town selection changes
   function handleTownChange(event) {
     const townId = event.target.value;
     if (event.target.checked) {
@@ -53,35 +53,13 @@
     } else {
       selectedTowns = selectedTowns.filter((id) => id !== townId);
     }
-    console.log(selectedTowns);
-    data.townList = selectedTowns.join(", ");
-    console.log(data.townList);
+    townList = selectedTowns.join(", ");
   }
 
+  // Function to handle image file selection
   function handleFileChange(event) {
-    console.log("Selected Image");
-    imageFile = event.target.files[0];
-    axiosDATA.append("image", imageFile);
-  }
-
-  function handleInputChange() {
-    const allTrue = Object.values(data).every((value) => Boolean(value));
-    if (
-      data.description ||
-      data.price_max ||
-      data.price_min ||
-      data.service_id ||
-      data.selectedTown
-    ) {
-      console.log(data);
-    }
-
-    if (allTrue) {
-      console.log("Form Completed");
-      for (const [key, value] of Object.entries(data)) {
-        axiosDATA.append(key, value);
-      }
-    }
+    image.set(event.target.files[0]); // Update the store
+    console.log("Image file selected:", event.target.files[0]);
   }
 </script>
 
@@ -94,24 +72,20 @@
     <h1 class="pt-4 text-2xl text-center md:text-3xl lg:text-4xl">
       Crear Servicio
     </h1>
-    <!-- Crear Solicitud de Servicio -->
-    <div class="">
+    <div>
       <label for="title">Titulo</label>
       <input
         class="w-full"
         type="text"
         name="titulo"
         id=""
-        bind:value={data.title}
-        on:change={handleInputChange}
+        bind:value={title}
       />
     </div>
 
-    <!-- Service Filter Start -->
     <label for="service">Seleccione Servicio a Brindar</label>
     <select
-      bind:value={data.service_id}
-      on:change={handleInputChange}
+      bind:value={service_id}
       name="service"
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
@@ -120,9 +94,7 @@
         <option value={id}>{service}</option>
       {/each}
     </select>
-    <!-- Service Filter End -->
 
-    <!-- Town Filter Start -->
     <div class="w-full dropdown">
       <button tabindex="0" class="btn btn-base dropdown-toggle"
         >Seleccionar Pueblos</button
@@ -146,16 +118,14 @@
       </ul>
     </div>
 
-    <!-- Town Filter End -->
     <div class="max-h-96">
       <label for="description">Descripcion de su Servicio</label>
       <textarea
-        bind:value={data.description}
-        on:change={handleInputChange}
+        bind:value={description}
         class="w-full min-h-20 max-h-20"
         name="description"
         id=""
-      ></textarea>
+      />
     </div>
     <div>
       <label for="price-min">Precio Minimo (Opcional)</label>
@@ -164,8 +134,7 @@
         type="number"
         name="price-min"
         id=""
-        bind:value={data.price_min}
-        on:change={handleInputChange}
+        bind:value={price_min}
       />
     </div>
     <div>
@@ -175,8 +144,7 @@
         type="number"
         name="price-max"
         id=""
-        bind:value={data.price_max}
-        on:change={handleInputChange}
+        bind:value={price_max}
       />
     </div>
     <div
@@ -197,6 +165,8 @@
         <p class="text-red-500">{errorMessage}</p>
       {/if}
     </div>
-    <Button {buttonDATA} {axiosDATA} {miscDATA} />
+
+    <Button {button} />
+    <div />
   </div>
 </div>

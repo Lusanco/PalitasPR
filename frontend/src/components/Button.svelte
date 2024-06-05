@@ -1,21 +1,26 @@
 <script>
   import axios from "axios";
-  import { createEventDispatcher } from "svelte";
-  import { state } from "../scripts/stateStores";
+  import { state, data, image } from "../scripts/stateStores";
+  import { get } from "svelte/store";
 
-  const dispatch = createEventDispatcher();
-
-  export let axiosDATA = {};
-  export let miscDATA = {};
-  export let buttonDATA = {
+  export let button = {
     name: "",
     method: "",
     url: "",
     headers: {},
     twcss: "",
+    misc: {},
   };
 
-  function axiosLogic(buttonDATA, axiosDATA = {}, miscDATA = {}) {
+  function logFormData(formData) {
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ": " + pair[1]);
+    }
+  }
+
+  // Function to handle Axios logic
+  function axiosLogic() {
+    // Update state for loading/error handling
     state.update((s) => ({
       ...s,
       hidden: false,
@@ -24,14 +29,30 @@
       error: false,
     }));
 
+    let formData = new FormData();
+    const $image = get(image);
+    const $data = get(data);
+
+    // Append image if it exists
+    if ($image) {
+      formData.append("image", $image);
+    }
+
+    // Append other data as JSON
+    const jsonData = JSON.stringify($data);
+    formData.append("data", jsonData);
+
+    // Log formData contents
+    logFormData(formData);
+
+    // Make the Axios request
     axios({
-      method: buttonDATA.method,
-      url: buttonDATA.url,
-      data: axiosDATA,
-      headers: buttonDATA.headers,
+      method: button.method,
+      url: button.url,
+      data: formData,
+      headers: button.headers,
     })
       .then((response) => {
-        setTimeout;
         state.update((s) => ({
           ...s,
           hidden: false,
@@ -40,16 +61,10 @@
           error: false,
         }));
 
-        dispatch("results", {
-          success: true,
-          data: response.data.results,
-          state: $state,
-        });
-
         console.log(".then() Response Log: ", response);
-        console.log(".then() Data Log: ", axiosDATA);
-        console.log(".then() Misc Log: ", miscDATA);
-        console.log(".then() State Log: ", $state);
+        console.log(".then() Data Log: ", formData);
+        console.log(".then() Misc Log: ", button.misc);
+        console.log(".then() State Log: ", get(state));
       })
       .catch((err) => {
         state.update((s) => ({
@@ -60,37 +75,20 @@
           error: true,
         }));
 
-        dispatch("results", {
-          success: false,
-          err: err,
-          state: state,
-        });
-
         console.log(".catch() Error Log: ", err);
-        console.log(".catch() Data Log: ", axiosDATA);
-        console.log(".catch() Misc Log: ", miscDATA);
-        console.log(".catch() State Log: ", $state);
+        console.log(".catch() Data Log: ", formData);
+        console.log(".catch() Misc Log: ", button.misc);
+        console.log(".catch() State Log: ", get(state));
       });
   }
 
-  function backButton() {
-    window.history.back();
-    console.log("Back Button");
-  }
-  // Expose the buttonLogic function to be callable from the parent component
+  // Function to handle button click
   export function buttonLogic() {
-    if (buttonDATA.method && buttonDATA.url) {
-      axiosLogic(buttonDATA, axiosDATA, miscDATA);
-    } else {
-      if (miscDATA["Back Button"] === true) {
-        backButton();
-      }
-    }
+    axiosLogic();
   }
 </script>
 
-<!-- on:click|preventDefault={buttonLogic} -->
-<button on:click={buttonLogic} type="button" class={buttonDATA.twcss}>
-  {buttonDATA.name}
+<button on:click={buttonLogic} type="button" class={button.twcss}>
+  {button.name}
   <slot />
 </button>
