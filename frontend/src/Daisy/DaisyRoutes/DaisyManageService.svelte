@@ -80,9 +80,9 @@
     <h1 class="font-sans text-3xl text-center text-bold text-primary">Services</h1>
     <br />
     <br />
-    <div class="h-screen overscroll-y-auto">
+    <div class="h-screen overflow-y-auto">
       {#each offers as offer}
-        <div class="flex flex-row items-start w-full p-4 mb-4 border-base-300
+        <div class="flex flex-row items-start w-full p-4 mb-4 rounded-lg shadow-lg border-base-300 bg-base-100">
           <div class="flex-1">
             <div class="font-bold text-primary">{offer.name}</div>
             <div class="text-neutral">{offer.priceRange}</div>

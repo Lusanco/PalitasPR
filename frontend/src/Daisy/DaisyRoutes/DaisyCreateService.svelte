@@ -4,7 +4,7 @@
   <script>
     import townsID from "../scripts/townsID";
     import servicesID from "../scripts/servicesID";
-    import Button from "../Daisycomponents/DaisyButton.svelte";
+    import Button from "../components/Button.svelte";
   
     // Data points for axiosDATA
     let model = "Promotion",
@@ -124,7 +124,7 @@
       <div>
         <label for="price-min">Precio Minimo (Opcional)</label>
         <input
-          class="input input-borderedw-full"
+          class="w-full input input-bordered"
           type="number"
           name="price-min"
           id=""

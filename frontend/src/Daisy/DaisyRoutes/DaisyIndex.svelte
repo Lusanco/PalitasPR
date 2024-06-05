@@ -67,7 +67,7 @@
             bind:value={miscDATA.search}
             on:keydown={handleKeydown}
             placeholder="Search for..."
-            class="col-span-2 input input-borderedw-full"
+            class="w-full col-span-2 input input-bordered"
           />
           <!-- on:keydown={handleKeydown} -->
         </div>
@@ -127,7 +127,7 @@
     {:else if (!$state.hidden && !$state.loaded) || $state.reload}
       <Loading />
     {:else if $state.error}
-      <span class="font-bold text-teal-600">No results found, try again.</span>
+      <span class="font-bold text-error">No results found, try again.</span>
     {:else}
       <div
         class="flex py-2 flex-col gap-4 rounded-md w-[95%] sm:w-[90%] md:w-[80%] overflow-y-scroll overflow-hidden h-96 bg-base-200"

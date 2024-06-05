@@ -72,7 +72,7 @@
                 type="button"
                 aria-label="Open item"
                 title="Open item"
-                class="flex items-center justify-between w-full p-4 bg-base-200 focus:outline-none"
+                class="flex items-center justify-between w-full p-4 bg-base-100 focus:outline-none"
                 on:click={() => toggleItem(index)}
               >
                 <div>

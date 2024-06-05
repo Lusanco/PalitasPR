@@ -1,5 +1,5 @@
 <script>
-    import Team from "../Daisycomponents/DaisyTeam.svelte";
+    import Team from "../components/Team.svelte";
   
     function scrollToTeam() {
       const teamSection = document.getElementById("team");
