@@ -6,3 +6,5 @@ export const state = writable({
   reload: false,
   error: false,
 });
+
+export const data = writable();
