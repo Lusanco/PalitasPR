@@ -3,21 +3,23 @@
   import Menu from "../components/Menu.svelte";
   import Button from "../components/Button.svelte";
 
-  let axiosDATA = {};
-  let miscDATA = { "Back Button": true };
-  let buttonDATA = {
+  // Button Prop Variables And Dependencies
+  let image = null;
+  let button = {
     name: "",
     method: "",
     url: "",
-    headers: {},
+    headers: "",
     twcss:
       "flex flex-col absolute items-center justify-center w-16 h-16 p-2 text-sm text-teal-600 rounded-lg hover:bg-teal-700 hover:text-teal-200 focus:outline-none focus:ring-0 m-2 z-50",
+    misc: { "App Location": "Back Button Component" },
   };
+  // Button Prop Variables And Dependencies
 </script>
 
 <!-- Main Start -->
 <main class="min-h-full overflow-y-scroll element">
-  <Button {axiosDATA} {buttonDATA} {miscDATA}>
+  <Button {image} {button}>
     <span class="sr-only">Go back</span>
     <svg
       class="w-5 h-5"

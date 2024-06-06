@@ -91,8 +91,17 @@
       });
   }
 
+  function backButton() {
+    window.history.back();
+    console.log("Back Button");
+  }
+
   // Function to handle button click
   export function buttonLogic() {
+    if (button.misc["App Location"] === "Back Button Component") {
+      backButton();
+      return;
+    }
     axiosLogic();
   }
 </script>
