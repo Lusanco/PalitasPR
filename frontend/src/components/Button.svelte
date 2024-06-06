@@ -1,17 +1,17 @@
 <script>
   import axios from "axios";
-  import { state, data, image } from "../scripts/stateStores";
+  import { state, data, response } from "../scripts/stores";
   import { get } from "svelte/store";
 
+  export let image = null;
   export let button = {
-    name: "",
-    method: "",
-    url: "",
-    headers: {},
-    twcss: "",
-    misc: {},
+    name: "Button Component",
+    method: "Button Method",
+    url: "Button URL",
+    headers: "Button Headers", // "application/json"
+    twcss: "Button Tailwind Styles",
+    misc: { "App Location": "Name of App Location" },
   };
-
   function logFormData(formData) {
     for (let pair of formData.entries()) {
       console.log(pair[0] + ": " + pair[1]);
@@ -20,6 +20,8 @@
 
   // Function to handle Axios logic
   function axiosLogic() {
+    const $data = get(data);
+
     // Update state for loading/error handling
     state.update((s) => ({
       ...s,
@@ -30,12 +32,10 @@
     }));
 
     let formData = new FormData();
-    const $image = get(image);
-    const $data = get(data);
 
     // Append image if it exists
-    if ($image) {
-      formData.append("image", $image);
+    if (image) {
+      formData.append("image", image);
     }
 
     // Append other data as JSON
@@ -44,15 +44,22 @@
 
     // Log formData contents
     logFormData(formData);
+    let axiosData =
+      image || button.headers === "multipart/form-data" ? formData : $data;
+
+    console.log("Before Axios Response Log: ", $response);
+    console.log("Before Axios Data Log: ", axiosData);
+    console.log("Before Axios Misc Log: ", button.misc);
+    console.log("Before Axios State Log: ", get(state));
 
     // Make the Axios request
     axios({
       method: button.method,
       url: button.url,
-      data: formData,
-      headers: button.headers,
+      data: axiosData,
+      headers: { "Content-Type": button.headers },
     })
-      .then((response) => {
+      .then((axiosResponse) => {
         state.update((s) => ({
           ...s,
           hidden: false,
@@ -61,12 +68,14 @@
           error: false,
         }));
 
-        console.log(".then() Response Log: ", response);
-        console.log(".then() Data Log: ", formData);
+        response.set(axiosResponse.data);
+
+        console.log(".then() Response Log: ", $response);
+        console.log(".then() Data Log: ", axiosData);
         console.log(".then() Misc Log: ", button.misc);
-        console.log(".then() State Log: ", get(state));
+        console.log(".then() State Log: ", $state);
       })
-      .catch((err) => {
+      .catch((axiosError) => {
         state.update((s) => ({
           ...s,
           hidden: false,
@@ -75,10 +84,10 @@
           error: true,
         }));
 
-        console.log(".catch() Error Log: ", err);
-        console.log(".catch() Data Log: ", formData);
+        console.log(".catch() Error Log: ", axiosError);
+        console.log(".catch() Data Log: ", axiosData);
         console.log(".catch() Misc Log: ", button.misc);
-        console.log(".catch() State Log: ", get(state));
+        console.log(".catch() State Log: ", $state);
       });
   }
 

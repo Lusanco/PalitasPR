@@ -3,25 +3,28 @@
   import townsID from "../scripts/townsID";
   import Loading from "../components/Loading.svelte";
   import Button from "../components/Button.svelte";
-  import { state } from "../scripts/stateStores";
+  import { state, data, response } from "../scripts/stores";
+  import { get } from "svelte/store";
+  import { setHeaders } from "../scripts/utils";
+
+  // Button Prop Variables And Dependencies
+  let image = null;
+  let search = "";
+  let model = "promotions";
+  let town = "all";
+  let button = {
+    name: "",
+    method: "GET",
+    url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}`,
+    headers: "application/json",
+    twcss:
+      "w-full h-full font-bold text-teal-100 bg-teal-800 hover:bg-teal-700 hover:text-teal-300",
+    misc: { "App Location": "Index Search Component" },
+  };
+  // Button Prop Variables And Dependencies
 
   let services = [];
   let errorMessage = "";
-
-  let axiosDATA;
-  let miscDATA = {
-    search: "",
-    model: "promotions",
-    town: "all",
-  };
-  let buttonDATA = {
-    name: "",
-    method: "GET",
-    url: `/api/explore?search=${miscDATA.search.trim()}&model=${miscDATA.model}&town=${miscDATA.town}`,
-    headers: { "Content-Type": "application/json" },
-    twcss:
-      "w-full h-full font-bold text-teal-100 bg-teal-800 hover:bg-teal-700 hover:text-teal-300",
-  };
 
   // Define a reference for the Button component
   let buttonRef;
@@ -34,21 +37,33 @@
     }
   }
 
-  function handleResults(event) {
-    const { success, data, error, state: newState } = event.detail;
-    services = data;
-    state.set(newState);
+  // function handleResults(event) {
+  //   const { success, data, error, state: newState } = event.detail;
+  //   services = data;
+  //   state.set(newState);
 
-    if (!success) {
-      errorMessage = error?.message || "An error occurred";
-    }
+  //   if (!success) {
+  //     errorMessage = error?.message || "An error occurred";
+  //   }
+  // }
+  // Reactive statement to update button store when misc store changes
+  $: {
+    button = {
+      ...button,
+      url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}`,
+    };
+
+    // Update the data store with the current misc values
+    data.set({ search, model, town });
   }
-
-  // Update buttonDATA when miscDATA changes
-  $: buttonDATA = {
-    ...buttonDATA,
-    url: `/api/explore?search=${miscDATA.search.trim()}&model=${miscDATA.model}&town=${miscDATA.town}`,
-  };
+  // $: {
+  //   const res = get(response);
+  //   if (res) {
+  //     services = res.data;
+  //     errorMessage = res.error ? res.error.message : "";
+  //   }
+  // }
+  $response = get(response);
 </script>
 
 <!-- Index Start -->
@@ -64,7 +79,7 @@
         <input
           type="text"
           id="search"
-          bind:value={miscDATA.search}
+          bind:value={search}
           on:keydown={handleKeydown}
           placeholder="Search for..."
           class="w-full col-span-2 rounded-md border-gray-200 py-2.5 pe-10 shadow-sm sm:text-sm"
@@ -74,7 +89,7 @@
       <div id="filters" class="grid grid-cols-3 col-span-2 row-span-1">
         <!-- Model Filter Start -->
         <select
-          bind:value={miscDATA.model}
+          bind:value={model}
           class="block w-full overflow-y-auto border-0 border-b-2 border-gray-200 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
         >
           <option value="promotions">Promotions</option>
@@ -83,7 +98,7 @@
         <!-- Model Filter End -->
         <!-- Town Filter Start -->
         <select
-          bind:value={miscDATA.town}
+          bind:value={town}
           class="block w-full overflow-y-auto border-0 border-b-2 border-gray-200 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
         >
           <option value="all" disabled>Town</option>
@@ -94,13 +109,8 @@
         <!-- Town Filter End -->
 
         <!-- Bind the Button component to the reference variable -->
-        <Button
-          bind:this={buttonRef}
-          {axiosDATA}
-          {buttonDATA}
-          {miscDATA}
-          on:results={handleResults}
-        >
+        <Button {button} {image} bind:this={buttonRef}>
+          <!-- on:results={handleResults} -->
           <span class="sr-only">Search</span>
 
           <svg
@@ -132,7 +142,8 @@
     <div
       class="flex py-2 flex-col gap-4 rounded-md w-[95%] sm:w-[90%] md:w-[80%] overflow-y-scroll overflow-hidden h-96 bg-teal-50"
     >
-      {#each services as service}
+      <!-- {#each services as service} -->
+      {#each $response.results as service}
         <a href="##">
           <div
             class="relative block w-full p-4 border border-teal-100 rounded-lg shadow-lg sm:p-6 lg:p-8"
