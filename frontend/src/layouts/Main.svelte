@@ -19,7 +19,7 @@
 
 <!-- Main Start -->
 <main class="min-h-full overflow-y-scroll element">
-  <Button {image} {button}>
+  <!-- <Button {image} {button}>
     <span class="sr-only">Go back</span>
     <svg
       class="w-5 h-5"
@@ -36,7 +36,7 @@
         d="M15 19l-7-7 7-7"
       />
     </svg>
-  </Button>
+  </Button> -->
   <Menu></Menu>
   <slot />
 </main>
