@@ -37,15 +37,6 @@
     }
   }
 
-  // function handleResults(event) {
-  //   const { success, data, error, state: newState } = event.detail;
-  //   services = data;
-  //   state.set(newState);
-
-  //   if (!success) {
-  //     errorMessage = error?.message || "An error occurred";
-  //   }
-  // }
   // Reactive statement to update button store when misc store changes
   $: {
     button = {
@@ -56,13 +47,7 @@
     // Update the data store with the current misc values
     data.set({ search, model, town });
   }
-  // $: {
-  //   const res = get(response);
-  //   if (res) {
-  //     services = res.data;
-  //     errorMessage = res.error ? res.error.message : "";
-  //   }
-  // }
+
   $response = get(response);
 </script>
 

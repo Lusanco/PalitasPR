@@ -12,16 +12,14 @@
     twcss: "Button Tailwind Styles",
     misc: { "App Location": "Name of App Location" },
   };
-  function logFormData(formData) {
-    for (let pair of formData.entries()) {
+  function logFormData(data) {
+    for (let pair of data.entries()) {
       console.log(pair[0] + ": " + pair[1]);
     }
   }
 
   // Function to handle Axios logic
   function axiosLogic() {
-    const $data = get(data);
-
     // Update state for loading/error handling
     state.update((s) => ({
       ...s,
@@ -31,26 +29,47 @@
       error: false,
     }));
 
-    let formData = new FormData();
-
-    // Append image if it exists
-    if (image) {
-      formData.append("image", image);
+    const $data = get(data);
+    let axiosData;
+    // let headers;
+    if (image || button.headers === "multipart/form-data") {
+      let formData = new FormData();
+      for (const key in $data) {
+        formData.append(key, $data[key]);
+      }
+      if (image) {
+        formData.append("image", image);
+      }
+      axiosData = formData;
+    } else {
+      axiosData = $data;
     }
 
+    // Log data contents
+    if (axiosData instanceof FormData) {
+      logFormData(axiosData);
+    } else {
+      console.log("JSON Data:", axiosData);
+    }
+
+    // data.set(new FormData());
+    // console.log("after data.set", $data);
+
+    // Append image if it exists
+
     // Append other data as JSON
-    const jsonData = JSON.stringify($data);
-    formData.append("data", jsonData);
-
-    // Log formData contents
-    logFormData(formData);
-    let axiosData =
-      image || button.headers === "multipart/form-data" ? formData : $data;
-
-    console.log("Before Axios Response Log: ", $response);
-    console.log("Before Axios Data Log: ", axiosData);
-    console.log("Before Axios Misc Log: ", button.misc);
-    console.log("Before Axios State Log: ", get(state));
+    // const jsonData = JSON.stringify($data);
+    // $data.append("data", jsonData);
+    // console.log("after data.set", $data);
+    // Log data contents
+    // logFormData(data);
+    // let axiosData =
+    //   image || button.headers === "multipart/form-data" ? data : $data;
+    // console.log("after data.set", $data);
+    // console.log("Before Axios Response Log: ", $response);
+    // console.log("Before Axios Data Log: ", axiosData);
+    // console.log("Before Axios Misc Log: ", button.misc);
+    // console.log("Before Axios State Log: ", get(state));
 
     // Make the Axios request
     axios({
@@ -71,9 +90,9 @@
         response.set(axiosResponse.data);
 
         console.log(".then() Response Log: ", $response);
-        console.log(".then() Data Log: ", axiosData);
-        console.log(".then() Misc Log: ", button.misc);
-        console.log(".then() State Log: ", $state);
+        // console.log(".then() Data Log: ", axiosData);
+        // console.log(".then() Misc Log: ", button.misc);
+        // console.log(".then() State Log: ", $state);
       })
       .catch((axiosError) => {
         state.update((s) => ({
@@ -85,9 +104,9 @@
         }));
 
         console.log(".catch() Error Log: ", axiosError);
-        console.log(".catch() Data Log: ", axiosData);
-        console.log(".catch() Misc Log: ", button.misc);
-        console.log(".catch() State Log: ", $state);
+        // console.log(".catch() Data Log: ", axiosData);
+        // console.log(".catch() Misc Log: ", button.misc);
+        // console.log(".catch() State Log: ", $state);
       });
   }
 

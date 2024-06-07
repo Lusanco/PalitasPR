@@ -1,20 +1,31 @@
 <script>
-  import { state, data, image } from "../scripts/stateStores";
+  import { state, data } from "../scripts/stores";
   import townsID from "../scripts/townsID";
   import servicesID from "../scripts/servicesID";
   import Button from "../components/Button.svelte";
 
-  let model = "Promotion";
+  // Button Prop Variables And Dependencies
+  let image = null;
+  let town = "all";
+  let towns;
+  let model = "promotions";
+
+  let button = {
+    name: "Create Service",
+    method: "POST",
+    url: "api/dashboard/promotion-request",
+    headers: "multipart/form-data",
+    twcss: "px-8 py-3 font-semibold text-teal-100 bg-teal-800 rounded",
+    misc: { "App Location": "CreateService Form" },
+  };
+  // Button Prop Variables And Dependencies
+
   let title = "";
   let service_id = "";
   let description = "";
   let price_min = "";
   let price_max = "";
   let errorMessage = "";
-
-  const towns = Object.entries(townsID);
-  const services = Object.entries(servicesID);
-
   let selectedTowns = [];
   let townList = "";
 
@@ -23,27 +34,16 @@
     $data = {
       model,
       title,
-      townList,
+      town: townList,
       service_id,
       description,
       price_min,
       price_max,
     };
 
+    data.set($data);
     console.log("Data updated:", $data);
   }
-
-  // Button configuration
-  let button = {
-    name: "Create Service",
-    method: "POST",
-    url: "api/dashboard/promotion-request",
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-    twcss: "px-8 py-3 font-semibold text-teal-100 bg-teal-800 rounded",
-    misc: { "Create Service": true },
-  };
 
   // Function to handle town selection changes
   function handleTownChange(event) {
@@ -58,7 +58,7 @@
 
   // Function to handle image file selection
   function handleFileChange(event) {
-    image.set(event.target.files[0]); // Update the store
+    image = event.target.files[0]; // Update the store
     console.log("Image file selected:", event.target.files[0]);
   }
 </script>
@@ -90,7 +90,7 @@
       class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
     >
       <option value={-1} disabled>---</option>
-      {#each services as [service, id]}
+      {#each Object.entries(servicesID) as [service, id]}
         <option value={id}>{service}</option>
       {/each}
     </select>
@@ -103,7 +103,7 @@
         tabindex="-1"
         class="flex flex-wrap w-full h-40 min-w-full gap-4 p-4 overflow-y-auto shadow gap-x-10 dropdown-content bg-base-100 rounded-box"
       >
-        {#each towns as [town, id]}
+        {#each Object.entries(townsID) as [town, id]}
           <li class="menu-item" value={id}>
             <input
               bind:value={id}
@@ -166,7 +166,7 @@
       {/if}
     </div>
 
-    <Button {button} />
+    <Button {button} {image} />
     <div />
   </div>
 </div>
