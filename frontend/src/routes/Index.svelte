@@ -17,8 +17,9 @@
     method: "GET",
     url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}`,
     headers: "application/json",
-    twcss:
-      "w-full h-full font-bold text-teal-100 bg-teal-800 hover:bg-teal-700 hover:text-teal-300",
+    twcss: "btn btn-base border-none rounded-none focus:outline-none",
+    // Previous styles: Don't delete in case for reference
+    // "w-full h-full font-bold text-teal-100 bg-teal-800 hover:bg-teal-700 hover:text-teal-300",
     misc: { "App Location": "Index Search Component" },
   };
   // Button Prop Variables And Dependencies
@@ -58,7 +59,9 @@
   <Slogan />
   <!-- SearchBar Start -->
   <div class="items-center justify-center w-full max-w-md mx-2 md:mx-auto">
-    <div class="grid grid-cols-2 grid-rows-2 bg-white rounded-lg overflow-clip">
+    <div
+      class="grid grid-cols-2 grid-rows-2 rounded-lg bg-base-100 overflow-clip join"
+    >
       <div id="search-bar" class="col-span-2 row-span-1">
         <label for="Search" class="sr-only"> Search </label>
         <input
@@ -67,7 +70,7 @@
           bind:value={search}
           on:keydown={handleKeydown}
           placeholder="Search for..."
-          class="w-full col-span-2 rounded-md border-gray-200 py-2.5 pe-10 shadow-sm sm:text-sm"
+          class="w-full col-span-2 border-t-0 border-b-2 rounded-none border-x-0 input input-bordered focus:outline-none"
         />
         <!-- on:keydown={handleKeydown} -->
       </div>
@@ -75,7 +78,7 @@
         <!-- Model Filter Start -->
         <select
           bind:value={model}
-          class="block w-full overflow-y-auto border-0 border-b-2 border-gray-200 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
+          class="w-full border-none select select-bordered focus:outline-none"
         >
           <option value="promotions">Promotions</option>
           <option value="requests">Requests</option>
@@ -84,7 +87,7 @@
         <!-- Town Filter Start -->
         <select
           bind:value={town}
-          class="block w-full overflow-y-auto border-0 border-b-2 border-gray-200 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
+          class="w-full border-none select select-bordered focus:outline-none"
         >
           <option value="all" disabled>Town</option>
           {#each Object.entries(townsID) as [town, id]}
