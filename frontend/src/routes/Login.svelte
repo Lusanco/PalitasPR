@@ -1,60 +1,60 @@
 <script>
   import { link } from "svelte-routing";
-  import { onMount } from "svelte";
-  import axios from "axios";
   import Loading from "../components/Loading.svelte";
+  import Button from "../components/Button.svelte";
+  import { state, data, response } from "../scripts/stores";
+  import { get } from "svelte/store";
+  import { onMount } from "svelte";
 
-  let af2, errorMessage, af1;
-  let hidden = true;
-  let loaded = false;
-  let reload = false;
-  let error = false;
+  // Button Prop Variables And Dependencies
+  let image = null;
+  let af1 = null;
+  let af2 = null;
+  let errorMessage;
+  let button = {
+    name: "Login",
+    method: "GET",
+    url: `/api/user/login?af1=${af1}&af2=${af2}`,
+    headers: "application/json",
+    twcss: "border-2 shadow-md btn bg-base-100",
+    misc: { "App Location": "Login" },
+  };
+  // Button Prop Variables And Dependencies
 
-  function loginLogic() {
-    if (typeof af1 === "undefined" || typeof af2 === "undefined") {
-      af1 = null;
-      af2 = null;
-    }
-    hidden = false;
-    loaded = false;
-    reload = true;
-    error = false;
+  // Define a reference for the Button component
+  let buttonRef;
 
-    // .post("/api/login", data)
-    axios
-      .get(`/api/user/login?af1=${af1}&af2=${af2}`)
-      // .get(`/api/login?e=${af1}&p=${af2}`)
-      .then((response) => {
-        loaded = true;
-        reload = false;
-        error = false;
-        console.log(response);
-        if (response.status === 200) {
-          // Write logic for real life cases
-          // as in flask_login appropiate
-          window.location.href = "/";
-        }
-      })
-      .catch((err) => {
-        hidden = false;
-        loaded = true;
-        reload = false;
-        error = true;
-        console.log(err);
-        errorMessage = err;
-      });
-  }
-
+  // Function to handle the "Enter" key press
   function handleKeydown(event) {
     if (event.key === "Enter") {
-      af1 = af1;
-      af2 = af2;
-      loginLogic();
+      // Trigger the button logic from the child component
+      if (typeof af1 === "undefined" || typeof af2 === "undefined") {
+        af1 = null;
+        af2 = null;
+      }
+
+      buttonRef.buttonLogic();
     }
   }
 
-  async function handleLogin() {
-    loginLogic();
+  // Reactive statement to update button store when misc store changes
+  $: {
+    button = {
+      ...button,
+      url: `/api/user/login?af1=${af1}&af2=${af2}`,
+    };
+
+    // Update the data store with the current misc values
+    data.set({ af1, af2 });
+  }
+
+  $response = get(response);
+
+  // Function to handle the Axios response and redirect on successful login
+  $: {
+    if ($response && $response.status === 200) {
+      window.location.href = "/";
+    }
   }
 
   onMount(() => {
@@ -63,72 +63,55 @@
 </script>
 
 <div
-  class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto text-teal-800 rounded-md sm:p-10"
+  class="flex flex-col items-center justify-center h-full min-h-screen m-auto"
 >
-  <div class="mb-8 text-center">
-    <h1 class="my-3 text-4xl font-bold">Login</h1>
-    <p class="text-sm text-teal-600">Login to access your account</p>
-  </div>
-  <form action="" class="w-full space-y-12">
-    <div class="space-y-4">
-      <div>
-        <label for="af1" class="block mb-2 text-sm">Email address</label>
-        <input
-          bind:value={af1}
-          on:keydown={handleKeydown}
-          type="email"
-          name="email"
-          id="af1"
-          placeholder="user@email.com"
-          class="w-full px-3 py-2 text-teal-800 border border-teal-300 rounded-md bg-teal-50"
-        />
-      </div>
-      <div>
-        <div class="flex justify-between mb-2">
-          <label for="af2" class="text-sm">Password</label>
-          <a
-            rel="noopener noreferrer"
-            href="/forgot-password"
-            class="text-xs text-teal-600 hover:underline">Forgot password?</a
-          >
-        </div>
-        <input
-          bind:value={af2}
-          on:keydown={handleKeydown}
-          type="password"
-          name="af2"
-          id="af2"
-          placeholder="************"
-          class="w-full px-3 py-2 text-teal-800 border border-teal-300 rounded-md bg-teal-50"
-        />
-      </div>
+  <div class="flex flex-col max-w-sm gap-4 px-1">
+    <div class="text-center">
+      <h1 class="text-4xl font-bold text-stone-800">Login</h1>
+      <p class="text-sm text-stone-600">Login to access your account</p>
+      <br />
     </div>
-    <div class="space-y-2">
-      <button
-        on:click={handleLogin}
-        type="button"
-        class="w-full px-8 py-3 font-semibold bg-teal-600 rounded-md text-teal-50"
-        >Login</button
+    <label class="flex items-center gap-2 input input-bordered">
+      <p class="text-center w-14">Email</p>
+      <input
+        bind:value={af1}
+        on:keydown={handleKeydown}
+        type="text"
+        class="border-none focus:ring-0 grow"
+        placeholder="user@email.com"
+      />
+    </label>
+    <label class="flex items-center gap-2 input input-bordered">
+      <p class="text-center w-14">Password</p>
+      <input
+        bind:value={af2}
+        on:keydown={handleKeydown}
+        type="password"
+        class="border-none focus:ring-0 grow"
+        placeholder="********"
+      />
+    </label>
+    <a
+      use:link
+      href="/forgot-password"
+      class="self-end pr-2 -mt-4 link link-hover">Forgot password?</a
+    >
+    <Button bind:this={buttonRef} {image} {button}></Button>
+    <p class="pr-2 -mt-4 text-right">
+      Don't have an account yet? <a
+        use:link
+        class="link link-hover"
+        href="/signup">Signup</a
       >
-      <p class="px-6 text-sm text-center text-teal-600">
-        Don't have an account yet?
-        <a
-          use:link
-          href="/signup"
-          rel="noopener noreferrer"
-          role="button"
-          class="font-semibold text-teal-600 hover:underline">Sign up</a
-        >
-      </p>
-    </div>
-    {#if hidden === true}
+    </p>
+    {#if $state.hidden === true}
       <div class="hidden"></div>
-    {:else if (hidden === false && loaded === false) || reload === true}
+    {:else if (!$state.hidden && !$state.loaded) || $state.reload}
       <Loading />
-    {:else if error}
-      <div class="w-full mx-auto font-bold text-center text-teal-600">
+    {:else if $state.error}
+      <div class="w-full mx-auto font-bold text-center text-stone-600">
         Incorrect email or password, try again.
       </div>
     {/if}
-  </form>
+  </div>
 </div>
