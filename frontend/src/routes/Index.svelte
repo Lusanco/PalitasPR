@@ -51,7 +51,7 @@
 
 <!-- Index Start -->
 <div
-  class="flex flex-col items-center justify-center h-full min-h-screen gap-8"
+  class="flex flex-col items-center justify-center h-full min-h-screen gap-8 py-20"
 >
   <Slogan />
   <!-- SearchBar Start -->
@@ -124,31 +124,21 @@
   {:else if (!$state.hidden && !$state.loaded) || $state.reload}
     <Loading />
   {:else if $state.error}
-    <span class="font-bold text-teal-600">No results found, try again.</span>
+    <span class="font-bold text-stone-600">No results found, try again.</span>
   {:else}
     <div
       class="flex py-2 flex-col gap-4 w-[95%] sm:w-[90%] md:w-[80%] overflow-y-scroll overflow-hidden h-96"
     >
       <!-- {#each services as service} -->
-      {#each $response.results as service}
+      {#each $response.data.results as service}
         <!-- New Card Start -->
         <div
           class="w-full h-40 transition-transform duration-200 ease-in-out transform rounded-none shadow-xl card card-side bg-base-100 hover:bg-base-300 active:scale-95"
         >
-          <figure class="w-0 h-full md:w-1/4">
-            <img
-              class="h-full"
-              src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-              alt="Shoes"
-            />
-          </figure>
-          <div class="w-1/2 h-full p-0 md:w-1/4 md:card-body">
-            <figure class="h-1/2 md:w-0">
-              <img
-                src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-                alt="Shoes"
-              />
-            </figure>
+          <div class="w-0 h-full rounded-none md:w-1/4 skeleton"></div>
+
+          <div class="w-1/2 h-40 p-0 md:w-1/4 md:card-body">
+            <div class="rounded-none h-1/2 md:w-0 skeleton"></div>
             <div class="p-2 md:mb-6 md:p-0 h-1/2 md:h-full">
               <h2
                 class="md:card-title text-md overflow-ellipsis line-clamp-1 md:truncate"
@@ -165,7 +155,7 @@
               <p class="text-sm md:-mt-2">{service.created_at}</p>
             </div>
           </div>
-          <div class="w-1/2 h-full p-2 md:w-2/4 md:card-body">
+          <div class="w-1/2 h-40 p-2 md:w-2/4 md:card-body">
             <p class="h-full line-clamp-4 overflow-ellipsis">
               {service.description}
             </p>
