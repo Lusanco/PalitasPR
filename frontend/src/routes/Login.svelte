@@ -63,7 +63,7 @@
 </script>
 
 <div
-  class="flex flex-col items-center justify-center h-full min-h-screen m-auto"
+  class="flex flex-col items-center justify-center h-full min-h-screen py-20 m-auto"
 >
   <div class="flex flex-col max-w-sm gap-4 px-1">
     <div class="text-center">
