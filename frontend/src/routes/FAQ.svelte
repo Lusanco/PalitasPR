@@ -1,14 +1,8 @@
 <script>
-  import { slide } from "svelte/transition";
-  let openItems = [];
+  let openIndex = null;
 
   function toggleItem(index) {
-    if (openItems.includes(index)) {
-      openItems = openItems.filter((i) => i !== index);
-    } else {
-      openItems = [];
-      openItems = [...openItems, index];
-    }
+    openIndex = openIndex === index ? null : index;
   }
 
   let questions = [
@@ -47,64 +41,32 @@
 </script>
 
 <div
-  class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
+  class="flex flex-col items-center justify-center h-full min-h-screen py-20 m-auto"
 >
-  <div class="max-w-xl sm:mx-auto lg:max-w-2xl">
-    <div class="flex flex-col mb-16 sm:text-center">
-      <a href="/" class="mb-6 sm:mx-auto"> </a>
-      <div class="max-w-xl md:mx-auto sm:text-center lg:max-w-2xl">
-        <h2
-          class="max-w-lg mb-8 text-5xl font-semibold text-center text-teal-700 sm:text-5xl md:mx-auto"
+  <div class="flex flex-col w-full max-w-5xl gap-4 px-2">
+    <div class="flex flex-col gap-4 text-center">
+      <h2 class="text-5xl text-stone-800">FAQ</h2>
+      <p class="max-w-sm mx-auto">
+        Here are some frequently asked questions. If you have any other
+        questions, please feel free to contact us.
+      </p>
+    </div>
+    {#each questions as { question, answer }, index}
+      <div class="max-w-3xl mx-auto border-b border-stone-200 bg-base-200">
+        <button
+          class="w-full px-2 py-4 text-xl font-medium text-left text-stone-800 hover:bg-stone-300 focus:outline-none"
+          on:click={() => toggleItem(index)}
         >
-          FAQ
-        </h2>
-        <p class="text-center text-gray-700 md:text-lg text-balance">
-          Here are some frequently asked questions. If you have any other
-          questions, please feel free to contact us.
-        </p>
-      </div>
-    </div>
-    <div class="p-5 rounded-lg bg-slate-100">
-      <div class="space-y-2">
-        {#each [0, 1, 2, 3, 4, 5] as index}
-          <div class="border rounded shadow-md">
-            <button
-              type="button"
-              aria-label="Open item"
-              title="Open item"
-              class="flex items-center justify-between w-full p-4 bg-slate-100 focus:outline-none"
-              on:click={() => toggleItem(index)}
-            >
-              <div>
-                <p class="text-lg font-medium">
-                  {#if index === 0}{questions[0].question}{/if}
-                  {#if index === 1}{questions[1].question}{/if}
-                  {#if index === 2}{questions[2].question}{/if}
-                  {#if index === 3}{questions[3].question}{/if}
-                  {#if index === 4}{questions[4].question}{/if}
-                  {#if index === 5}{questions[5].question}{/if}
-                </p>
-                <span><i class="fa-solid fa-angle-down"></i></span>
-              </div>
-            </button>
-            {#if openItems.includes(index)}
-              <div
-                transition:slide={{ duration: 300 }}
-                class="p-4 pt-0 bg-slate-100"
-              >
-                <p class="text-gray-700 text-balance">
-                  {#if index === 0}{questions[0].answer}{/if}
-                  {#if index === 1}{questions[1].answer}{/if}
-                  {#if index === 2}{questions[2].answer}{/if}
-                  {#if index === 3}{questions[3].answer}{/if}
-                  {#if index === 4}{questions[4].answer}{/if}
-                  {#if index === 5}{questions[5].answer}{/if}
-                </p>
-              </div>
-            {/if}
+          {question}
+        </button>
+        <div
+          class={`overflow-hidden transition-all duration-300 ${openIndex === index ? "max-h-screen" : "max-h-0"}`}
+        >
+          <div class="px-4 py-2">
+            <p>{answer}</p>
           </div>
-        {/each}
+        </div>
       </div>
-    </div>
+    {/each}
   </div>
 </div>
