@@ -76,7 +76,7 @@
       <input
         bind:value={af1}
         on:keydown={handleKeydown}
-        type="text"
+        type="email"
         class="border-none focus:ring-0 grow"
         placeholder="user@email.com"
       />
