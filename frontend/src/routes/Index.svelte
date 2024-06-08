@@ -5,7 +5,6 @@
   import Button from "../components/Button.svelte";
   import { state, data, response } from "../scripts/stores";
   import { get } from "svelte/store";
-  import { setHeaders } from "../scripts/utils";
 
   // Button Prop Variables And Dependencies
   let image = null;
@@ -18,8 +17,6 @@
     url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}`,
     headers: "application/json",
     twcss: "btn btn-base border-none rounded-none focus:outline-none",
-    // Previous styles: Don't delete in case for reference
-    // "w-full h-full font-bold text-teal-100 bg-teal-800 hover:bg-teal-700 hover:text-teal-300",
     misc: { "App Location": "Index Search Component" },
   };
   // Button Prop Variables And Dependencies
@@ -58,7 +55,9 @@
 >
   <Slogan />
   <!-- SearchBar Start -->
-  <div class="items-center justify-center w-full max-w-md mx-2 md:mx-auto">
+  <div
+    class="items-center justify-center w-full max-w-md mx-2 border-2 shadow-lg md:mx-auto"
+  >
     <div
       class="grid grid-cols-2 grid-rows-2 rounded-lg bg-base-100 overflow-clip join"
     >
@@ -128,58 +127,51 @@
     <span class="font-bold text-teal-600">No results found, try again.</span>
   {:else}
     <div
-      class="flex py-2 flex-col gap-4 rounded-md w-[95%] sm:w-[90%] md:w-[80%] overflow-y-scroll overflow-hidden h-96 bg-teal-50"
+      class="flex py-2 flex-col gap-4 w-[95%] sm:w-[90%] md:w-[80%] overflow-y-scroll overflow-hidden h-96"
     >
       <!-- {#each services as service} -->
       {#each $response.results as service}
-        <a href="##">
-          <div
-            class="relative block w-full p-4 border border-teal-100 rounded-lg shadow-lg sm:p-6 lg:p-8"
-          >
-            <span
-              class="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-teal-200 via-teal-400 to-teal-600"
-            ></span>
-
-            <div class="sm:flex sm:justify-between sm:gap-4">
-              <div>
-                <h3 class="text-lg font-bold text-gray-900 sm:text-xl">
-                  {service.title}
-                </h3>
-
-                <p class="mt-1 text-xs font-medium text-gray-600">
-                  By {service.first_name}
-                  {service.last_name}
-                </p>
-              </div>
-
-              <div class="hidden sm:block sm:shrink-0">
-                <img
-                  alt=""
-                  src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80"
-                  class="object-cover rounded-lg shadow-sm size-16"
-                />
-              </div>
-            </div>
-
-            <div class="">
-              <p class="text-sm text-gray-500 text-pretty">
-                {service.description}
+        <!-- New Card Start -->
+        <div
+          class="w-full h-40 transition-transform duration-200 ease-in-out transform rounded-none shadow-xl card card-side bg-base-100 hover:bg-base-300 active:scale-95"
+        >
+          <figure class="w-0 h-full md:w-1/4">
+            <img
+              class="h-full"
+              src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
+              alt="Shoes"
+            />
+          </figure>
+          <div class="w-1/2 h-full p-0 md:w-1/4 md:card-body">
+            <figure class="h-1/2 md:w-0">
+              <img
+                src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
+                alt="Shoes"
+              />
+            </figure>
+            <div class="p-2 md:mb-6 md:p-0 h-1/2 md:h-full">
+              <h2
+                class="md:card-title text-md overflow-ellipsis line-clamp-1 md:truncate"
+              >
+                {service.title}
+              </h2>
+              <p
+                class="text-sm md:-mt-2 overflow-ellipsis line-clamp-1 md:truncate"
+              >
+                {service.first_name}
+                {service.last_name}
               </p>
+              <h3 class="hidden text-lg md:block">Published</h3>
+              <p class="text-sm md:-mt-2">{service.created_at}</p>
             </div>
-
-            <dl class="flex gap-4 sm:gap-6">
-              <div class="flex flex-col-reverse">
-                <dt class="text-sm font-medium text-gray-600">Published</dt>
-                <dd class="text-xs text-gray-500">{service.created_at}</dd>
-              </div>
-
-              <div class="flex flex-col-reverse">
-                <dt class="text-sm font-medium text-gray-600">Rated</dt>
-                <dd class="text-xs text-gray-500">{service.rating}/5</dd>
-              </div>
-            </dl>
           </div>
-        </a>
+          <div class="w-1/2 h-full p-2 md:w-2/4 md:card-body">
+            <p class="h-full line-clamp-4 overflow-ellipsis">
+              {service.description}
+            </p>
+          </div>
+        </div>
+        <!-- New Card End -->
       {/each}
     </div>
   {/if}
