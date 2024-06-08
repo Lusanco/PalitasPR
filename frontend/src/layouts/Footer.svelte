@@ -1,45 +1,14 @@
-<script>
-  import List from "../components/List.svelte";
-
-  let classUL1 = "flex flex-wrap items-center space-x-4 sm:space-x-8";
-  let classUL2 = "flex flex-wrap pl-3 space-x-4 sm:space-x-8";
-  let linksARRAY1 = { "Terms of Use": "/terms-of-use", Privacy: "/privacy" };
-  let classLINKS1 = { "Terms of Use": "", Privacy: "" };
-  let linksARRAY2 = { About: "/about", Contact: "/contact", FAQ: "/faq" };
-  let classLINKS2 = { About: "", Contact: "", FAQ: "" };
-  let svgPath =
-    "M18.266 26.068l7.839-7.854 4.469 4.479c1.859 1.859 1.859 4.875 0 6.734l-1.104 1.104c-1.859 1.865-4.875 1.865-6.734 0zM30.563 2.531l-1.109-1.104c-1.859-1.859-4.875-1.859-6.734 0l-6.719 6.734-6.734-6.734c-1.859-1.859-4.875-1.859-6.734 0l-1.104 1.104c-1.859 1.859-1.859 4.875 0 6.734l6.734 6.734-6.734 6.734c-1.859 1.859-1.859 4.875 0 6.734l1.104 1.104c1.859 1.859 4.875 1.859 6.734 0l21.307-21.307c1.859-1.859 1.859-4.875 0-6.734z";
-</script>
-
-<!-- Footer Start -->
-<footer class="hidden px-4 py-4 mt-auto text-teal-100 bg-teal-800 md:flex">
-  <div
-    class="container flex flex-wrap items-center justify-center mx-auto space-y-4 sm:justify-between sm:space-y-0"
-  >
-    <div class="flex flex-row pr-3 space-x-4 sm:space-x-8">
-      <div
-        class="flex items-center justify-center flex-shrink-0 w-12 h-12 bg-teal-400 rounded-full"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 32 32"
-          fill="currentColor"
-          class="w-5 h-5 text-teal-900 rounded-full"
-        >
-          <path d={svgPath}></path>
-        </svg>
-      </div>
-      <List
-        linksARRAY={linksARRAY1}
-        classLINKS={classLINKS1}
-        classUL={classUL1}
-      />
-    </div>
-    <List
-      linksARRAY={linksARRAY2}
-      classLINKS={classLINKS2}
-      classUL={classUL2}
-    />
-  </div>
+<footer
+  class="flex flex-wrap justify-between p-10 rounded footer bg-base-100 text-base-content"
+>
+  <nav class="flex flex-wrap items-center justify-center gap-4 mx-auto">
+    <a href="/about" class="link link-hover">About us</a>
+    <a href="/contact" class="link link-hover">Contact</a>
+    <a href="/faq" class="link link-hover">FAQ</a>
+    <a href="/terms-of-use" class="link link-hover">Terms of Use</a>
+    <a href="/privacy" class="link link-hover">Privacy</a>
+  </nav>
+  <p class="mx-auto text-center md:text-end">
+    Copyright © 2024 - All right reserved by PalitasPR
+  </p>
 </footer>
-<!-- Footer End -->
