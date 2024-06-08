@@ -87,7 +87,7 @@
           error: false,
         }));
 
-        response.set(axiosResponse.data);
+        response.set(axiosResponse);
 
         console.log(".then() Response Log: ", $response);
         // console.log(".then() Data Log: ", axiosData);
