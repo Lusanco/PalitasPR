@@ -20,12 +20,13 @@
       use:link
       on:click={handlePalitasPRClick}
       href="/"
+      rel="noopener noreferrer"
       class="text-xl btn btn-ghost">PalitasPR</a
     >
   </div>
   <div class="gap-2 navbar-end">
-    <a use:link href="/login" class="btn">Login</a>
-    <a use:link href="/signup" class="btn">Signup</a>
+    <a use:link href="/login" rel="noopener noreferrer" class="btn">Login</a>
+    <a use:link href="/signup" rel="noopener noreferrer" class="btn">Signup</a>
   </div>
 </header>
 <!-- Header End -->

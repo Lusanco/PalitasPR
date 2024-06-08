@@ -94,6 +94,7 @@
     <a
       use:link
       href="/forgot-password"
+      rel="noopener noreferrer"
       class="self-end pr-2 -mt-4 link link-hover">Forgot password?</a
     >
     <Button bind:this={buttonRef} {image} {button}></Button>
@@ -101,6 +102,7 @@
       Don't have an account yet? <a
         use:link
         class="link link-hover"
+        rel="noopener noreferrer"
         href="/signup">Signup</a
       >
     </p>

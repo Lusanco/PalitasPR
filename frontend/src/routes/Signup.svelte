@@ -142,8 +142,11 @@
 
     <Button bind:this={buttonRef} {image} {button}></Button>
     <p class="pr-2 -mt-4 text-right">
-      Have an account? <a use:link class="link link-hover" href="/login"
-        >Login</a
+      Have an account? <a
+        use:link
+        class="link link-hover"
+        rel="noopener noreferrer"
+        href="/login">Login</a
       >
     </p>
     {#if $state.hidden === true}
