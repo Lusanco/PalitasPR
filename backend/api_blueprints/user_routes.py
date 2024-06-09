@@ -67,6 +67,6 @@ def delete_object(model, model_id):
     """
     # if model == 'Profile':
     #     model_id = current_user.id
-    response = DBOperations().delete_object(model, model_id, current_user.id)
-    return jsonify(response[0]), response[1]
+    response, status = DBOperations().delete_object(model, model_id, current_user.id)
+    return make_response(jsonify(response), status)
 
