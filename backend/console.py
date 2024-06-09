@@ -79,20 +79,22 @@ class DBConsole(cmd.Cmd):
     def do_delete(self, args):
         """
         Delete objects based on criteria.
-        Usage: delete <model_name> <key1>=<value1> <key2>=<value2> ...
-        Example: delete Service user_id=c0a5be5a-94bf-4ad8-95dc-1d6e54cb1aed name=Gardening
+        Usage: delete <model_name> <model_id>
+        Example: delete Promotion abc123
         """
         arg_list = shlex.split(args)
-        if arg_list:
-            model_name = arg_list[0]
-            data = {model_name: dict(pair.split('=') for pair in arg_list[1:])}
-            result = db.delete(data)
-            if result:
-                print("Delete successful.")
+        if len(arg_list) == 2:
+            model_name, model_id = arg_list
+            user_id = input("Enter your user ID: ")
+
+            response, status_code = db.delete_object(model_name, model_id, user_id)
+            if 'error' in response:
+                print(response['error'])
             else:
-                print("Delete failed.")
+                print(response['message'])
         else:
-            print("Invalid input. Please provide a model name and key-value pairs.")
+            print("Invalid input. Usage: delete <model_name> <model_id>")
+
 
     def do_update(self, args):
         """
