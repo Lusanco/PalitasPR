@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request, make_response, session
 from db.db_user import Db_user
+from db.db_operations import DBOperations
 import emails
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 
 user_bp = Blueprint('user', __name__)
 
@@ -56,4 +57,16 @@ def user_login():
 def logout():
     logout_user()
     return make_response(jsonify({'results':'Logged out'}), 200)
+
+
+@user_bp.route('/delete/<model>/<model_id>', methods=['DELETE'])
+@login_required
+def delete_object(model, model_id):
+    """
+    Delete a promotion, request, or picture associated with the current user.
+    """
+    # if model == 'Profile':
+    #     model_id = current_user.id
+    response = DBOperations().delete_object(model, model_id, current_user.id)
+    return jsonify(response[0]), response[1]
 
