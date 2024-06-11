@@ -25,6 +25,9 @@
   import Contact from "./routes/Contact.svelte";
   import Faq from "./routes/FAQ.svelte";
   import Inbox from "./routes/Inbox.svelte";
+  import ServiceDetails from "./routes/ServiceDetails.svelte";
+  import DaisyServiceDetails from "./Daisy/DaisyRoutes/DaisyServiceDetails.svelte";
+  import RequestDetails from "./routes/RequestDetails.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -39,8 +42,10 @@
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/create-service" component={CreateService} />
       <Route path="/create-service-success" component={CreateServiceSuccess} />
+      <Route path="/service-details/:id" component={ServiceDetails} />
       <Route path="/create-request" component={CreateRequest} />
       <Route path="/create-request-success" component={CreateRequestSuccess} />
+      <Route path="/request-details/:id" component={RequestDetails} />
       <Route path="/manage-services" component={ManageServices} />
       <Route path="/manage-requests" component={ManageRequests} />
       <Route path="/profile" component={Profile} />
@@ -49,7 +54,7 @@
       <Route path="/faq" component={Faq} />
 
       <!-- Test Route -->
-      <Route path="/test" component={Inbox} />
+      <Route path="/test" component={DaisyServiceDetails} />
     </Router>
   </Main>
   <Footer />

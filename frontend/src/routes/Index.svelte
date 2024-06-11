@@ -5,8 +5,10 @@
   import Button from "../components/Button.svelte";
   import { state, data, response } from "../scripts/stores";
   import { get } from "svelte/store";
+  import { link } from "svelte-routing";
 
   // Button Prop Variables And Dependencies
+  let href = "";
   let image = null;
   let search = "";
   let model = "promotions";
@@ -20,9 +22,6 @@
     misc: { "App Location": "Index Search Component" },
   };
   // Button Prop Variables And Dependencies
-
-  let services = [];
-  let errorMessage = "";
 
   // Define a reference for the Button component
   let buttonRef;
@@ -45,7 +44,6 @@
     // Update the data store with the current misc values
     data.set({ search, model, town });
   }
-
   $response = get(response);
 </script>
 
@@ -132,7 +130,11 @@
       <!-- {#each services as service} -->
       {#each $response.data.results as service}
         <!-- New Card Start -->
-        <div
+        <a
+          use:link
+          href={service.promo_id
+            ? `/service-details/${service.promo_id}`
+            : `/request-details/${service.request_id}`}
           class="w-full h-40 transition-transform duration-200 ease-in-out transform rounded-none shadow-xl card card-side bg-base-100 hover:bg-base-300 active:scale-95"
         >
           <div class="w-0 h-full rounded-none md:w-1/4 skeleton"></div>
@@ -160,7 +162,7 @@
               {service.description}
             </p>
           </div>
-        </div>
+        </a>
         <!-- New Card End -->
       {/each}
     </div>
