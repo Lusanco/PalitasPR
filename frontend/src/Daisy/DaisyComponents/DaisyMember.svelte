@@ -5,7 +5,7 @@
   export let imageALT;
   export let classLIST = {
     classDiv1: "card shadow-lg w-full md:w-1/5",
-    classImg: "card-img-top rounded-full w-20 h-20 mb-2 shadow",
+    classImg: "object-cover rounded-full w-20 h-20 mb-2 shadow transition transform hover:scale-110 duration-300",
     classDiv2: "card-body flex flex-col items-center",
     classP1: "card-title text-lg font-bold",
     classP2: "card-text text-sm text-gray-800",

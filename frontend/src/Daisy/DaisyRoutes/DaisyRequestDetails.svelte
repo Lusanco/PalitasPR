@@ -89,7 +89,7 @@
       * Card 
     -->
     <div
-      class="relative w-full max-w-6xl p-5 py-4 mx-2 rounded-md shadow-md bg-base-100"
+      class="relative w-full max-w-6xl p-5 py-4 mx-2 rounded-md shadow-md bg-base-200"
     >
       <!-- 
         * Exit button 

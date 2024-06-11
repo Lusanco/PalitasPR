@@ -64,16 +64,16 @@
     class="flex flex-col items-center justify-center h-full min-h-screen bg-base-200 md:bg-none"
   >
     <div
-      class="w-full h-full max-w-2xl p-2 font-semibold rounded-lg md:shadow-lg md:p-8 bg-base-100"
+      class="w-full h-full max-w-2xl p-2 font-semibold rounded-lg md:shadow-lg md:p-8 bg-base-200"
     >
-      <h1 class="pt-4 text-2xl text-center md:text-3xl lg:text-4xl">
+      <h1 class="pt-4 text-2xl text-center md:text-3xl lg:text-4xl text-primary">
         Crear Servicio
       </h1>
       <!-- Crear Solicitud de Servicio -->
       <div class="">
         <label for="title">Titulo</label>
         <input
-          class="w-full input input-bordered"
+          class="w-full shadow-sm input input-bordered"
           type="text"
           name="titulo"
           id=""
@@ -88,7 +88,7 @@
         bind:value={data.service_id}
         on:change={handleInputChange}
         name="service"
-        class="w-full select select-bordered"
+        class="block w-full shadow-sm select select-bordered"
       >
         <option value={-1} disabled>---</option>
         {#each services as [service, id]}
@@ -98,12 +98,12 @@
       <!-- Service Filter End -->
   
       <!-- Town Filter Start -->
-      <label for="town">Seleccione un Pueblo</label>
+      <label for="town" class="block font-medium text-md">Seleccione un Pueblo</label>
       <select
         bind:value={data.town}
         on:change={handleInputChange}
         name="town"
-        class="w-full select select-bordered"
+        class="block w-full shadow-sm select select-bordered"
       >
         <option value={-1} disabled>---</option>
         {#each towns as [town, id]}
@@ -112,19 +112,19 @@
       </select>
       <!-- Town Filter End -->
       <div class="max-h-96">
-        <label for="description">Descripcion de su Servicio</label>
+        <label for="description" class="block font-medium text-md">Descripcion de su Servicio</label>
         <textarea
           bind:value={data.description}
           on:change={handleInputChange}
-          class="w-full textarea textarea-bordered min-h-20 max-h-20"
+          class="w-full shadow-sm textarea"
           name="description"
           id=""
         ></textarea>
       </div>
       <div>
-        <label for="price-min">Precio Minimo (Opcional)</label>
+        <label for="price-min" class="block font-medium text-md">Precio Minimo (Opcional)</label>
         <input
-          class="w-full input input-bordered"
+          class="w-full shadow-sm input input-bordered"
           type="number"
           name="price-min"
           id=""
@@ -133,9 +133,9 @@
         />
       </div>
       <div>
-        <label for="price-max">Precio Maximo (Opcional)</label>
+        <label for="price-max" class="block font-medium text-md">Precio Maximo (Opcional)</label>
         <input
-          class="w-full input input-bordered"
+          class="w-full shadow-sm input input-bordered"
           type="number"
           name="price-max"
           id=""
@@ -153,7 +153,7 @@
             name="image"
             id="imageInput"
             on:change={handleFileChange}
-            class="w-full px-8 py-12 border-2 border-dashed rounded-md text-neutral-content bg-base-200"
+            class="w-full px-8 py-8 border-2 border-dashed rounded-md text-neutral-content bg-base-200"
             accept="image/*"
           />
         </div>
