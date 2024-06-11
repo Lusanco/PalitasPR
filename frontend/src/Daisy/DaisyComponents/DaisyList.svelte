@@ -1,7 +1,8 @@
+<!-- List Component -->
 <script>
-  import Link from "./DaisyLink.svelte";
+  import Link from "./Link.svelte";
 
-  export let classUL = "menu bg-base-100 w-56 p-2 rounded-box";
+  export let classUL = "menu bg-neutral w-56 p-2 rounded-box";
   export let linksARRAY;
   export let classLINKS = {
     home: "menu-item",

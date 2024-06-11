@@ -1,6 +1,6 @@
 <!-- Revised: Alfre - Remember to move/rename this where it belongs: Promote from search -->
 <script>
-  import ReviewCard from "../../components/ReviewCard.svelte";
+  import ReviewCard from "../components/ReviewCard.svelte";
 
   /**
    * ! Test data
@@ -54,9 +54,9 @@
   };
 
   let description = `Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laudantium,
-            magni nisi? Repellendus sequi perspiciatis delectus esse excepturi
-            laborum, labore debitis quos sunt doloribus nesciunt quia quibusdam
-            sed. Culpa, corrupti nisi.`;
+          magni nisi? Repellendus sequi perspiciatis delectus esse excepturi
+          laborum, labore debitis quos sunt doloribus nesciunt quia quibusdam
+          sed. Culpa, corrupti nisi.`;
 
   /**
    * ! Test functions
@@ -80,37 +80,37 @@
 </script>
 
 <!-- 
-    ? Container
-  -->
+  ? Container
+-->
 <div
   class="flex flex-col items-center justify-center min-h-screen p-5 bg-base-200"
 >
   <!-- 
-      * Card 
-    -->
+    * Card 
+  -->
   <div
     class="relative w-full max-w-6xl p-5 py-4 mx-2 rounded-md shadow-md bg-base-100"
   >
     <!-- 
-        * Exit button 
-      -->
+      * Exit button 
+    -->
     <button
       on:click={handleCard}
-      class="absolute justify-end w-8 top-4 right-2 btn btn-circle btn-outline"
+      class="absolute justify-end w-8 top-4 right-2 btn btn-circle"
     >
       <i class="fa-solid fa-xmark"></i>
     </button>
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <!-- 
-          * Left Side Section 
-        -->
+        * Left Side Section 
+      -->
       <div class="col-span-1 p-2 m-1">
-        <h1 class="text-3xl text-center text-primary">Service</h1>
+        <h1 class="text-3xl text-center">Service</h1>
         <figure class="mb-2 border-b-2">
           <img
             src={image.img}
             alt={image.alt}
-            class="object-cover w-full h-64 mt-3 rounded-lg"
+            class="object-cover w-full h-64 mt-3 rounded-md"
           />
           <div class="mt-2">
             <h2 class="text-lg">Jardineria: rr43523454325</h2>
@@ -120,23 +120,23 @@
         <p class="mt-2 text-sm lg:text-base">{description}</p>
       </div>
       <!-- 
-          * Right Side Section 
-        -->
+        * Right Side Section 
+      -->
       <div class="col-span-1 p-2 m-1">
         <div class="grid grid-cols-3">
           <h1
-            class="col-span-3 text-3xl text-center text-primary lg:col-span-1 lg:col-start-2"
+            class="col-span-3 text-3xl text-center lg:col-span-1 lg:col-start-2"
           >
             Reviews
           </h1>
         </div>
 
         <div class="flex flex-col mt-2">
-          <div class="flex flex-col gap-1 overflow-y-auto h-[26rem]">
+          <div class="flex flex-col gap-1 overflow-y-scroll element h-[26rem]">
             {#each reviews as review (review.id)}
               <!-- 
-                  * Review Cards Component 
-                -->
+                * Review Cards Component 
+              -->
               <ReviewCard
                 name={review.name}
                 id={review.id}
@@ -148,8 +148,8 @@
         </div>
       </div>
       <!-- 
-          * Action Buttons 
-        -->
+        * Action Buttons 
+      -->
       <div
         class="flex justify-center w-full col-span-1 col-start-1 mt-2 sm:col-span-2 sm:col-start-1 sm:mt-4 sm:flex-row"
       >

@@ -6,11 +6,11 @@
   </script>
   
   <div
-    class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto rounded-md text-primary-content sm:p-10"
+    class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto rounded-md text-primary sm:p-10"
   >
     <div class="mb-8 text-center">
       <h1 class="my-3 text-4xl font-bold">Request Created Successfully</h1>
-      <p class="text-sm text-teal-600">
+      <p class="text-sm text-primary">
         Your request has been successfully submitted.
       </p>
     </div>
