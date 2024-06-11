@@ -1,6 +1,6 @@
 <!-- Revised: Alfre - Remember to move/rename this where it belongs: Promote from search -->
 <script>
-  import ReviewCard from "../components/ReviewCard.svelte";
+  import ReviewCard from "../../components/ReviewCard.svelte";
 
   /**
    * ! Test data
