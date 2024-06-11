@@ -23,13 +23,32 @@
         console.log(".then() Response Log: ", $response);
       })
       .catch((axiosError) => {
+        window.location.href = "/404";
         console.log(".catch() Error Log: ", axiosError);
       });
   });
 </script>
 
-{#if $response.data.results.id}
-  <h1 class="text-red-500 bg-black text-7xl">PLACEHOLDER</h1>
-{:else}
-  ID NOT PASSED
+{#if $response}
+  <!-- ServiceDetails Container -->
+  <div
+    class="flex flex-col items-center justify-center w-full m-auto bg-red-500"
+  >
+    <!-- ServiceDetails Flex Wrap -->
+    <div
+      class="flex flex-wrap items-center justify-center w-full m-auto md:max-w-7xl"
+    >
+      <!-- ServiceDetails Left -->
+      <div class="bg-blue-500 basis-full md:w-fit md:basis-1/2">I am blue</div>
+      <!-- Left -->
+
+      <!-- ServiceDetails Right -->
+      <div class="bg-yellow-500 basis-full md:w-fit md:basis-1/2">
+        I am yellow
+      </div>
+      <!-- Right -->
+    </div>
+    <!-- Flex Wrap -->
+  </div>
+  <!-- Container -->
 {/if}
