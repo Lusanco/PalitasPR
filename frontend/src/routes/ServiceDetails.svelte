@@ -108,6 +108,12 @@
       <!-- Right -->
     </div>
     <!-- Flex Wrap -->
+    <div
+      class="flex items-center justify-center w-10/12 gap-4 mx-4 md:w-11/12 md:max-w-6xl"
+    >
+      <button class="w-1/2 btn bg-stone-200">Cancel</button>
+      <button class="w-1/2 btn bg-stone-200">Accept</button>
+    </div>
   </div>
   <!-- Container -->
 {/if}

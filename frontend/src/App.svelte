@@ -28,6 +28,7 @@
   import ServiceDetails from "./routes/ServiceDetails.svelte";
   import DaisyServiceDetails from "./Daisy/DaisyRoutes/DaisyServiceDetails.svelte";
   import RequestDetails from "./routes/RequestDetails.svelte";
+  import ServiceOffers from "./routes/ServiceOffers.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -54,7 +55,7 @@
       <Route path="/faq" component={Faq} />
 
       <!-- Test Route -->
-      <Route path="/test" component={DaisyServiceDetails} />
+      <Route path="/test" component={ServiceOffers} />
     </Router>
   </Main>
   <Footer />
