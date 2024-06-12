@@ -56,6 +56,7 @@ class Town(BaseModelSerial, Base):
 class Review(BaseModel, Base):
     __tablename__ = "reviews"
 
+    task_id = Column(String, nullable=False)
     description = Column(String, nullable=False)
     rating = Column(Integer, nullable=False)
     pictures = Column(String(255))
@@ -63,14 +64,12 @@ class Review(BaseModel, Base):
 
 class Task(BaseModel, Base):
     __tablename__ = "tasks"
-
+    promo_id = Column(String)
     receiver_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     provider_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     service_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     status = Column(String(255), nullable=False, default="open")
     description = Column(String(255), nullable=False)
-    review_id = Column(String(255), ForeignKey("reviews.id"))
-
 
 class Promotion(BaseModel, Base):
     __tablename__ = "promotions"
