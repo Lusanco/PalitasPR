@@ -8,9 +8,11 @@
 </script>
 
 <!-- Link Start -->
-<a rel="noopener noreferrer" use:link {href}
-  ><li class={"list-none " + twcss}>
-    {name}
+<a rel="noopener noreferrer" use:link {href}>
+  <li class={"list-none " + twcss}>
+    <span class="px-2">
+      {name}
+    </span>
     <slot />
   </li>
 </a>
