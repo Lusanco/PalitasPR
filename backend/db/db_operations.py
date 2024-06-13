@@ -10,6 +10,7 @@ from sqlalchemy import func
 from unidecode import unidecode
 from aws_bucket import create_model_folder
 from db_init import get_session
+from aws_bucket import delete_model_folder
 from models import (
     User,
     Service,
@@ -21,6 +22,7 @@ from models import (
     Request,
     Request_Towns,
     Promotion,
+    Profile,
 ) 
 
 
@@ -35,7 +37,8 @@ class DBOperations:
                 'Review': Review,
                 'Task': Task,
                 'Promotion': Promotion,
-                'Request': Request 
+                'Request': Request,
+                'Profile': Profile
                 }
 
     def __init__(self):
@@ -155,67 +158,57 @@ class DBOperations:
             return None
 
 
-    # def delete(self, data):
-    #       """
-    #         Delete objects and handle if the object has relationship
-    #         Usage:  {'object_id': {'parameter1': 'value1', 'parameter2': 'value2'}}
-    #     """
-    #     session = get_session()
+    def delete_object(self, model, model_id, user_id):
+            """
+            Delete a promotion, request, or picture associated with the user.
+            """
+            allowed_models = ['Promotion', 'Request', 'Profile']
+            if model not in allowed_models:
+                return {'error': 'Invalid model'}, 400
 
-    #     model_name = list(data.keys())[0]
-    #     model_class = self.classes_dict.get(model_name)
-    #     if not model_class:
-    #         print("\nInvalid model name.\n")
-    #         return None
+            # if model == 'Profile':
+            #     # Handle deletion of the user's profile
+            #     profile_obj = self.session.query(Profile).filter_by(id=user_id).first()
+            #     if not profile_obj:
+            #         return {'error': f'No profile found for user {user_id}'}, 404
 
-    #     inner_dict = data[model_name]
-    #     query = session.query(model_class)
+            #     try:
+            #         self.session.delete(profile_obj)
+            #         self.session.commit()
+            #     except SQLAlchemyError as e:
+            #         self.session.rollback()
+            #         return {'error': str(e)}, 500
 
-    #     for key, value in inner_dict.items():
-    #         column = getattr(model_class, key, None)
-    #         if column is not None:
-    #             query = query.filter(getattr(model_class, key) == value)
-    #         else:
-    #             print(f"\nInvalid attribute '{key}' for model '{model_name}'.\n")
-    #             return None
+            #     try:
+            #         # Delete user's profile folder from AWS S3
+            #         delete_model_folder(user_id, 'Profile', user_id)
+            #     except Exception as e:
+            #         return {'error': str(e)}, 500
 
-    #     objs_to_delete = query.all()
-    #     if not objs_to_delete:
-    #         print("No object found to delete.\n")
-    #         return True
+            #     return {'message': 'Profile deleted successfully'}, 200
 
-    #     for obj in objs_to_delete:
-    #         if model_name == 'User':
-    #             password = input("Enter your password to confirm delete: ")
-    #             if not self.confirm_password(obj, password):
-    #                 print("Incorrect password.")
-    #                 return False
-    #             else:
-    #                 # Print the user's first name and last name when deleted
-    #                 print(f"User {obj.first_name} {obj.last_name} deleted.")
+            model_class = self.classes_dict.get(model)
+            if not model_class:
+                return {'error': f'No model found with name {model}'}, 400
 
-    #         if model_name == 'Service' and 'user_id' in inner_dict:
-    #             # If the model is 'Service' and user_id is provided,
-    #             # delete the associated UserServiceAssoc object for the specific user
-    #             assoc_obj = session.query(UserServiceAssoc) \
-    #                 .filter(UserServiceAssoc.service_id == obj.id,
-    #                         UserServiceAssoc.user_id == inner_dict['user_id']).all()
+            obj = self.session.query(model_class).filter_by(id=model_id, user_id=user_id).first()
+            if not obj:
+                return {'error': f'No {model} found with ID {model_id} for user {user_id}'}, 404
 
-    #             if assoc_obj:
-    #                 for obj in assoc_obj:
-    #                     session.delete(obj)
-    #         else:
-    #             # Delete all associated UserServiceAssoc objects first
-    #             assoc_objs = session.query(UserServiceAssoc) \
-    #                 .filter(UserServiceAssoc.user_id == obj.id).all()
-    #             for assoc_obj in assoc_objs:
-    #                 session.delete(assoc_obj)
+            try:
+                self.session.delete(obj)
+                self.session.commit()
+            except SQLAlchemyError as e:
+                self.session.rollback()
+                return {'error': str(e)}, 500
 
-    #             # Delete the filtered objects themselves
-    #             session.delete(obj)
+            if model in ['Promotion', 'Request', 'Profile']:
+                try:
+                    delete_model_folder(user_id, model, model_id)
+                except Exception as e:
+                    return {'error': str(e)}, 500
 
-    #     session.commit()
-    #     return True
+            return {'message': f'{model} with ID {model_id} deleted successfully'}, 200
 
 
     # async def reset_password(self, data):
@@ -247,21 +240,3 @@ class DBOperations:
 
     #     asyncio.create_task(send_confirm_email(user.email, "Your password has been reset"))
     #     return {"result": "Password reset successfully"}, 200
-
-
-    # async def my_reviews(self, user_id):
-    #     """
-    #     Retrieve reviews for a user.
-    #     """
-    #     session = get_session()
-    #     rows = session.query(
-    #         Review.id,
-    #         Review.comment,
-    #         Review.rating,
-    #         Review.created_at,
-    #         Service.name,
-    #     ).select_from(Review).join(Service, Review.service_id == Service.id).filter(
-    #         Review.user_id == user_id
-    #     ).order_by(Review.created_at).all()
-
-    #     return [{"id": row.id, "comment": row.comment, "rating": row.rating, "created_at": row.created_at, "service": row.name} for row in rows]

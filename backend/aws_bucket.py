@@ -233,6 +233,10 @@ def get_picture(user_id: str, model: str, model_id: str, pic_name: str):
         # Attempt to get the object
         response = s3_client.get_object(Bucket='palitas-pics', Key=path)
         
+        response = s3_client.generate_presigned_url('get_object',
+                                                    Params={'Bucket': 'palitas-pics', 'Key': path},
+                                                    ExpiresIn=3600)
+
         return ({'results': response}, 200)
 
     except ClientError as e:

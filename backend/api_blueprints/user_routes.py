@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request, make_response, session
 from db.db_user import Db_user
+from db.db_operations import DBOperations
 import emails
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 
 user_bp = Blueprint('user', __name__)
 
@@ -57,3 +58,25 @@ def logout():
     logout_user()
     return make_response(jsonify({'results':'Logged out'}), 200)
 
+
+@user_bp.route('/delete/<model>/<model_id>', methods=['DELETE'])
+@login_required
+def delete_object(model, model_id):
+    """
+    Delete a promotion, request, or picture associated with the current user.
+    """
+    # if model == 'Profile':
+    #     model_id = current_user.id
+    response, status = DBOperations().delete_object(model, model_id, current_user.id)
+    return make_response(jsonify(response), status)
+
+# WORKING DOWN HERE NEED TESTING
+@user_bp.route('/initial-contacts', methods=['GET'])
+@login_required
+def get_contacts():
+    '''
+        Get all initial contact messages sent to a service provider by a
+        requester
+    '''
+    response, status = Db_user().get_initial_contacts(current_user.id)
+    return make_response(jsonify(response), status)

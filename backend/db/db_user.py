@@ -7,7 +7,7 @@ from email_validator import validate_email, EmailNotValidError
 from db_init import get_session
 from db.db_operations import DBOperations
 import bcrypt
-from models import User
+from models import User, Initial_Contact
 
 
 class Db_user:
@@ -90,3 +90,26 @@ class Db_user:
         # Assuming self.new is a method that handles the creation of a new user
         response, status = DBOperations().new({"User": dict_of_user})
         return response, status
+
+    # WORKING DOWN HEERE NEED TEST
+    def get_initial_contacts(self, user_id):
+        """
+            get all initial contact messages user has received
+        """
+        all_initial_contacts = []
+
+        initialContacts = self.session.query(Initial_Contact).filter(Initial_Contact.receiver_id==user_id).all()
+        if not initialContacts:
+            return {'results': []}, 200
+
+        for initialContact in initialContacts:
+            contact_dict = {}
+            contact_dict.update(initialContact.all_columns())
+
+            sender = initialContact.sender
+            contact_dict['sender_first_name'] = sender.first_name
+            contact_dict['sender_last_name'] = sender.last_name
+            contact_dict['sender_email']= sender.email
+
+            all_initial_contacts.append(contact_dict)
+        return {'results': all_initial_contacts}, 200
