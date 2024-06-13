@@ -242,19 +242,39 @@ class DBOperations:
     #     return {"result": "Password reset successfully"}, 200
 
 
-    # async def my_reviews(self, user_id):
-    #     """
-    #     Retrieve reviews for a user.
-    #     """
-    #     session = get_session()
-    #     rows = session.query(
-    #         Review.id,
-    #         Review.comment,
-    #         Review.rating,
-    #         Review.created_at,
-    #         Service.name,
-    #     ).select_from(Review).join(Service, Review.service_id == Service.id).filter(
-    #         Review.user_id == user_id
-    #     ).order_by(Review.created_at).all()
+    def get_task_reviews(self, promo_id):
+        """
+        Retrieves reviews for a specific promo.
 
-    #     return [{"id": row.id, "comment": row.comment, "rating": row.rating, "created_at": row.created_at, "service": row.name} for row in rows]
+        Args:
+            promo_id (str): The ID of the promo.
+
+        Returns:
+            list: A list of dictionaries containing review details.
+        """
+        reviews = (
+            self.session.query(
+                Review.id,
+                Review.description,
+                Review.rating,
+                Review.pictures,
+                Review.created_at
+            )
+            .join(Task, Review.task_id == Task.id)
+            .join(Promotion, Task.promo_id == Promotion.id)
+            .filter(Promotion.id == promo_id)
+            .all()
+        )
+
+        review_list = []
+        for review in reviews:
+            review_dict = {
+                'id': review.id,
+                'description': review.description,
+                'rating': review.rating,
+                'pictures': review.pictures,
+                'created_at': review.created_at.strftime("%Y-%m-%d %H:%M:%S")
+            }
+            review_list.append(review_dict)
+
+        return review_list

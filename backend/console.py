@@ -257,5 +257,31 @@ class DBConsole(cmd.Cmd):
             delete a model folder (Promotion, Request, Task, Review)
         '''
         response2 = aws_bucket.delete_model_folder('007', 'Promotion', '005')
+
+    def do_promo_reviews(self, args):
+        """
+        View all reviews for a specific task.
+        Usage: view_task_reviews <task_id>
+        Example: view_task_reviews abc123
+        """
+        arg_list = shlex.split(args)
+        if len(arg_list) == 1:
+            promo_id = arg_list[0]
+            reviews = db.get_task_reviews(promo_id)
+            if reviews:
+                print(f"Reviews for Task ID {promo_id}:")
+                for review in reviews:
+                    print(f"ReviewID: {review['id']}")
+                    print(f"Description: {review['description']}")
+                    print(f"Rating: {review['rating']}")
+                    print(f"Pictures: {review['pictures']}")
+                    print(f"Created At: {review['created_at']}")
+                    print("-" * 20)
+            else:
+                print(f"No reviews found for Task ID {promo_id}")
+        else:
+            print("Invalid input. Usage: view_task_reviews <task_id>")
+
+
 if __name__ == '__main__':
     DBConsole().cmdloop()
