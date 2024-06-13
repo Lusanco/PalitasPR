@@ -26,6 +26,15 @@
         window.location.href = "/404";
         console.log(".catch() Error Log: ", axiosError);
       });
+    axios
+      .get(`/api/promotion/promo_review/${id}`)
+      .then((axiosResponse) => {
+        response.set(axiosResponse);
+        console.log(".then() Response 2 Log: ", $response);
+      })
+      .catch((axiosError) => {
+        console.log(".catch() Error Log: ", axiosError);
+      });
   });
 </script>
 
@@ -84,11 +93,11 @@
         <div
           class="flex flex-col gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96"
         >
-          {#each [1, 2, 3, 4, 5, 6, 7] as item}
+          <!-- {#each $response.data.results as review}
             <div class="p-4 shadow-md bg-stone-200 min-h-40 max-h-96">
-              Review Card
+              {review}
             </div>
-          {/each}
+          {/each} -->
         </div>
         <!-- 
       {
