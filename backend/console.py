@@ -6,12 +6,14 @@ import cmd
 import shlex
 from db.db_operations import DBOperations
 from db.db_user import Db_user
+from db.db_promotion import Db_promotion
 import aws_bucket
 import time
 import random
 
 db = DBOperations()
 db_user = Db_user()
+db_promo = Db_promotion()
 
 class DBConsole(cmd.Cmd):
     """Simple command line interpreter for DB Operations"""
@@ -267,7 +269,7 @@ class DBConsole(cmd.Cmd):
         arg_list = shlex.split(args)
         if len(arg_list) == 1:
             promo_id = arg_list[0]
-            reviews = db.get_task_reviews(promo_id)
+            reviews = db_promo.get_promo_reviews(promo_id)
             if reviews:
                 print(f"Reviews for Task ID {promo_id}:")
                 for review in reviews:

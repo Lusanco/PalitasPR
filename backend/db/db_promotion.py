@@ -11,7 +11,8 @@ from models import (
     Town,
     Promo_Towns,
     Promotion,
-    Promotion,
+    Review,
+    Task
 ) 
 
 
@@ -154,3 +155,39 @@ class Db_promotion:
             }
             promos_dict.append(inner_dict)
         return promos_dict
+
+    def get_promo_reviews(self, promo_id):
+        """
+        Retrieves reviews for a specific promo.
+
+        Args:
+            promo_id (str): The ID of the promo.
+
+        Returns:
+            list: A list of dictionaries containing review details.
+        """
+        reviews = (
+            self.session.query(
+                Review
+            )
+            .join(Task, Review.task_id == Task.id)
+            .join(Promotion, Task.promo_id == Promotion.id)
+            .filter(Promotion.id == promo_id)
+            .all()
+        )
+
+        review_list = []
+        for review in reviews:
+            user = review.reviewer
+            review_dict = {
+                'id': review.id,
+                'description': review.description,
+                'rating': review.rating,
+                'pictures': review.pictures,
+                'created_at': review.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                'first_name': user.first_name,
+                'last_name': user.last_name
+            }
+            review_list.append(review_dict)
+
+        return review_list

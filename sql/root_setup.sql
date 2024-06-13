@@ -79,6 +79,7 @@ CREATE Table initial_contacts (
 CREATE TABLE reviews (
     id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
     description Text NOT NULL,
+    user_id varchar(50) REFERENCES users(id),
     task_id VARCHAR(50) REFERENCES tasks(id) ON DELETE CASCADE,
     rating NUMERIC(2, 1) CHECK (rating >= 1 AND rating <= 5),
     pictures varchar(255),
@@ -914,125 +915,167 @@ JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
 WHERE p.title = 'Artistic Painting Services';
 
 -- Inserting reviews for tasks related to promotions
-INSERT INTO reviews (description, task_id, rating, pictures)
+
+-- Nightclubs and Weddings
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Awesome DJ performance, kept the party going!', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1), 
         5, 
-        'https://example.com/nightclub.jpg');
+        'https://example.com/nightclub.jpg',
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Urban DJ (Great mix of music, everyone enjoyed the beats.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Great mix of music, everyone enjoyed the beats.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Urban DJ' LIMIT 1), 
         4, 
-        NULL);
+        NULL,
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Urban DJ' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Urban DJ (Good communication and service from the DJ.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Good communication and service from the DJ.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK2 DESCRIPTION: Urban DJ' LIMIT 1), 
         4, 
-        NULL);
+        NULL,
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK2 DESCRIPTION: Urban DJ' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Urban DJ (Diverse music selection, accommodated all requests.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Diverse music selection, accommodated all requests.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK3 DESCRIPTION: Urban DJ' LIMIT 1), 
         5, 
-        NULL);
+        NULL,
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK3 DESCRIPTION: Urban DJ' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Urban DJ (Professional setup, created a lively atmosphere.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Professional setup, created a lively atmosphere.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK4 DESCRIPTION: Urban DJ' LIMIT 1), 
         4, 
-        NULL);
+        NULL,
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK4 DESCRIPTION: Urban DJ' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Special Gardening Offer (Beautiful garden transformation, very pleased.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Beautiful garden transformation, very pleased.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Special Gardening Offer' LIMIT 1), 
         5, 
-        'https://example.com/garden2.jpg');
+        'https://example.com/garden2.jpg',
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Special Gardening Offer' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Special Gardening Offer (Highly recommend their gardening services.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Highly recommend their gardening services.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK2 DESCRIPTION: Special Gardening Offer' LIMIT 1), 
         5, 
-        NULL);
+        NULL,
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK2 DESCRIPTION: Special Gardening Offer' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Special Gardening Offer (Efficient work, completed the job on time.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Efficient work, completed the job on time.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK3 DESCRIPTION: Special Gardening Offer' LIMIT 1), 
         4, 
-        NULL);
+        NULL,
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK3 DESCRIPTION: Special Gardening Offer' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- New Styles Modern (Stunning hairstyle, exactly what I wanted!)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Stunning hairstyle, exactly what I wanted!', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: New Styles Modern' LIMIT 1), 
         5, 
-        'https://example.com/hairstyle2.jpg');
+        'https://example.com/hairstyle2.jpg',
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: New Styles Modern' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Best Styles in Town (Great consultation, got the perfect hairstyle.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Great consultation, got the perfect hairstyle.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Best Styles in Town' LIMIT 1), 
         4, 
-        NULL);
+        NULL,
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Best Styles in Town' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Nail Art Extravaganza (Creative nail designs, exceeded expectations!)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Creative nail designs, exceeded expectations!', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nail Art Extravaganza' LIMIT 1), 
         5, 
-        'https://example.com/nails.jpg');
+        'https://example.com/nails.jpg',
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nail Art Extravaganza' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Spotless Cleaning Service (Thorough cleaning job, everything looks pristine.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Thorough cleaning job, everything looks pristine.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Spotless Cleaning Service' LIMIT 1), 
         5, 
-        NULL);
+        NULL,
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Spotless Cleaning Service' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Pet Paradise Retreat (Pets were happy and well cared for.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Pets were happy and well cared for.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Pet Paradise Retreat' LIMIT 1), 
         4, 
-        NULL);
+        NULL,
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Pet Paradise Retreat' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Premium Car Wash & Detailing (Car looks brand new after the detailing.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Car looks brand new after the detailing.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Premium Car Wash & Detailing' LIMIT 1), 
         5, 
-        'https://example.com/car2.jpg');
+        'https://example.com/car2.jpg',
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Premium Car Wash & Detailing' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Landscaping Masterpieces (Beautiful landscaping design, very professional.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Beautiful landscaping design, very professional.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Landscaping Masterpieces' LIMIT 1), 
         5, 
-        NULL);
+        NULL,
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Landscaping Masterpieces' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Expert Plumbing Solutions (Fixed the plumbing issue quickly and effectively.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Fixed the plumbing issue quickly and effectively.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Expert Plumbing Solutions' LIMIT 1), 
         4, 
-        NULL);
+        NULL,
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Expert Plumbing Solutions' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Gourmet Catering Experience (Delicious food, everyone enjoyed the catering.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Delicious food, everyone enjoyed the catering.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Gourmet Catering Experience' LIMIT 1), 
         5, 
-        'https://example.com/catering2.jpg');
+        'https://example.com/catering2.jpg',
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Gourmet Catering Experience' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Ultimate Party DJ (DJ created a fantastic atmosphere for the party.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('DJ created a fantastic atmosphere for the party.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Ultimate Party DJ' LIMIT 1), 
         5, 
-        NULL);
+        NULL,
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Ultimate Party DJ' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Professional Electrical Solutions (Resolved electrical issues efficiently.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Resolved electrical issues efficiently.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Professional Electrical Solutions' LIMIT 1), 
         4, 
-        NULL);
+        NULL,
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Professional Electrical Solutions' LIMIT 1));
 
-INSERT INTO reviews (description, task_id, rating, pictures)
+-- Artistic Painting Services (Transformed the space with creative painting.)
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Transformed the space with creative painting.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Artistic Painting Services' LIMIT 1), 
         5, 
-        'https://example.com/painting2.jpg');
+        'https://example.com/painting2.jpg',
+        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Artistic Painting Services' LIMIT 1));
+
 
 -- Inserts into initial_contacts
 

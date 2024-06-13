@@ -7,6 +7,7 @@ from db.db_operations import DBOperations
 from api_blueprints.api_blueprint import api_bp
 from api_blueprints.dashboard_bp import my_bp
 from api_blueprints.user_routes import user_bp
+from api_blueprints.promotion_routes import promotion_bp
 from flask_mail import Mail
 from flask_login import LoginManager
 from datetime import timedelta
@@ -23,6 +24,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15)
 app.register_blueprint(api_bp, url_prefix='/api')
 app.register_blueprint(my_bp, url_prefix='/api/dashboard')
 app.register_blueprint(user_bp, url_prefix='/api/user')
+app.register_blueprint(promotion_bp, url_prefix='/api/promotion')
 mail = Mail(app)
 login_manager = LoginManager(app)
 

@@ -56,10 +56,13 @@ class Town(BaseModelSerial, Base):
 class Review(BaseModel, Base):
     __tablename__ = "reviews"
 
+    user_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     task_id = Column(String, nullable=False)
     description = Column(String, nullable=False)
     rating = Column(Integer, nullable=False)
     pictures = Column(String(255))
+
+    reviewer = relationship("User", foreign_keys=[user_id])
 
 # W)RKING DOWN HERE NEED TESTING
 class Initial_Contact(BaseModel, Base):
