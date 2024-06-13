@@ -30,8 +30,8 @@ CREATE TABLE users (
 -- Create table for Initial Contacts
 CREATE Table initial_contacts (
         id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
-        sender_id varchar(50) NOT NULL,
-        receiver_id varchar(50) NOT NULL,
+        sender_id varchar(50) REFERENCES users(id) NOT NULL,
+        receiver_id varchar(50) REFERENCES users(id) NOT NULL,
         read BOOLEAN DEFAULT False,
         sent_task BOOLEAN DEFAULT False,
         created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
