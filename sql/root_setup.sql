@@ -1,5 +1,6 @@
 -- Drop tables if they exist (for testing purposes)
 DROP TABLE IF EXISTS user_service_assoc;
+DROP TABLE IF EXISTS initial_contacts;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS tasks;
 DROP TABLE IF EXISTS request_towns;
@@ -24,6 +25,15 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create table for Initial Contacts
+CREATE Table initial_contacts (
+        id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+        sender_id varchar(50) NOT NULL,
+        receiver_id varchar(50) NOT NULL,
+        read BOOLEAN DEFAULT False,
+        sent_task BOOLEAN DEFAULT False
 );
 
 -- Create table for Service
@@ -54,6 +64,7 @@ CREATE TABLE tasks (
 	promo_id varchar(50) References promotions(id) ON DELETE CASCADE NOT NULL,
     provider_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     receiver_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    receiver_confirm BOOLEAN,
     service_id INT REFERENCES services(id) ON DELETE CASCADE NOT NULL,
     description Text NOT NULL,
     status VARCHAR(10) DEFAULT 'open' CHECK(status in ('open', 'closed', 'pending')),

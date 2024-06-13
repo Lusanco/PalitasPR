@@ -61,11 +61,25 @@ class Review(BaseModel, Base):
     rating = Column(Integer, nullable=False)
     pictures = Column(String(255))
 
+# W)RKING DOWN HERE NEED TESTING
+class Initial_Contact(BaseModel, Base):
+    __tablename__ = 'initial_contacts'
+
+    receiver_id = Column(String(255), ForeignKey("users.id"), nullable=False)
+    sender_id = Column(String(255), ForeignKey("users.id"), nullable=False)
+    read = Column(Boolean, default=False)
+    sent_task = Column(Boolean, default=False)
+
+    # Relationships
+    sender = relationship("User", foreign_keys=[sender_id])
+    receiver = relationship("User", foreign_keys=[receiver_id])
+
 
 class Task(BaseModel, Base):
     __tablename__ = "tasks"
     promo_id = Column(String)
     receiver_id = Column(String(255), ForeignKey("users.id"), nullable=False)
+    receiver_confirm = Column(Boolean)
     provider_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     service_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     status = Column(String(255), nullable=False, default="open")
