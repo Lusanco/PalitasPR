@@ -240,21 +240,3 @@ class DBOperations:
 
     #     asyncio.create_task(send_confirm_email(user.email, "Your password has been reset"))
     #     return {"result": "Password reset successfully"}, 200
-
-
-    # async def my_reviews(self, user_id):
-    #     """
-    #     Retrieve reviews for a user.
-    #     """
-    #     session = get_session()
-    #     rows = session.query(
-    #         Review.id,
-    #         Review.comment,
-    #         Review.rating,
-    #         Review.created_at,
-    #         Service.name,
-    #     ).select_from(Review).join(Service, Review.service_id == Service.id).filter(
-    #         Review.user_id == user_id
-    #     ).order_by(Review.created_at).all()
-
-    #     return [{"id": row.id, "comment": row.comment, "rating": row.rating, "created_at": row.created_at, "service": row.name} for row in rows]
