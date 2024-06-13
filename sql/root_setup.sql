@@ -33,7 +33,9 @@ CREATE Table initial_contacts (
         sender_id varchar(50) NOT NULL,
         receiver_id varchar(50) NOT NULL,
         read BOOLEAN DEFAULT False,
-        sent_task BOOLEAN DEFAULT False
+        sent_task BOOLEAN DEFAULT False,
+        created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create table for Service

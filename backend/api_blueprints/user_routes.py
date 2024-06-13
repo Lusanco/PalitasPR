@@ -71,12 +71,12 @@ def delete_object(model, model_id):
     return make_response(jsonify(response), status)
 
 # WORKING DOWN HERE NEED TESTING
-@user_bp.route('/initial-contacts', methods=['DELETE'])
+@user_bp.route('/initial-contacts', methods=['GET'])
 @login_required
 def get_contacts():
     '''
         Get all initial contact messages sent to a service provider by a
         requester
     '''
-    response, status = Db_user.get_initial_contacts(current_user.id)
+    response, status = Db_user().get_initial_contacts(current_user.id)
     return make_response(jsonify(response), status)

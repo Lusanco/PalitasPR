@@ -98,7 +98,7 @@ class Db_user:
         """
         all_initial_contacts = []
 
-        initialContacts = self.session.query(Initial_Contact).filter_by(Initial_Contact.receiver_id==user_id).all()
+        initialContacts = self.session.query(Initial_Contact).filter(Initial_Contact.receiver_id==user_id).all()
         if not initialContacts:
             return {'results': []}, 200
 
