@@ -27,17 +27,6 @@ CREATE TABLE users (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create table for Initial Contacts
-CREATE Table initial_contacts (
-        id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
-        sender_id varchar(50) REFERENCES users(id) NOT NULL,
-        receiver_id varchar(50) REFERENCES users(id) NOT NULL,
-        promo_id varchar(50) References promotions(id) ON DELETE CASCADE NOT NULL,
-        read BOOLEAN DEFAULT False,
-        sent_task BOOLEAN DEFAULT False,
-        created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
 
 -- Create table for Service
 CREATE TABLE services (
@@ -75,6 +64,17 @@ CREATE TABLE tasks (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create table for Initial Contacts
+CREATE Table initial_contacts (
+        id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+        sender_id varchar(50) REFERENCES users(id) NOT NULL,
+        receiver_id varchar(50) REFERENCES users(id) NOT NULL,
+        promo_id varchar(50) References promotions(id) ON DELETE CASCADE NOT NULL,
+        read BOOLEAN DEFAULT False,
+        sent_task BOOLEAN DEFAULT False,
+        created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 --  Create Table for reviews
 CREATE TABLE reviews (
     id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
@@ -1033,6 +1033,61 @@ VALUES ('Transformed the space with creative painting.',
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Artistic Painting Services' LIMIT 1), 
         5, 
         'https://example.com/painting2.jpg');
+
+-- Inserts into initial_contacts
+
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id)
+SELECT
+    u1.id AS sender_id,
+    u2.id AS receiver_id,
+    p.id AS promo_id
+FROM
+    users u1
+    JOIN users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver
+    JOIN promotions p ON p.title = 'Nightclubs and Weddings'
+WHERE
+    u1.first_name = 'Jane' AND u1.last_name = 'Smith' --Sender
+LIMIT 1;
+
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id)
+SELECT
+    u1.id AS sender_id,
+    u2.id AS receiver_id,
+    p.id AS promo_id
+FROM
+    users u1
+    JOIN users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver
+    JOIN promotions p ON p.title = 'Nightclubs and Weddings'
+WHERE
+    u1.first_name = 'David' AND u1.last_name = 'Wilson' --Sender
+LIMIT 1;
+
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id)
+SELECT
+    u1.id AS sender_id,
+    u2.id AS receiver_id,
+    p.id AS promo_id
+FROM
+    users u1
+    JOIN users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver
+    JOIN promotions p ON p.title = 'Nightclubs and Weddings'
+WHERE
+    u1.first_name = 'Miguel' AND u1.last_name = 'Diaz' --Sender
+LIMIT 1;
+
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id)
+SELECT
+    u1.id AS sender_id,
+    u2.id AS receiver_id,
+    p.id AS promo_id
+FROM
+    users u1
+    JOIN users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver
+    JOIN promotions p ON p.title = 'Nightclubs and Weddings'
+WHERE
+    u1.first_name = 'Alice' AND u1.last_name = 'Brown' --Sender
+LIMIT 1;
+
 
 -- Output confirmation
 SELECT 'Tables created and populated successfully' AS Status;

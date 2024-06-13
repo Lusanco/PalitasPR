@@ -104,7 +104,7 @@ class Db_user:
 
         for initialContact in initialContacts:
             contact_dict = {}
-            contact_dict.copy(initialContact.all_columns())
+            contact_dict.update(initialContact.all_columns())
 
             sender = initialContact.sender
             contact_dict['sender_first_name'] = sender.first_name
