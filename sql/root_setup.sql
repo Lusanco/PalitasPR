@@ -126,8 +126,9 @@ CREATE TABLE request_towns (
 
 -- Create table for Profiles
 CREATE TABLE profiles (
-    id VARCHAR(50) PRIMARY KEY,
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
     bio TEXT,
+    user_id varchar REFERENCES users(id) NOT NULL,
     profile_pic VARCHAR(255),
     gallery VARCHAR(255),
     social_links TEXT,
@@ -1131,6 +1132,8 @@ WHERE
     u1.first_name = 'Alice' AND u1.last_name = 'Brown' --Sender
 LIMIT 1;
 
+-- Populate Profiles table
+INSERT INTO profiles(user_id, bio)
 
 -- Output confirmation
 SELECT 'Tables created and populated successfully' AS Status;
