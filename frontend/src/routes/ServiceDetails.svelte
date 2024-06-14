@@ -2,6 +2,10 @@
   import { onMount } from "svelte";
   import axios from "axios";
   import { response } from "../scripts/stores";
+  import { writable } from "svelte/store";
+
+  const response1 = writable(null);
+  const response2 = writable(null);
 
   let id;
   let currentUrl;
@@ -20,7 +24,8 @@
       .get(`/api/Promotion/${id}`)
       .then((axiosResponse) => {
         response.set(axiosResponse);
-        console.log(".then() Response Log: ", $response);
+        response1.set(axiosResponse.data);
+        console.log(".then() Response Log: ", $response1);
       })
       .catch((axiosError) => {
         window.location.href = "/404";
@@ -30,7 +35,8 @@
       .get(`/api/promotion/promo_review/${id}`)
       .then((axiosResponse) => {
         response.set(axiosResponse);
-        console.log(".then() Response 2 Log: ", $response);
+        response2.set(axiosResponse.data);
+        console.log(".then() Response 2 Log: ", $response2);
       })
       .catch((axiosError) => {
         console.log(".catch() Error Log: ", axiosError);
@@ -38,7 +44,7 @@
   });
 </script>
 
-{#if $response}
+{#if $response1 && $response2}
   <!-- ServiceDetails Container -->
   <div
     class="flex flex-col items-center justify-center w-full h-full min-h-screen py-20 m-auto"
@@ -52,34 +58,20 @@
         class="h-full gap-1 p-4 rounded-none card md:border-r-2 min-h-96 md:border-stone-700 basis-full md:w-fit md:basis-1/2"
       >
         <h1 class="self-center text-3xl card-title">
-          {$response.data.results.title}
+          {$response1.results.title}
         </h1>
         <br />
         <div
           class="flex flex-col overflow-hidden overflow-y-scroll min-h-96 h-96 element"
         >
           <div class="self-center w-full h-40 rounded-none skeleton"></div>
-          <h2>User: {$response.data.results.user_id}</h2>
-          <h3>Service: {$response.data.results.service_id}</h3>
+          <h2>User: {$response1.results.user_id}</h2>
+          <h3>Service: {$response1.results.service_id}</h3>
           <hr class="text-stone-500" />
           <p class="self-center w-full text-justify min-h-40">
-            {$response.data.results.description}
+            {$response1.results.description}
           </p>
         </div>
-        <!-- 
-        {
-    "created_at": "Sat, 25 May 2024 21:28:42 GMT",
-    "description": "Get the latest mix trends and hits. If you are looking to get your clients invested in your business, give them the entertainment they deserve.",
-    "id": "2a39db46-59f4-42c2-9c1a-f14d63c4d7d9",
-    "pictures": null,
-    "price_max": 0,
-    "price_min": 0,
-    "service_id": 14,
-    "title": "Urban DJ",
-    "updated_at": "Sat, 25 May 2024 21:28:42 GMT",
-    "user_id": "9e85c86b-f7aa-4ace-a538-84c53585f4fe"
-}
-        -->
       </div>
       <!-- Left -->
 
@@ -93,26 +85,30 @@
         <div
           class="flex flex-col gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96"
         >
-          <!-- {#each $response.data.results as review}
-            <div class="p-4 shadow-md bg-stone-200 min-h-40 max-h-96">
-              {review}
+          {#each $response2.results as review}
+            <div
+              class="flex flex-col justify-between p-4 shadow-md bg-stone-200 min-h-40 max-h-96 card"
+            >
+              <div class="flex justify-between gap-2">
+                <div>
+                  {`${review.first_name} ${review.last_name}`}
+                </div>
+                <div>{`${review.rating}/5.0`}</div>
+              </div>
+              <div class="h-full line-clamp-4 overflow-ellipsis">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
+                consequuntur beatae nostrum ullam aperiam, magnam veritatis
+                error mollitia, minus laudantium sunt quaerat maxime voluptatem
+                voluptate officiis vitae culpa suscipit blanditiis!
+                <!-- {review.description} -->
+              </div>
+              <div class="flex justify-between gap-2">
+                <div>{review.created_at}</div>
+                <button class="absolute btn right-4 bottom-4">Images</button>
+              </div>
             </div>
-          {/each} -->
+          {/each}
         </div>
-        <!-- 
-      {
-  "created_at": "Sat, 25 May 2024 21:28:42 GMT",
-  "description": "Get the latest mix trends and hits. If you are looking to get your clients invested in your business, give them the entertainment they deserve.",
-  "id": "2a39db46-59f4-42c2-9c1a-f14d63c4d7d9",
-  "pictures": null,
-  "price_max": 0,
-  "price_min": 0,
-  "service_id": 14,
-  "title": "Urban DJ",
-  "updated_at": "Sat, 25 May 2024 21:28:42 GMT",
-  "user_id": "9e85c86b-f7aa-4ace-a538-84c53585f4fe"
-}
-      -->
       </div>
       <!-- Right -->
     </div>
