@@ -104,7 +104,6 @@ def get_profile(profile_id):
     '''
         Get a user's profile(not your own)
     '''
-    print(f'my profile id is: {profile_id}')
     profile = DBOperations().search('Profile', profile_id)
     if not profile:
         return make_response(jsonify({'error': 'Profile does not exist'}), 404)
