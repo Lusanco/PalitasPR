@@ -1,4 +1,3 @@
-<!-- REVIEWS - JOB RATING: rename/move to it appropiate place -->
 <script>
   /**
    * ? User data
@@ -33,9 +32,7 @@
 <!-- 
   ? Container
 -->
-<div
-  class="flex flex-col items-center justify-center min-h-screen p-6 md:p-12 bg-base-200"
->
+<div class="flex flex-col items-center justify-center min-h-screen p-6 md:p-12 bg-base-200">
   <!-- 
     * Card 
   -->
@@ -56,7 +53,7 @@
     <!--
       * Review Box
     -->
-    <div class="p-4 my-2 rounded bg-base-200">
+    <div class="p-4 my-2 rounded bg-stone-200">
       <p class="text-wrap">
         {review}
       </p>
@@ -80,7 +77,7 @@
       -->
       <div>
         <button
-          class="flex p-2 px-6 mt-4 text-white btn btn-primary"
+          class="flex p-2 px-6 mt-4 text-white rounded-md btn bg-stone-600 hover:bg-stone-700"
           ><i class="block p-1 fa-solid fa-xmark md:hidden"></i>
           <span class="hidden md:block">Close</span></button
         >
@@ -88,5 +85,3 @@
     </div>
   </div>
 </div>
-
-<style></style>

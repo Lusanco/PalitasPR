@@ -8,9 +8,9 @@
   class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto rounded-md text-stone-800 sm:p-10 bg-base-200"
 >
   <div class="mb-8 text-center">
-    <h1 class="my-3 text-4xl font-bold">Request Created Successfully</h1>
+    <h1 class="my-3 text-4xl font-bold">Service Created Successfully</h1>
     <p class="text-sm text-stone-600">
-      Your request has been successfully submitted.
+      Your service has been successfully submitted.
     </p>
   </div>
   <div class="space-y-2">
