@@ -68,6 +68,7 @@
           <h2>User: {$response1.results.user_id}</h2>
           <h3>Service: {$response1.results.service_id}</h3>
           <hr class="text-stone-500" />
+          <br />
           <p class="self-center w-full text-justify min-h-40">
             {$response1.results.description}
           </p>
@@ -95,15 +96,14 @@
                 </div>
                 <div>{`${review.rating}/5.0`}</div>
               </div>
-              <div class="h-full line-clamp-4 overflow-ellipsis">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-                consequuntur beatae nostrum ullam aperiam, magnam veritatis
-                error mollitia, minus laudantium sunt quaerat maxime voluptatem
-                voluptate officiis vitae culpa suscipit blanditiis!
-                <!-- {review.description} -->
+              <br />
+              <div class="h-full text-justify line-clamp-6 overflow-ellipsis">
+                {review.description}
               </div>
+              <br />
+              <br />
               <div class="flex justify-between gap-2">
-                <div>{review.created_at}</div>
+                <div class="">{review.created_at}</div>
                 <button class="absolute btn right-4 bottom-4">Images</button>
               </div>
             </div>
