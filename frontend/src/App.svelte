@@ -30,6 +30,7 @@
   import RequestDetails from "./routes/RequestDetails.svelte";
   import ServiceOffers from "./routes/ServiceOffers.svelte";
   import MockServiceDetails from "./Daisy/DaisyRoutes/MockServiceDetails.svelte";
+  import NotFound from "./routes/NotFound.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -54,6 +55,7 @@
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/faq" component={Faq} />
+      <Route path="/404" component={NotFound} />
 
       <!-- Test Route -->
       <!-- <Route path="/test" component={MockServiceDetails} /> -->
