@@ -1,8 +1,4 @@
 <!-- Profile component -->
-<!-- Remove likes and the ability to leave messages
-    and add people, this is not a social app like
-    facebook, but retain the ability to follow/star
-    service or people, not both for mvp -->
 <script>
   import { slide } from "svelte/transition";
   import { onMount } from "svelte";
@@ -14,6 +10,7 @@
   import pic4 from "../images/gallGrid_4.jpg";
   import pic5 from "../images/gallGrid_5.jpg";
   import pic6 from "../images/gallGrid_6.jpg";
+  import axios from "axios";
 
   let name = "Alfredo Santiago";
   let provServ = "Landscaper";
@@ -55,428 +52,142 @@
   }
 
   onMount(() => {
-    intervalId = setInterval(nextReview, 5000);
+    // axios.get("");
   });
 </script>
 
-<!--* Profile Body -->
-<body class="h-screen font-mono">
-  <div class="profileContainer py-3 px-[5%] text-[#626262] bg-slate-100">
-    <img
-      src={banner}
-      alt="Banner"
-      class="w-full mb-4 rounded-md sm:h-80 md:h-96 lg:h-96 xl:h-96"
-    />
-    <!--* Profile Details -->
-    <div
-      class="flex items-start justify-between p-5 mb-4 bg-white rounded-md shadow-md profileDetails"
-    >
-      <div class="w-full">
-        <div class="pd">
-          <div class="flex items-start pdRow">
-            <img
-              src={profilePic}
-              alt="User Pic"
-              class="w-24 mr-4 rounded-md pdImg"
-            />
-            <div class="flex justify-between w-full">
-              <div>
-                <h3 class="py-[7px] text-2xl font-semibold">{name}</h3>
+<div
+  class="flex flex-col items-center justify-center max-w-5xl mx-auto text-stone-700 bg-base-200"
+>
+  <div class="w-full rounded-none h-96 skeleton"></div>
 
-                <p class="text-sm">{provServ}</p>
-                <p class="text-sm">
-                  <i class="fa-solid fa-star"></i>
-                  <span>{userRating} • {jobsCount}</span>
-                </p>
-              </div>
-              <div class="relative flex justify-end bottom-8">
-                <button type="button" class="pr-2 text-black">
-                  <i
-                    class="invisible md:visible lg:visible xl:visible fa-solid fa-ellipsis"
-                  ></i>
-                </button>
-              </div>
-              <!-- <p id="clientsCount" class="text-sm text-center"></p> -->
-              <!-- <div class="flex justify-between pdClients">
-                <img
-                  src="images/images/member-1.png"
-                  alt=""
-                  class="w-6 mt-2 rounded-full"
-                />
-                <img
-                  src="images/images/member-2.png"
-                  alt=""
-                  class="w-6 mt-2 rounded-full"
-                />
-                <img
-                  src="images/images/member-3.png"
-                  alt=""
-                  class="w-6 mt-2 rounded-full"
-                />
-                <img
-                  src="images/images/member-4.png"
-                  alt=""
-                  class="w-6 mt-2 rounded-full"
-                />
-              </div> -->
-            </div>
-          </div>
+  <div class="p-5 mb-4 bg-white rounded-md shadow-md">
+    <div class="flex flex-col justify-between md:flex-row md:items-start">
+      <div
+        class="w-24 h-24 mb-4 mr-4 bg-gray-200 rounded-md skeleton md:mb-0"
+      ></div>
+      <div class="flex-1 md:mr-4">
+        <h3 class="py-2 text-2xl font-semibold">{name}</h3>
+        <p class="text-sm">{provServ}</p>
+        <p class="text-sm">
+          <i class="fa-solid fa-star"></i>
+          <span>{userRating} • {jobsCount} Jobs</span>
+        </p>
+      </div>
+      <div class="flex-1 mb-4 md:mb-0">
+        <h3 class="text-xl font-bold border-b-2">About me</h3>
+        <div class="pt-3">
+          <i class="fa-solid fa-location-dot"></i>
+          <span>{userTown}</span>
         </div>
-        <div class="flex justify-center gap-2 mt-4">
-          <button
-            type="button"
-            class="w-full p-2 text-black bg-gray-100 rounded-lg shadow-sm hover:bg-gray-300"
-          >
-            <i class="text-xs fa-solid fa-user-plus"></i>
-          </button>
-          <button
-            type="button"
-            class="w-full p-2 text-black bg-gray-100 rounded-lg shadow-sm hover:bg-gray-300"
-          >
-            <i class="text-xs fa-solid fa-message"></i>
-          </button>
+        <div>
+          <i class="pr-2 fa-solid fa-check"></i>Completed jobs:
+          <span>{jobsCount}</span>
         </div>
-        <button
-          type="button"
-          class="w-full p-2 mt-2 text-white bg-green-800 rounded-lg shadow-sm sm:block md:hidden lg:hidden xl:hidden 2xl:hidden hover:bg-green-900"
-          >Gallery
-        </button>
+        <div class="flex mt-4">
+          <a
+            href="https://www.instagram.com/tuUsuario/"
+            class="mr-4"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a
+            href="https://www.facebook.com/tuUsuario"
+            class="mr-4"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a
+            href="https://twitter.com/tuUsuario"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fab fa-twitter"></i>
+          </a>
+        </div>
       </div>
     </div>
-    <!--* Profile Info -->
-    <div class="profileInfo">
-      <div class="gap-4 md:flex sm:grid lg:grid-cols-3">
-        <div class="items-center w-full col-span-1 infoCol">
-          <!--* User Info Containers -->
-          <!--* User About Me -->
-          <div
-            class="w-full p-4 mx-0 my-5 bg-white rounded-md shadow-md userInfoContainer"
-          >
-            <div class="aboutHeader">
-              <h3 class="text-xl font-bold border-b-2">About me</h3>
-              <div class="pt-3">
-                <i class="fa-solid fa-location-dot"></i>
-                <span>{userTown}</span>
-              </div>
-              <div class="">
-                <i class="pr-2 fa-solid fa-check"></i>Completed jobs:
-                <span>{jobsCount}</span>
-              </div>
-            </div>
-          </div>
-          <!--* User Description -->
-          <div
-            class="w-full p-4 mx-0 my-5 bg-white rounded-md shadow-md userDescriptionContainer"
-          >
-            <div class="userDescriptionHeader">
-              <h3 class="text-xl font-bold border-b-2">Description</h3>
-              <div class="pt-3">
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab
-                  repudiandae, nemo animi amet unde modi, consectetur voluptas
-                  quae, iusto facilis dolor architecto! Sequi praesentium quidem
-                  autem temporibus inventore iste eius.
-                </p>
-              </div>
-            </div>
-          </div>
-          <!--* User Social Links -->
-          <div
-            class="w-full p-4 bg-white rounded-md shadow-md userSocialsContainer"
-          >
-            <h3 class="text-xl font-bold border-b-2">Socials</h3>
-            <ul class="flex flex-col justify-start pt-3">
-              <li>
-                <button>
-                  <a
-                    href="https://www.facebook.com/"
-                    class="hover:text-green-800"
-                    ><i class="fa-brands fa-square-facebook"></i> Facebook</a
-                  >
-                </button>
-              </li>
-              <li>
-                <button>
-                  <a
-                    href="https://www.instagram.com/"
-                    class="hover:text-green-800"
-                    ><i class="fa-brands fa-instagram"></i> Instagram</a
-                  >
-                </button>
-              </li>
-              <li>
-                <button>
-                  <a href="https://twitter.com/" class="hover:text-green-800"
-                    ><i class="fa-brands fa-square-twitter"></i> Twitter</a
-                  >
-                </button>
-              </li>
-            </ul>
-          </div>
-          <!--* User Gallery -->
-          <div
-            class="hidden w-full p-4 mx-0 my-5 bg-white rounded-md shadow-md userGalleryContainer md:block lg:block xl:block"
-          >
-            <div class="aboutHeader">
-              <h3 class="text-xl font-bold border-b-2">Gallery</h3>
 
-              <section class="">
-                <div class="container flex flex-col justify-center p-4 mx-auto">
-                  <div class="grid gap-2 lg:grid-cols-3 sm:grid-cols-3">
-                    <img
-                      class="object-cover w-full rounded-md aspect-square"
-                      alt=""
-                      src={pic4}
-                    />
-                    <img
-                      class="object-cover w-full rounded-md aspect-square"
-                      alt=""
-                      src={pic3}
-                    />
-                    <img
-                      class="object-cover w-full rounded-md aspect-square"
-                      alt=""
-                      src={pic6}
-                    />
-                  </div>
-                </div>
-              </section>
+    <div class="mt-4">
+      <p class="text-md">
+        Soy un apasionado del paisajismo con más de 10 años de experiencia,
+        dedicado a transformar espacios exteriores en lugares de belleza y
+        tranquilidad. Mi especialidad incluye diseño de jardines, mantenimiento
+        de césped y plantación de especies autóctonas. Comprometido con la
+        sostenibilidad y la creación de entornos verdes saludables para mis
+        clientes.
+      </p>
+    </div>
+  </div>
 
-              <button
-                type="button"
-                class="w-full p-3.5 mt-2 text-sm rounded-md shadow-sm hover:bg-slate-200 bg-slate-100"
-              >
-                See more
-              </button>
+  <!-- Sección de Reseñas -->
+  <div class="flex flex-col gap-4 mb-4 md:flex-row">
+    <div class="w-full p-5 bg-white rounded-md shadow-md md:w-1/2">
+      <h3 class="mb-3 text-xl font-bold border-b-2">Reseñas</h3>
+      <div class="flex flex-col gap-2 overflow-y-scroll min-h-96 h-96">
+        {#each reviews as review, index}
+          <div class="relative p-4 transition-all shadow-md bg-stone-200">
+            <div class="flex justify-between">
+              <div class="text-lg font-bold">{review.title}</div>
+              <div>{review.date}</div>
+            </div>
+            <div class="mb-12">
+              {#if 0 > 250}
+                {#if true}
+                  {review.review}
+                  <button class="mt-2 cursor-pointer text-stone-500">
+                    Show Less</button
+                  >
+                {:else}
+                  {review.review.slice(0, 180)}...
+                  <button class="mt-2 cursor-pointer text-stone-500">
+                    Show More</button
+                  >
+                {/if}
+              {:else}
+                {review.review}
+              {/if}
+            </div>
+            <div class="absolute text-sm bottom-2 left-2 text-stone-500">
+              {review.user_id}
+            </div>
+            <div class="absolute text-sm bottom-2 right-2 text-stone-500">
+              Rating: {review.rating}
             </div>
           </div>
-          <!--* User Reviews -->
-          <div
-            class="relative w-full p-4 mx-0 my-5 bg-white rounded-md shadow-md userInfoContainer"
-          >
-            <div class="reviewsHeader">
-              <h3 class="flex justify-between text-xl font-bold border-b-2">
-                Reviews <span class="text-sm"><a href="/">See all</a> </span>
-              </h3>
-              <div class="pt-3">
-                <div class="userReview">
-                  {#key reviews[currentIndex].reviewerName}
-                    <div
-                      transition:slide
-                      class="p-2 transition duration-300 rounded-md shadow-md reviewHeader bg-slate-100"
-                    >
-                      <div
-                        class="flex justify-between p-2 rounded-md bg-slate-200"
-                      >
-                        <h3 class="text-sm">
-                          {reviews[currentIndex].reviewerName}
-                        </h3>
-                        <p class="text-xs">
-                          {#each Array(reviews[currentIndex].reviewStars) as _, i}
-                            <i class="fa-solid fa-star" />
-                          {/each}
-                        </p>
-                      </div>
-                      <div class="flex justify-between">
-                        <p class="p-2 text-xs">
-                          {reviews[currentIndex].reviewText}
-                        </p>
-                      </div>
-                    </div>
-                  {/key}
-                </div>
-              </div>
-            </div>
-            <!-- <div class="flex items-center justify-center w-full gap-2 mt-2">
-              <div class="flex items-center justify-center w-full">
-                <button
-                  on:click={prevReview}
-                  class="w-full px-4 py-2 text-gray-800 bg-gray-300 rounded-l hover:bg-gray-400"
-                >
-                  Prev
-                </button>
-              </div>
-              <div class="flex items-center w-full">
-                <button
-                  on:click={nextReview}
-                  class="w-full px-4 py-2 text-gray-800 bg-gray-300 rounded-r hover:bg-gray-400"
-                >
-                  Next
-                </button>
-              </div>
-            </div> -->
-          </div>
+        {/each}
+      </div>
+    </div>
+
+    <!-- Galería con scroll vertical, mostrando dos imágenes por fila -->
+    <div class="w-full p-5 bg-white rounded-md shadow-md md:w-1/2">
+      <h3 class="mb-3 text-xl font-bold border-b-2">Galería</h3>
+      <div class="flex flex-col gap-2 overflow-y-scroll min-h-96 h-96">
+        <!-- Row 1 -->
+        <div class="flex gap-2">
+          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
+          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
         </div>
-        <div class="col-span-2 postCol">
-          <!--* Post Container -->
-          <div
-            class="w-full p-3 mx-0 my-5 bg-white rounded-md shadow-md postContainer"
-          >
-            <div class="flex items-start w-full gap-3 mb-2 postHeader">
-              <img
-                src={profilePic}
-                alt="User Pic"
-                class="w-16 rounded-md pdImg"
-              />
-              <div class="flex justify-between w-full">
-                <div>
-                  <h3 class="text-lg font-semibold text-wrap">
-                    {name}
-                  </h3>
-
-                  <p
-                    class="inline-block p-1 text-xs font-thin text-center text-white bg-green-800 rounded-lg whitespace-nowrap min-w-12 max-w-40"
-                  >
-                    {provServ}
-                  </p>
-                </div>
-                <div class="relative flex justify-end bottom-4">
-                  <button type="button" class="pr-2 text-black">
-                    <i class="fa-solid fa-ellipsis"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <p class="mb-2 text-sm text-wrap">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eveniet
-              cumque ratione id voluptates quae. Iure expedita quaerat possimus
-              optio adipisci laudantium? Vitae voluptas dignissimos iste rerum
-              deleniti voluptatum voluptates a.
-            </p>
-            <div class="grid grid-cols-3 gap-2 mb-2">
-              <img src={pic1} alt="" class="w-64 h-40 rounded-md" />
-              <img src={pic2} alt="" class="w-64 h-40 rounded-md" />
-              <img src={pic3} alt="" class="w-64 h-40 rounded-md" />
-            </div>
-            <div class="flex justify-center gap-2">
-              <button
-                type="button"
-                class="w-full p-2 text-black bg-gray-100 rounded-lg shadow-sm hover:bg-gray-300"
-              >
-                <i class="fa-regular fa-thumbs-up"></i>
-              </button>
-              <button
-                type="button"
-                class="w-full p-2 text-white bg-green-800 rounded-lg shadow-sm hover:bg-green-900"
-              >
-                <i class="text-xs fa-solid fa-message"></i>
-              </button>
-            </div>
-          </div>
-          <!--* Post Container -->
-          <div
-            class="w-full p-3 mx-0 my-5 bg-white rounded-md shadow-md postContainer"
-          >
-            <div class="flex items-start w-full gap-3 mb-2 postHeader">
-              <img
-                src={profilePic}
-                alt="User Pic"
-                class="w-16 rounded-md pdImg"
-              />
-              <div class="flex justify-between w-full">
-                <div>
-                  <h3 class="text-lg font-semibold text-wrap">
-                    {name}
-                  </h3>
-
-                  <p
-                    class="inline-block p-1 text-xs font-thin text-center text-white bg-green-800 rounded-lg whitespace-nowrap min-w-12 max-w-40"
-                  >
-                    {provServ}
-                  </p>
-                </div>
-                <div class="relative flex justify-end bottom-4">
-                  <button type="button" class="pr-2 text-black">
-                    <i class="fa-solid fa-ellipsis"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <p class="mb-2 text-sm text-wrap">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eveniet
-              cumque ratione id voluptates quae. Iure expedita quaerat possimus
-              optio adipisci laudantium? Vitae voluptas dignissimos iste rerum
-              deleniti voluptatum voluptates a.
-            </p>
-            <div class="grid grid-cols-3 gap-2 mb-2">
-              <img src={pic4} alt="" class="w-64 h-40 rounded-md" />
-              <img src={pic5} alt="" class="w-64 h-40 rounded-md" />
-              <img src={pic6} alt="" class="w-64 h-40 rounded-md" />
-            </div>
-            <div class="flex justify-center gap-2">
-              <button
-                type="button"
-                class="w-full p-2 text-black bg-gray-100 rounded-lg shadow-sm hover:bg-gray-300"
-              >
-                <i class="fa-regular fa-thumbs-up"></i>
-              </button>
-              <button
-                type="button"
-                class="w-full p-2 text-white bg-green-800 rounded-lg shadow-sm hover:bg-green-900"
-              >
-                <i class="text-xs fa-solid fa-message"></i>
-              </button>
-            </div>
-          </div>
-          <!--* Post Container -->
-          <div
-            class="w-full p-3 mx-0 my-5 bg-white rounded-md shadow-md postContainer"
-          >
-            <div class="flex items-start w-full gap-3 mb-2 postHeader">
-              <img
-                src={profilePic}
-                alt="User Pic"
-                class="w-16 rounded-md pdImg"
-              />
-              <div class="flex justify-between w-full">
-                <div>
-                  <h3 class="text-lg font-semibold text-wrap">
-                    {name}
-                  </h3>
-
-                  <p
-                    class="inline-block p-1 text-xs font-thin text-center text-white bg-green-800 rounded-lg whitespace-nowrap min-w-12 max-w-40"
-                  >
-                    {provServ}
-                  </p>
-                </div>
-                <div class="relative flex justify-end bottom-4">
-                  <button type="button" class="pr-2 text-black">
-                    <i class="fa-solid fa-ellipsis"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <p class="mb-2 text-sm text-wrap">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eveniet
-              cumque ratione id voluptates quae. Iure expedita quaerat possimus
-              optio adipisci laudantium? Vitae voluptas dignissimos iste rerum
-              deleniti voluptatum voluptates a.
-            </p>
-            <div class="grid grid-cols-3 gap-2 mb-2">
-              <!-- <img src={pic1} alt="" class="w-64 h-40 rounded-md" />
-              <img src={pic2} alt="" class="w-64 h-40 rounded-md" />
-              <img src={pic3} alt="" class="w-64 h-40 rounded-md" /> -->
-            </div>
-            <div class="flex justify-center gap-2">
-              <button
-                type="button"
-                class="w-full p-2 text-black bg-gray-100 rounded-lg shadow-sm hover:bg-gray-300"
-              >
-                <i class="fa-regular fa-thumbs-up"></i>
-              </button>
-              <button
-                type="button"
-                class="w-full p-2 text-white bg-green-800 rounded-lg shadow-sm hover:bg-green-900"
-              >
-                <i class="text-xs fa-solid fa-message"></i>
-              </button>
-            </div>
-          </div>
+        <!-- Row 2 -->
+        <div class="flex gap-2">
+          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
+          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
+        </div>
+        <!-- Row 3 -->
+        <div class="flex gap-2">
+          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
+          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
+        </div>
+        <!-- Row 4 -->
+        <div class="flex gap-2">
+          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
+          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
         </div>
       </div>
     </div>
   </div>
-</body>
-
-<style></style>
+</div>

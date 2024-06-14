@@ -30,6 +30,7 @@
   import RequestDetails from "./routes/RequestDetails.svelte";
   import ServiceOffers from "./routes/ServiceOffers.svelte";
   import NotFound from "./routes/NotFound.svelte";
+  import DaisyProfile from "./Daisy/DaisyRoutes/DaisyProfile.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -57,7 +58,7 @@
       <Route path="/404" component={NotFound} />
 
       <!-- Test Route -->
-      <!-- <Route path="/test" component={} /> -->
+      <Route path="/test" component={DaisyProfile} />
     </Router>
   </Main>
   <Footer />
