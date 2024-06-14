@@ -85,9 +85,9 @@ def get_contacts():
 @login_required
 def get_my_profile():
     '''
-        Get the user's profile info that will be displayed
+        Get the user's profile
     '''
-    profile = Db_user().get_profile(current_user.id)
+    profile = Db_user().get_profile_by_userId(current_user.id)
     if not profile:
         return make_response(jsonify({'error': 'Profile does not exist'}), 404)
     rating = Db_user().rating(current_user.id)
@@ -95,5 +95,23 @@ def get_my_profile():
     profile_dict.update(profile.all_columns())
     profile_dict['first_name'] = current_user.first_name
     profile_dict['last_name'] = current_user.last_name
+    profile_dict['rating'] = rating
+    return make_response(jsonify({'results': profile_dict}), 200)
+
+@user_bp.route('/profile/<profile_id>', methods=['GET'])
+@login_required
+def get_profile(profile_id):
+    '''
+        Get a user's profile(not your own)
+    '''
+    profile = DBOperations().search('Profile', profile_id)
+    if not profile:
+        return make_response(jsonify({'error': 'Profile does not exist'}), 404)
+    user = DBOperations().search('User', profile.user_id)
+    rating = Db_user().rating(profile.user_id)
+    profile_dict = {}
+    profile_dict.update(profile.all_columns())
+    profile_dict['first_name'] = user.first_name
+    profile_dict['last_name'] = user.last_name
     profile_dict['rating'] = rating
     return make_response(jsonify({'results': profile_dict}), 200)

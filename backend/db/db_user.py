@@ -114,12 +114,13 @@ class Db_user:
             all_initial_contacts.append(contact_dict)
         return {'results': all_initial_contacts}, 200
 
-    def get_profile(self, userId):
+    def get_profile_by_userId(self, userId):
         '''
             Get profile of a user
         '''
         profile = self.session.query(Profile).join(User, User.id==Profile.user_id).filter(User.id == userId).first()
         return profile
+
 
     def rating(self, userId):
         '''
