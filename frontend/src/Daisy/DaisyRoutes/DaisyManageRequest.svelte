@@ -10,7 +10,7 @@
         "https://via.placeholder.com/150",
         "https://via.placeholder.com/150",
       ],
-      status: "pending",
+      status: "pending", // status can be "pending", "upcoming", or "promotion"
     },
     {
       id: 2,
@@ -77,7 +77,7 @@
 
 <div class="flex justify-center min-h-screen py-8 bg-base-200">
   <div class="w-full max-w-5xl">
-    <h1 class="font-sans text-3xl font-bold text-center">Services</h1>
+    <h1 class="font-sans text-3xl font-bold text-center">Requests</h1>
     <br />
     <br />
     <div class="h-screen overflow-y-scroll">
