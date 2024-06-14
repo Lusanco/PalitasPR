@@ -7,15 +7,15 @@
   let image = null;
   let town = "all";
   let towns;
-  let model = "promotions";
+  let model = "requests";
 
   let button = {
-    name: "Create Service",
+    name: "Request Service",
     method: "POST",
-    url: "api/dashboard/promotion-request",
+    url: "api/dashboard/request-service",
     headers: "multipart/form-data",
     twcss: "px-8 py-3 font-semibold bg-stone-200 rounded hover:bg-stone-300",
-    misc: { "App Location": "CreateService Form" },
+    misc: { "App Location": "RequestService Form" },
   };
 
   let title = "";
@@ -60,13 +60,13 @@
 
 <div class="flex flex-col items-center justify-center h-full min-h-screen bg-base-200 md:bg-none">
   <div class="flex flex-col w-full h-full max-w-2xl gap-4 p-2 my-8 font-semibold rounded-lg md:shadow-lg md:p-8 bg-base-200">
-    <h1 class="pt-4 text-2xl text-center md:text-3xl lg:text-4xl">Crear Servicio</h1>
+    <h1 class="pt-4 text-2xl text-center md:text-3xl lg:text-4xl">Request Service</h1>
     <div>
-      <label for="title">Titulo</label>
-      <input class="w-full input input-bordered" type="text" name="titulo" id="" bind:value={title} />
+      <label for="title">Title</label>
+      <input class="w-full input input-bordered" type="text" name="title" id="title" bind:value={title} />
     </div>
 
-    <label for="service">Seleccione Servicio a Brindar</label>
+    <label for="service">Select Service</label>
     <select bind:value={service_id} name="service" class="block w-full select select-bordered">
       <option value={-1} disabled>---</option>
       {#each Object.entries(servicesID) as [service, id]}
@@ -75,7 +75,7 @@
     </select>
 
     <div class="w-full dropdown">
-      <button tabindex="0" class="btn btn-base dropdown-toggle">Seleccionar Pueblos</button>
+      <button tabindex="0" class="btn btn-base dropdown-toggle">Select Towns</button>
       <ul tabindex="-1" class="flex flex-wrap w-full h-40 min-w-full gap-4 p-4 overflow-y-auto shadow gap-x-10 dropdown-content bg-base-100 rounded-box">
         {#each Object.entries(townsID) as [town, id]}
           <li class="menu-item" value={id}>
@@ -87,16 +87,16 @@
     </div>
 
     <div class="max-h-96">
-      <label for="description">Descripcion de su Servicio</label>
-      <textarea bind:value={description} class="w-full textarea textarea-bordered" name="description" id=""></textarea>
+      <label for="description">Service Description</label>
+      <textarea bind:value={description} class="w-full textarea textarea-bordered" name="description" id="description"></textarea>
     </div>
     <div>
-      <label for="price-min">Precio Minimo (Opcional)</label>
-      <input class="w-full input input-bordered" type="number" name="price-min" id="" bind:value={price_min} />
+      <label for="price-min">Minimum Price (Optional)</label>
+      <input class="w-full input input-bordered" type="number" name="price-min" id="price-min" bind:value={price_min} />
     </div>
     <div>
-      <label for="price-max">Precio Maximo (Opcional)</label>
-      <input class="w-full input input-bordered" type="number" name="price-max" id="" bind:value={price_max} />
+      <label for="price-max">Maximum Price (Optional)</label>
+      <input class="w-full input input-bordered" type="number" name="price-max" id="price-max" bind:value={price_max} />
     </div>
     <div class="flex flex-col items-center justify-center w-full m-auto mx-auto space-y-1 text-gray-800">
       <label for="imageInput" class="block text-sm font-medium"></label>
