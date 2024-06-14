@@ -93,5 +93,7 @@ def get_my_profile():
     rating = Db_user().rating(current_user.id)
     profile_dict = {}
     profile_dict.update(profile.all_columns())
+    profile_dict['first_name'] = current_user.first_name
+    profile_dict['last_name'] = current_user.last_name
     profile_dict['rating'] = rating
     return make_response(jsonify({'results': profile_dict}), 200)
