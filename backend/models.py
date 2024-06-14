@@ -98,6 +98,8 @@ class Promotion(BaseModel, Base):
     price_max = Column(Integer, default=0)
     pictures = Column(String(255))
 
+    user = relationship('User', foreign_keys=[user_id])
+
 
 class Request(BaseModel, Base):
     __tablename__ = "requests"
