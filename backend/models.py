@@ -112,7 +112,14 @@ class Profile(BaseModel, Base):
     __tablename__ = "profiles"
 
     id = Column(String(50), ForeignKey("users.id"), primary_key=True)
+    user_id = Column(String(255), ForeignKey("users.id"), nullable=False)
+    job_title = Column(String(50))
     bio = Column(String)
-    profile_pic = Column(String(255))
-    gallery = Column(String(255))
+    tasks_completed = Column(Integer)
     social_links = Column(String)
+    profile_pic = Column(String(255))
+    cover_pic = Column(String(255))
+    gallery = Column(String(255))
+
+    # relationships
+    user = relationship('User', foreign_keys=[user_id])
