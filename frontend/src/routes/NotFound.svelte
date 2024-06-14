@@ -3,7 +3,7 @@
 </script>
 
 <div
-  class="flex flex-col justify-center h-full px-6 py-20 place-items-center sm:py-32 lg:px-8"
+  class="flex flex-col justify-center h-full min-h-screen px-6 py-20 place-items-center sm:py-32 lg:px-8"
 >
   <div class="text-center">
     <p class="font-semibold text-stone-300 text-8xl">404</p>
