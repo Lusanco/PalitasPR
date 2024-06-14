@@ -29,7 +29,6 @@
   import DaisyServiceDetails from "./Daisy/DaisyRoutes/DaisyServiceDetails.svelte";
   import RequestDetails from "./routes/RequestDetails.svelte";
   import ServiceOffers from "./routes/ServiceOffers.svelte";
-  import MockServiceDetails from "./Daisy/DaisyRoutes/MockServiceDetails.svelte";
   import NotFound from "./routes/NotFound.svelte";
 </script>
 
@@ -58,7 +57,7 @@
       <Route path="/404" component={NotFound} />
 
       <!-- Test Route -->
-      <!-- <Route path="/test" component={MockServiceDetails} /> -->
+      <!-- <Route path="/test" component={} /> -->
     </Router>
   </Main>
   <Footer />

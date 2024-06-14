@@ -8,7 +8,7 @@
   <div class="text-center">
     <p class="font-semibold text-stone-300 text-8xl">404</p>
     <h1
-      class="mt-4 text-3xl font-bold tracking-tight text-stone-700 sm:text-5xl"
+      class="mt-4 text-3xl font-bold tracking-tight text-stone-500 sm:text-5xl"
     >
       Page not found
     </h1>
