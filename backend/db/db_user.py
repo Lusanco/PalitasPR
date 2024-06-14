@@ -7,7 +7,7 @@ from email_validator import validate_email, EmailNotValidError
 from db_init import get_session
 from db.db_operations import DBOperations
 import bcrypt
-from models import User, Initial_Contact
+from models import User, Initial_Contact, Profile, Review, Task
 
 
 class Db_user:
@@ -113,3 +113,33 @@ class Db_user:
 
             all_initial_contacts.append(contact_dict)
         return {'results': all_initial_contacts}, 200
+
+    def get_profile(self, userId):
+        '''
+            Get profile of a user
+        '''
+        profile = self.session.query(Profile).join(User, User.id==Profile.user_id).filter(User.id == userId).first()
+        return profile
+
+    def rating(self, userId):
+        '''
+            Calculate average rating of user based on
+            total rating he has on reviews associated to him
+        '''
+        reviews = self.session.query(Review)\
+        .join(Task, Task.id == Review.task_id)\
+        .join(User, User.id == Task.provider_id)\
+        .filter(User.id == userId)\
+        .all()
+        if not reviews:
+            return 0
+
+        # Ratings range from 1 to 5
+        total_tasks = len(reviews)
+        ratings_total = 0
+        for review in reviews:
+            ratings_total += review.rating
+        avg_rating = ratings_total/(5*total_tasks)
+        
+        rating_in_stars = avg_rating * 5
+        return rating_in_stars
