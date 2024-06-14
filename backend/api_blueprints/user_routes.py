@@ -80,3 +80,18 @@ def get_contacts():
     '''
     response, status = Db_user().get_initial_contacts(current_user.id)
     return make_response(jsonify(response), status)
+
+@user_bp.route('/my-profile', methods=['GET'])
+@login_required
+def get_my_profile():
+    '''
+        Get the user's profile info that will be displayed
+    '''
+    profile = Db_user().get_profile(current_user.id)
+    if not profile:
+        return make_response(jsonify({'error': 'Profile does not exist'}), 404)
+    rating = Db_user().rating(current_user.id)
+    profile_dict = {}
+    profile_dict.update(profile.all_columns())
+    profile_dict['rating'] = rating
+    return make_response(jsonify({'results': profile_dict}), 200)
