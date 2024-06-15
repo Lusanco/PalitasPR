@@ -2,6 +2,10 @@
   let currentDate = new Date().toLocaleDateString();
 </script>
 
+<head>
+  <title>PalitasPR | Terms of Use</title>
+</head>
+
 <div
   class="container max-w-6xl px-4 py-8 mx-auto my-20 rounded-lg shadow-lg bg-base-100"
 >
@@ -179,7 +183,7 @@
     </p>
   </div>
   <br />
-  <p class="text-center  text-stone-500">
+  <p class="text-center text-stone-500">
     Has visto los terminos de uso en: {currentDate}
   </p>
   <br />

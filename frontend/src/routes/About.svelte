@@ -7,6 +7,10 @@
   }
 </script>
 
+<head>
+  <title>PalitasPR | About</title>
+</head>
+
 <div class="py-20 scroll-smooth">
   <div class="relative bg-base-200 h-[32rem]">
     <div class="absolute inset-x-0 bottom-0">

@@ -30,6 +30,10 @@
    */
 </script>
 
+<head>
+  <title>PalitasPR | Review</title>
+</head>
+
 <!-- 
   ? Container
 -->

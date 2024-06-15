@@ -42,6 +42,10 @@
   });
 </script>
 
+<head>
+  <title>PalitasPR | Profile</title>
+</head>
+
 {#if $response2}
   <!-- Profile Container -->
   <div class="flex flex-col items-center min-h-screen">

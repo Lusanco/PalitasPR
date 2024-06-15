@@ -5,6 +5,10 @@
   }
 </script>
 
+<head>
+  <title>PalitasPR | Login To Continue</title>
+</head>
+
 <div
   class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto text-teal-800 rounded-md sm:p-10"
 >

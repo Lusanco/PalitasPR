@@ -2,6 +2,10 @@
   let currentDate = new Date().toLocaleDateString();
 </script>
 
+<head>
+  <title>PalitasPR | Privacy</title>
+</head>
+
 <div
   class="container max-w-6xl px-4 py-8 mx-auto my-20 rounded-lg shadow-lg bg-base-100"
 >

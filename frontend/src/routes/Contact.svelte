@@ -2,6 +2,10 @@
   let name, email, subject, message;
 </script>
 
+<head>
+  <title>PalitasPR | Contact</title>
+</head>
+
 <div
   class="flex flex-col justify-center min-h-screen pt-2 md:my-20 bg-base-200"
 >

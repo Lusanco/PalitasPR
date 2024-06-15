@@ -63,6 +63,10 @@
   }
 </script>
 
+<head>
+  <title>PalitasPR | Create Service</title>
+</head>
+
 <div
   class="flex flex-col items-center justify-center h-full min-h-screen bg-teal-50 md:bg-none"
 >

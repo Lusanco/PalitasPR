@@ -62,6 +62,10 @@
   });
 </script>
 
+<head>
+  <title>PalitasPR | Login</title>
+</head>
+
 <div
   class="flex flex-col items-center justify-center h-full min-h-screen py-20 m-auto"
 >

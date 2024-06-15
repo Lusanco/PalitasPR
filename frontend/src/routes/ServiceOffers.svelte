@@ -75,6 +75,10 @@
   }
 </script>
 
+<head>
+  <title>PalitasPR | Service Offers</title>
+</head>
+
 <!-- 
   ? Container
 -->

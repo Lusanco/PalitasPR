@@ -79,6 +79,10 @@
   }
 </script>
 
+<head>
+  <title>PalitasPR | Request Details</title>
+</head>
+
 <!-- 
   ? Container
 -->

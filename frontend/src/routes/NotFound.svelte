@@ -2,6 +2,10 @@
   import { link } from "svelte-routing";
 </script>
 
+<head>
+  <title>PalitasPR | Not Found</title>
+</head>
+
 <div
   class="flex flex-col justify-center h-full min-h-screen px-6 py-20 place-items-center sm:py-32 lg:px-8"
 >

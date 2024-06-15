@@ -44,6 +44,10 @@
   });
 </script>
 
+<head>
+  <title>PalitasPR | Service Details</title>
+</head>
+
 {#if $response1 && $response2}
   <!-- ServiceDetails Container -->
   <div

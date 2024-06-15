@@ -76,6 +76,10 @@
   ];
 </script>
 
+<head>
+  <title>PalitasPR | Inbox</title>
+</head>
+
 <div class="max-h-full min-h-screen">
   <h1 class="font-sans text-3xl text-center text-bold">Inbox</h1>
   <br />
