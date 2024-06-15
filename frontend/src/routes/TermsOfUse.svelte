@@ -179,7 +179,8 @@
     </p>
   </div>
   <br />
-  <p class="mb-8 text-center text-stone-500">
+  <p class="text-center  text-stone-500">
     Has visto los terminos de uso en: {currentDate}
   </p>
+  <br />
 </div>
