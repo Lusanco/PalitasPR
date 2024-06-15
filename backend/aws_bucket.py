@@ -220,14 +220,20 @@ def get_picture(user_id: str, model: str, model_id: str, pic_name: str):
     - Example: get_picture('101', 'Promotion', '001', 'Palitas_logo_pitch.png')
     """
 
-    models_dict = {
-        'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
-        'Request': f'{user_id}/requests/{model_id}/{pic_name}',
-        'Task': f'{user_id}/tasks/{model_id}/{pic_name}',
-        'Review': f'{user_id}/reviews/{model_id}/{pic_name}',
-        'Gallery': f'{user_id}/gallery/{pic_name}',
+    if model not in ['Gallery', 'Profile', 'Cover']:
+            models_dict = {
+            'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
+            'Request': f'{user_id}/requests/{model_id}/{pic_name}',
+            'Task': f'{user_id}/tasks/{model_id}/{pic_name}',
+            'Review': f'{user_id}/reviews/{model_id}/{pic_name}'
+            }
+    else:
+        models_dict = {
         'Profile': f'{user_id}/profile/{pic_name}',
+        'Gallery': f'{user_id}/gallery/{pic_name}',
+        'Cover': f'{user_id}/cover/{pic_name}'
         }
+
     if model in models_dict:
         path = f'users/{models_dict[model]}' # This pastes users/101/promotions/001/Palitas_logo_pitch.png
     else:
