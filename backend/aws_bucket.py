@@ -249,7 +249,7 @@ def get_picture(user_id: str, model: str, model_id: str, pic_name: str):
             return ({'error': 'Internal error aws'}, 500)
 
 
-def delete_picture(user_id: str, model: str, model_id: str, pic_name: str):
+def delete_picture(user_id: str, model: str, model_id, pic_name: str):
         """
         Delete a picture from an AWS S3 bucket based on the specified user ID, model,model_id and pic_name.
 
@@ -259,14 +259,19 @@ def delete_picture(user_id: str, model: str, model_id: str, pic_name: str):
         """
 
         # Define the models and their respective paths
-        models_dict = {
-        'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
-        'Request': f'{user_id}/requests/{model_id}/{pic_name}',
-        'Task': f'{user_id}/tasks/{model_id}/{pic_name}',
-        'Review': f'{user_id}/reviews/{model_id}/{pic_name}',
-        'Profile': f'{user_id}/profile/{pic_name}',
-        'Gallery': f'{user_id}/gallery/{pic_name}' 
-        }
+        if model not in ['Gallery', 'Profile', 'Cover']:
+            models_dict = {
+            'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
+            'Request': f'{user_id}/requests/{model_id}/{pic_name}',
+            'Task': f'{user_id}/tasks/{model_id}/{pic_name}',
+            'Review': f'{user_id}/reviews/{model_id}/{pic_name}'
+            }
+        else:
+            models_dict = {
+            'Profile': f'{user_id}/profile/{pic_name}',
+            'Gallery': f'{user_id}/gallery/{pic_name}',
+            'Cover': f'{user_id}/cover/{pic_name}'
+            }
 
         if model in models_dict:
             path = f'users/{models_dict[model]}'  # Construct the full path of the picture
@@ -288,7 +293,7 @@ def delete_picture(user_id: str, model: str, model_id: str, pic_name: str):
             # Attempt to delete the object from the S3 bucket
             print(f'\nPAth to delete object from: {path}\n')
             response = s3_client.delete_object(Bucket='palitas-pics', Key=path)
-            return response
+            return {'results': 'ok'}, 200
 
         except ClientError as e:
             # Handle the specific error codes
@@ -305,16 +310,20 @@ def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content:
         Call this function with the user ID, model name, and pic_name to delete an object from the S3 bucket.
         - Example: delete_picture('101', 'Promotion', '001/Palitas_logo_pitch.png', <bytes>)
         """
+        if model not in ['Gallery', 'Profile', 'Cover']:
+            models_dict = {
+            'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
+            'Request': f'{user_id}/requests/{model_id}/{pic_name}',
+            'Task': f'{user_id}/tasks/{model_id}/{pic_name}',
+            'Review': f'{user_id}/reviews/{model_id}/{pic_name}'
+            }
+        else:
+            models_dict = {
+            'Profile': f'{user_id}/profile/{pic_name}',
+            'Gallery': f'{user_id}/gallery/{pic_name}',
+            'Cover': f'{user_id}/cover/{pic_name}'
+            }
 
-        # Define the models and their respective paths
-        models_dict = {
-        'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
-        'Request': f'{user_id}/requests/{model_id}/{pic_name}',
-        'Task': f'{user_id}/tasks/{model_id}/{pic_name}',
-        'Review': f'{user_id}/reviews/{model_id}/{pic_name}',
-        'Gallery': f'{user_id}/gallery/{pic_name}',
-        'Profile': f'{user_id}/profile/{pic_name}'
-        }
         # Construct path of picture
         if model in models_dict:
             path = f'users/{models_dict[model]}'  # Construct the full path of the object
