@@ -6,12 +6,14 @@ import cmd
 import shlex
 from db.db_operations import DBOperations
 from db.db_user import Db_user
+from db.db_promotion import Db_promotion
 import aws_bucket
 import time
 import random
 
 db = DBOperations()
 db_user = Db_user()
+db_promo = Db_promotion()
 
 class DBConsole(cmd.Cmd):
     """Simple command line interpreter for DB Operations"""
@@ -79,20 +81,22 @@ class DBConsole(cmd.Cmd):
     def do_delete(self, args):
         """
         Delete objects based on criteria.
-        Usage: delete <model_name> <key1>=<value1> <key2>=<value2> ...
-        Example: delete Service user_id=c0a5be5a-94bf-4ad8-95dc-1d6e54cb1aed name=Gardening
+        Usage: delete <model_name> <model_id>
+        Example: delete Promotion abc123
         """
         arg_list = shlex.split(args)
-        if arg_list:
-            model_name = arg_list[0]
-            data = {model_name: dict(pair.split('=') for pair in arg_list[1:])}
-            result = db.delete(data)
-            if result:
-                print("Delete successful.")
+        if len(arg_list) == 2:
+            model_name, model_id = arg_list
+            user_id = input("Enter your user ID: ")
+
+            response, status_code = db.delete_object(model_name, model_id, user_id)
+            if 'error' in response:
+                print(response['error'])
             else:
-                print("Delete failed.")
+                print(response['message'])
         else:
-            print("Invalid input. Please provide a model name and key-value pairs.")
+            print("Invalid input. Usage: delete <model_name> <model_id>")
+
 
     def do_update(self, args):
         """
@@ -255,5 +259,31 @@ class DBConsole(cmd.Cmd):
             delete a model folder (Promotion, Request, Task, Review)
         '''
         response2 = aws_bucket.delete_model_folder('007', 'Promotion', '005')
+
+    def do_promo_reviews(self, args):
+        """
+        View all reviews for a specific task.
+        Usage: view_task_reviews <task_id>
+        Example: view_task_reviews abc123
+        """
+        arg_list = shlex.split(args)
+        if len(arg_list) == 1:
+            promo_id = arg_list[0]
+            reviews = db_promo.get_promo_reviews(promo_id)
+            if reviews:
+                print(f"Reviews for Task ID {promo_id}:")
+                for review in reviews:
+                    print(f"ReviewID: {review['id']}")
+                    print(f"Description: {review['description']}")
+                    print(f"Rating: {review['rating']}")
+                    print(f"Pictures: {review['pictures']}")
+                    print(f"Created At: {review['created_at']}")
+                    print("-" * 20)
+            else:
+                print(f"No reviews found for Task ID {promo_id}")
+        else:
+            print("Invalid input. Usage: view_task_reviews <task_id>")
+
+
 if __name__ == '__main__':
     DBConsole().cmdloop()

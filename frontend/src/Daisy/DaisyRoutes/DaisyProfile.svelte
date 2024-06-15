@@ -1,150 +1,131 @@
-<script>
-  import { onMount } from "svelte";
-  import { slide } from "svelte/transition";
-  import axios from "axios";
-  import { response } from "../scripts/stores";
-  import banner from "../images/lawnMowing.jpg";
-  import pic1 from "../images/gallGrid_1.jpg";
-  import pic2 from "../images/gallGrid_2.jpg";
-  import pic3 from "../images/gallGrid_3.jpg";
-  import pic4 from "../images/gallGrid_4.jpg";
-  import pic5 from "../images/gallGrid_5.jpg";
-  import pic6 from "../images/gallGrid_6.jpg";
+<!-- Profile Container -->
+<div class="flex flex-col items-center min-h-screen">
+  <div class="flex w-screen max-w-6xl mx-auto bg-base-100">
+    <!-- Upper Half -->
+    <div class="w-screen">
+      <!-- Profile Cover -->
+      <div
+        class="flex w-screen max-w-6xl mx-auto rounded-none h-60 max-h-96 skeleton"
+      ></div>
+      <!-- Profile Container -->
+      <div class="flex flex-col items-center w-full pb-4 bg-base-100">
+        <!-- Profile Picture -->
+        <div
+          class="w-40 h-40 -mt-20 border-4 rounded-full skeleton border-base-200"
+        ></div>
+        <h1 class="text-lg font-semibold">Luis Petraco</h1>
+      </div>
+      <!-- Profile Details -->
+      <div
+        class="flex flex-wrap p-4 mt-4 rounded-none md:-mt-24 bg-base-100 md:bg-transparent"
+      >
+        <div class="flex flex-wrap justify-between w-full px-4">
+          <span class="w-full text-center md:text-left md:w-fit"
+            >Landscaper</span
+          >
+          <span class="w-full text-center md:w-fit md:text-right">
+            San Juan, PR
+          </span>
+        </div>
+        <div class="flex flex-wrap justify-between w-full px-4">
+          <span class="w-full text-center md:text-left md:w-fit"
+            >Completed: 20 Palitas</span
+          >
+          <span class="w-full text-center md:text-right md:w-fit">5.0/5.0</span>
+        </div>
+      </div>
 
-  let name = "Alfredo Santiago";
-  let provServ = "Landscaper";
-  let userTown = "San Juan, PR";
-  let userRating = 4.5;
-  let clientsCount = "100 Clients";
-  let jobsCount = 20;
-  let reviewerName = "John Doe";
-  let reviewStars = 4.5;
-
-  let reviews = [
-    { user_id: "User ID", title: "Excelente Servicio", review: "Reseña corta 1", rating: 4, date: "2024-06-13" },
-    { user_id: "User ID", title: "Buen Servicio", review: "Reseña corta 2", rating: 5, date: "2024-06-12" },
-    { user_id: "User ID", title: "Mal Servicio", review: "Reseña muy larga que debería mostrar un botón de 'ver más' para expandir y mostrar todo el contenido de la reseña. Esta es una reseña de ejemplo que es lo suficientemente larga como para necesitar truncamiento. Reseña muy larga que debería mostrar un botón de 'ver más' Reseña muy larga que debería mostrar un botón de 'ver más'", rating: 3, date: "2024-06-11" },
-    { user_id: "User ID", title: "Excelente Servicio", review: "Reseña corta 4", rating: 4, date: "2024-06-10" },
-    { user_id: "User ID", title: "Buen Servicio", review: "Reseña corta 5", rating: 5, date: "2024-06-09" },
-    { user_id: "User ID", title: "Mal Servicio", review: "Reseña corta 6", rating: 2, date: "2024-06-08" },
-    { user_id: "User ID", title: "Excelente Servicio", review: "Reseña corta 7", rating: 4, date: "2024-06-07" },
-  ];
-
-  let expandedReviews = [];
-
-  function toggleReview(index) {
-    if (expandedReviews.includes(index)) {
-      expandedReviews = expandedReviews.filter(i => i !== index);
-    } else {
-      expandedReviews = [...expandedReviews, index];
-    }
-  }
-
-  onMount(() => {
-    intervalId = setInterval(nextReview, 5000);
-  });
-</script>
-
-<div class="profileContainer py-3 px-[5%] text-[#626262] bg-base-200 max-w-1200 mx-auto">
-  <div class="w-full mb-4 bg-gray-200 rounded-md sm:h-80 md:h-96 lg:h-96 xl:h-96">
-    <div class="w-full h-full skeleton"></div>
-  </div>
-
-  <div class="p-5 mb-4 bg-white rounded-md shadow-md">
-    <div class="flex flex-col justify-between md:flex-row md:items-start">
-      <div class="w-24 h-24 mb-4 mr-4 bg-gray-200 rounded-md skeleton md:mb-0"></div>
-      <div class="flex-1 md:mr-4">
-        <h3 class="py-2 text-2xl font-semibold">{name}</h3>
-        <p class="text-sm">{provServ}</p>
-        <p class="text-sm">
-          <i class="fa-solid fa-star"></i>
-          <span>{userRating} • {jobsCount} Jobs</span>
+      <!-- Description -->
+      <div class="rounded-none card bg-base-100">
+        <p
+          class="h-full text-justify line-clamp-none overflow-ellipsis card-body"
+        >
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eligendi,
+          omnis! Tempore provident commodi id aliquid eveniet iste totam odit
+          labore dicta blanditiis nam voluptas vel, aut sint vitae!
+          Exercitationem, qui? Lorem ipsum dolor sit amet, consectetur
+          adipisicing elit. Error deleniti odit, ducimus beatae, impedit,
+          obcaecati quis aliquid id inventore maxime cum excepturi? Possimus
+          excepturi atque veniam tempora quos doloribus rerum?
         </p>
       </div>
-      <div class="flex-1 mb-4 md:mb-0">
-        <h3 class="text-xl font-bold border-b-2">About me</h3>
-        <div class="pt-3">
-          <i class="fa-solid fa-location-dot"></i>
-          <span>{userTown}</span>
-        </div>
-        <div>
-          <i class="pr-2 fa-solid fa-check"></i>Completed jobs: <span>{jobsCount}</span>
-        </div>
-        <div class="flex mt-4">
-          <a href="https://www.instagram.com/tuUsuario/" class="mr-4" target="_blank" rel="noopener noreferrer">
-            <i class="fab fa-instagram"></i>
-          </a>
-          <a href="https://www.facebook.com/tuUsuario" class="mr-4" target="_blank" rel="noopener noreferrer">
-            <i class="fab fa-facebook-f"></i>
-          </a>
-          <a href="https://twitter.com/tuUsuario" target="_blank" rel="noopener noreferrer">
-            <i class="fab fa-twitter"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  
-    <div class="mt-4">
-      <p class="text-md">
-        Soy un apasionado del paisajismo con más de 10 años de experiencia, dedicado a transformar espacios exteriores en lugares de belleza y tranquilidad. Mi especialidad incluye diseño de jardines, mantenimiento de césped y plantación de especies autóctonas. Comprometido con la sostenibilidad y la creación de entornos verdes saludables para mis clientes.
-      </p>
     </div>
   </div>
+  <!-- Bottom Half -->
+  <div class="flex flex-wrap w-full h-full max-w-6xl bg-base-100">
+    <!-- Leftmost -->
+    <div class="w-full min-h-20 md:w-1/2">
+      <!-- Reviews -->
+      <div
+        class="flex flex-col h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2"
+      >
+        <h1 class="self-center text-3xl card-title">Reviews</h1>
+        <br />
 
-  <!-- Sección de Reseñas -->
-  <div class="flex flex-col gap-4 mb-4 md:flex-row">
-    <div class="w-full p-5 bg-white rounded-md shadow-md md:w-1/2">
-      <h3 class="mb-3 text-xl font-bold border-b-2">Reseñas</h3>
-      <div class="flex flex-col gap-2 overflow-y-scroll min-h-96 h-96">
-        {#each reviews as review, index}
-          <div class="relative p-4 transition-all shadow-md bg-stone-200" class:min-h-auto={expandedReviews.includes(index)} class:min-h-[150px]={!expandedReviews.includes(index)}>
-            <div class="flex justify-between">
-              <div class="text-lg font-bold">{review.title}</div>
-              <div>{review.date}</div>
+        <div
+          class="flex flex-col gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96 element"
+        >
+          {#each [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as review}
+            <div
+              class="flex flex-col justify-between p-4 shadow-md bg-stone-200 min-h-40 max-h-96 card"
+            >
+              <div class="flex justify-between gap-2">
+                <div>Full Name</div>
+                <div>3.5/5.0</div>
+              </div>
+              <br />
+              <div class="h-full text-justify line-clamp-6 overflow-ellipsis">
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                Dolorem cumque iste quia veritatis doloremque cum natus, vero
+                fugiat, vel odio quas placeat similique corrupti quo delectus
+                iure commodi maiores repellendus!
+              </div>
+              <br />
+              <br />
+              <div class="flex justify-between gap-2">
+                <div class="">Fecha</div>
+                <button class="absolute btn right-4 bottom-4">Images</button>
+              </div>
             </div>
-            <div class="mb-12">
-              {#if review.review.length > 250}
-                {#if expandedReviews.includes(index)}
-                  {review.review}
-                  <button class="mt-2 cursor-pointer text-stone-500" on:click={() => toggleReview(index)}> Show Less</button>
-                {:else}
-                  {review.review.slice(0, 180)}...
-                  <button class="mt-2 cursor-pointer text-stone-500" on:click={() => toggleReview(index)}> Show More</button>
-                {/if}
-              {:else}
-                {review.review}
-              {/if}
-            </div>
-            <div class="absolute text-sm bottom-2 left-2 text-stone-500">{review.user_id}</div>
-            <div class="absolute text-sm bottom-2 right-2 text-stone-500">Rating: {review.rating}</div>
-          </div>
-        {/each}
+          {/each}
+        </div>
       </div>
     </div>
-     
-    <!-- Galería con scroll vertical, mostrando dos imágenes por fila -->
-    <div class="w-full p-5 bg-white rounded-md shadow-md md:w-1/2">
-      <h3 class="mb-3 text-xl font-bold border-b-2">Galería</h3>
-      <div class="flex flex-col gap-2 overflow-y-scroll min-h-96 h-96">
-        <!-- Row 1 -->
-        <div class="flex gap-2">
-          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
-          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
-        </div>
-        <!-- Row 2 -->
-        <div class="flex gap-2">
-          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
-          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
-        </div>
-        <!-- Row 3 -->
-        <div class="flex gap-2">
-          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
-          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
-        </div>
-        <!-- Row 4 -->
-        <div class="flex gap-2">
-          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
-          <div class="w-1/2 h-32 bg-gray-300 rounded-md"></div>
+    <!-- Rightmost -->
+    <div class="w-full bg-base-100 max-h-40 md:w-1/2">
+      <!-- Gallery -->
+      <div
+        class="flex flex-col h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2 bg-base-100"
+      >
+        <h1 class="self-center text-3xl card-title">Reviews</h1>
+        <br />
+
+        <div
+          class="flex flex-col gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96 element"
+        >
+          {#each [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as review}
+            <div
+              class="flex flex-col justify-between p-4 shadow-md bg-stone-200 min-h-40 max-h-96 card"
+            >
+              <div class="flex justify-between gap-2">
+                <div>Full Name</div>
+                <div>3.5/5.0</div>
+              </div>
+              <br />
+              <div class="h-full text-justify line-clamp-6 overflow-ellipsis">
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                Dolorem cumque iste quia veritatis doloremque cum natus, vero
+                fugiat, vel odio quas placeat similique corrupti quo delectus
+                iure commodi maiores repellendus!
+              </div>
+              <br />
+              <br />
+              <div class="flex justify-between gap-2">
+                <div class="">Fecha</div>
+                <button class="absolute btn right-4 bottom-4">Images</button>
+              </div>
+            </div>
+          {/each}
         </div>
       </div>
     </div>

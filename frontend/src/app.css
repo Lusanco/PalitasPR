@@ -1,6 +1,5 @@
 /* Import FontAwesome */
 @import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
-@import "daisyui/dist/full.css";
 
 /* Tailwind CSS */
 @tailwind base;

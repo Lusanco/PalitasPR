@@ -25,10 +25,14 @@ def explore():
 
 @api_bp.route("/Promotion/<id>", methods=["GET"])
 def show_promo(id):
-    promo_obj = DBOperations().search('Promotion', id)
-    if promo_obj:
-        obj_dict = promo_obj.all_columns()
-        return make_response(jsonify({'results': obj_dict}), 200)
+    promo = DBOperations().search('Promotion', id)
+    if promo:
+        promo_dict = {}
+        promo_dict.update(promo.all_columns())
+        promo_dict['first_name'] = promo.user.first_name
+        promo_dict['last_name'] = promo.user.last_name
+
+        return make_response(jsonify({'results': promo_dict}), 200)
     else:
         return make_response(jsonify({"error": f"No Promotion object found with ID {id}"}), 404)
 
@@ -40,16 +44,6 @@ def show_request(id):
         return jsonify(request_obj), 200
     else:
         return jsonify({"error": f"No Request object found with ID {id}"}), 404
-
-
-@api_bp.route("/Review/<id>", methods=["GET"])
-def show_review(id):
-    review_obj = DBOperations().search('Review', id)
-    if review_obj:
-        return jsonify(review_obj), 200
-    else:
-        return jsonify({"error": f"No Review object found with ID {id}"}), 404
-
 
 @api_bp.route('/pic', methods=['POST'])
 def put_pic():    

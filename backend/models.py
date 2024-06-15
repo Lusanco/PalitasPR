@@ -56,21 +56,37 @@ class Town(BaseModelSerial, Base):
 class Review(BaseModel, Base):
     __tablename__ = "reviews"
 
+    user_id = Column(String(255), ForeignKey("users.id"), nullable=False)
+    task_id = Column(String, nullable=False)
     description = Column(String, nullable=False)
     rating = Column(Integer, nullable=False)
     pictures = Column(String(255))
 
+    reviewer = relationship("User", foreign_keys=[user_id])
+
+# W)RKING DOWN HERE NEED TESTING
+class Initial_Contact(BaseModel, Base):
+    __tablename__ = 'initial_contacts'
+
+    receiver_id = Column(String(255), ForeignKey("users.id"), nullable=False)
+    sender_id = Column(String(255), ForeignKey("users.id"), nullable=False)
+    read = Column(Boolean, default=False)
+    sent_task = Column(Boolean, default=False)
+
+    # Relationships
+    sender = relationship("User", foreign_keys=[sender_id])
+    receiver = relationship("User", foreign_keys=[receiver_id])
+
 
 class Task(BaseModel, Base):
     __tablename__ = "tasks"
-
+    promo_id = Column(String(50), ForeignKey('promotions.id'))
     receiver_id = Column(String(255), ForeignKey("users.id"), nullable=False)
+    receiver_confirm = Column(Boolean)
     provider_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     service_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     status = Column(String(255), nullable=False, default="open")
     description = Column(String(255), nullable=False)
-    review_id = Column(String(255), ForeignKey("reviews.id"))
-
 
 class Promotion(BaseModel, Base):
     __tablename__ = "promotions"
@@ -81,6 +97,8 @@ class Promotion(BaseModel, Base):
     price_min = Column(Integer, default=0)
     price_max = Column(Integer, default=0)
     pictures = Column(String(255))
+
+    user = relationship('User', foreign_keys=[user_id])
 
 
 class Request(BaseModel, Base):
@@ -96,7 +114,14 @@ class Profile(BaseModel, Base):
     __tablename__ = "profiles"
 
     id = Column(String(50), ForeignKey("users.id"), primary_key=True)
+    user_id = Column(String(255), ForeignKey("users.id"), nullable=False)
+    job_title = Column(String(50))
     bio = Column(String)
-    profile_pic = Column(String(255))
-    gallery = Column(String(255))
+    tasks_completed = Column(Integer)
     social_links = Column(String)
+    profile_pic = Column(String(255))
+    cover_pic = Column(String(255))
+    gallery = Column(String(255))
+
+    # relationships
+    user = relationship('User', foreign_keys=[user_id])
