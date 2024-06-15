@@ -26,16 +26,11 @@
   import Faq from "./routes/FAQ.svelte";
   import Inbox from "./routes/Inbox.svelte";
   import ServiceDetails from "./routes/ServiceDetails.svelte";
-  import DaisyServiceDetails from "./Daisy/DaisyRoutes/DaisyServiceDetails.svelte";
   import RequestDetails from "./routes/RequestDetails.svelte";
   import ServiceOffers from "./routes/ServiceOffers.svelte";
   import NotFound from "./routes/NotFound.svelte";
-  import DaisyProfile from "./Daisy/DaisyRoutes/DaisyProfile.svelte";
-  import DaisyTermsOfUse from "./Daisy/DaisyRoutes/DaisyTermsOfUse.svelte";
   import TermsOfUse from "./routes/TermsOfUse.svelte";
-  import DaisyPrivacy from "./Daisy/DaisyRoutes/DaisyPrivacy.svelte";
   import Privacy from "./routes/Privacy.svelte";
-  import DaisyAbout from "./Daisy/DaisyRoutes/DaisyAbout.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -65,7 +60,7 @@
       <Route path="/privacy" component={Privacy} />
 
       <!-- Test Route -->
-      <Route path="/test" component={DaisyAbout} />
+      <!-- <Route path="/test" component={DaisyAbout} /> -->
     </Router>
   </Main>
   <Footer />
