@@ -54,21 +54,24 @@ def create_user_folder(user_id: str = None):
 
     # user_folder will always have the '/' at the end
     user_folder = f'users/{user_id}/'
-    profile_folder = f'{user_folder}profile/'
     promotions_folder = f'{user_folder}promotions/'
     requests_folder = f'{user_folder}requests/'
     tasks_folder = f'{user_folder}tasks/'
     reviews_folder = f'{user_folder}reviews/'
     gallery_folder = f'{user_folder}gallery/'
+    profile_folder = f'{user_folder}profile/'
+    cover_folder = f'{user_folder}cover/'
+
 
     # All folders to create
     folders = [user_folder,
-               profile_folder,
                promotions_folder,
                requests_folder,
                tasks_folder,
                reviews_folder,
-               gallery_folder
+               profile_folder,
+               gallery_folder,
+               cover_folder
                ]
 
     for folder in folders:
