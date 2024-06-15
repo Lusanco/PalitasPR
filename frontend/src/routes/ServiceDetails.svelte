@@ -88,7 +88,7 @@
         >
           {#each $response2.results as review}
             <div
-              class="flex flex-col justify-between p-4 shadow-md bg-stone-200 min-h-40 max-h-96 card"
+              class="flex flex-col justify-between p-4 shadow-md bg-stone-200 card"
             >
               <div class="flex justify-between gap-2">
                 <div>
@@ -97,11 +97,13 @@
                 <div>{`${review.rating}/5.0`}</div>
               </div>
               <br />
-              <div class="h-full text-justify line-clamp-6 overflow-ellipsis">
+              <div
+                class="h-full py-6 text-justify line-clamp-none overflow-ellipsis"
+              >
                 {review.description}
               </div>
-              <br />
-              <br />
+              <!-- <br />
+              <br /> -->
               <div class="flex justify-between gap-2">
                 <div class="">{review.created_at}</div>
                 <button class="absolute btn right-4 bottom-4">Images</button>
