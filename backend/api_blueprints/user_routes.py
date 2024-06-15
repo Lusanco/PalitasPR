@@ -3,6 +3,7 @@ from db.db_user import Db_user
 from db.db_operations import DBOperations
 import emails
 from flask_login import login_user, logout_user, login_required, current_user
+import aws_bucket
 
 user_bp = Blueprint('user', __name__)
 
@@ -81,22 +82,46 @@ def get_contacts():
     response, status = Db_user().get_initial_contacts(current_user.id)
     return make_response(jsonify(response), status)
 
-@user_bp.route('/my-profile', methods=['GET'])
+@user_bp.route('/my-profile', methods=['GET', 'PUT'])
 @login_required
 def get_my_profile():
     '''
         Get the user's profile
     '''
-    profile = Db_user().get_profile_by_userId(current_user.id)
-    if not profile:
-        return make_response(jsonify({'error': 'Profile does not exist'}), 404)
-    rating = Db_user().rating(current_user.id)
-    profile_dict = {}
-    profile_dict.update(profile.all_columns())
-    profile_dict['first_name'] = current_user.first_name
-    profile_dict['last_name'] = current_user.last_name
-    profile_dict['rating'] = rating
-    return make_response(jsonify({'results': profile_dict}), 200)
+    if request.method == 'GET':
+        profile = Db_user().get_profile_by_userId(current_user.id)
+        if not profile:
+            return make_response(jsonify({'error': 'Profile does not exist'}), 404)
+        rating = Db_user().rating(current_user.id)
+        profile_dict = {}
+        profile_dict.update(profile.all_columns())
+        profile_dict['first_name'] = current_user.first_name
+        profile_dict['last_name'] = current_user.last_name
+        profile_dict['rating'] = rating
+        return make_response(jsonify({'results': profile_dict}), 200)
+
+    if request.method == 'PUT':
+        #TESTING
+        # data = request.data  This must be a dictionary, must validate keys here or in dboperations.update
+        data = {'Profile': {'id': 'profile_id', 'bio': 'Updated bio...'}}
+        response, status = DBOperations().update({'Profile': {data}})
+        return make_response(jsonify(response), status)
+
+    if request.method == 'POST':
+        # image_data = request.files  This must be picture, must validate keys here or in dboperations.update
+        pic_bytes = bytes
+        pic_name = 'pic_names'
+        model = 'Gallery, Profile, Cover'
+        aws_bucket.put_picture(current_user.id, model, None, pic_name, pic_bytes)
+
+    if request.method == 'DELETE':
+        #Testing
+        # image_data = request.data  This must be picture names, must validate keys here or in dboperations.update
+        pic_name = 'existing pic name'
+        model = 'Gallery, Profile, Cover'
+        response, status = aws_bucket.delete_picture(current_user.id, model, None, pic_name)
+        return make_response(jsonify(response), status)
+
 
 @user_bp.route('/profile/<profile_id>', methods=['GET'])
 @login_required
