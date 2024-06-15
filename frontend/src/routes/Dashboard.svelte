@@ -2,7 +2,7 @@
   import Link from "../components/Link.svelte";
 
   let twcss =
-    "w-full h-24 md:h-32 rounded-lg bg-stone-200  flex flex-col justify-center items-center font-bold shadow-md text-md md:text-2xl hover:bg-teal-700 transition duration-300 ease-in-out cursor-pointer text-center";
+    "w-full h-24 md:h-32 rounded-lg text-stone-600 bg-stone-300  flex flex-col justify-center items-center font-bold shadow-md text-md md:text-2xl hover:bg-stone-400 hover:text-stone-700 transition duration-300 ease-in-out cursor-pointer text-center";
 </script>
 
 <div class="flex flex-col items-center justify-center h-full min-h-screen">
