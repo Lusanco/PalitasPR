@@ -4,6 +4,7 @@
   import axios from "axios";
   import { response } from "../scripts/stores";
   import { writable } from "svelte/store";
+  import { link } from "svelte-routing";
 
   let response1 = writable(null);
   let response2 = writable(null);
@@ -114,32 +115,44 @@
             class="flex flex-col gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96 element"
           >
             {#each $response3 as service}
-              <div
-                class="flex flex-col justify-between p-4 rounded-none shadow-md bg-stone-200 card"
+              <a
+                use:link
+                href={service.promo_id
+                  ? `/service-details/${service.promo_id}`
+                  : `/request-details/${service.request_id}`}
+                class="w-full transition-transform duration-200 ease-in-out transform rounded-none shadow-xl min-h-40 card card-side bg-base-100 hover:bg-base-300 active:scale-95"
               >
-                <div class="flex justify-between gap-2">
-                  <div>
-                    {`${service.first_name} ${service.last_name}`}
+                <div class="w-1/2 p-0 min-h-40 md:w-1/4 md:card-body">
+                  <div class="p-2 md:mb-6 md:p-0 h-1/2 md:h-full">
+                    <h2
+                      class="md:card-title text-md overflow-ellipsis line-clamp-none"
+                    >
+                      {service.title}
+                    </h2>
+                    <p
+                      class="text-sm md:-mt-2 overflow-ellipsis line-clamp-1 md:truncate"
+                    >
+                      {service.first_name}
+                      {service.last_name}
+                    </p>
+                    <br />
+                    <h3 class="text-lg">Published</h3>
+                    <p class="text-sm md:-mt-2">{service.created_at}</p>
                   </div>
-                  <div>{`${service.rating}/5.0`}</div>
                 </div>
-                <br />
-                <div
-                  class="h-full py-6 text-justify line-clamp-none overflow-ellipsis"
-                >
-                  {service.description}
+                <div class="w-1/2 p-2 min-h-40 md:w-2/4 md:card-body">
+                  <p class="h-full line-clamp-none overflow-ellipsis">
+                    {service.description}
+                  </p>
                 </div>
-                <div class="flex justify-between gap-2">
-                  <div class="">{service.created_at}</div>
-                  <button class="absolute btn right-4 bottom-4">Images</button>
-                </div>
-              </div>
+              </a>
+              <!-- New Card End -->
             {/each}
           </div>
         </div>
       </div>
       <!-- Rightmost -->
-      <div class="w-full bg-base-100 max-h-40 md:w-1/2">
+      <div class="w-full min-h-20 md:w-1/2">
         <!-- Gallery -->
         <div
           class="flex flex-col h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2 bg-base-100"
@@ -150,30 +163,12 @@
           <br />
 
           <div
-            class="flex flex-col gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96 element"
+            class="flex flex-wrap justify-center gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96 element"
           >
-            {#each [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as review}
+            {#each [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as image}
               <div
-                class="flex flex-col justify-between p-4 rounded-none shadow-md bg-stone-200 min-h-40 max-h-96 card"
-              >
-                <div class="flex justify-between gap-2">
-                  <div>Full Name</div>
-                  <div>3.5/5.0</div>
-                </div>
-                <br />
-                <div class="h-full text-justify line-clamp-6 overflow-ellipsis">
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                  Dolorem cumque iste quia veritatis doloremque cum natus, vero
-                  fugiat, vel odio quas placeat similique corrupti quo delectus
-                  iure commodi maiores repellendus!
-                </div>
-                <br />
-                <br />
-                <div class="flex justify-between gap-2">
-                  <div class="">Fecha</div>
-                  <button class="absolute btn right-4 bottom-4">Images</button>
-                </div>
-              </div>
+                class="rounded-none min-w-32 min-h-32 max-w-48 max-h-48 skeleton"
+              ></div>
             {/each}
           </div>
         </div>
