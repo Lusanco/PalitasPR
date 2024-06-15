@@ -60,7 +60,7 @@
       <Route path="/privacy" component={Privacy} />
 
       <!-- Test Route -->
-      <!-- <Route path="/test" component={DaisyAbout} /> -->
+      <!-- <Route path="/test" component={} /> -->
     </Router>
   </Main>
   <Footer />
