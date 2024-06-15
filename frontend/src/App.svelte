@@ -33,6 +33,8 @@
   import DaisyProfile from "./Daisy/DaisyRoutes/DaisyProfile.svelte";
   import DaisyTermsOfUse from "./Daisy/DaisyRoutes/DaisyTermsOfUse.svelte";
   import TermsOfUse from "./routes/TermsOfUse.svelte";
+  import DaisyPrivacy from "./Daisy/DaisyRoutes/DaisyPrivacy.svelte";
+  import Privacy from "./routes/Privacy.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -59,9 +61,10 @@
       <Route path="/faq" component={Faq} />
       <Route path="/404" component={NotFound} />
       <Route path="/terms-of-use" component={TermsOfUse} />
+      <Route path="/privacy" component={Privacy} />
 
       <!-- Test Route -->
-      <Route path="/test" component={DaisyTermsOfUse} />
+      <Route path="/test" component={DaisyPrivacy} />
     </Router>
   </Main>
   <Footer />
