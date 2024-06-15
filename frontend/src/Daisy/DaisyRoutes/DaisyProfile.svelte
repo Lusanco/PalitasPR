@@ -1,3 +1,4 @@
+<!-- /api/dashboard/promotion-request -->
 <!-- Profile Container -->
 <div class="flex flex-col items-center min-h-screen">
   <div class="flex w-screen max-w-6xl mx-auto bg-base-100">
@@ -13,7 +14,7 @@
         <div
           class="w-40 h-40 -mt-20 border-4 rounded-full skeleton border-base-200"
         ></div>
-        <h1 class="text-lg font-semibold">Luis Petraco</h1>
+        <h1 class="py-2 text-xl font-semibold text-stone-700">Luis Petraco</h1>
       </div>
       <!-- Profile Details -->
       <div
@@ -49,17 +50,18 @@
           excepturi atque veniam tempora quos doloribus rerum?
         </p>
       </div>
+      <br />
     </div>
   </div>
   <!-- Bottom Half -->
   <div class="flex flex-wrap w-full h-full max-w-6xl bg-base-100">
     <!-- Leftmost -->
     <div class="w-full min-h-20 md:w-1/2">
-      <!-- Reviews -->
+      <!-- Services -->
       <div
         class="flex flex-col h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2"
       >
-        <h1 class="self-center text-3xl card-title">Reviews</h1>
+        <h1 class="self-center text-3xl text-stone-700 card-title">Services</h1>
         <br />
 
         <div
@@ -67,7 +69,7 @@
         >
           {#each [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as review}
             <div
-              class="flex flex-col justify-between p-4 shadow-md bg-stone-200 min-h-40 max-h-96 card"
+              class="flex flex-col justify-between p-4 rounded-none shadow-md bg-stone-200 min-h-40 max-h-96 card"
             >
               <div class="flex justify-between gap-2">
                 <div>Full Name</div>
@@ -97,7 +99,7 @@
       <div
         class="flex flex-col h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2 bg-base-100"
       >
-        <h1 class="self-center text-3xl card-title">Reviews</h1>
+        <h1 class="self-center text-3xl text-stone-700 card-title">Gallery</h1>
         <br />
 
         <div
@@ -105,7 +107,7 @@
         >
           {#each [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as review}
             <div
-              class="flex flex-col justify-between p-4 shadow-md bg-stone-200 min-h-40 max-h-96 card"
+              class="flex flex-col justify-between p-4 rounded-none shadow-md bg-stone-200 min-h-40 max-h-96 card"
             >
               <div class="flex justify-between gap-2">
                 <div>Full Name</div>
