@@ -31,6 +31,8 @@
   import ServiceOffers from "./routes/ServiceOffers.svelte";
   import NotFound from "./routes/NotFound.svelte";
   import DaisyProfile from "./Daisy/DaisyRoutes/DaisyProfile.svelte";
+  import DaisyTermsOfUse from "./Daisy/DaisyRoutes/DaisyTermsOfUse.svelte";
+  import TermsOfUse from "./routes/TermsOfUse.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -56,9 +58,10 @@
       <Route path="/contact" component={Contact} />
       <Route path="/faq" component={Faq} />
       <Route path="/404" component={NotFound} />
+      <Route path="/terms-of-use" component={TermsOfUse} />
 
       <!-- Test Route -->
-      <Route path="/test" component={DaisyProfile} />
+      <Route path="/test" component={DaisyTermsOfUse} />
     </Router>
   </Main>
   <Footer />
