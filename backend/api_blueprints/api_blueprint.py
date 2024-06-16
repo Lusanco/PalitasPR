@@ -63,3 +63,7 @@ def put_pic():
         print(content)
         response = aws_bucket.put_picture('007', 'Promotion', '005', filename, content)
         return make_response(response)
+# FINISH THIS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+@api_bp.route('initial-contact', methods=['POST'])
+def send_contact():
+    pass
