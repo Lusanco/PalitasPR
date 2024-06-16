@@ -1,8 +1,8 @@
 -- Drop tables if they exist (for testing purposes)
 DROP TABLE IF EXISTS user_service_assoc;
-DROP TABLE IF EXISTS initial_contacts;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS initial_contacts;
 DROP TABLE IF EXISTS request_towns;
 DROP TABLE If EXISTS promo_towns;
 DROP Table IF EXISTS promotions;
@@ -50,21 +50,6 @@ CREATE TABLE promotions (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
 
--- Create table for tasks
-CREATE TABLE tasks (
-    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
-	promo_id varchar(50) References promotions(id) ON DELETE CASCADE NOT NULL,
-    provider_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    receiver_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    receiver_confirm BOOLEAN,
-    is_read BOOLEAN DEFAULT False,
-    service_id INT REFERENCES services(id) ON DELETE CASCADE NOT NULL,
-    description Text NOT NULL,
-    status VARCHAR(10) DEFAULT 'pending' CHECK(status in ('open', 'closed', 'pending')),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
 -- Create table for Initial Contacts
 CREATE Table initial_contacts (
         id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
@@ -76,6 +61,23 @@ CREATE Table initial_contacts (
         created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Create table for tasks
+CREATE TABLE tasks (
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+	promo_id varchar(50) References promotions(id) ON DELETE CASCADE NOT NULL,
+    provider_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    receiver_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    initial_contact_id varchar(50) REFERENCES initial_contacts(id) ON DELETE CASCADE NOT NULL,
+    receiver_confirm BOOLEAN,
+    is_read BOOLEAN DEFAULT False,
+    service_id INT REFERENCES services(id) ON DELETE CASCADE NOT NULL,
+    description Text NOT NULL,
+    status VARCHAR(10) DEFAULT 'pending' CHECK(status in ('open', 'closed', 'pending')),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 --  Create Table for reviews
 CREATE TABLE reviews (
     id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
@@ -795,345 +797,382 @@ WHERE r.title = 'Event Decoration'
 AND u.first_name = 'Sofia'
 AND u.last_name = 'Rodriguez';
 
+-- Create initial contact, task and review
 
--- Insert tasks related to promotions
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- Initial contact A1
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
+SELECT u1.id AS sender_id, u2.id AS receiver_id, p.id AS promo_id, true AS read, true AS sent_task
+FROM users u1
+JOIN users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver (promo owner)
+JOIN promotions p ON p.title = 'Nightclubs and Weddings'
+WHERE u1.first_name = 'Jane' AND u1.last_name = 'Smith'
+LIMIT 1; -- Sender (service requester)
+
+-- Task A1
+INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
+SELECT 
+    p.id AS promo_id, 
+    p.user_id AS provider_id, 
+    (SELECT id FROM users WHERE id <> p.user_id LIMIT 1) AS receiver_id,
+    (SELECT ic.id FROM initial_contacts ic WHERE ic.promo_id = p.id AND ic.sender_id = (SELECT id FROM users WHERE first_name = 'Jane' AND last_name = 'Smith' LIMIT 1) AND ic.receiver_id = p.user_id LIMIT 1) AS initial_contact_id, 
+    p.service_id AS service_id, 
+    'closed' AS status, 
+    'TASK DESCRIPTION: ' || p.title AS description,
+    true AS is_read
 FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Nightclubs and Weddings'; -- John Doe
+WHERE p.title = 'Nightclubs and Weddings';
 
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Urban DJ';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK2 DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Urban DJ';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK3 DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Urban DJ';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK4 DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Urban DJ';
-
--- Insert tasks related to promotions
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Special Gardening Offer';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK2 DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Special Gardening Offer';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK3 DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Special Gardening Offer';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'New Styles Modern';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Best Styles in Town';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Nail Art Extravaganza';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Spotless Cleaning Service';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Pet Paradise Retreat';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Premium Car Wash & Detailing';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Landscaping Masterpieces';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Expert Plumbing Solutions';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Gourmet Catering Experience';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Ultimate Party DJ';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Professional Electrical Solutions';
-
-INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
-SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
-FROM promotions p
-JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
-WHERE p.title = 'Artistic Painting Services';
-
--- Inserting reviews for tasks related to promotions
-
--- Nightclubs and Weddings
+-- Review A1
 INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Awesome DJ performance, kept the party going!', 
+VALUES ('Awesome DJ performance, kept the party going! Variety of songs, tracks, mixes, all was awesome!', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1), 
         5, 
-        'https://example.com/nightclub.jpg',
+        'https://www.austinchronicle.com/binary/ba6f/Doc-Daneeka---Kingdom-_3_.jpg',
         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1));
 
--- Urban DJ (Great mix of music, everyone enjoyed the beats.)
+-- Initial contact A2
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
+SELECT u1.id AS sender_id, u2.id AS receiver_id, p.id AS promo_id, true AS read, true AS sent_task
+FROM users u1
+JOIN users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver (promo owner)
+JOIN promotions p ON p.title = 'Nightclubs and Weddings'
+WHERE u1.first_name = 'Hector' AND u1.last_name = 'Torres'
+LIMIT 1; -- Sender (service requester)
+
+-- Task A2
+INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
+SELECT 
+    p.id AS promo_id, 
+    p.user_id AS provider_id, 
+    (SELECT id FROM users WHERE id <> p.user_id LIMIT 1) AS receiver_id,
+    (SELECT ic.id FROM initial_contacts ic WHERE ic.promo_id = p.id AND ic.sender_id = (SELECT id FROM users WHERE first_name = 'Hector' AND last_name = 'Torres' LIMIT 1) AND ic.receiver_id = p.user_id LIMIT 1) AS initial_contact_id, 
+    p.service_id AS service_id, 
+    'closed' AS status, 
+    '2 TASK DESCRIPTION: ' || p.title AS description,
+    true AS is_read
+FROM promotions p
+WHERE p.title = 'Nightclubs and Weddings';
+
+-- Review A2
+INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+VALUES ('Awesome, kept the party going! Would hire again. It was a great experience. Next time we will have him for the company party.', 
+        (SELECT id FROM tasks WHERE description LIKE '2 TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1), 
+        5, 
+        'https://www.austinchronicle.com/binary/ba6f/Doc-Daneeka---Kingdom-_3_.jpg',
+        (SELECT receiver_id FROM tasks WHERE description LIKE '2 TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1));
+
+-- Initial contact B1
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
+SELECT u1.id AS sender_id, u2.id AS receiver_id, p.id AS promo_id, true AS read, true AS sent_task
+FROM users u1
+JOIN users u2 ON u2.first_name = 'Hector' AND u2.last_name = 'Torres' -- Receiver (promo owner)
+JOIN promotions p ON p.title = 'Urban DJ'
+WHERE u1.first_name = 'John' AND u1.last_name = 'Doe'
+LIMIT 1; -- Sender (service requester)
+
+-- Task B1
+INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
+SELECT 
+    p.id AS promo_id, 
+    p.user_id AS provider_id, 
+    (SELECT id FROM users WHERE id <> p.user_id LIMIT 1) AS receiver_id,
+    (SELECT ic.id FROM initial_contacts ic WHERE ic.promo_id = p.id AND ic.sender_id = (SELECT id FROM users WHERE first_name = 'John' AND last_name = 'Doe' LIMIT 1) AND ic.receiver_id = p.user_id LIMIT 1) AS initial_contact_id, 
+    p.service_id AS service_id, 
+    'closed' AS status, 
+    'TASK DESCRIPTION: ' || p.title AS description,
+    true AS is_read
+FROM promotions p
+WHERE p.title = 'Urban DJ';
+
+-- Review B1
 INSERT INTO reviews (description, task_id, rating, pictures, user_id)
 VALUES ('Great mix of music, everyone enjoyed the beats.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Urban DJ' LIMIT 1), 
         4, 
-        NULL,
+        'https://djintershade.com/wp-content/uploads/2022/02/95DF5BD2-C9D4-4C27-B277-C159BAC1ECBB-scaled-1-2048x1536.jpeg',
         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Urban DJ' LIMIT 1));
 
--- Urban DJ (Good communication and service from the DJ.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Good communication and service from the DJ.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK2 DESCRIPTION: Urban DJ' LIMIT 1), 
-        4, 
-        NULL,
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK2 DESCRIPTION: Urban DJ' LIMIT 1));
+-- Initial contact C1
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
+SELECT u1.id AS sender_id, u2.id AS receiver_id, p.id AS promo_id, true AS read, true AS sent_task
+FROM users u1
+JOIN users u2 ON u2.first_name = 'Jane' AND u2.last_name = 'Smith' -- Receiver (promo owner)
+JOIN promotions p ON p.title = 'Special Gardening Offer'
+WHERE u1.first_name = 'John' AND u1.last_name = 'Doe'
+LIMIT 1; -- Sender (service requester)
 
--- Urban DJ (Diverse music selection, accommodated all requests.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Diverse music selection, accommodated all requests.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK3 DESCRIPTION: Urban DJ' LIMIT 1), 
-        5, 
-        NULL,
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK3 DESCRIPTION: Urban DJ' LIMIT 1));
+-- Task C1
+INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
+SELECT 
+    p.id AS promo_id, 
+    p.user_id AS provider_id, 
+    (SELECT id FROM users WHERE id <> p.user_id LIMIT 1) AS receiver_id,
+    (SELECT ic.id FROM initial_contacts ic WHERE ic.promo_id = p.id AND ic.sender_id = (SELECT id FROM users WHERE first_name = 'John' AND last_name = 'Doe' LIMIT 1) AND ic.receiver_id = p.user_id LIMIT 1) AS initial_contact_id, 
+    p.service_id AS service_id, 
+    'closed' AS status, 
+    'TASK DESCRIPTION: ' || p.title AS description,
+    true AS is_read
+FROM promotions p
+WHERE p.title = 'Special Gardening Offer';
 
--- Urban DJ (Professional setup, created a lively atmosphere.)
+-- Review C1
 INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Professional setup, created a lively atmosphere.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK4 DESCRIPTION: Urban DJ' LIMIT 1), 
-        4, 
-        NULL,
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK4 DESCRIPTION: Urban DJ' LIMIT 1));
-
--- Special Gardening Offer (Beautiful garden transformation, very pleased.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Beautiful garden transformation, very pleased.', 
+VALUES ('Beautiful garden transformation, very pleased. Started small but will hire again for future projects.', 
         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Special Gardening Offer' LIMIT 1), 
         5, 
-        'https://example.com/garden2.jpg',
+        'https://www.bobvila.com/wp-content/uploads/2023/08/Vego-Garden-Raised-Beds-Review.jpg',
         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Special Gardening Offer' LIMIT 1));
 
--- Special Gardening Offer (Highly recommend their gardening services.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Highly recommend their gardening services.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK2 DESCRIPTION: Special Gardening Offer' LIMIT 1), 
-        5, 
-        NULL,
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK2 DESCRIPTION: Special Gardening Offer' LIMIT 1));
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK2 DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Urban DJ';
 
--- Special Gardening Offer (Efficient work, completed the job on time.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Efficient work, completed the job on time.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK3 DESCRIPTION: Special Gardening Offer' LIMIT 1), 
-        4, 
-        NULL,
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK3 DESCRIPTION: Special Gardening Offer' LIMIT 1));
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK3 DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Urban DJ';
 
--- New Styles Modern (Stunning hairstyle, exactly what I wanted!)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Stunning hairstyle, exactly what I wanted!', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: New Styles Modern' LIMIT 1), 
-        5, 
-        'https://example.com/hairstyle2.jpg',
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: New Styles Modern' LIMIT 1));
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK4 DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Urban DJ';
 
--- Best Styles in Town (Great consultation, got the perfect hairstyle.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Great consultation, got the perfect hairstyle.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Best Styles in Town' LIMIT 1), 
-        4, 
-        NULL,
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Best Styles in Town' LIMIT 1));
+-- -- Insert tasks related to promotions
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Special Gardening Offer';
 
--- Nail Art Extravaganza (Creative nail designs, exceeded expectations!)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Creative nail designs, exceeded expectations!', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nail Art Extravaganza' LIMIT 1), 
-        5, 
-        'https://example.com/nails.jpg',
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nail Art Extravaganza' LIMIT 1));
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK2 DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Special Gardening Offer';
 
--- Spotless Cleaning Service (Thorough cleaning job, everything looks pristine.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Thorough cleaning job, everything looks pristine.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Spotless Cleaning Service' LIMIT 1), 
-        5, 
-        NULL,
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Spotless Cleaning Service' LIMIT 1));
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK3 DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Special Gardening Offer';
 
--- Pet Paradise Retreat (Pets were happy and well cared for.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Pets were happy and well cared for.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Pet Paradise Retreat' LIMIT 1), 
-        4, 
-        NULL,
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Pet Paradise Retreat' LIMIT 1));
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'New Styles Modern';
 
--- Premium Car Wash & Detailing (Car looks brand new after the detailing.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Car looks brand new after the detailing.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Premium Car Wash & Detailing' LIMIT 1), 
-        5, 
-        'https://example.com/car2.jpg',
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Premium Car Wash & Detailing' LIMIT 1));
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Best Styles in Town';
 
--- Landscaping Masterpieces (Beautiful landscaping design, very professional.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Beautiful landscaping design, very professional.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Landscaping Masterpieces' LIMIT 1), 
-        5, 
-        NULL,
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Landscaping Masterpieces' LIMIT 1));
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Nail Art Extravaganza';
 
--- Expert Plumbing Solutions (Fixed the plumbing issue quickly and effectively.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Fixed the plumbing issue quickly and effectively.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Expert Plumbing Solutions' LIMIT 1), 
-        4, 
-        NULL,
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Expert Plumbing Solutions' LIMIT 1));
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Spotless Cleaning Service';
 
--- Gourmet Catering Experience (Delicious food, everyone enjoyed the catering.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Delicious food, everyone enjoyed the catering.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Gourmet Catering Experience' LIMIT 1), 
-        5, 
-        'https://example.com/catering2.jpg',
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Gourmet Catering Experience' LIMIT 1));
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Pet Paradise Retreat';
 
--- Ultimate Party DJ (DJ created a fantastic atmosphere for the party.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('DJ created a fantastic atmosphere for the party.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Ultimate Party DJ' LIMIT 1), 
-        5, 
-        NULL,
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Ultimate Party DJ' LIMIT 1));
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Premium Car Wash & Detailing';
 
--- Professional Electrical Solutions (Resolved electrical issues efficiently.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Resolved electrical issues efficiently.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Professional Electrical Solutions' LIMIT 1), 
-        4, 
-        NULL,
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Professional Electrical Solutions' LIMIT 1));
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Landscaping Masterpieces';
 
--- Artistic Painting Services (Transformed the space with creative painting.)
-INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Transformed the space with creative painting.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Artistic Painting Services' LIMIT 1), 
-        5, 
-        'https://example.com/painting2.jpg',
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Artistic Painting Services' LIMIT 1));
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Expert Plumbing Solutions';
+
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Gourmet Catering Experience';
+
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Ultimate Party DJ';
+
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Professional Electrical Solutions';
+
+-- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
+-- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK DESCRIPTION: ' || p.title
+-- FROM promotions p
+-- JOIN users r ON r.id = (SELECT id FROM users WHERE id <> p.user_id LIMIT 1)
+-- WHERE p.title = 'Artistic Painting Services';
+
+-- Inserting reviews for tasks related to promotions
 
 
--- Inserts into initial_contacts
+-- Review
 
-INSERT INTO initial_contacts (sender_id, receiver_id, promo_id)
-SELECT
-    u1.id AS sender_id,
-    u2.id AS receiver_id,
-    p.id AS promo_id
-FROM
-    users u1
-    JOIN users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver
-    JOIN promotions p ON p.title = 'Nightclubs and Weddings'
-WHERE
-    u1.first_name = 'Jane' AND u1.last_name = 'Smith' --Sender
-LIMIT 1;
+-- -- Urban DJ (Good communication and service from the DJ.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Good communication and service from the DJ.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK2 DESCRIPTION: Urban DJ' LIMIT 1), 
+--         4, 
+--         NULL,
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK2 DESCRIPTION: Urban DJ' LIMIT 1));
 
-INSERT INTO initial_contacts (sender_id, receiver_id, promo_id)
-SELECT
-    u1.id AS sender_id,
-    u2.id AS receiver_id,
-    p.id AS promo_id
-FROM
-    users u1
-    JOIN users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver
-    JOIN promotions p ON p.title = 'Nightclubs and Weddings'
-WHERE
-    u1.first_name = 'David' AND u1.last_name = 'Wilson' --Sender
-LIMIT 1;
+-- -- Urban DJ (Diverse music selection, accommodated all requests.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Diverse music selection, accommodated all requests.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK3 DESCRIPTION: Urban DJ' LIMIT 1), 
+--         5, 
+--         NULL,
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK3 DESCRIPTION: Urban DJ' LIMIT 1));
 
-INSERT INTO initial_contacts (sender_id, receiver_id, promo_id)
-SELECT
-    u1.id AS sender_id,
-    u2.id AS receiver_id,
-    p.id AS promo_id
-FROM
-    users u1
-    JOIN users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver
-    JOIN promotions p ON p.title = 'Nightclubs and Weddings'
-WHERE
-    u1.first_name = 'Miguel' AND u1.last_name = 'Diaz' --Sender
-LIMIT 1;
+-- -- Urban DJ (Professional setup, created a lively atmosphere.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Professional setup, created a lively atmosphere.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK4 DESCRIPTION: Urban DJ' LIMIT 1), 
+--         4, 
+--         NULL,
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK4 DESCRIPTION: Urban DJ' LIMIT 1));
 
-INSERT INTO initial_contacts (sender_id, receiver_id, promo_id)
-SELECT
-    u1.id AS sender_id,
-    u2.id AS receiver_id,
-    p.id AS promo_id
-FROM
-    users u1
-    JOIN users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver
-    JOIN promotions p ON p.title = 'Nightclubs and Weddings'
-WHERE
-    u1.first_name = 'Alice' AND u1.last_name = 'Brown' --Sender
-LIMIT 1;
+
+-- -- Special Gardening Offer (Highly recommend their gardening services.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Highly recommend their gardening services.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK2 DESCRIPTION: Special Gardening Offer' LIMIT 1), 
+--         5, 
+--         NULL,
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK2 DESCRIPTION: Special Gardening Offer' LIMIT 1));
+
+-- -- Special Gardening Offer (Efficient work, completed the job on time.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Efficient work, completed the job on time.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK3 DESCRIPTION: Special Gardening Offer' LIMIT 1), 
+--         4, 
+--         NULL,
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK3 DESCRIPTION: Special Gardening Offer' LIMIT 1));
+
+-- -- New Styles Modern (Stunning hairstyle, exactly what I wanted!)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Stunning hairstyle, exactly what I wanted!', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: New Styles Modern' LIMIT 1), 
+--         5, 
+--         'https://example.com/hairstyle2.jpg',
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: New Styles Modern' LIMIT 1));
+
+-- -- Best Styles in Town (Great consultation, got the perfect hairstyle.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Great consultation, got the perfect hairstyle.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Best Styles in Town' LIMIT 1), 
+--         4, 
+--         NULL,
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Best Styles in Town' LIMIT 1));
+
+-- -- Nail Art Extravaganza (Creative nail designs, exceeded expectations!)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Creative nail designs, exceeded expectations!', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nail Art Extravaganza' LIMIT 1), 
+--         5, 
+--         'https://example.com/nails.jpg',
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nail Art Extravaganza' LIMIT 1));
+
+-- -- Spotless Cleaning Service (Thorough cleaning job, everything looks pristine.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Thorough cleaning job, everything looks pristine.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Spotless Cleaning Service' LIMIT 1), 
+--         5, 
+--         NULL,
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Spotless Cleaning Service' LIMIT 1));
+
+-- -- Pet Paradise Retreat (Pets were happy and well cared for.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Pets were happy and well cared for.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Pet Paradise Retreat' LIMIT 1), 
+--         4, 
+--         NULL,
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Pet Paradise Retreat' LIMIT 1));
+
+-- -- Premium Car Wash & Detailing (Car looks brand new after the detailing.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Car looks brand new after the detailing.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Premium Car Wash & Detailing' LIMIT 1), 
+--         5, 
+--         'https://example.com/car2.jpg',
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Premium Car Wash & Detailing' LIMIT 1));
+
+-- -- Landscaping Masterpieces (Beautiful landscaping design, very professional.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Beautiful landscaping design, very professional.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Landscaping Masterpieces' LIMIT 1), 
+--         5, 
+--         NULL,
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Landscaping Masterpieces' LIMIT 1));
+
+-- -- Expert Plumbing Solutions (Fixed the plumbing issue quickly and effectively.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Fixed the plumbing issue quickly and effectively.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Expert Plumbing Solutions' LIMIT 1), 
+--         4, 
+--         NULL,
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Expert Plumbing Solutions' LIMIT 1));
+
+-- -- Gourmet Catering Experience (Delicious food, everyone enjoyed the catering.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Delicious food, everyone enjoyed the catering.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Gourmet Catering Experience' LIMIT 1), 
+--         5, 
+--         'https://example.com/catering2.jpg',
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Gourmet Catering Experience' LIMIT 1));
+
+-- -- Ultimate Party DJ (DJ created a fantastic atmosphere for the party.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('DJ created a fantastic atmosphere for the party.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Ultimate Party DJ' LIMIT 1), 
+--         5, 
+--         NULL,
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Ultimate Party DJ' LIMIT 1));
+
+-- -- Professional Electrical Solutions (Resolved electrical issues efficiently.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Resolved electrical issues efficiently.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Professional Electrical Solutions' LIMIT 1), 
+--         4, 
+--         NULL,
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Professional Electrical Solutions' LIMIT 1));
+
+-- -- Artistic Painting Services (Transformed the space with creative painting.)
+-- INSERT INTO reviews (description, task_id, rating, pictures, user_id)
+-- VALUES ('Transformed the space with creative painting.', 
+--         (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Artistic Painting Services' LIMIT 1), 
+--         5, 
+--         'https://example.com/painting2.jpg',
+--         (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Artistic Painting Services' LIMIT 1));
 
 -- Populate Profiles table
 INSERT INTO profiles(user_id, job_title, bio, tasks_completed)
