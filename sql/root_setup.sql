@@ -57,9 +57,10 @@ CREATE TABLE tasks (
     provider_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     receiver_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     receiver_confirm BOOLEAN,
+    is_read BOOLEAN DEFAULT False,
     service_id INT REFERENCES services(id) ON DELETE CASCADE NOT NULL,
     description Text NOT NULL,
-    status VARCHAR(10) DEFAULT 'open' CHECK(status in ('open', 'closed', 'pending')),
+    status VARCHAR(10) DEFAULT 'pending' CHECK(status in ('open', 'closed', 'pending')),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
