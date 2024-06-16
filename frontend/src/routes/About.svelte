@@ -11,13 +11,13 @@
   <title>PalitasPR | About</title>
 </head>
 
-<div class="py-20 scroll-smooth">
-  <div class="relative bg-base-200 h-[32rem]">
+<div class="mt-20 bg-white scroll-smooth">
+  <div class="relative bg-[#f1f1f1] h-[32rem]">
     <div class="absolute inset-x-0 bottom-0">
       <svg
         viewBox="0 0 224 12"
         fill="currentColor"
-        class="w-full -mb-1 text-stone-600"
+        class="w-full -mb-1 text-[#1f1f1f] border-b-4 border-[#cc2936]"
         preserveAspectRatio="none"
       >
         <path
@@ -32,11 +32,11 @@
         class="relative max-w-2xl sm:mx-auto sm:max-w-xl md:max-w-2xl sm:text-center"
       >
         <h1
-          class="mb-10 text-5xl font-bold tracking-tight text-center text-stone-800 sm:text-4xl sm:leading-none"
+          class="mb-10 text-5xl font-bold tracking-tight text-center text-[#cc2936] sm:text-4xl sm:leading-none"
         >
           About Us
         </h1>
-        <p class="text-2xl text-stone-600">
+        <p class="text-2xl text-[#1f1f1f]">
           PalitasPR is a marketplace for requesting and promoting services
           locally in PR. We are a small team of 5 developers that gave life to
           this app for an event considered our graduation project.
@@ -47,7 +47,7 @@
         <button
           on:click={scrollToTeam}
           aria-label="Scroll down"
-          class="flex items-center justify-center w-10 h-10 mx-auto duration-300 transform border rounded-full text-stone-800 hover:shadow-sm hover:scale-110"
+          class="flex items-center justify-center w-10 h-10 mx-auto duration-300 transform shadow-lg border-[#cc2936] rounded-full text-[#cc2936] hover:shadow-sm hover:scale-110 border-2"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -66,11 +66,11 @@
   </div>
   <div
     id="team"
-    class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20 bg-base-200"
+    class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
   >
     <div class="mx-auto mb-10 lg:max-w-xl sm:text-center">
       <h1
-        class="inline-block px-3 py-px mb-4 text-xl font-semibold tracking-wider uppercase rounded-full text-stone-800 bg-stone-200"
+        class="inline-block px-3 py-px mb-4 text-xl font-semibold tracking-wider uppercase rounded-full text-[#1f1f1f]"
       >
         Our Team
       </h1>
