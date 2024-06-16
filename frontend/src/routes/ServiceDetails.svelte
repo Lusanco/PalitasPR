@@ -3,6 +3,7 @@
   import axios from "axios";
   import { response } from "../scripts/stores";
   import { writable } from "svelte/store";
+  import { link } from "svelte-routing";
 
   const response1 = writable(null);
   const response2 = writable(null);
@@ -11,6 +12,7 @@
   let currentUrl;
   let urlArr;
 
+  function showModal(event) {}
   onMount(() => {
     console.log("ServiceDetails Component Has Mounted");
     currentUrl = window.location.href;
@@ -122,7 +124,7 @@
     <div
       class="flex items-center justify-center w-10/12 gap-4 mx-4 md:w-11/12 md:max-w-6xl"
     >
-      <button class="w-1/2 btn bg-stone-200">Cancel</button>
+      <a use:link href="/" class="w-1/2 btn bg-stone-200">Cancel</a>
       <button class="w-1/2 btn bg-stone-200">Accept</button>
     </div>
   </div>

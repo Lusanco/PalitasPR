@@ -3,7 +3,7 @@
 </script>
 
 <footer
-  class="flex flex-wrap border-[#1f1f1f] text-[#f1f1f1] justify-between p-10 rounded footer border-t-4 font-semibold border-x-0 border-b-0 bg-[#cc2936]"
+  class="flex flex-wrap border-[#1f1f1f] text-[#f1f1f1] justify-between p-10 footer border-t-4 font-semibold border-x-0 border-b-0 bg-[#cc2936]"
 >
   <nav class="flex flex-wrap items-center justify-center gap-4 mx-auto">
     <a
