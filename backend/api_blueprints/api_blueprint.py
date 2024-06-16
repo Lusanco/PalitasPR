@@ -66,13 +66,13 @@ def put_pic():
         response = aws_bucket.put_picture('007', 'Promotion', '005', filename, content)
         return make_response(response)
 
-@api_bp.route('initial-contact', methods=['POST'])
+@api_bp.route('/initial-contact', methods=['POST'])
 @login_required
 def send_contact():
     '''
         Create initial-contact message
     '''
-    data = request.get_json
+    data = request.get_json()
     if 'receiver_id' not in data or 'promo_id' not in data:
         return make_response(jsonify({'error': 'Missing a key'}), 400)
     if not DBOperations().search('User', data['receiver_id']):
@@ -80,7 +80,7 @@ def send_contact():
     if not DBOperations().search('Promotion', data['promo_id']):
         return make_response(jsonify({'error': 'Promotion doesnt exist'}), 404)
     data['sender_id'] = current_user.id
-    response, status = DBOperations().new({'Initial_contact': data})
+    response, status = DBOperations().new({'Initial_Contact': data})
     if status != 201:
         return make_response(jsonify(response), status)
     return make_response(jsonify({'results': 'ok'}), 201)
