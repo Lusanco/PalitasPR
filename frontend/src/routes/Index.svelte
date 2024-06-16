@@ -19,7 +19,7 @@
     url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}`,
     headers: "application/json",
     twcss:
-      "btn border-none rounded-none focus:outline-none text-[#CC2936] bg-white hover:text-[#f1f1f1] hover:bg-[#cc2936]",
+      "btn border-none rounded-t-none rounded-l-none rounded-r-lg rounded-b-lg focus:outline-none text-[#CC2936] bg-white hover:text-[#f1f1f1] hover:bg-[#cc2936]",
     misc: { "App Location": "Index Search Component" },
   };
   // Button Prop Variables And Dependencies
@@ -73,7 +73,10 @@
           class="w-full col-span-2 border-t-0 border-b-2 rounded-none border-x-0 border-[#cc2936] input input-bordered focus:outline-none text-[#cc2936]"
         />
       </div>
-      <div id="filters" class="grid grid-cols-3 col-span-2 row-span-1">
+      <div
+        id="filters"
+        class="grid grid-cols-3 col-span-2 row-span-1 overflow-hidden"
+      >
         <!-- Model Filter Start -->
         <select
           bind:value={model}

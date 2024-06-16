@@ -105,7 +105,7 @@
     <!-- Bottom Half -->
     <div class="flex flex-wrap w-full h-full max-w-6xl bg-base-100">
       <!-- Leftmost -->
-      <div class="w-full min-h-20 md:w-1/2">
+      <div class="w-full min-h-20 md:w-2/3">
         <!-- Services -->
         <div
           class="flex flex-col h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2"
@@ -156,7 +156,7 @@
         </div>
       </div>
       <!-- Rightmost -->
-      <div class="w-full min-h-20 md:w-1/2">
+      <div class="w-full min-h-20 md:w-1/3">
         <!-- Gallery -->
         <div
           class="flex flex-col h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2 bg-base-100"
