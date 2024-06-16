@@ -22,6 +22,7 @@
     id = urlArr[urlArr.length - 1];
     console.log("ServiceDetails Component ID: ", id);
 
+    // fix axios calls like Profile axios
     axios
       .get(`/api/Promotion/${id}`)
       .then((axiosResponse) => {
@@ -61,7 +62,7 @@
     >
       <!-- ServiceDetails Left -->
       <div
-        class="h-full gap-1 p-4 rounded-none card md:border-r-2 min-h-96 md:border-stone-700 basis-full md:w-fit md:basis-1/2"
+        class="h-full gap-1 p-4 rounded-none card md:border-r-2 min-h-96 md:border-[#1f1f1f] basis-full md:w-fit md:basis-1/2"
       >
         <h1 class="self-center text-3xl card-title">
           {$response1.results.title}
@@ -73,7 +74,7 @@
           <div class="self-center w-full h-40 rounded-none skeleton"></div>
           <h2>User: {$response1.results.user_id}</h2>
           <h3>Service: {$response1.results.service_id}</h3>
-          <hr class="text-stone-500" />
+          <hr class="text-[#1f1f1f]" />
           <br />
           <p class="self-center w-full text-justify min-h-40">
             {$response1.results.description}
@@ -92,30 +93,38 @@
         <div
           class="flex flex-col gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96"
         >
-          {#each $response2.results as review}
-            <div
-              class="flex flex-col justify-between p-4 shadow-md bg-stone-200 card"
-            >
-              <div class="flex justify-between gap-2">
-                <div>
-                  {`${review.first_name} ${review.last_name}`}
-                </div>
-                <div>{`${review.rating}/5.0`}</div>
-              </div>
-              <br />
+          {#if $response2}
+            {#each $response2.results as review}
               <div
-                class="h-full py-6 text-justify line-clamp-none overflow-ellipsis"
+                class="flex flex-col justify-between p-4 shadow-md bg-[#f1f1f1] card"
               >
-                {review.description}
-              </div>
-              <!-- <br />
+                <div class="flex justify-between gap-2">
+                  <div>
+                    {`${review.first_name} ${review.last_name}`}
+                  </div>
+                  <div>{`${review.rating}/5.0`}</div>
+                </div>
+                <br />
+                <div
+                  class="h-full py-6 text-justify line-clamp-none overflow-ellipsis"
+                >
+                  {review.description}
+                </div>
+                <!-- <br />
               <br /> -->
-              <div class="flex justify-between gap-2">
-                <div class="">{review.created_at}</div>
-                <button class="absolute btn right-4 bottom-4">Images</button>
+                <div class="flex justify-between gap-2">
+                  <div class="">{review.created_at}</div>
+                  <button class="absolute btn right-4 bottom-4">Images</button>
+                </div>
               </div>
+            {/each}
+          {:else}
+            <div
+              class="font-bold bg-white text-xl flex flex-col justify-center items-center text-[#1f1f1f] text-center h-full w-full"
+            >
+              No Reviews Yet
             </div>
-          {/each}
+          {/if}
         </div>
       </div>
       <!-- Right -->
@@ -124,8 +133,8 @@
     <div
       class="flex items-center justify-center w-10/12 gap-4 mx-4 md:w-11/12 md:max-w-6xl"
     >
-      <a use:link href="/" class="w-1/2 btn bg-stone-200">Cancel</a>
-      <button class="w-1/2 btn bg-stone-200">Accept</button>
+      <a use:link href="/" class="w-1/2 btn bg-[#f1f1f1]">Cancel</a>
+      <button class="w-1/2 btn bg-[#f1f1f1]">Accept</button>
     </div>
   </div>
   <!-- Container -->
