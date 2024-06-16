@@ -21,7 +21,7 @@
       on:click={handlePalitasPRClick}
       href="/"
       rel="noopener noreferrer"
-      class="text-xl border-none btn"
+      class="text-xl bg-transparent border-none hover:bg-gradient-to-t hover:from-[#1f1f1f] hover:via-[#cc2936] hover:to-[#1f1f1f] mx-8 rounded-full"
     >
       <img class="w-24" src="/public/logoLight.svg" alt="" />
     </a>
@@ -31,14 +31,14 @@
       use:link
       href="/login"
       rel="noopener noreferrer"
-      class="btn border-[#cc2936] border-b-2 border-t-0 border-x-0 text-[#f1f1f1]"
+      class="btn border-[#cc2936] border-b-2 border-t-0 border-x-0 text-[#f1f1f1] bg-transparent hover:bg-transparent hover:border-[#f1f1f1]"
       >Login</a
     >
     <a
       use:link
       href="/signup"
       rel="noopener noreferrer"
-      class="btn border-[#cc2936] border-b-2 border-t-0 border-x-0 text-[#f1f1f1]"
+      class="btn border-[#cc2936] border-b-2 border-t-0 border-x-0 text-[#f1f1f1] bg-transparent hover:bg-transparent hover:border-[#f1f1f1]"
       >Signup</a
     >
   </div>

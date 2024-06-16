@@ -4,6 +4,7 @@
   import { response } from "../scripts/stores";
   import { writable } from "svelte/store";
   import { link } from "svelte-routing";
+  import servicesID from "../scripts/servicesID";
 
   const response1 = writable(null);
   const response2 = writable(null);
@@ -72,8 +73,11 @@
           class="flex flex-col overflow-hidden overflow-y-scroll min-h-96 h-96 element"
         >
           <div class="self-center w-full h-40 rounded-none skeleton"></div>
-          <h2>User: {$response1.results.user_id}</h2>
-          <h3>Service: {$response1.results.service_id}</h3>
+          <h2>
+            {$response1.results.first_name}
+            {$response1.results.last_name}
+          </h2>
+          <h3>{Object.keys(servicesID)[$response1.results.service_id]}</h3>
           <hr class="text-[#1f1f1f]" />
           <br />
           <p class="self-center w-full text-justify min-h-40">
@@ -110,9 +114,7 @@
                 >
                   {review.description}
                 </div>
-                <!-- <br />
-              <br /> -->
-                <div class="flex justify-between gap-2">
+                <div class="flex justify-between gap-2 mt-8">
                   <div class="">{review.created_at}</div>
                   <button class="absolute btn right-4 bottom-4">Images</button>
                 </div>

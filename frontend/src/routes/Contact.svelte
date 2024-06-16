@@ -14,7 +14,7 @@
       class="absolute inset-0 transform -skew-y-6 shadow-lg bg-gradient-to-r from-[#cc2936] to-[#1f1f1f] sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"
     ></div>
     <div
-      class="relative px-4 py-10 shadow-lg bg-gradient-to-tr from-[#f1f1f1] to-white via-[#f1f1f1] border-l-2 border-b-2 border-[#cc2936] text-[#cc2936] sm:rounded-3xl sm:p-20"
+      class="relative px-4 py-10 shadow-lg bg-gradient-to-tr from-white to-white via-[#f1f1f1] border-l-2 border-b-2 border-[#cc2936] text-[#cc2936] sm:rounded-3xl sm:p-20"
     >
       <div class="pb-6 text-center">
         <h1 class="text-3xl">Contact Us!</h1>

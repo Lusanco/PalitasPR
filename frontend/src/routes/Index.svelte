@@ -19,7 +19,7 @@
     url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}`,
     headers: "application/json",
     twcss:
-      "btn btn-base border-none rounded-none focus:outline-none text-[#CC2936]",
+      "btn border-none rounded-none focus:outline-none text-[#CC2936] bg-white hover:text-[#f1f1f1] hover:bg-[#cc2936]",
     misc: { "App Location": "Index Search Component" },
   };
   // Button Prop Variables And Dependencies
@@ -59,11 +59,9 @@
   <Slogan />
   <!-- SearchBar Start -->
   <div
-    class="items-center justify-center w-full max-w-md mx-2 border-2 shadow-lg md:mx-auto rounded-2xl border-b-2 border-x-0 border-t-0 border-[#cc2936] bg-white"
+    class="items-center justify-center w-full max-w-md mx-2 border-2 shadow-lg md:mx-auto rounded-lg border-b-2 border-x-0 border-t-0 border-[#cc2936] bg-white"
   >
-    <div
-      class="grid grid-cols-2 grid-rows-2 rounded-lg bg-base-100 overflow-clip join"
-    >
+    <div class="grid grid-cols-2 grid-rows-2 rounded-lg overflow-clip join">
       <div id="search-bar" class="col-span-2 row-span-1">
         <label for="Search" class="sr-only"> Search </label>
         <input
