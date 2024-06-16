@@ -798,130 +798,209 @@ AND u.first_name = 'Sofia'
 AND u.last_name = 'Rodriguez';
 
 -- Create initial contact, task and review
-
 -- Initial contact A1
 INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
-SELECT u1.id AS sender_id, u2.id AS receiver_id, p.id AS promo_id, true AS read, true AS sent_task
-FROM users u1
-JOIN users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver (promo owner)
-JOIN promotions p ON p.title = 'Nightclubs and Weddings'
-WHERE u1.first_name = 'Jane' AND u1.last_name = 'Smith'
+SELECT 
+    u1.id AS sender_id,           -- Jane Smith (service requester)
+    u2.id AS receiver_id,         -- John Doe (service provider)
+    p.id AS promo_id, 
+    true AS read, 
+    true AS sent_task
+FROM 
+    users u1
+JOIN 
+    users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver (service provider)
+JOIN 
+    promotions p ON p.title = 'Nightclubs and Weddings'
+WHERE 
+    u1.first_name = 'Jane' AND u1.last_name = 'Smith'
 LIMIT 1; -- Sender (service requester)
 
 -- Task A1
 INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
 SELECT 
     p.id AS promo_id, 
-    p.user_id AS provider_id, 
-    (SELECT id FROM users WHERE id <> p.user_id LIMIT 1) AS receiver_id,
-    (SELECT ic.id FROM initial_contacts ic WHERE ic.promo_id = p.id AND ic.sender_id = (SELECT id FROM users WHERE first_name = 'Jane' AND last_name = 'Smith' LIMIT 1) AND ic.receiver_id = p.user_id LIMIT 1) AS initial_contact_id, 
+    u2.id AS provider_id,        -- John Doe (service provider)
+    u1.id AS receiver_id,        -- Jane Smith (service requester)
+    ic.id AS initial_contact_id,
     p.service_id AS service_id, 
     'closed' AS status, 
     'TASK DESCRIPTION: ' || p.title AS description,
     true AS is_read
-FROM promotions p
-WHERE p.title = 'Nightclubs and Weddings';
+FROM 
+    promotions p
+JOIN 
+    initial_contacts ic ON ic.promo_id = p.id
+JOIN 
+    users u1 ON u1.id = ic.sender_id -- Ensure sender of initial contact
+JOIN 
+    users u2 ON u2.id = ic.receiver_id -- Ensure receiver of initial contact
+WHERE 
+    p.title = 'Nightclubs and Weddings'
+    AND u1.first_name = 'Jane' AND u1.last_name = 'Smith';
 
 -- Review A1
 INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Awesome DJ performance, kept the party going! Variety of songs, tracks, mixes, all was awesome!', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1), 
-        5, 
-        'https://www.austinchronicle.com/binary/ba6f/Doc-Daneeka---Kingdom-_3_.jpg',
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1));
+VALUES (
+    'Awesome DJ performance, kept the party going! Variety of songs, tracks, mixes, all was awesome!', 
+    (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1), 
+    5, 
+    'https://www.austinchronicle.com/binary/ba6f/Doc-Daneeka---Kingdom-_3_.jpg',
+    (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1)
+);
 
 -- Initial contact A2
 INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
-SELECT u1.id AS sender_id, u2.id AS receiver_id, p.id AS promo_id, true AS read, true AS sent_task
-FROM users u1
-JOIN users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver (promo owner)
-JOIN promotions p ON p.title = 'Nightclubs and Weddings'
-WHERE u1.first_name = 'Hector' AND u1.last_name = 'Torres'
+SELECT 
+    u1.id AS sender_id,           -- Hector Torres (service requester)
+    u2.id AS receiver_id,         -- John Doe (service provider)
+    p.id AS promo_id, 
+    true AS read, 
+    true AS sent_task
+FROM 
+    users u1
+JOIN 
+    users u2 ON u2.first_name = 'John' AND u2.last_name = 'Doe' -- Receiver (service provider)
+JOIN 
+    promotions p ON p.title = 'Nightclubs and Weddings'
+WHERE 
+    u1.first_name = 'Hector' AND u1.last_name = 'Torres'
 LIMIT 1; -- Sender (service requester)
 
 -- Task A2
 INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
 SELECT 
     p.id AS promo_id, 
-    p.user_id AS provider_id, 
-    (SELECT id FROM users WHERE id <> p.user_id LIMIT 1) AS receiver_id,
-    (SELECT ic.id FROM initial_contacts ic WHERE ic.promo_id = p.id AND ic.sender_id = (SELECT id FROM users WHERE first_name = 'Hector' AND last_name = 'Torres' LIMIT 1) AND ic.receiver_id = p.user_id LIMIT 1) AS initial_contact_id, 
+    u2.id AS provider_id,        -- John Doe (service provider)
+    u1.id AS receiver_id,        -- Hector Torres (service requester)
+    ic.id AS initial_contact_id,
     p.service_id AS service_id, 
     'closed' AS status, 
     '2 TASK DESCRIPTION: ' || p.title AS description,
     true AS is_read
-FROM promotions p
-WHERE p.title = 'Nightclubs and Weddings';
+FROM 
+    promotions p
+JOIN 
+    initial_contacts ic ON ic.promo_id = p.id
+JOIN 
+    users u1 ON u1.id = ic.sender_id -- Ensure sender of initial contact
+JOIN 
+    users u2 ON u2.id = ic.receiver_id -- Ensure receiver of initial contact
+WHERE 
+    p.title = 'Nightclubs and Weddings'
+    AND u1.first_name = 'Hector' AND u1.last_name = 'Torres';
 
 -- Review A2
 INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Awesome, kept the party going! Would hire again. It was a great experience. Next time we will have him for the company party.', 
-        (SELECT id FROM tasks WHERE description LIKE '2 TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1), 
-        5, 
-        'https://www.austinchronicle.com/binary/ba6f/Doc-Daneeka---Kingdom-_3_.jpg',
-        (SELECT receiver_id FROM tasks WHERE description LIKE '2 TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1));
+VALUES (
+    'Awesome, kept the party going! Would hire again. It was a great experience. Next time we will have him for the company party.', 
+    (SELECT id FROM tasks WHERE description LIKE '2 TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1), 
+    5, 
+    'https://www.austinchronicle.com/binary/ba6f/Doc-Daneeka---Kingdom-_3_.jpg',
+    (SELECT receiver_id FROM tasks WHERE description LIKE '2 TASK DESCRIPTION: Nightclubs and Weddings' LIMIT 1)
+);
 
--- Initial contact B1
+-- Initial contact B1 (Assuming this is a separate promotion)
 INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
-SELECT u1.id AS sender_id, u2.id AS receiver_id, p.id AS promo_id, true AS read, true AS sent_task
-FROM users u1
-JOIN users u2 ON u2.first_name = 'Hector' AND u2.last_name = 'Torres' -- Receiver (promo owner)
-JOIN promotions p ON p.title = 'Urban DJ'
-WHERE u1.first_name = 'John' AND u1.last_name = 'Doe'
+SELECT 
+    u1.id AS sender_id,           -- John Doe (service requester)
+    u2.id AS receiver_id,         -- Hector Torres (service provider)
+    p.id AS promo_id, 
+    true AS read, 
+    true AS sent_task
+FROM 
+    users u1
+JOIN 
+    users u2 ON u2.first_name = 'Hector' AND u2.last_name = 'Torres' -- Receiver (service provider)
+JOIN 
+    promotions p ON p.title = 'Urban DJ'
+WHERE 
+    u1.first_name = 'John' AND u1.last_name = 'Doe'
 LIMIT 1; -- Sender (service requester)
 
 -- Task B1
 INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
 SELECT 
     p.id AS promo_id, 
-    p.user_id AS provider_id, 
-    (SELECT id FROM users WHERE id <> p.user_id LIMIT 1) AS receiver_id,
-    (SELECT ic.id FROM initial_contacts ic WHERE ic.promo_id = p.id AND ic.sender_id = (SELECT id FROM users WHERE first_name = 'John' AND last_name = 'Doe' LIMIT 1) AND ic.receiver_id = p.user_id LIMIT 1) AS initial_contact_id, 
+    u2.id AS provider_id,        -- Hector Torres (service provider)
+    u1.id AS receiver_id,        -- John Doe (service requester)
+    ic.id AS initial_contact_id,
     p.service_id AS service_id, 
     'closed' AS status, 
     'TASK DESCRIPTION: ' || p.title AS description,
     true AS is_read
-FROM promotions p
-WHERE p.title = 'Urban DJ';
+FROM 
+    promotions p
+JOIN 
+    initial_contacts ic ON ic.promo_id = p.id
+JOIN 
+    users u1 ON u1.id = ic.sender_id -- Ensure sender of initial contact
+JOIN 
+    users u2 ON u2.id = ic.receiver_id -- Ensure receiver of initial contact
+WHERE 
+    p.title = 'Urban DJ'
+    AND u1.first_name = 'John' AND u1.last_name = 'Doe';
 
 -- Review B1
 INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Great mix of music, everyone enjoyed the beats.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Urban DJ' LIMIT 1), 
-        4, 
-        'https://djintershade.com/wp-content/uploads/2022/02/95DF5BD2-C9D4-4C27-B277-C159BAC1ECBB-scaled-1-2048x1536.jpeg',
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Urban DJ' LIMIT 1));
+VALUES (
+    'Great mix of music, everyone enjoyed the beats.', 
+    (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Urban DJ' LIMIT 1), 
+    4, 
+    'https://djintershade.com/wp-content/uploads/2022/02/95DF5BD2-C9D4-4C27-B277-C159BAC1ECBB-scaled-1-2048x1536.jpeg',
+    (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Urban DJ' LIMIT 1)
+);
 
--- Initial contact C1
+-- Initial contact C1 (Assuming this is a separate promotion)
 INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
-SELECT u1.id AS sender_id, u2.id AS receiver_id, p.id AS promo_id, true AS read, true AS sent_task
-FROM users u1
-JOIN users u2 ON u2.first_name = 'Jane' AND u2.last_name = 'Smith' -- Receiver (promo owner)
-JOIN promotions p ON p.title = 'Special Gardening Offer'
-WHERE u1.first_name = 'John' AND u1.last_name = 'Doe'
+SELECT 
+    u1.id AS sender_id,           -- John Doe (service requester)
+    u2.id AS receiver_id,         -- Jane Smith (service provider)
+    p.id AS promo_id, 
+    true AS read, 
+    true AS sent_task
+FROM 
+    users u1
+JOIN 
+    users u2 ON u2.first_name = 'Jane' AND u2.last_name = 'Smith' -- Receiver (service provider)
+JOIN 
+    promotions p ON p.title = 'Special Gardening Offer'
+WHERE 
+    u1.first_name = 'John' AND u1.last_name = 'Doe'
 LIMIT 1; -- Sender (service requester)
 
 -- Task C1
 INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
 SELECT 
     p.id AS promo_id, 
-    p.user_id AS provider_id, 
-    (SELECT id FROM users WHERE id <> p.user_id LIMIT 1) AS receiver_id,
-    (SELECT ic.id FROM initial_contacts ic WHERE ic.promo_id = p.id AND ic.sender_id = (SELECT id FROM users WHERE first_name = 'John' AND last_name = 'Doe' LIMIT 1) AND ic.receiver_id = p.user_id LIMIT 1) AS initial_contact_id, 
+    u2.id AS provider_id,        -- Jane Smith (service provider)
+    u1.id AS receiver_id,        -- John Doe (service requester)
+    ic.id AS initial_contact_id,
     p.service_id AS service_id, 
     'closed' AS status, 
     'TASK DESCRIPTION: ' || p.title AS description,
     true AS is_read
-FROM promotions p
-WHERE p.title = 'Special Gardening Offer';
+FROM 
+    promotions p
+JOIN 
+    initial_contacts ic ON ic.promo_id = p.id
+JOIN 
+    users u1 ON u1.id = ic.sender_id -- Ensure sender of initial contact
+JOIN 
+    users u2 ON u2.id = ic.receiver_id -- Ensure receiver of initial contact
+WHERE 
+    p.title = 'Special Gardening Offer'
+    AND u1.first_name = 'John' AND u1.last_name = 'Doe';
 
 -- Review C1
 INSERT INTO reviews (description, task_id, rating, pictures, user_id)
-VALUES ('Beautiful garden transformation, very pleased. Started small but will hire again for future projects.', 
-        (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Special Gardening Offer' LIMIT 1), 
-        5, 
-        'https://www.bobvila.com/wp-content/uploads/2023/08/Vego-Garden-Raised-Beds-Review.jpg',
-        (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Special Gardening Offer' LIMIT 1));
+VALUES (
+    'Beautiful garden transformation, very pleased. Started small but will hire again for future projects.', 
+    (SELECT id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Special Gardening Offer' LIMIT 1), 
+    5, 
+    'https://www.bobvila.com/wp-content/uploads/2023/08/Vego-Garden-Raised-Beds-Review.jpg',
+    (SELECT receiver_id FROM tasks WHERE description LIKE 'TASK DESCRIPTION: Special Gardening Offer' LIMIT 1)
+);
 
 -- INSERT INTO tasks (promo_id, provider_id, receiver_id, service_id, status, description)
 -- SELECT p.id, p.user_id, r.id, p.service_id, 'closed', 'TASK2 DESCRIPTION: ' || p.title
