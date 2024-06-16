@@ -70,12 +70,14 @@ class Initial_Contact(BaseModel, Base):
 
     receiver_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     sender_id = Column(String(255), ForeignKey("users.id"), nullable=False)
+    promo_id = Column(String(255), ForeignKey("promotions.id"), nullable=False)
     read = Column(Boolean, default=False)
     sent_task = Column(Boolean, default=False)
 
     # Relationships
     sender = relationship("User", foreign_keys=[sender_id])
     receiver = relationship("User", foreign_keys=[receiver_id])
+    promo = relationship("Promotion", foreign_keys=[promo_id])
 
 
 class Task(BaseModel, Base):
@@ -85,8 +87,11 @@ class Task(BaseModel, Base):
     receiver_confirm = Column(Boolean)
     provider_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     service_id = Column(String(255), ForeignKey("users.id"), nullable=False)
+    is_read = Column(Boolean, default=False)
     status = Column(String(255), nullable=False, default="open")
     description = Column(String(255), nullable=False)
+
+    promo = relationship('Promotion', foreign_keys=[promo_id])
 
 class Promotion(BaseModel, Base):
     __tablename__ = "promotions"
