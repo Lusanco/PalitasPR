@@ -9,6 +9,7 @@ from db.db_operations import DBOperations
 import bcrypt
 from models import User, Initial_Contact, Profile, Review, Task
 from sqlalchemy import or_
+from db.db_task import Db_task
 
 
 class Db_user:
@@ -97,9 +98,10 @@ class Db_user:
         """
             get all initial contact messages user has received and its tasks
         """
-        all_initial_contacts = []
+        all_contacts = {}
         sent_contacts = []
-        
+        received_contacts = []
+
         initialContacts = self.session.query(Initial_Contact)\
             .filter(or_(Initial_Contact.receiver_id==user_id, Initial_Contact.sender_id==user_id))\
             .order_by(Initial_Contact.updated_at.desc())\
@@ -110,21 +112,33 @@ class Db_user:
         for initialContact in initialContacts:
             contact_dict = {}
             contact_dict.update(initialContact.all_columns())
-            # The user is the receiver, we need sender info
+            task = Db_task().get_task_by_contactId(initialContact.id)
+            if task:
+                contact_dict['task'] = task.all_columns()
+            else:
+                contact_dict['task'] = None
+            # DO NOT TOUCH LINE BELOW, adding object to session, prevent detached objects error on lazy loads
+            initialContact = self.session.merge(initialContact)
+
+            # received_contacts: The user is the receiver, we need sender info
             if user_id == initialContact.receiver_id:
                 sender = initialContact.sender
                 contact_dict['sender_first_name'] = sender.first_name
                 contact_dict['sender_last_name'] = sender.last_name
                 contact_dict['sender_email']= sender.email
                 contact_dict.pop('receiver_id')
-            else: # User is sender, we need receiver_info
+                received_contacts.append(contact_dict)
+            else: # sent_contacts: User is sender, we need receiver_info
                 receiver = initialContact.receiver
                 contact_dict['receiver_first_name'] = receiver.first_name
                 contact_dict['receiver_last_name'] = receiver.last_name
                 contact_dict['receiver_email']= receiver.email
                 contact_dict.pop('sender_id')
-            all_initial_contacts.append(contact_dict)
-        return {'results': all_initial_contacts}, 200
+                sent_contacts.append(contact_dict)
+
+            all_contacts['received'] = received_contacts
+            all_contacts['sent'] = sent_contacts
+        return {'results': all_contacts}, 200
 
     def get_profile_by_userId(self, userId):
         '''
