@@ -126,7 +126,7 @@
   {:else if (!$state.hidden && !$state.loaded) || $state.reload}
     <Loading />
   {:else if $state.error}
-    <span class="font-bold text-stone-600">No results found, try again.</span>
+    <span class="font-bold text-[#cc2936]">No results found, try again.</span>
   {:else}
     <div
       class="flex py-2 flex-col gap-4 w-[95%] sm:w-[90%] md:w-[80%] overflow-y-scroll overflow-hidden h-96"
@@ -139,7 +139,7 @@
           href={service.promo_id
             ? `/service-details/${service.promo_id}`
             : `/request-details/${service.request_id}`}
-          class="w-full h-40 transition-transform duration-200 ease-in-out transform rounded-none shadow-xl card card-side bg-base-100 hover:bg-base-300 active:scale-95"
+          class="w-full h-40 transition-transform duration-200 ease-in-out transform rounded-none shadow-xl card card-side bg-white hover:bg-[#cc2936] active:scale-95 border-b-4 border-[#cc2936]"
         >
           <div class="w-0 h-full rounded-none md:w-1/4 skeleton"></div>
 
