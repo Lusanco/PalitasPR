@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request, make_response
+from flask_login import current_user, login_required
 from db.db_operations import DBOperations
 from db.db_core import Db_core
+from db.db_initial_contact import Db_initial_contact
 from werkzeug.utils import secure_filename
 import aws_bucket
 
@@ -50,12 +52,12 @@ def put_pic():
     print("Pic ROUTE ACTIVATED")
     if 'image' not in request.files:
         return make_response({'message': 'No file part'}, 400)
-        
+ 
     file = request.files['image']
     print(file)
     if file.filename == '':
         return make_response({'message': 'No selected file'}, 400)
-        
+
     if file:
         filename = secure_filename(file.filename)  # Secure the filename
         content = file.read()
@@ -63,7 +65,20 @@ def put_pic():
         print(content)
         response = aws_bucket.put_picture('007', 'Promotion', '005', filename, content)
         return make_response(response)
-# FINISH THIS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 @api_bp.route('initial-contact', methods=['POST'])
+@login_required
 def send_contact():
-    pass
+    '''
+        Create initial-contact message
+    '''
+    data = request.get_json
+    if 'receiver_id' not in data or 'promo_id' not in data:
+        return make_response(jsonify({'error': 'Missing a key'}), 400)
+    if not DBOperations().search('User', data['receiver_id']):
+        return make_response(jsonify({'error': 'Receiver doesnt exist'}), 404)
+    if not DBOperations().search('Promotion', data['promo_id']):
+        return make_response(jsonify({'error': 'Promotion doesnt exist'}), 404)
+    data['sender_id'] = current_user.id
+    response, status = DBOperations().new({'Initial_contact': data})
+    return response, status

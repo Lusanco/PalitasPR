@@ -82,6 +82,7 @@ class Initial_Contact(BaseModel, Base):
 
 class Task(BaseModel, Base):
     __tablename__ = "tasks"
+    initial_contact_id = Column(String(255), ForeignKey("initial_contacts.id"), nullable=False)
     promo_id = Column(String(50), ForeignKey('promotions.id'))
     receiver_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     receiver_confirm = Column(Boolean)

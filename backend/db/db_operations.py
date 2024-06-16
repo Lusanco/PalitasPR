@@ -23,6 +23,7 @@ from models import (
     Request_Towns,
     Promotion,
     Profile,
+    Initial_Contact
 ) 
 
 
@@ -38,7 +39,8 @@ class DBOperations:
                 'Task': Task,
                 'Promotion': Promotion,
                 'Request': Request,
-                'Profile': Profile
+                'Profile': Profile,
+                'Initial_Contact': Initial_Contact
                 }
 
     def __init__(self):
