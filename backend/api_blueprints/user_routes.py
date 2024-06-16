@@ -79,9 +79,9 @@ def delete_object(model, model_id):
 @login_required
 def get_contacts():
     '''
-        Get all initial contact messages for the user
+        Get all initial contact messages for the user and tasks
     '''
-    response, status = Db_user().get_initial_contacts(current_user.id)
+    response, status = Db_user().get_contacts_section(current_user.id)
     # MODIFY i need to retrieve the tasks of this user and
     # associate the task with the initial contact
     return make_response(jsonify(response), status)
