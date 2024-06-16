@@ -74,6 +74,7 @@ def delete_object(model, model_id):
     response, status = DBOperations().delete_object(model, model_id, current_user.id)
     return make_response(jsonify(response), status)
 
+# WORK HEREEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 @user_bp.route('/contacts', methods=['GET']) # initial contacts (messages) display
 @login_required
 def get_contacts():
