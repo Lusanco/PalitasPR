@@ -97,8 +97,14 @@
         <div
           class="flex flex-col gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96"
         >
-          {#if $response2}
-            {#each $response2.results as review}
+          {#if $response2.results === null}
+          <div
+            class="font-bold bg-white text-xl flex flex-col justify-center items-center text-[#1f1f1f] text-center h-full w-full"
+          >
+            No Reviews Yet
+          </div>   
+          {:else}
+          {#each $response2.results as review}
               <div
                 class="flex flex-col justify-between p-4 shadow-md bg-[#f1f1f1] card"
               >
@@ -120,12 +126,6 @@
                 </div>
               </div>
             {/each}
-          {:else}
-            <div
-              class="font-bold bg-white text-xl flex flex-col justify-center items-center text-[#1f1f1f] text-center h-full w-full"
-            >
-              No Reviews Yet
-            </div>
           {/if}
         </div>
       </div>

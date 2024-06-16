@@ -17,7 +17,7 @@ def promotion_reviews(promo_id):
         Get all promotion reviews
     '''
     review_obj = Db_promotion().get_promo_reviews(promo_id)
-    if review_obj:
-        return make_response(jsonify({'results': review_obj}), 200)
-    else:
-        return make_response(jsonify({"error": f"No reviews found for Promo_ID {promo_id}"}), 404)
+    if not review_obj:
+        return make_response(jsonify({'results': None}), 200)
+
+    return make_response(jsonify({'results': review_obj}), 200)
