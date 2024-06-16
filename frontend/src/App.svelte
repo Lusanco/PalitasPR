@@ -61,7 +61,7 @@
       <Route path="/privacy" component={Privacy} />
 
       <!-- Test Route -->
-      <Route path="/test" component={LoginToContinue} />
+      <Route path="/test" component={Test} />
     </Router>
   </Main>
   <Footer />
