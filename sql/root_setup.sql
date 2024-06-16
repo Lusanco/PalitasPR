@@ -255,7 +255,7 @@ VALUES
     ('Naranjito'),
     ('Orocovis'),
     ('Patillas'),
-    ('Peñuelas'),
+    ('Penuelas'),
     ('Ponce'),
     ('Quebradillas'),
     ('Rincon'),
