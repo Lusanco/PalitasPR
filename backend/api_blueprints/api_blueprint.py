@@ -69,16 +69,16 @@ def put_pic():
 @api_bp.route('initial-contact', methods=['POST'])
 @login_required
 def send_contact():
-    data = {
-        'receiver_id': '<RECEIVER USER ID>',
-        'sender_id': current_user.id,
-        'promo_id': '<PROMOTION ID>'
-        }
-
+    '''
+        Create initial-contact message
+    '''
+    data = request.get_json
+    if 'receiver_id' not in data or 'promo_id' not in data:
+        return make_response(jsonify({'error': 'Missing a key'}), 400)
     if not DBOperations().search('User', data['receiver_id']):
         return make_response(jsonify({'error': 'Receiver doesnt exist'}), 404)
     if not DBOperations().search('Promotion', data['promo_id']):
         return make_response(jsonify({'error': 'Promotion doesnt exist'}), 404)
-
+    data['sender_id'] = current_user.id
     response, status = DBOperations().new({'Initial_contact': data})
     return response, status
