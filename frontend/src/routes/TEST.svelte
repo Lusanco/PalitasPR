@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
   import axios, { AxiosError } from "axios";
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
@@ -27,4 +27,4 @@
   </div>
 {:else}
   <div>No correct response</div>
-{/if}
+{/if} -->

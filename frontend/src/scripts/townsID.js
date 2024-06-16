@@ -1,5 +1,5 @@
 const townsID = {
-  All: 0,
+  All: "all",
   Adjuntas: 1,
   Aguada: 2,
   Aguadilla: 3,
