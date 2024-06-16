@@ -139,7 +139,7 @@
           href={service.promo_id
             ? `/service-details/${service.promo_id}`
             : `/request-details/${service.request_id}`}
-          class="w-full h-40 transition-transform duration-200 ease-in-out transform rounded-none shadow-xl card card-side bg-white hover:bg-[#cc2936] active:scale-95 border-b-4 border-[#cc2936]"
+          class="w-full h-40 transition-transform duration-200 ease-in-out transform rounded-none shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-[#f1f1f1] active:scale-95 border-b-4 border-[#cc2936]"
         >
           <div class="w-0 h-full rounded-none md:w-1/4 skeleton"></div>
 
