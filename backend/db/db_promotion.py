@@ -188,6 +188,7 @@ class Db_promotion:
                 'first_name': user.first_name,
                 'last_name': user.last_name
             }
+            print(f'Review:{review_dict}\n')
             review_list.append(review_dict)
 
         return review_list
