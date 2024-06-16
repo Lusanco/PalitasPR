@@ -7,7 +7,8 @@ from models import User
 from sqlalchemy import func, or_
 from models import (
     User,
-    Task
+    Task,
+    Initial_Contact
 ) 
 
 
@@ -28,3 +29,12 @@ class Db_task:
             .filter(or_(Task.receiver_id == userId, Task.provider_id == userId))\
             .all()
         return tasks
+
+    def get_task_by_contactId(self, contactID):
+        '''
+            Get a task by contact_id
+        '''
+        task = self.session.query(Task)\
+            .filter(Task.initial_contact_id== contactID)\
+            .first()
+        return task
