@@ -93,12 +93,13 @@ class Db_user:
         return response, status
 
     # WORKING DOWN HEERE NEED TEST
-    def get_initial_contacts(self, user_id):
+    def get_contacts_section(self, user_id):
         """
-            get all initial contact messages user has received
+            get all initial contact messages user has received and its tasks
         """
         all_initial_contacts = []
-
+        sent_contacts = []
+        
         initialContacts = self.session.query(Initial_Contact)\
             .filter(or_(Initial_Contact.receiver_id==user_id, Initial_Contact.sender_id==user_id))\
             .order_by(Initial_Contact.updated_at.desc())\
