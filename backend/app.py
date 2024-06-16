@@ -8,6 +8,7 @@ from api_blueprints.api_blueprint import api_bp
 from api_blueprints.dashboard_bp import my_bp
 from api_blueprints.user_routes import user_bp
 from api_blueprints.promotion_routes import promotion_bp
+from api_blueprints.tasks_routes import task_bp
 from flask_mail import Mail
 from flask_login import LoginManager
 from datetime import timedelta
@@ -25,6 +26,8 @@ app.register_blueprint(api_bp, url_prefix='/api')
 app.register_blueprint(my_bp, url_prefix='/api/dashboard')
 app.register_blueprint(user_bp, url_prefix='/api/user')
 app.register_blueprint(promotion_bp, url_prefix='/api/promotion')
+app.register_blueprint(task_bp, url_prefix='/api/tasks')
+
 mail = Mail(app)
 login_manager = LoginManager(app)
 
