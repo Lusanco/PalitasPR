@@ -31,6 +31,7 @@
   import NotFound from "./routes/NotFound.svelte";
   import TermsOfUse from "./routes/TermsOfUse.svelte";
   import Privacy from "./routes/Privacy.svelte";
+  import Test from "./routes/TEST.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -60,7 +61,7 @@
       <Route path="/privacy" component={Privacy} />
 
       <!-- Test Route -->
-      <!-- <Route path="/test" component={MockDashboard} /> -->
+      <Route path="/test" component={Test} />
     </Router>
   </Main>
   <Footer />

@@ -18,7 +18,8 @@
     method: "GET",
     url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}`,
     headers: "application/json",
-    twcss: "btn btn-base border-none rounded-none focus:outline-none",
+    twcss:
+      "btn btn-base border-none rounded-none focus:outline-none text-[#CC2936]",
     misc: { "App Location": "Index Search Component" },
   };
   // Button Prop Variables And Dependencies
@@ -58,7 +59,7 @@
   <Slogan />
   <!-- SearchBar Start -->
   <div
-    class="items-center justify-center w-full max-w-md mx-2 border-2 shadow-lg md:mx-auto"
+    class="items-center justify-center w-full max-w-md mx-2 border-2 shadow-lg md:mx-auto rounded-2xl border-b-2 border-x-0 border-t-0 border-[#cc2936] bg-white"
   >
     <div
       class="grid grid-cols-2 grid-rows-2 rounded-lg bg-base-100 overflow-clip join"
@@ -71,15 +72,14 @@
           bind:value={search}
           on:keydown={handleKeydown}
           placeholder="Search for..."
-          class="w-full col-span-2 border-t-0 border-b-2 rounded-none border-x-0 input input-bordered focus:outline-none"
+          class="w-full col-span-2 border-t-0 border-b-2 rounded-none border-x-0 border-[#cc2936] input input-bordered focus:outline-none text-[#cc2936]"
         />
-        <!-- on:keydown={handleKeydown} -->
       </div>
       <div id="filters" class="grid grid-cols-3 col-span-2 row-span-1">
         <!-- Model Filter Start -->
         <select
           bind:value={model}
-          class="w-full border-none select select-bordered focus:outline-none"
+          class="w-full border-none select select-bordered focus:outline-none text-[#cc2936]"
         >
           <option value="promotions">Promotions</option>
           <option value="requests">Requests</option>
@@ -88,7 +88,7 @@
         <!-- Town Filter Start -->
         <select
           bind:value={town}
-          class="w-full border-none select select-bordered focus:outline-none"
+          class="w-full border-none select select-bordered focus:outline-none text-[#cc2936]"
         >
           <option value="all" disabled>Town</option>
           {#each Object.entries(townsID) as [town, id]}

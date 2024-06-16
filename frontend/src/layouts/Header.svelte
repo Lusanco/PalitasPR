@@ -14,19 +14,33 @@
 </script>
 
 <!-- Header Start -->
-<header class="navbar bg-base-100">
+<header class="border-b-4 shadow-2xl border-[#cc2936] navbar bg-[#1f1f1f]">
   <div class="navbar-start">
     <a
       use:link
       on:click={handlePalitasPRClick}
       href="/"
       rel="noopener noreferrer"
-      class="text-xl btn btn-ghost">PalitasPR</a
+      class="text-xl border-none btn"
     >
+      <img class="w-24" src="/public/logoLight.svg" alt="" />
+    </a>
   </div>
   <div class="gap-2 navbar-end">
-    <a use:link href="/login" rel="noopener noreferrer" class="btn">Login</a>
-    <a use:link href="/signup" rel="noopener noreferrer" class="btn">Signup</a>
+    <a
+      use:link
+      href="/login"
+      rel="noopener noreferrer"
+      class="btn border-[#cc2936] border-b-2 border-t-0 border-x-0 text-[#f1f1f1]"
+      >Login</a
+    >
+    <a
+      use:link
+      href="/signup"
+      rel="noopener noreferrer"
+      class="btn border-[#cc2936] border-b-2 border-t-0 border-x-0 text-[#f1f1f1]"
+      >Signup</a
+    >
   </div>
 </header>
 <!-- Header End -->
