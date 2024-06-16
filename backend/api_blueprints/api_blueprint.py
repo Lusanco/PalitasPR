@@ -81,4 +81,6 @@ def send_contact():
         return make_response(jsonify({'error': 'Promotion doesnt exist'}), 404)
     data['sender_id'] = current_user.id
     response, status = DBOperations().new({'Initial_contact': data})
-    return response, status
+    if status != 201:
+        return make_response(jsonify(response), status)
+    return make_response(jsonify({'results': 'ok'}), 201)
