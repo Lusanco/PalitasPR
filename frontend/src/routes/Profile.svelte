@@ -127,11 +127,12 @@
                   : `/request-details/${service.request_id}`}
                 class="w-full h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-[#f1f1f1] active:scale-95 border-b-4 border-[#cc2936]"
               >
-                <div class="w-1/2 h-40 p-0 md:w-1/4 md:card-body">
-                  <div class="rounded-none h-1/2 md:w-0 skeleton"></div>
-                  <div class="p-2 md:mb-6 md:p-0 h-1/2 md:h-full">
+                <div class="w-1/2 h-40 p-0 px-2 md:w-1/4 md:card-body">
+                  <div
+                    class="flex flex-col justify-center h-full my-auto text-left"
+                  >
                     <h2
-                      class="md:card-title text-md overflow-ellipsis line-clamp-1 md:truncate"
+                      class="md:text-lg overflow-ellipsis line-clamp-1 md:truncate"
                     >
                       {service.title}
                     </h2>
@@ -146,7 +147,9 @@
                   </div>
                 </div>
                 <div class="w-1/2 h-40 p-2 md:w-2/4 md:card-body">
-                  <p class="h-full line-clamp-4 overflow-ellipsis">
+                  <p
+                    class="h-full text-sm text-justify md:text-base line-clamp-4 overflow-ellipsis"
+                  >
                     {service.description}
                   </p>
                 </div>
@@ -172,7 +175,7 @@
           >
             {#each [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as image}
               <div
-                class="rounded-none min-w-60 min-h-32 max-w-60 max-h-32 skeleton"
+                class="rounded-none min-w-72 min-h-36 max-w-72 max-h-36 skeleton"
               ></div>
             {/each}
           </div>
