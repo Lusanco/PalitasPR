@@ -21,7 +21,8 @@
     method: "POST",
     url: "/api/user/signup",
     headers: "application/json",
-    twcss: "border-2 shadow-md btn bg-base-100",
+    twcss:
+      "shadow-md text-[#f1f1f1] btn bg-[#cc2936] hover:bg-white hover:text-[#1f1f1f]",
     misc: { "App Location": "Signup" },
   };
   // Button Prop Variables And Dependencies
@@ -89,57 +90,57 @@
 >
   <div class="flex flex-col max-w-sm gap-4 px-1">
     <div class="text-center">
-      <h1 class="text-4xl font-bold text-stone-800">Signup</h1>
-      <p class="text-sm text-stone-600">Signup to create your account</p>
+      <h1 class="text-4xl font-bold text-[#1f1f1f]">Signup</h1>
+      <p class="text-sm text-[#cc2936]">Signup to create your account</p>
       <br />
     </div>
-    <label class="flex items-center gap-2 input input-bordered">
+    <label class="flex items-center gap-2 bg-white input input-bordered">
       <p class="text-center w-14">First</p>
       <input
         bind:value={first_name}
         on:keydown={handleKeydown}
         type="text"
-        class="border-none focus:ring-0 grow"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
         placeholder="John"
       />
     </label>
-    <label class="flex items-center gap-2 input input-bordered">
+    <label class="flex items-center gap-2 bg-white input input-bordered">
       <p class="text-center w-14">Last</p>
       <input
         bind:value={last_name}
         on:keydown={handleKeydown}
         type="text"
-        class="border-none focus:ring-0 grow"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
         placeholder="Doe"
       />
     </label>
-    <label class="flex items-center gap-2 input input-bordered">
+    <label class="flex items-center gap-2 bg-white input input-bordered">
       <p class="text-center w-14">Email</p>
       <input
         bind:value={email}
         on:keydown={handleKeydown}
         type="email"
-        class="border-none focus:ring-0 grow"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
         placeholder="user@email.com"
       />
     </label>
-    <label class="flex items-center gap-2 input input-bordered">
+    <label class="flex items-center gap-2 bg-white input input-bordered">
       <p class="text-center w-14">Password</p>
       <input
         bind:value={password}
         on:keydown={handleKeydown}
         type="password"
-        class="border-none focus:ring-0 grow"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
         placeholder="********"
       />
     </label>
-    <label class="flex items-center gap-2 input input-bordered">
+    <label class="flex items-center gap-2 bg-white input input-bordered">
       <p class="text-center w-14">Confirm</p>
       <input
         bind:value={confirmPassword}
         on:keydown={handleKeydown}
         type="password"
-        class="border-none focus:ring-0 grow"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
         placeholder="********"
       />
     </label>
@@ -148,7 +149,7 @@
     <p class="pr-2 -mt-4 text-right">
       Have an account? <a
         use:link
-        class="link link-hover"
+        class="link link-hover text-[#cc2936]"
         rel="noopener noreferrer"
         href="/login">Login</a
       >

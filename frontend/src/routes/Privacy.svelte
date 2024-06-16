@@ -11,6 +11,7 @@
     Política de Privacidad
   </h1>
   <br />
+  <br />
   <div class="p-4 bg-white rounded-md shadow-md">
     <p>
       PalitasPR ("nosotros", "nuestro" o "la aplicación") opera como un mercado

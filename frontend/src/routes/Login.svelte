@@ -16,7 +16,8 @@
     method: "GET",
     url: `/api/user/login?af1=${af1}&af2=${af2}`,
     headers: "application/json",
-    twcss: "border-2 shadow-md btn bg-base-100",
+    twcss:
+      "shadow-md text-[#f1f1f1] btn bg-[#cc2936] hover:bg-white hover:text-[#1f1f1f]",
     misc: { "App Location": "Login" },
   };
   // Button Prop Variables And Dependencies
@@ -71,27 +72,27 @@
 >
   <div class="flex flex-col max-w-sm gap-4 px-1">
     <div class="text-center">
-      <h1 class="text-4xl font-bold text-stone-800">Login</h1>
-      <p class="text-sm text-stone-600">Login to access your account</p>
+      <h1 class="text-4xl font-bold text-[#1f1f1f]">Login</h1>
+      <p class="text-sm text-[#cc2936]">Login to access your account</p>
       <br />
     </div>
-    <label class="flex items-center gap-2 input input-bordered">
+    <label class="flex items-center gap-2 bg-white input input-bordered">
       <p class="text-center w-14">Email</p>
       <input
         bind:value={af1}
         on:keydown={handleKeydown}
         type="email"
-        class="border-none focus:ring-0 grow"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
         placeholder="user@email.com"
       />
     </label>
-    <label class="flex items-center gap-2 input input-bordered">
+    <label class="flex items-center gap-2 bg-white input input-bordered">
       <p class="text-center w-14">Password</p>
       <input
         bind:value={af2}
         on:keydown={handleKeydown}
         type="password"
-        class="border-none focus:ring-0 grow"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
         placeholder="********"
       />
     </label>
@@ -99,13 +100,14 @@
       use:link
       href="/forgot-password"
       rel="noopener noreferrer"
-      class="self-end pr-2 -mt-4 link link-hover">Forgot password?</a
+      class="self-end pr-2 -mt-4 link link-hover text-[#cc2936]"
+      >Forgot password?</a
     >
     <Button bind:this={buttonRef} {image} {button}></Button>
     <p class="pr-2 -mt-4 text-right">
       Don't have an account yet? <a
         use:link
-        class="link link-hover"
+        class="link link-hover text-[#cc2936]"
         rel="noopener noreferrer"
         href="/signup">Signup</a
       >
@@ -115,7 +117,7 @@
     {:else if (!$state.hidden && !$state.loaded) || $state.reload}
       <Loading />
     {:else if $state.error}
-      <div class="w-full mx-auto font-bold text-center text-stone-600">
+      <div class="w-full mx-auto font-bold text-center text-[#cc2936]">
         Incorrect email or password, try again.
       </div>
     {/if}

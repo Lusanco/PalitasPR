@@ -11,6 +11,7 @@
     Terminos de Uso
   </h1>
   <br />
+  <br />
   <div class="p-4 bg-white rounded-md shadow-md">
     <p>
       Bienvenido a PalitasPR. Estos Términos de Uso ("Términos") rigen tu acceso
