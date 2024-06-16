@@ -32,6 +32,7 @@
   import TermsOfUse from "./routes/TermsOfUse.svelte";
   import Privacy from "./routes/Privacy.svelte";
   import Test from "./routes/TEST.svelte";
+  import InitialContactSuccess from "./routes/InitialContactSuccess.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -59,6 +60,10 @@
       <Route path="/404" component={NotFound} />
       <Route path="/terms-of-use" component={TermsOfUse} />
       <Route path="/privacy" component={Privacy} />
+      <Route
+        path="/initial-contact-success"
+        component={InitialContactSuccess}
+      />
 
       <!-- Test Route -->
       <Route path="/test" component={Test} />

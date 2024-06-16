@@ -21,7 +21,7 @@
       on:click={handlePalitasPRClick}
       href="/"
       rel="noopener noreferrer"
-      class="text-xl bg-transparent border-none hover:bg-gradient-to-t hover:from-[#1f1f1f] hover:via-[#cc2936] hover:to-[#1f1f1f] mx-8 rounded-full"
+      class="text-xl bg-transparent border-none hover:bg-gradient-to-t hover:from-[#1f1f1f] hover:via-[#cc2936] hover:to-[#1f1f1f] mx-4 rounded-full"
     >
       <img class="w-24" src="/public/logoLight.svg" alt="" />
     </a>

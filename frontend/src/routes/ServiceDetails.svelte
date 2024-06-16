@@ -1,10 +1,22 @@
 <script>
   import { onMount } from "svelte";
   import axios from "axios";
-  import { response } from "../scripts/stores";
+  import { state, data, response } from "../scripts/stores";
   import { writable } from "svelte/store";
   import { link } from "svelte-routing";
   import servicesID from "../scripts/servicesID";
+  import Button from "../components/Button.svelte";
+  import { get } from "svelte/store";
+
+  let image = null;
+  let button = {
+    name: "Send Initial Contact",
+    method: "POST",
+    url: "/api/initial-contact",
+    headers: "application/json", // "application/json"
+    twcss: "w-1/2 btn bg-[#f1f1f1]",
+    misc: { "App Location": "Service Details" },
+  };
 
   const response1 = writable(null);
   const response2 = writable(null);
@@ -12,6 +24,7 @@
   let id;
   let currentUrl;
   let urlArr;
+  let initialContact;
 
   function showModal(event) {}
   onMount(() => {
@@ -41,6 +54,11 @@
         response.set(axiosResponse);
         response2.set(axiosResponse.data);
         console.log(".then() Response 2 Log: ", $response2);
+        initialContact = {
+          receiver_id: $response1.results.user_id,
+          promo_id: $response1.results.id,
+        };
+        data.set(initialContact);
       })
       .catch((axiosError) => {
         console.log(".catch() Error Log: ", axiosError);
@@ -98,13 +116,13 @@
           class="flex flex-col gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96"
         >
           {#if $response2.results === null}
-          <div
-            class="font-bold bg-white text-xl flex flex-col justify-center items-center text-[#1f1f1f] text-center h-full w-full"
-          >
-            No Reviews Yet
-          </div>   
+            <div
+              class="font-bold bg-white text-xl flex flex-col justify-center items-center text-[#1f1f1f] text-center h-full w-full"
+            >
+              No Reviews Yet
+            </div>
           {:else}
-          {#each $response2.results as review}
+            {#each $response2.results as review}
               <div
                 class="flex flex-col justify-between p-4 shadow-md bg-[#f1f1f1] card"
               >
@@ -135,8 +153,13 @@
     <div
       class="flex items-center justify-center w-10/12 gap-4 mx-4 md:w-11/12 md:max-w-6xl"
     >
-      <a use:link href="/" class="w-1/2 btn bg-[#f1f1f1]">Cancel</a>
-      <button class="w-1/2 btn bg-[#f1f1f1]">Accept</button>
+      <a use:link href="/" class="w-1/2 btn bg-[#f1f1f1]">Back To Search</a>
+      <!-- <a use:link href="/initial-contact-success" class="w-1/2 btn bg-[#f1f1f1]"
+        >Send Initial Contact</a
+      > -->
+      <Button {image} {button} />
+      <!-- <a use:link href="/initial-contact-success">
+      </a> -->
     </div>
   </div>
   <!-- Container -->

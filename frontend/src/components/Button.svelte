@@ -1,7 +1,9 @@
 <script>
   import axios from "axios";
   import { state, data, response } from "../scripts/stores";
-  import { get } from "svelte/store";
+  import { get, writable } from "svelte/store";
+
+  let SDResponse = writable(null);
 
   export let image = null;
   export let button = {
@@ -117,6 +119,17 @@
 
   // Function to handle button click
   export function buttonLogic() {
+    if (button.misc["App Location"] === "Service Details") {
+      axiosLogic();
+      $SDResponse = get(response);
+      // console.log("Before IF", $SDResponse);
+      if ($SDResponse.status === 200) {
+        console.log("IN IF", $SDResponse);
+        window.location.href = "/initial-contact-success";
+      }
+      // console.log("After IF", $SDResponse);
+      return;
+    }
     if (button.misc["App Location"] === "Back Button Component") {
       backButton();
       return;
