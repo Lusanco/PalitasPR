@@ -49,26 +49,26 @@
 {#if $response2}
   <!-- Profile Container -->
   <div class="flex flex-col items-center min-h-screen">
-    <div class="flex w-screen max-w-6xl mx-auto bg-base-100">
+    <div class="flex w-screen max-w-6xl mx-auto bg-[#f1f1f1]">
       <!-- Upper Half -->
-      <div class="w-screen">
+      <div class="w-screen border-x-0 border-t-0 border-b-2 border-[#cc2936]">
         <!-- Profile Cover -->
         <div
-          class="flex w-screen max-w-6xl mx-auto rounded-none h-60 max-h-96 skeleton"
+          class="flex border-[#cc2936] border-b-2 border-x-0 border-t-0 w-screen max-w-6xl mx-auto rounded-none h-60 max-h-96 skeleton"
         ></div>
         <!-- Profile Container -->
-        <div class="flex flex-col items-center w-full pb-4 bg-base-100">
+        <div class="flex flex-col items-center w-full pb-4 bg-[#f1f1f1]">
           <!-- Profile Picture -->
           <div
-            class="w-40 h-40 -mt-20 border-4 rounded-full skeleton border-base-200"
+            class="w-40 border-[#cc2936] border-2 h-40 -mt-20 rounded-full skeleton"
           ></div>
-          <h1 class="py-2 text-xl font-semibold text-stone-700">
+          <h1 class="py-2 text-xl font-semibold text-[#1f1f1f]">
             {`${$response2.results.first_name} ${$response2.results.last_name}`}
           </h1>
         </div>
         <!-- Profile Details -->
         <div
-          class="flex flex-wrap p-4 mt-4 rounded-none md:-mt-24 bg-base-100 md:bg-transparent"
+          class="flex flex-wrap p-4 mt-4 rounded-none md:-mt-24 bg-[#f1f1f1] md:bg-transparent"
         >
           <div class="flex flex-wrap justify-between w-full px-4">
             <span class="w-full text-center md:text-left md:w-fit"
@@ -92,7 +92,7 @@
         </div>
 
         <!-- Description -->
-        <div class="rounded-none card bg-base-100">
+        <div class="rounded-none card bg-[#f1f1f1]">
           <p
             class="h-full text-justify line-clamp-none overflow-ellipsis card-body"
           >
@@ -101,16 +101,18 @@
         </div>
         <br />
       </div>
+      <br />
     </div>
+    <br />
     <!-- Bottom Half -->
-    <div class="flex flex-wrap w-full h-full max-w-6xl bg-base-100">
+    <div class="flex flex-wrap w-full h-full max-w-6xl bg-[#f1f1f1]">
       <!-- Leftmost -->
       <div class="w-full min-h-20 md:w-2/3">
         <!-- Services -->
         <div
           class="flex flex-col h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2"
         >
-          <h1 class="self-center text-3xl text-stone-700 card-title">
+          <h1 class="self-center text-3xl text-[#1f1f1f] card-title">
             Services
           </h1>
           <br />
@@ -163,9 +165,9 @@
       <div class="w-full min-h-20 md:w-1/3">
         <!-- Gallery -->
         <div
-          class="flex flex-col h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2 bg-base-100"
+          class="flex flex-col h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2 bg-[#f1f1f1]"
         >
-          <h1 class="self-center text-3xl text-stone-700 card-title">
+          <h1 class="self-center text-3xl text-[#1f1f1f] card-title">
             Gallery
           </h1>
           <br />
