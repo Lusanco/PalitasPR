@@ -74,13 +74,12 @@ def delete_object(model, model_id):
     response, status = DBOperations().delete_object(model, model_id, current_user.id)
     return make_response(jsonify(response), status)
 
-# WORK HEREEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 @user_bp.route('/contacts', methods=['GET']) # initial contacts (messages) display
 @login_required
 def get_contacts():
     '''
-        Get all initial contact messages sent to a service provider by a
-        requester
+        Get all initial contact messages for the user
     '''
     response, status = Db_user().get_initial_contacts(current_user.id)
     # MODIFY i need to retrieve the tasks of this user and
