@@ -31,7 +31,10 @@ def user_sign_up():
     else:
         return make_response(jsonify({'message': 'Missing a required field'}), 400)
 
-
+# initiAl_contacts.py 
+# Db_initiAL_contacts
+# /api/initial-contact
+#
 @user_bp.route("/verify_email/<token>", methods=["GET"])
 def verify_email(token):
     if not token:
@@ -71,8 +74,7 @@ def delete_object(model, model_id):
     response, status = DBOperations().delete_object(model, model_id, current_user.id)
     return make_response(jsonify(response), status)
 
-# WORKING DOWN HERE NEED TESTING
-@user_bp.route('/initial-contacts', methods=['GET'])
+@user_bp.route('/contacts', methods=['GET']) # initial contacts (messages) display
 @login_required
 def get_contacts():
     '''
@@ -80,6 +82,8 @@ def get_contacts():
         requester
     '''
     response, status = Db_user().get_initial_contacts(current_user.id)
+    # MODIFY i need to retrieve the tasks of this user and
+    # associate the task with the initial contact
     return make_response(jsonify(response), status)
 
 @user_bp.route('/my-profile', methods=['GET', 'PUT'])
