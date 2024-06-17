@@ -18,11 +18,11 @@ def explore():
     model = request.args.get('model')
     service = request.args.get('search')
     town = request.args.get('town')
-    search_results = Db_core().landing_searchBar(model, service, town)
-    if search_results:
-        return make_response(jsonify({'results': search_results}), 200)
+    response, status = Db_core().landing_searchBar(model, service, town)
+    if status != 200:
+        return make_response(jsonify(response), status)
     else:
-        return make_response(jsonify({'message':"No Results"}), 404)
+        return make_response(jsonify(response), status)
 
 
 @api_bp.route("/Promotion/<id>", methods=["GET"])

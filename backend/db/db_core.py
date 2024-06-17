@@ -107,7 +107,7 @@ class Db_core:
                 }
                 list_of_models.append(model_dict)
 
-        return list_of_models
+        return {'results': list_of_models}, 200
 
     async def dashboard_get_promos_requests(self, user_id):
         """
