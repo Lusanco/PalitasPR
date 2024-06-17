@@ -23,7 +23,7 @@
       rel="noopener noreferrer"
       class="text-xl bg-transparent border-none hover:bg-gradient-to-t hover:from-[#1f1f1f] hover:via-[#cc2936] hover:to-[#1f1f1f] mx-4 rounded-full"
     >
-      <img class="w-24" src="/public/logoLight.svg" alt="" />
+      <img class="w-24" src="/logoLight.svg" alt="" />
     </a>
   </div>
   <div class="gap-2 navbar-end">
