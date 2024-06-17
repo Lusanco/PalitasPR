@@ -69,7 +69,13 @@ class DBOperations:
             return {'error': 'Not valid class'}, 400
         
         new_object = model_class(**inner_dict)
+
+
         self.session.add(new_object)
+
+        # Create profile for user
+        if model_class == User:
+            self.new({'Profile': {'user_id': new_object.id, 'tasks_completed': 0, 'bio': 'Hola soy nuevo en PalitasPR!'}})
 
         try:
             self.session.commit()
