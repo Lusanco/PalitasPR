@@ -122,12 +122,12 @@
     if (button.misc["App Location"] === "Service Details") {
       axiosLogic();
       $SDResponse = get(response);
-      // console.log("Before IF", $SDResponse);
+      console.log("Before IF", $SDResponse);
       if ($SDResponse.status === 200) {
         console.log("IN IF", $SDResponse);
         window.location.href = "/initial-contact-success";
       }
-      // console.log("After IF", $SDResponse);
+      console.log("After IF", $SDResponse);
       return;
     }
     if (button.misc["App Location"] === "Back Button Component") {

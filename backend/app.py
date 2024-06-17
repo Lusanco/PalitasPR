@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """MAIN APP WITH FLASK"""
 
+import os
 from flask import Flask, send_from_directory, session, g
 from flask_cors import CORS
 from db.db_operations import DBOperations
@@ -14,12 +15,19 @@ from flask_login import LoginManager
 from datetime import timedelta
 from db_init import init_db
 
-app = Flask(__name__, static_folder="static", static_url_path="/")
+# app = Flask(__name__, static_folder="static", static_url_path="/")
 
 
-@app.route("/")
-def serve_index():
-    return send_from_directory(app.static_folder, "index.html")
+app = Flask(__name__, static_folder="static")
+
+
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve(path):
+    if path != "" and os.path.exists(app.static_folder + "/" + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, "index.html")
 
 
 app.config["SECRET_KEY"] = "demo_dev_pwd"
