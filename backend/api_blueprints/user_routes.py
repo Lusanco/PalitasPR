@@ -23,11 +23,9 @@ def user_sign_up():
         and "password" in form_data
     ):
         response, status = Db_user().sign_up(form_data)
-
         if status != 201:
             return make_response(jsonify(response), status)
-
-        return make_response(jsonify({"results": "ok"}), status)
+        return make_response(jsonify({'results': 'ok'}), 201)
     else:
         return make_response(jsonify({'message': 'Missing a required field'}), 400)
 
