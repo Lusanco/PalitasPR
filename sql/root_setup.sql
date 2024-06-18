@@ -26,15 +26,35 @@ CREATE TABLE users (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
-
+--  ------------------------------------------------------------------------------
 -- Create table for Service
 CREATE TABLE services (
     id Serial PRIMARY KEY,
     name VARCHAR(50) UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    tsv tsvector
 );
+
+-- Create GIN index on the tsvector column
+CREATE INDEX idx_services_tsv ON services USING gin(tsv);
+
+-- Create trigger function to update tsvector column
+CREATE FUNCTION update_tsvector() RETURNS trigger AS $$
+BEGIN
+    NEW.tsv := to_tsvector('english', NEW.name);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to call the trigger function on insert or update
+CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE
+ON services FOR EACH ROW EXECUTE FUNCTION update_tsvector();
+
+-- Update existing rows to populate tsvector column
+UPDATE services SET tsv = to_tsvector('english', name);
+-- -----------------------------------------------------------------
+
 -- Create table for promotions of users offering services
 -- If price max is left null, the price total is the price_min
 CREATE TABLE promotions (

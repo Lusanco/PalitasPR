@@ -16,6 +16,8 @@ from db.db_request import Db_request
 from models import User
 from sqlalchemy.exc import SQLAlchemyError
 import asyncio
+from sqlalchemy.dialects.postgresql import to_tsquery
+from sqlalchemy import func
 from sqlalchemy import func
 from unidecode import unidecode
 from aws_bucket import create_model_folder
@@ -60,12 +62,21 @@ class Db_core:
             return {'error':'model or service missing'}, 400
 
         service_name = unidecode(service).lower() # Normalize text
-        # Find service given the name typed on the searchbar
+        tsquery = func.to_tsquery('english', f'{service_name}:*')
+         # Find service using full-text search
         service_obj = (
             self.session.query(Service)
-            .filter(func.lower(Service.name).op("~")(f"{service_name}"))
-            .first()
+            .filter(Service.tsv.op('@@')(tsquery))
+            .all()
         )
+
+        # Testing here, best match search
+        print('My services: ')
+        print(len(service_obj))
+        if len(service_obj) > 0:
+            for service in service_obj:
+                print(f'{service.name}')
+            service_obj = service_obj[0]
         if not service_obj:
             return {'error': f'No service found with name: {service_name}'}, 404 
 

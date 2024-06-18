@@ -3,10 +3,13 @@
     All classes for tables(DataBase)
 """
 
-from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, Integer, Boolean
+from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, Integer, Boolean,  Index
 from sqlalchemy.orm import relationship
 from base_model import BaseModel, Base, BaseModelSerial
 from flask_login import UserMixin
+from sqlalchemy.dialects.postgresql import TSVECTOR
+from sqlalchemy.event import listen
+from sqlalchemy.sql import text
 
 
 # ASSOCIATION USER & SERVICE & TOWN CLASS
@@ -28,11 +31,16 @@ class Request_Towns(BaseModel, Base):
     __table_args__ = (UniqueConstraint("request_id", "town_id"),)
 
 
-# SERVICE CLASS (Serial id int)
-class Service(BaseModelSerial, Base):
+class Service(Base):
     __tablename__ = "services"
 
+    id = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True, nullable=False)
+    tsv = Column(TSVECTOR)
+
+    __table_args__ = (
+        Index('idx_services_tsv', 'tsv', postgresql_using='gin'),
+    )
 
 
 # USER CLASS
