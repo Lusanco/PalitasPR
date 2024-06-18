@@ -22,6 +22,10 @@ def explore():
     if status != 200:
         return make_response(jsonify(response), status)
     else:
+        # empty list from query, return None and 404 
+        if len(response['results']) == 0:
+            response['results'] = None
+            status = 404
         return make_response(jsonify(response), status)
 
 
