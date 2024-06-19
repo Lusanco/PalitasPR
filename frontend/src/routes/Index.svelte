@@ -157,14 +157,14 @@
           {/if}
 
           <div class="w-1/2 h-40 p-0 md:w-1/4 md:card-body">
-            <!-- <div class="rounded-none h-1/2 md:w-0 skeleton"></div> -->
-
             {#if !service.pictures}
               <div
                 class="object-center rounded-none h-1/2 md:w-0 skeleton"
               ></div>
             {:else}
-              <div class="object-cover w-20 rounded-none h-1/2 md:w-0">
+              <div
+                class="object-cover object-center w-full rounded-none h-1/2 md:w-0"
+              >
                 <img
                   class="object-cover w-full h-full rounded-none md:w-0"
                   src={service.pictures}
