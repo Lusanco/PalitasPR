@@ -17,20 +17,21 @@
       To continue, login to your account
     </p> -->
     <p class="px-6 pt-4 text-sm text-center text-stone-600">
-      <button
-        type="button"
+      <a
+        use:link
+        href="/"
+        rel="noopener noreferrer"
         class="bg-[#cc2936] max-w-32 w-full text-[#f1f1f1] hover:text-[#1f1f1f] hover:bg-white btn px-6"
-      >
-        <a use:link href="/" rel="noopener noreferrer" role="button">Search </a>
-      </button>
-      <button
-        type="button"
+        >Search
+      </a>
+      <a
+        use:link
+        href="/dashboard"
+        rel="noopener noreferrer"
         class="bg-[#cc2936] max-w-32 text-[#f1f1f1] hover:text-[#1f1f1f] hover:bg-white btn px-6"
       >
-        <a use:link href="/dashboard" rel="noopener noreferrer" role="button">
-          Dashboard
-        </a>
-      </button>
+        Dashboard
+      </a>
     </p>
   </div>
 </div>
