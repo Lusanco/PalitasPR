@@ -94,6 +94,7 @@ class Db_core:
             if model == "promotions":
                 model_dict = {
                     "promo_id": str(row.promo_id),
+                    'user_id': row.user_id,
                     "service": service_name,
                     "title": row.title,
                     "description": row.description,
@@ -109,6 +110,7 @@ class Db_core:
             else: # Requests dict...
                 model_dict = {
                     "request_id": str(row.request_id),
+                    'user_id': row.user_id,
                     "service": service_name,
                     "title": row.title,
                     "description": row.description,
@@ -116,6 +118,7 @@ class Db_core:
                     "last_name": row.last_name,
                     "towns": row[3],
                     "created_at": row.created_at.strftime("%Y-%m-%d"),
+                    'pictures': row.pictures
                 }
                 list_of_models.append(model_dict)
 
