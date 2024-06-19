@@ -32,7 +32,7 @@ def explore():
             model['pictures'] = model['pictures'][0]['results']
         return make_response(jsonify(response), status)
 
-@api_bp.route("/Promotion/<id>", methods=["GET"])
+@api_bp.route("/promotion/<id>", methods=["GET"])
 def show_promo(id):
     promo = DBOperations().search('Promotion', id)
     if promo:
