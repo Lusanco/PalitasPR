@@ -92,8 +92,15 @@
           {#if !$response1.results.pictures}
             <div class="self-center w-full h-40 rounded-none skeleton"></div>
           {:else}
-            <div class="self-center w-full h-40 rounded-none"></div>
-            <img src={$response1.results.pictures} alt="" />
+            <div
+              class="self-center object-contain w-full h-40 rounded-none max-h-40"
+            >
+              <img
+                class="self-center object-contain w-full h-40 rounded-none max-h-40"
+                src={$response1.results.pictures}
+                alt=""
+              />
+            </div>
           {/if}
           <h2>
             {$response1.results.first_name}

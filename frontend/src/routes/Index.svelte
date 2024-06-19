@@ -142,7 +142,9 @@
             : `/request-details/${service.request_id}`}
           class="w-full h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-[#f1f1f1] active:scale-95 border-b-4 border-[#cc2936]"
         >
-          <div class="w-0 h-full rounded-none md:w-1/4 skeleton"></div>
+          <div
+            class="w-0 h-full rounded-r-none rounded-l-2xl rounded-t-2xl md:w-1/4 skeleton"
+          ></div>
 
           <div class="w-1/2 h-40 p-0 md:w-1/4 md:card-body">
             <div class="rounded-none h-1/2 md:w-0 skeleton"></div>
