@@ -5,7 +5,7 @@ from db.db_core import Db_core
 from db.db_initial_contact import Db_initial_contact
 from werkzeug.utils import secure_filename
 import aws_bucket
-
+import shlex
 api_bp = Blueprint('api', __name__)
 
 @api_bp.route('/explore', methods=['GET'])
@@ -26,13 +26,30 @@ def explore():
         if len(response['results']) == 0:
             response['results'] = None
             status = 404
-        # Need to change this later
+        # Get first picture name to fetch from aws
         for model in response['results']:
-            model['pictures'] = aws_bucket.get_picture('007', 'Promotion', '001', 'aws_logo.png')
-            model['pictures'] = model['pictures'][0]['results']
+            if model['pictures']:
+                pic_names = model['pictures']
+                if 'promo_id' in model:
+                    modelFolder = 'Promotion'
+                    model_id = model['promo_id']
+                else:
+                    modelFolder = 'Request'
+                    model_id = model['request_id']
+                # Serve only one picture as thumbnail
+                pic1, separator, pic2 = pic_names.partition('|')
+                responseAWS, statusAWS = aws_bucket.get_picture(model['user_id'], modelFolder, model_id, pic1)
+                if statusAWS == 200:
+                    # put url into the pictures column of the model
+                    urlPic = responseAWS['results']
+                    model['pictures'] = urlPic
+                else:
+                    model['pictures'] = None
+
         return make_response(jsonify(response), status)
 
-@api_bp.route("/promotion/<id>", methods=["GET"])
+
+@api_bp.route("/Promotion/<id>", methods=["GET"])
 def show_promo(id):
     promo = DBOperations().search('Promotion', id)
     if promo:
@@ -40,13 +57,30 @@ def show_promo(id):
         promo_dict.update(promo.all_columns())
         promo_dict['first_name'] = promo.user.first_name
         promo_dict['last_name'] = promo.user.last_name
-        promo_dict['pictures'] = aws_bucket.get_picture('007', 'Promotion', '001', 'aws_logo.png')
-        print(promo_dict['pictures'])
-        promo_dict['pictures'] = promo_dict['pictures'][0]['results']
+        picNames = promo_dict['pictures']
+        promo_id = promo_dict['promo_id']
+        user_id = promo_dict['user_id']
+        
+        # Iterate all pic names to get them from aws
+        if promo_dict['pictures']:
+            urls = []
+            loop = True
+            while loop:
+                pic, seperator, pics = picNames.partition('|')
+                responseAWS, statusAWS = aws_bucket.get_picture(user_id, 'Promotion', promo_id, pic)
+                if statusAWS == 200:
+                    # put url into the pictures column of the model
+                    urlPic = responseAWS['results']
+                    urls.append(urlPic)
+                if not pics:
+                    loop = False
+                else:
+                    pic = pics
+
+        promo_dict['pictures'] = urls
         return make_response(jsonify({'results': promo_dict}), 200)
     else:
         return make_response(jsonify({"error": f"No Promotion object found with ID {id}"}), 404)
-
 
 @api_bp.route("/Request/<id>", methods=["GET"])
 def show_request(id):
