@@ -37,7 +37,7 @@ def show_promo(id):
         promo_dict.update(promo.all_columns())
         promo_dict['first_name'] = promo.user.first_name
         promo_dict['last_name'] = promo.user.last_name
-
+        promo_dict['pictures'] = aws_bucket.get_picture('007', 'Promotion', '001', 'aws_logo.png')
         return make_response(jsonify({'results': promo_dict}), 200)
     else:
         return make_response(jsonify({"error": f"No Promotion object found with ID {id}"}), 404)
