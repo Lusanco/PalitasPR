@@ -37,7 +37,7 @@
     console.log("ServiceDetails Component ID: ", id);
 
     axios
-      .get(`/api/Promotion/${id}`)
+      .get(`/api/promotion/${id}`)
       .then((axiosResponse) => {
         response.set(axiosResponse);
         response1.set(axiosResponse.data);
@@ -93,10 +93,10 @@
             <div class="self-center w-full h-40 rounded-none skeleton"></div>
           {:else}
             <div
-              class="self-center object-contain w-full h-40 rounded-none max-h-40"
+              class="self-center object-cover w-full h-40 rounded-none max-h-40"
             >
               <img
-                class="self-center object-contain w-full h-40 rounded-none max-h-40"
+                class="self-center object-cover w-full h-40 rounded-none max-h-40"
                 src={$response1.results.pictures}
                 alt=""
               />
