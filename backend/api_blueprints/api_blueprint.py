@@ -26,8 +26,11 @@ def explore():
         if len(response['results']) == 0:
             response['results'] = None
             status = 404
+        # Need to change this later
+        for model in response['results']:
+            model['pictures'] = aws_bucket.get_picture('007', 'Promotion', '001', 'aws_logo.png')
+            model['pictures'] = model['pictures'][0]['results']
         return make_response(jsonify(response), status)
-
 
 @api_bp.route("/Promotion/<id>", methods=["GET"])
 def show_promo(id):

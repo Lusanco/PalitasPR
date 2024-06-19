@@ -103,6 +103,7 @@ class Db_core:
                     "last_name": row.last_name,
                     "towns": row[3],
                     "created_at": row.created_at.strftime("%Y-%m-%d"),
+                    'pictures': row.pictures
                 }
                 list_of_models.append(model_dict)
             else: # Requests dict...
