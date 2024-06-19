@@ -1,181 +1,139 @@
-<!-- Revised: Alfre - Remember to move/rename this where it belongs: Promote from search -->
 <script>
-  import ReviewCard from "../components/ReviewCard.svelte";
+  import { onMount } from "svelte";
+  import axios from "axios";
+  import { state, data, response } from "../scripts/stores";
+  import { writable } from "svelte/store";
+  import { link } from "svelte-routing";
+  import servicesID from "../scripts/servicesID";
+  import Button from "../components/Button.svelte";
+  import { get } from "svelte/store";
 
-  /**
-   * ! Test data
-   */
-
-  let reviews = [
-    {
-      name: "Jane Doe",
-      id: Math.floor(Math.random() * 1000000),
-      rating: Math.floor(Math.random() * 5) + 1,
-    },
-    {
-      name: "John Doe",
-      id: Math.floor(Math.random() * 1000000),
-      rating: Math.floor(Math.random() * 5) + 1,
-    },
-    {
-      name: "John Smith",
-      id: Math.floor(Math.random() * 1000000),
-      rating: Math.floor(Math.random() * 5) + 1,
-    },
-    {
-      name: "Jane Smith",
-      id: Math.floor(Math.random() * 1000000),
-      rating: Math.floor(Math.random() * 5) + 1,
-    },
-    {
-      name: "John Doe",
-      id: Math.floor(Math.random() * 1000000),
-      rating: Math.floor(Math.random() * 5) + 1,
-    },
-    {
-      name: "John Smith",
-      id: Math.floor(Math.random() * 1000000),
-      rating: Math.floor(Math.random() * 5) + 1,
-    },
-    {
-      name: "Jane Smith",
-      id: Math.floor(Math.random() * 1000000),
-      rating: Math.floor(Math.random() * 5) + 1,
-    },
-  ];
-
-  /**
-   * ? User data
-   */
-
-  let image = {
-    img: "https://images.pexels.com/photos/1453499/pexels-photo-1453499.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    alt: "Lawn Mowing",
+  let image = null;
+  let button = {
+    name: "Send Initial Contact",
+    method: "POST",
+    url: "/api/initial-contact",
+    headers: "application/json",
+    twcss: "w-1/2 btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
+    misc: { "App Location": "Service Details" },
   };
 
-  let description = `Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laudantium,
-          magni nisi? Repellendus sequi perspiciatis delectus esse excepturi
-          laborum, labore debitis quos sunt doloribus nesciunt quia quibusdam
-          sed. Culpa, corrupti nisi.`;
+  const response1 = writable(null);
+  const response2 = writable(null);
 
-  /**
-   * ! Test functions
-   */
+  let id;
+  let currentUrl;
+  let urlArr;
+  let initialContact;
 
-  function handleAccept() {
-    alert("Accept button is working!");
-  }
+  function showModal(event) {}
+  onMount(() => {
+    console.log("ServiceDetails Component Has Mounted");
+    currentUrl = window.location.href;
+    console.log("Current URL: ", currentUrl);
+    urlArr = currentUrl.split("/");
+    id = urlArr[urlArr.length - 1];
+    console.log("ServiceDetails Component ID: ", id);
 
-  function handleReject() {
-    alert("Reject button is working!");
-  }
-
-  function handleCard() {
-    alert("Close button is working!");
-  }
-
-  function viewReview() {
-    alert("View Review button is working!");
-  }
+    axios
+      .get(`/api/Promotion/${id}`)
+      .then((axiosResponse) => {
+        response.set(axiosResponse);
+        response1.set(axiosResponse.data);
+        console.log(".then() Response Log: ", $response1);
+      })
+      .catch((axiosError) => {
+        window.location.href = "/404";
+        console.log(".catch() Error Log: ", axiosError);
+      });
+    axios
+      .get(`/api/promotion/promo_review/${id}`)
+      .then((axiosResponse) => {
+        response.set(axiosResponse);
+        response2.set(axiosResponse.data);
+        console.log(".then() Response 2 Log: ", $response2);
+        initialContact = {
+          receiver_id: $response1.results.user_id,
+          promo_id: $response1.results.id,
+        };
+        data.set(initialContact);
+      })
+      .catch((axiosError) => {
+        console.log(".catch() Error Log: ", axiosError);
+      });
+  });
 </script>
 
 <head>
-  <title>PalitasPR | Request Details</title>
+  <title>PalitasPR | Service Details</title>
 </head>
 
-<!-- 
-  ? Container
--->
-<div
-  class="flex flex-col items-center justify-center min-h-screen p-5 bg-slate-100"
->
-  <!-- 
-    * Card 
-  -->
-  <div
-    class="relative w-full max-w-6xl p-5 py-4 mx-2 rounded-md shadow-md bg-slate-100"
-  >
-    <!-- 
-      * Exit button 
-    -->
-    <button
-      on:click={handleCard}
-      class="absolute justify-end w-8 top-4 right-2"
-    >
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <!-- 
-        * Left Side Section 
-      -->
-      <div class="col-span-1 p-2 m-1">
-        <h1 class="text-3xl text-center">Service</h1>
-        <figure class="mb-2 border-b-2">
-          <img
-            src={image.img}
-            alt={image.alt}
-            class="object-cover w-full h-64 mt-3 rounded-md"
-          />
-          <div class="mt-2">
-            <h2 class="text-lg">Jardineria: rr43523454325</h2>
-            <p class="mb-1 text-sm">Juan del Pueblo: 11234fsd4421</p>
-          </div>
-        </figure>
-        <p class="mt-2 text-sm lg:text-base">{description}</p>
-      </div>
-      <!-- 
-        * Right Side Section 
-      -->
-      <div class="col-span-1 p-2 m-1">
-        <div class="grid grid-cols-3">
-          <h1
-            class="col-span-3 text-3xl text-center lg:col-span-1 lg:col-start-2"
-          >
-            Reviews
-          </h1>
+{#if $response1 && $response2}
+  <!-- ServiceDetails Container -->
+  <div class="flex flex-col items-center justify-center w-full h-full min-h-screen py-20 m-auto bg-[#f1f1f1]">
+    <!-- ServiceDetails Flex Wrap -->
+    <div class="flex flex-wrap items-center justify-center w-full m-auto md:max-w-6xl">
+      <!-- ServiceDetails Left -->
+      <div class="h-full gap-1 p-4 rounded-lg card md:border-r-2 min-h-96 md:border-[#cc2936] basis-full md:w-fit md:basis-1/2 bg-white shadow-md">
+        <h1 class="self-center text-3xl card-title text-[#1f1f1f]">
+          {$response1.results.title}
+        </h1>
+        <br />
+        <div class="flex flex-col overflow-hidden overflow-y-scroll min-h-96 h-96 element text-[#1f1f1f]">
+          <div class="self-center w-full h-40 rounded-none skeleton"></div>
+          <h2>
+            {$response1.results.first_name}
+            {$response1.results.last_name}
+          </h2>
+          <h3>{Object.keys(servicesID)[$response1.results.service_id]}</h3>
+          <hr class="border-[#cc2936]" />
+          <br />
+          <p class="self-center w-full text-justify min-h-40">
+            {$response1.results.description}
+          </p>
         </div>
+      </div>
+      <!-- Left -->
 
-        <div class="flex flex-col mt-2">
-          <div class="flex flex-col gap-1 overflow-y-scroll element h-[26rem]">
-            {#each reviews as review (review.id)}
-              <!-- 
-                * Review Cards Component 
-              -->
-              <ReviewCard
-                name={review.name}
-                id={review.id}
-                rating={review.rating}
-                {viewReview}
-              />
+      <!-- ServiceDetails Right -->
+      <div class="flex flex-col h-full gap-1 p-4 bg-white rounded-lg shadow-md card min-h-96 basis-full md:w-fit md:basis-1/2">
+        <h1 class="self-center text-3xl card-title text-[#1f1f1f]">Reviews</h1>
+        <br />
+
+        <div class="flex flex-col gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96">
+          {#if $response2.results === null}
+            <div class="font-bold text-xl flex flex-col justify-center items-center text-[#cc2936] text-center h-full w-full">
+              No Reviews Yet
+            </div>
+          {:else}
+            {#each $response2.results as review}
+              <div class="flex flex-col justify-between p-4 shadow-md bg-[#f1f1f1] card rounded-lg">
+                <div class="flex justify-between gap-2 text-[#1f1f1f]">
+                  <div>
+                    {`${review.first_name} ${review.last_name}`}
+                  </div>
+                  <div>{`${review.rating}/5.0`}</div>
+                </div>
+                <br />
+                <div class="h-full py-6 text-justify line-clamp-none overflow-ellipsis text-[#1f1f1f]">
+                  {review.description}
+                </div>
+                <div class="flex justify-between gap-2 mt-8 text-[#1f1f1f]">
+                  <div>{review.created_at}</div>
+                  <button class="absolute btn right-4 bottom-4 bg-[#cc2936] text-white hover:bg-white hover:text-[#1f1f1f] hover:shadow-md">Images</button>
+                </div>
+              </div>
             {/each}
-          </div>
+          {/if}
         </div>
       </div>
-      <!-- 
-        * Action Buttons 
-      -->
-      <div
-        class="flex justify-center w-full col-span-1 col-start-1 mt-2 sm:col-span-2 sm:col-start-1 sm:mt-4 sm:flex-row"
-      >
-        <button
-          class="w-full px-2 py-4 mx-2 text-white bg-teal-500 rounded hover:bg-teal-600 sm:w-2/3"
-          on:click={handleAccept}
-        >
-          <div class="flex justify-center gap-2">
-            <i class="mt-[6px] fa-solid fa-check"></i>
-            <span class="hidden md:block">Accept</span>
-          </div>
-        </button>
-        <button
-          class="w-full px-2 py-4 mx-2 text-white bg-red-500 rounded hover:bg-red-600 sm:w-2/3"
-          on:click={handleReject}
-        >
-          <div class="flex justify-center gap-2">
-            <i class="mt-[6px] fa-solid fa-xmark"></i>
-            <span class="hidden md:block">Reject</span>
-          </div>
-        </button>
-      </div>
+      <!-- Right -->
+    </div>
+    <!-- Flex Wrap -->
+    <div class="flex items-center justify-center w-10/12 gap-4 mx-4 md:w-11/12 md:max-w-6xl">
+      <a use:link href="/" class="w-1/2 btn bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md">Back To Search</a>
+      <Button {image} {button} />
     </div>
   </div>
-</div>
+  <!-- Container -->
+{/if}

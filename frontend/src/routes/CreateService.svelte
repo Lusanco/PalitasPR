@@ -4,7 +4,6 @@
   import servicesID from "../scripts/servicesID";
   import Button from "../components/Button.svelte";
 
-  // Button Prop Variables And Dependencies
   let image = null;
   let town = "all";
   let towns;
@@ -15,10 +14,9 @@
     method: "POST",
     url: "api/dashboard/promotion-request",
     headers: "multipart/form-data",
-    twcss: "px-8 py-3 font-semibold text-teal-100 bg-teal-800 rounded",
+    twcss: "px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
     misc: { "App Location": "CreateService Form" },
   };
-  // Button Prop Variables And Dependencies
 
   let title = "";
   let service_id = "";
@@ -29,7 +27,6 @@
   let selectedTowns = [];
   let townList = "";
 
-  // Reactive block to update $data
   $: {
     $data = {
       model,
@@ -45,7 +42,6 @@
     console.log("Data updated:", $data);
   }
 
-  // Function to handle town selection changes
   function handleTownChange(event) {
     const townId = event.target.value;
     if (event.target.checked) {
@@ -56,43 +52,22 @@
     townList = selectedTowns.join(", ");
   }
 
-  // Function to handle image file selection
   function handleFileChange(event) {
-    image = event.target.files[0]; // Update the store
+    image = event.target.files[0];
     console.log("Image file selected:", event.target.files[0]);
   }
 </script>
 
-<head>
-  <title>PalitasPR | Create Service</title>
-</head>
-
-<div
-  class="flex flex-col items-center justify-center h-full min-h-screen bg-teal-50 md:bg-none"
->
-  <div
-    class="flex flex-col w-full h-full max-w-2xl gap-4 p-2 my-8 font-semibold rounded-lg md:shadow-lg md:p-8 bg-teal-50"
-  >
-    <h1 class="pt-4 text-2xl text-center md:text-3xl lg:text-4xl">
-      Crear Servicio
-    </h1>
+<div class="flex flex-col items-center justify-center h-full min-h-screen bg-[#f1f1f1]">
+  <div class="flex flex-col w-full h-full max-w-2xl gap-4 p-2 my-8 font-semibold bg-white rounded-lg shadow-lg">
+    <h1 class="pt-4 text-2xl text-center text-[#1f1f1f] md:text-3xl lg:text-4xl">Crear Servicio</h1>
     <div>
-      <label for="title">Titulo</label>
-      <input
-        class="w-full"
-        type="text"
-        name="titulo"
-        id=""
-        bind:value={title}
-      />
+      <label for="title" class="text-[#1f1f1f]">Titulo</label>
+      <input class="w-full input input-bordered text-[#cc2936]" type="text" name="titulo" id="" bind:value={title} />
     </div>
 
-    <label for="service">Seleccione Servicio a Brindar</label>
-    <select
-      bind:value={service_id}
-      name="service"
-      class="block w-full overflow-y-auto border-slate-600 border-1 focus:border-teal-500 focus:ring-0 disabled:cursor-not-allowed"
-    >
+    <label for="service" class="text-[#1f1f1f]">Seleccione Servicio a Brindar</label>
+    <select bind:value={service_id} name="service" class="block w-full select select-bordered text-[#cc2936]">
       <option value={-1} disabled>---</option>
       {#each Object.entries(servicesID) as [service, id]}
         <option value={id}>{service}</option>
@@ -100,22 +75,11 @@
     </select>
 
     <div class="w-full dropdown">
-      <button tabindex="0" class="btn btn-base dropdown-toggle"
-        >Seleccionar Pueblos</button
-      >
-      <ul
-        tabindex="-1"
-        class="flex flex-wrap w-full h-40 min-w-full gap-4 p-4 overflow-y-auto shadow gap-x-10 dropdown-content bg-base-100 rounded-box"
-      >
+      <button tabindex="0" class="btn btn-base dropdown-toggle text-[#f1f1f1] bg-[#cc2936] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md">Seleccionar Pueblos</button>
+      <ul tabindex="-1" class="flex flex-wrap w-full h-40 min-w-full gap-4 p-4 overflow-y-auto bg-white shadow gap-x-10 dropdown-content rounded-box">
         {#each Object.entries(townsID) as [town, id]}
           <li class="menu-item" value={id}>
-            <input
-              bind:value={id}
-              on:change={handleTownChange}
-              type="checkbox"
-              id={`'${id}'`}
-              class="mr-2 checkbox checkbox-base"
-            />
+            <input bind:value={id} on:change={handleTownChange} type="checkbox" id={`'${id}'`} class="mr-2 checkbox checkbox-base" />
             {town}
           </li>
         {/each}
@@ -123,50 +87,24 @@
     </div>
 
     <div class="max-h-96">
-      <label for="description">Descripcion de su Servicio</label>
-      <textarea
-        bind:value={description}
-        class="w-full min-h-20 max-h-20"
-        name="description"
-        id=""
-      />
+      <label for="description" class="text-[#1f1f1f]">Descripcion de su Servicio</label>
+      <textarea bind:value={description} class="w-full textarea textarea-bordered text-[#cc2936]" name="description" id=""></textarea>
     </div>
     <div>
-      <label for="price-min">Precio Minimo (Opcional)</label>
-      <input
-        class="w-full"
-        type="number"
-        name="price-min"
-        id=""
-        bind:value={price_min}
-      />
+      <label for="price-min" class="text-[#1f1f1f]">Precio Minimo (Opcional)</label>
+      <input class="w-full input input-bordered text-[#cc2936]" type="number" name="price-min" id="" bind:value={price_min} />
     </div>
     <div>
-      <label for="price-max">Precio Maximo (Opcional)</label>
-      <input
-        class="w-full"
-        type="number"
-        name="price-max"
-        id=""
-        bind:value={price_max}
-      />
+      <label for="price-max" class="text-[#1f1f1f]">Precio Maximo (Opcional)</label>
+      <input class="w-full input input-bordered text-[#cc2936]" type="number" name="price-max" id="" bind:value={price_max} />
     </div>
-    <div
-      class="flex flex-col items-center justify-center w-full m-auto mx-auto space-y-1 text-gray-800"
-    >
-      <label for="imageInput" class="block text-sm font-medium"></label>
+    <div class="flex flex-col items-center justify-center w-full m-auto mx-auto space-y-1 text-[#1f1f1f]">
+      <label for="imageInput" class="block text-sm font-medium text-[#1f1f1f]"></label>
       <div class="flex w-full">
-        <input
-          type="file"
-          name="image"
-          id="imageInput"
-          on:change={handleFileChange}
-          class="w-full px-8 py-12 text-gray-600 bg-gray-100 border-2 border-gray-300 border-dashed rounded-md"
-          accept="image/*"
-        />
+        <input type="file" name="image" id="imageInput" on:change={handleFileChange} class="w-full px-8 py-12 text-[#1f1f1f] bg-[#f1f1f1] border-2 border-[#cc2936] border-dashed rounded-md" accept="image/*" />
       </div>
       {#if errorMessage}
-        <p class="text-red-500">{errorMessage}</p>
+        <p class="text-[#cc2936]">{errorMessage}</p>
       {/if}
     </div>
 

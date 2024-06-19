@@ -11,7 +11,7 @@
 <div class="flex justify-end m-2 bg-transparent md:hidden">
   <button
     type="button"
-    class="inline-flex items-center justify-center w-16 h-16 p-2 text-sm text-[#cc2936] rounded-lg hover:opacity-90 focus:outline-none focus:ring-0"
+    class="inline-flex items-center justify-center w-16 h-16 p-2 text-sm text-teal-600 rounded-lg hover:text-teal-400 focus:outline-none focus:ring-0"
     aria-controls="navbar-cta"
     aria-expanded={menuOpen}
     on:click={toggleMenu}
@@ -46,7 +46,7 @@
       <a
         use:link
         href="/"
-        class="block px-3 py-2 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+        class="block px-3 py-2 text-teal-600 rounded hover:bg-teal-800 hover:text-gray-200 dark:text-teal-100 dark:hover:bg-teal-700 dark:hover:text-teal-100"
         >Home</a
       >
     </li>
@@ -54,7 +54,7 @@
       <a
         use:link
         href="/aboutus"
-        class="block px-3 py-2 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+        class="block px-3 py-2 text-teal-600 rounded hover:bg-teal-800 hover:text-gray-200 dark:text-teal-100 dark:hover:bg-teal-700 dark:hover:text-teal-100"
         >About Us</a
       >
     </li>
@@ -62,7 +62,7 @@
       <a
         use:link
         href="/services"
-        class="block px-3 py-2 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+        class="block px-3 py-2 text-teal-600 rounded hover:bg-teal-800 hover:text-gray-200 dark:text-teal-100 dark:hover:bg-teal-700 dark:hover:text-teal-100"
         >Services</a
       >
     </li>
@@ -70,7 +70,7 @@
       <a
         use:link
         href="/contact"
-        class="block px-3 py-2 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+        class="block px-3 py-2 text-teal-600 rounded hover:bg-teal-800 hover:text-gray-200 dark:text-teal-100 dark:hover:bg-teal-700 dark:hover:text-teal-100"
         >Contact</a
       >
     </li>
@@ -79,7 +79,7 @@
       <a
         use:link
         href="/login"
-        class="block px-4 py-2 text-sm font-medium text-center text-white bg-[#cc2936] rounded-lg"
+        class="block px-4 py-2 text-sm font-medium text-center text-white bg-teal-400 rounded-lg hover:bg-teal-500 focus:ring-4 focus:outline-none focus:ring-teal-300"
         >Sign In</a
       >
     </li>
@@ -87,7 +87,7 @@
       <a
         use:link
         href="/signup"
-        class="block px-4 py-2 text-sm font-medium text-center text-white bg-[#cc2936] rounded-lg"
+        class="block px-4 py-2 text-sm font-medium text-center text-white bg-teal-400 rounded-lg hover:bg-teal-500 focus:ring-4 focus:outline-none focus:ring-teal-300"
         >Sign Up</a
       >
     </li>

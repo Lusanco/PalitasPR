@@ -38,7 +38,7 @@
       use:link
       href="/signup"
       rel="noopener noreferrer"
-      class="btn border-[#cc2936] border-b-2 border-t-0 border-x-0 text-[#f1f1f1] bg-transparent hover:bg-transparent hover:border-[#f1f1f1]"
+      class="btn mr-4 border-[#cc2936] border-b-2 border-t-0 border-x-0 text-[#f1f1f1] bg-transparent hover:bg-transparent hover:border-[#f1f1f1]"
       >Signup</a
     >
   </div>
