@@ -49,7 +49,7 @@ def explore():
         return make_response(jsonify(response), status)
 
 
-@api_bp.route("/Promotion/<id>", methods=["GET"])
+@api_bp.route("/promotion/<id>", methods=["GET"])
 def show_promo(id):
     promo = DBOperations().search('Promotion', id)
     if promo:
@@ -82,7 +82,7 @@ def show_promo(id):
     else:
         return make_response(jsonify({"error": f"No Promotion object found with ID {id}"}), 404)
 
-@api_bp.route("/Request/<id>", methods=["GET"])
+@api_bp.route("/request/<id>", methods=["GET"])
 def show_request(id):
     request_obj = DBOperations().search('Request', id)
     if request_obj:
