@@ -284,6 +284,13 @@ class DBConsole(cmd.Cmd):
         else:
             print("Invalid input. Usage: view_task_reviews <task_id>")
 
+    def do_usersFolders(self, args):
+        '''
+            after resetting database, we can create all users folders
+        '''
+        response = db_user.create_folders_for_allUsers()
+        print(response)
+
 
 if __name__ == '__main__':
     DBConsole().cmdloop()

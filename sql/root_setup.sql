@@ -11,6 +11,9 @@ DROP TABLE IF EXISTS profiles;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS services;
 DROP TABLE IF EXISTS towns;
+-- Drop trigger and function if they exist (to avoid conflicts)
+DROP TRIGGER IF EXISTS tsvectorupdate ON services;
+DROP FUNCTION IF EXISTS update_tsvector();
 -- Create Extension for encryption
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
@@ -299,59 +302,72 @@ VALUES
     ('Yauco');
 
 -- Assigning promos to users
-INSERT INTO promotions (user_id, service_id, title, description)
-SELECT u.id, s.id, 'Nightclubs and Weddings','I create a personalized timeline that reflects your taste, ensuring a smooth transition from ceremony to reception and unforgettable dance floor moments for you and your guests. I also make video recordings!'
+INSERT INTO promotions (user_id, service_id, title, description, pictures)
+SELECT u.id, s.id,
+'Nightclubs and Weddings',
+'I create a personalized timeline that reflects your taste, ensuring a smooth transition from ceremony to reception and unforgettable dance floor moments for you and your guests. I also make video recordings!',
+'promo1.PNG|promo2.PNG'
 FROM users u
 JOIN services s ON s.name = 'DJ'
 WHERE u.first_name = 'John' AND u.last_name = 'Doe';
 
-INSERT INTO promotions (user_id, service_id, title, description)
+INSERT INTO promotions (user_id, service_id, title, description, pictures)
 SELECT u.id, s.id, 'Special Gardening Offer',
-'Transform your garden with our expert gardening service. We offer a variety of designs tailored to your preferences.'
+'Transform your garden with our expert gardening service. We offer a variety of designs tailored to your preferences.',
+'promo1.PNG|promo2.PNG'
 FROM users u
 JOIN services s ON s.name = 'Gardening'
 WHERE u.first_name = 'Jane' AND u.last_name = 'Smith';
 
-INSERT INTO promotions (user_id, service_id, title, description)
+INSERT INTO promotions (user_id, service_id, title, description, pictures)
 SELECT u.id, s.id, 'Urban DJ',
-'Get the latest mix trends and hits. If you are looking to get your clients invested in your business, give them the entertainment they deserve.'
+'Get the latest mix trends and hits. If you are looking to get your clients invested in your business, give them the entertainment they deserve.',
+'promo1.PNG|promo2.PNG'
 FROM users u
 JOIN services s ON s.name = 'DJ'
 WHERE u.first_name = 'Hector' AND u.last_name = 'Torres';
 
-INSERT INTO promotions (user_id, service_id, title, description)
+INSERT INTO promotions (user_id, service_id, title, description, pictures)
 SELECT u.id, s.id, 'New Styles Modern',
-'Latest hair trends with our professional service. Look stunning for your special day! Our stylists excel in special occasion hair styling, from elegant updos to glamorous curls,ensuring you shine at weddings, proms, and more'
+'Latest hair trends with our professional service. Look stunning for your special day! Our stylists excel in special occasion hair styling, from elegant updos to glamorous curls,ensuring you shine at weddings, proms, and more',
+'promo1.PNG|promo2.PNG'
 FROM users u
 JOIN services s ON s.name = 'Hairstyling'
 WHERE u.first_name = 'Olivia' AND u.last_name = 'Davis';
 
-INSERT INTO promotions (user_id, service_id, title, description)
-SELECT u.id, s.id, 'Best Styles in Town', 'Discover your ideal hair style with our personalized consultations. Our stylists will assess your hair type, face shape, and lifestyle to recommend the perfect cut and style for you.'
+INSERT INTO promotions (user_id, service_id, title, description, pictures)
+SELECT u.id, s.id,
+'Best Styles in Town',
+'Discover your ideal hair style with our personalized consultations. Our stylists will assess your hair type, face shape, and lifestyle to recommend the perfect cut and style for you.',
+'promo1.PNG|promo2.PNG'
 FROM users u
 JOIN services s ON s.name = 'Hairstyling'
 WHERE u.first_name = 'Marta' AND u.last_name = 'Lopez';
 
-INSERT INTO promotions (user_id, service_id, title, description)
-SELECT u.id, s.id, 'Nail Art Extravaganza', 'Treat yourself to stunning nail art designs. Our expert nail technicians will transform your nails into works of art!'
+INSERT INTO promotions (user_id, service_id, title, description, pictures)
+SELECT u.id, s.id, 'Nail Art Extravaganza','Treat yourself to stunning nail art designs. Our expert nail technicians will transform your nails into works of art!',
+'promo1.PNG|promo2.PNG'
 FROM users u
 JOIN services s ON s.name = 'Nails'
 WHERE u.first_name = 'Maria' AND u.last_name = 'Garcia';
 
-INSERT INTO promotions (user_id, service_id, title, description)
-SELECT u.id, s.id, 'Spotless Cleaning Service', 'Experience the joy of a spotless home! Our cleaning experts will handle all your cleaning needs with meticulous care.'
+INSERT INTO promotions (user_id, service_id, title, description, pictures)
+SELECT u.id, s.id, 'Spotless Cleaning Service', 'Experience the joy of a spotless home! Our cleaning experts will handle all your cleaning needs with meticulous care.',
+'promo1.PNG|promo2.PNG'
 FROM users u
 JOIN services s ON s.name = 'House Cleaning'
 WHERE u.first_name = 'Sofia' AND u.last_name = 'Rodriguez';
 
-INSERT INTO promotions (user_id, service_id, title, description)
-SELECT u.id, s.id, 'Pet Paradise Retreat', 'Your pets home away from home! We provide personalized pet sitting services to ensure your furry friends are happy and cared for.'
+INSERT INTO promotions (user_id, service_id, title, description, pictures)
+SELECT u.id, s.id, 'Pet Paradise Retreat', 'Your pets home away from home! We provide personalized pet sitting services to ensure your furry friends are happy and cared for.',
+'promo1.PNG|promo2.PNG'
 FROM users u
 JOIN services s ON s.name = 'Pet Sitting'
 WHERE u.first_name = 'Angelica' AND u.last_name = 'Diaz';
 
-INSERT INTO promotions (user_id, service_id, title, description)
-SELECT u.id, s.id, 'Premium Car Wash & Detailing', 'Revitalize your vehicle with our premium car wash and detailing services. We will make your car shine inside and out!'
+INSERT INTO promotions (user_id, service_id, title, description, pictures)
+SELECT u.id, s.id, 'Premium Car Wash & Detailing', 'Revitalize your vehicle with our premium car wash and detailing services. We will make your car shine inside and out!',
+'promo1.PNG|promo2.PNG'
 FROM users u
 JOIN services s ON s.name = 'Car Washing'
 WHERE u.first_name = 'Erick' AND u.last_name = 'Santiago';

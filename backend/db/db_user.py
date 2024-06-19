@@ -10,6 +10,7 @@ import bcrypt
 from models import User, Initial_Contact, Profile, Review, Task
 from sqlalchemy import or_
 from db.db_task import Db_task
+import aws_bucket
 
 
 class Db_user:
@@ -170,3 +171,13 @@ class Db_user:
         
         rating_in_stars = avg_rating * 5
         return rating_in_stars
+
+    # ONLY FOR DATABASE RESETS
+    def create_folders_for_allUsers(self):
+        '''
+            after resetting db, lets make all folders for users
+        '''
+        users = self.session.query(User).all()
+        for user in users:
+            aws_bucket.create_user_folder(user.id)
+        return 'Succes'
