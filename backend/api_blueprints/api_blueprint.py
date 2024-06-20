@@ -58,9 +58,9 @@ def show_promo(id):
         promo_dict['first_name'] = promo.user.first_name
         promo_dict['last_name'] = promo.user.last_name
         picNames = promo_dict['pictures']
-        promo_id = promo_dict['promo_id']
+        promo_id = promo_dict['id']
         user_id = promo_dict['user_id']
-        
+        urls = []
         # Iterate all pic names to get them from aws
         if promo_dict['pictures']:
             urls = []
@@ -77,6 +77,8 @@ def show_promo(id):
                 else:
                     pic = pics
 
+        if len(urls) == 0:
+            urls == None 
         promo_dict['pictures'] = urls
         return make_response(jsonify({'results': promo_dict}), 200)
     else:

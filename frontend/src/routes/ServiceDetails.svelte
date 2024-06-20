@@ -60,6 +60,8 @@
         data.set(initialContact);
       })
       .catch((axiosError) => {
+        console.log($response1);
+        console.log($response2);
         console.log(".catch() Error Log: ", axiosError);
       });
   });
@@ -97,7 +99,7 @@
             >
               <img
                 class="self-center object-cover w-full h-40 rounded-none max-h-40"
-                src={$response1.results.pictures}
+                src={$response1.results.pictures[0]}
                 alt=""
               />
             </div>
