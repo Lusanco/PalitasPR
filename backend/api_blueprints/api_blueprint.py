@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, make_response
+from flask import Blueprint, jsonify, request, make_response, g
 from flask_login import current_user, login_required
 from db.db_operations import DBOperations
 from db.db_core import Db_core
@@ -20,7 +20,7 @@ def explore():
     model = request.args.get('model')
     service = request.args.get('search')
     town = request.args.get('town')
-    response, status = Db_core().landing_searchBar(model, service, town)
+    response, status = Db_core(g.db_session).landing_searchBar(model, service, town)
     if status != 200:
         return make_response(jsonify(response), status)
     else:
@@ -53,7 +53,7 @@ def explore():
 
 @api_bp.route("/promotion/<id>", methods=["GET"])
 def show_promo(id):
-    promo = DBOperations().search('Promotion', id)
+    promo = DBOperations(g.db_session).search('Promotion', id)
     if promo:
         promo_dict = {}
         promo_dict.update(promo.all_columns())
@@ -91,7 +91,7 @@ def show_promo(id):
 
 @api_bp.route("/request/<id>", methods=["GET"])
 def show_request(id):
-    request_obj = DBOperations().search('Request', id)
+    request_obj = DBOperations(g.db_session).search('Request', id)
     if request_obj:
         return jsonify(request_obj), 200
     else:
@@ -125,12 +125,12 @@ def send_contact():
     data = request.get_json()
     if 'receiver_id' not in data or 'promo_id' not in data:
         return make_response(jsonify({'error': 'Missing a key'}), 400)
-    if not DBOperations().search('User', data['receiver_id']):
+    if not DBOperations(g.db_session).search('User', data['receiver_id']):
         return make_response(jsonify({'error': 'Receiver doesnt exist'}), 404)
-    if not DBOperations().search('Promotion', data['promo_id']):
+    if not DBOperations(g.db_session).search('Promotion', data['promo_id']):
         return make_response(jsonify({'error': 'Promotion doesnt exist'}), 404)
     data['sender_id'] = current_user.id
-    response, status = DBOperations().new({'Initial_Contact': data})
+    response, status = DBOperations(g.db_session).new({'Initial_Contact': data})
     if status != 201:
         return make_response(jsonify(response), status)
     return make_response(jsonify({'results': 'ok'}), 201)

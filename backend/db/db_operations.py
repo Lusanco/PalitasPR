@@ -77,13 +77,6 @@ class DBOperations:
         if model_class == User:
             self.new({'Profile': {'user_id': new_object.id, 'tasks_completed': 0, 'bio': 'Hola soy nuevo en PalitasPR!'}})
 
-        try:
-            self.session.commit()
-        except SQLAlchemyError as e:
-            self.session.rollback()
-            print(e)
-            return ({"Error": "Error"}, 500)
-
         # check if object needs aws folder
         aws_folders = {Promotion: "Promotion", Request: "Request", Review: "Review"}
         if model_class in aws_folders:
@@ -91,9 +84,7 @@ class DBOperations:
                 new_object.user_id, aws_folders[model_class], new_object.id
             )
             if response[1] != 201:
-                self.session.rollback()
                 return response
-
         return ({'results': new_object}, 201)
 
     def update(self, data):

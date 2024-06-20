@@ -24,78 +24,49 @@ class Db_request:
         * Functionalites to filter certain Request
         * etc..
     '''
-    def __init__(self):
-        self.session = get_session()
+    def __init__(self, db_session):
+        self.session = db_session
 
     def get_requests_byTowns(self, my_service_id, town_id):
         """
-        Query Requests(Service Requests) based on service ID and town ID.
-        Searches all Request on a specified town with all the info related.
-
+        Query Requests (Service Requests) based on service ID and town ID.
+        Searches all requests in a specified town with all the related information.
         """
-        if town_id == 0: # Do all towns
-            rows = (
-                self.session.query(
-                    Request_Towns.request_id,
-                    User.first_name,
-                    User.last_name,
-                    func.array_agg(Town.name),
-                    Request.created_at,
-                    Request.title,
-                    Request.description,
-                    Request.pictures
-                )
-                .select_from(Request)
-                .join(User, Request.user_id == User.id)
-                .join(Request_Towns, Request.id == Request_Towns.request_id)
-                .join(Town, Request_Towns.town_id == Town.id)
-                .filter((Request.service_id == my_service_id))
-                .group_by(
-                    Request_Towns.request_id,
-                    User.first_name,
-                    User.last_name,
-                    Request.created_at,
-                    Request.description,
-                    Request.title,
-                    Request.pictures
-                )
-                .order_by(Request_Towns.request_id)
-                .all()
+        query = (
+            self.session.query(
+                Request_Towns.request_id,
+                User.first_name,
+                User.last_name,
+                func.array_agg(Town.name),
+                Request.created_at,
+                Request.title,
+                Request.description,
+                Request.pictures,
+                Request.user_id
             )
-            return rows
-        else: # Do specific town
-            rows = (
-                self.session.query(
-                    Request_Towns.request_id,
-                    User.first_name,
-                    User.last_name,
-                    func.array_agg(Town.name),
-                    Request.created_at,
-                    Request.title,
-                    Request.description,
-                    Request.pictures
-                )
-                .select_from(Request)
-                .join(User, Request.user_id == User.id)
-                .join(Request_Towns, Request.id == Request_Towns.request_id)
-                .join(Town, Request_Towns.town_id == Town.id)
-                .filter(
-                    (Request.service_id == my_service_id)
-                    & (Town.id == town_id)
-                )
-                .group_by(
-                    Request_Towns.request_id,
-                    User.first_name,
-                    User.last_name,
-                    Request.created_at,
-                    Request.title,
-                    Request.description,
-                    Request.pictures
-                )
-                .order_by(Request_Towns.request_id)
-                .all()
+            .select_from(Request)
+            .join(User, Request.user_id == User.id)
+            .join(Request_Towns, Request.id == Request_Towns.request_id)
+            .join(Town, Request_Towns.town_id == Town.id)
+            .filter(Request.service_id == my_service_id)
+            .group_by(
+                Request_Towns.request_id,
+                User.first_name,
+                User.last_name,
+                Request.created_at,
+                Request.title,
+                Request.description,
+                Request.pictures,
+                Request.user_id
             )
-            return rows
+            .order_by(Request_Towns.request_id)
+        )
+
+        if town_id != 0:
+            query = query.filter(Town.id == town_id)
+
+        rows = query.all()
+        return rows
 
     async def get_user_requests(self, session, my_user_id):
         """

@@ -17,9 +17,11 @@ def user_sign_up():
         and "email" in form_data
         and "password" in form_data
     ):
-        response, status = Db_user().sign_up(form_data)
+        response, status = Db_user(g.db_session).sign_up(form_data)
         if status != 201:
+            g.db_session.rollback()
             return make_response(jsonify(response), status)
+        g.db_session.commit()
         return make_response(jsonify({'results': 'ok'}), 201)
     else:
         return make_response(jsonify({'message': 'Missing a required field'}), 400)
@@ -64,7 +66,7 @@ def delete_object(model, model_id):
     """
     # if model == 'Profile':
     #     model_id = current_user.id
-    response, status = DBOperations().delete_object(model, model_id, current_user.id)
+    response, status = DBOperations(g.db_session).delete_object(model, model_id, current_user.id)
     return make_response(jsonify(response), status)
 
 
@@ -74,7 +76,7 @@ def get_contacts():
     '''
         Get all initial contact messages for the user and tasks
     '''
-    response, status = Db_user().get_contacts_section(current_user.id)
+    response, status = Db_user(g.db_session).get_contacts_section(current_user.id)
     # MODIFY i need to retrieve the tasks of this user and
     # associate the task with the initial contact
     return make_response(jsonify(response), status)
@@ -86,10 +88,10 @@ def get_my_profile():
         Get the user's profile
     '''
     if request.method == 'GET':
-        profile = Db_user().get_profile_by_userId(current_user.id)
+        profile = Db_user(g.db_session).get_profile_by_userId(current_user.id)
         if not profile:
             return make_response(jsonify({'error': 'Profile does not exist'}), 404)
-        rating = Db_user().rating(current_user.id)
+        rating = Db_user(g.db_session).rating(current_user.id)
         profile_dict = {}
         profile_dict.update(profile.all_columns())
         profile_dict['first_name'] = current_user.first_name
@@ -101,7 +103,7 @@ def get_my_profile():
         #TESTING
         # data = request.data  This must be a dictionary, must validate keys here or in dboperations.update
         data = {'Profile': {'id': 'profile_id', 'bio': 'Updated bio...'}}
-        response, status = DBOperations().update({'Profile': {data}})
+        response, status = DBOperations(g.db_session).update({'Profile': {data}})
         return make_response(jsonify(response), status)
 
     if request.method == 'POST':

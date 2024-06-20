@@ -89,9 +89,10 @@ class Db_user:
             "last_name": last_name,
             "verification_token": verification_token,
         }
+        response, status = DBOperations(self.session).new({"User": dict_of_user})
+        if status != 201:
+            return response, status
         send_confirm_email(email, first_name, verification_token)
-        # Assuming self.new is a method that handles the creation of a new user
-        response, status = DBOperations().new({"User": dict_of_user})
         return response, status
 
     # WORKING DOWN HEERE NEED TEST
