@@ -140,16 +140,18 @@
           href={service.promo_id
             ? `/service-details/${service.promo_id}`
             : `/request-details/${service.request_id}`}
-          class="w-full h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-[#f1f1f1] active:scale-95 border-b-4 border-[#cc2936]"
+          class="w-full h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-[#f1f1f1] active:scale-95 overflow-hidden border-b-4 border-[#cc2936]"
         >
           {#if !service.pictures}
-            <div class="self-center w-full h-40 rounded-none skeleton"></div>
+            <div
+              class="hidden object-cover h-full rounded-none min-w-60 max-w-60 md:block md:w-1/4 skeleton"
+            ></div>
           {:else}
             <div
-              class="hidden object-cover h-full rounded-r-none w-60 md:block rounded-l-2xl rounded-t-2xl md:w-1/4"
+              class="hidden object-cover h-full rounded-none min-w-60 max-w-60 md:block md:w-1/4"
             >
               <img
-                class="hidden object-cover h-full rounded-r-none w-60 md:block rounded-l-2xl rounded-t-2xl"
+                class="hidden object-cover h-full rounded-none min-w-60 max-w-60 md:block"
                 src={service.pictures}
                 alt=""
               />

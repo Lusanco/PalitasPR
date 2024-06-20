@@ -38,20 +38,15 @@
 
     axios
       .get(`/api/promotion/${id}`)
-      .then((axiosResponse) => {
-        response.set(axiosResponse);
-        response1.set(axiosResponse.data);
+      .then((axiosResponse1) => {
+        response.set(axiosResponse1);
+        response1.set(axiosResponse1.data);
         console.log(".then() Response Log: ", $response1);
+        return axios.get(`/api/promotion/promo_review/${id}`);
       })
-      .catch((axiosError) => {
-        window.location.href = "/404";
-        console.log(".catch() Error Log: ", axiosError);
-      });
-    axios
-      .get(`/api/promotion/promo_review/${id}`)
-      .then((axiosResponse) => {
-        response.set(axiosResponse);
-        response2.set(axiosResponse.data);
+      .then((axiosResponse2) => {
+        response.set(axiosResponse2);
+        response2.set(axiosResponse2.data);
         console.log(".then() Response 2 Log: ", $response2);
         initialContact = {
           receiver_id: $response1.results.user_id,
@@ -60,8 +55,7 @@
         data.set(initialContact);
       })
       .catch((axiosError) => {
-        console.log($response1);
-        console.log($response2);
+        window.location.href = "/404";
         console.log(".catch() Error Log: ", axiosError);
       });
   });
@@ -82,8 +76,9 @@
     >
       <!-- ServiceDetails Left -->
       <div
-        class="h-full gap-1 p-4 rounded-lg card md:border-r-2 min-h-96 md:border-[#cc2936] basis-full md:w-fit md:basis-1/2 bg-white shadow-md"
+        class="h-full gap-1 p-4 rounded-none card md:border-r-2 min-h-96 md:border-[#cc2936] basis-full md:w-fit md:basis-1/2 bg-white"
       >
+        <br />
         <h1 class="self-center text-3xl card-title text-[#1f1f1f]">
           {$response1.results.title}
         </h1>
@@ -120,8 +115,9 @@
 
       <!-- ServiceDetails Right -->
       <div
-        class="flex flex-col h-full gap-1 p-4 bg-white rounded-lg shadow-md card min-h-96 basis-full md:w-fit md:basis-1/2"
+        class="flex flex-col h-full gap-1 p-4 bg-white rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2"
       >
+        <br />
         <h1 class="self-center text-3xl card-title text-[#1f1f1f]">Reviews</h1>
         <br />
 
@@ -167,15 +163,19 @@
     </div>
     <!-- Flex Wrap -->
     <div
-      class="flex items-center justify-center w-10/12 gap-4 mx-4 md:w-11/12 md:max-w-6xl"
+      class="flex items-center justify-center w-full h-20 bg-white md:max-w-6xl"
     >
-      <a
-        use:link
-        href="/"
-        class="w-1/2 btn bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
-        >Back To Search</a
+      <div
+        class="flex items-center justify-center w-10/12 gap-4 mx-4 bg-white md:w-11/12 md:max-w-6xl"
       >
-      <Button {image} {button} />
+        <a
+          use:link
+          href="/"
+          class="w-1/2 btn bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
+          >Back To Search</a
+        >
+        <Button {image} {button} />
+      </div>
     </div>
   </div>
   <!-- Container -->
