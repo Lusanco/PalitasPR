@@ -89,17 +89,19 @@
       />
     </div>
 
-    <label for="service" class="text-[#1f1f1f]">Seleccionar servicio</label>
-    <select
-      bind:value={service_id}
-      name="service"
-      class="block w-full select select-bordered text-[#cc2936]"
-    >
-      <option value={-1} disabled>---</option>
-      {#each Object.entries(servicesID) as [service, id]}
-        <option value={id}>{service}</option>
-      {/each}
-    </select>
+    <label for="service" class="text-[#1f1f1f]"
+      >Seleccionar servicio
+      <select
+        bind:value={service_id}
+        name="service"
+        class="block w-full select select-bordered text-[#cc2936]"
+      >
+        <option value={-1} disabled>---</option>
+        {#each Object.entries(servicesID) as [service, id]}
+          <option value={id}>{service}</option>
+        {/each}
+      </select>
+    </label>
 
     <div class="w-full dropdown">
       <button
