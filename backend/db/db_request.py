@@ -43,8 +43,7 @@ class Db_request:
                     Request.created_at,
                     Request.title,
                     Request.description,
-                    Request.pictures,
-                    Request.user_id
+                    Request.pictures
                 )
                 .select_from(Request)
                 .join(User, Request.user_id == User.id)
@@ -58,8 +57,7 @@ class Db_request:
                     Request.created_at,
                     Request.description,
                     Request.title,
-                    Request.pictures,
-                    Request.user_id
+                    Request.pictures
                 )
                 .order_by(Request_Towns.request_id)
                 .all()
@@ -75,8 +73,7 @@ class Db_request:
                     Request.created_at,
                     Request.title,
                     Request.description,
-                    Request.pictures,
-                    Request.user_id
+                    Request.pictures
                 )
                 .select_from(Request)
                 .join(User, Request.user_id == User.id)
@@ -93,8 +90,7 @@ class Db_request:
                     Request.created_at,
                     Request.title,
                     Request.description,
-                    Request.pictures,
-                    Request.user_id
+                    Request.pictures
                 )
                 .order_by(Request_Towns.request_id)
                 .all()

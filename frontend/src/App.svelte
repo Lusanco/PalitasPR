@@ -64,6 +64,7 @@
         path="/initial-contact-success"
         component={InitialContactSuccess}
       />
+      <Route path="*" component={NotFound} />
 
       <!-- Test Route -->
       <Route path="/test" component={Test} />

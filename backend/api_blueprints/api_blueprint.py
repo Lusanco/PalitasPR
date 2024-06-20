@@ -49,7 +49,7 @@ def explore():
         return make_response(jsonify(response), status)
 
 
-@api_bp.route("/Promotion/<id>", methods=["GET"])
+@api_bp.route("/promotion/<id>", methods=["GET"])
 def show_promo(id):
     promo = DBOperations().search('Promotion', id)
     if promo:
@@ -58,31 +58,39 @@ def show_promo(id):
         promo_dict['first_name'] = promo.user.first_name
         promo_dict['last_name'] = promo.user.last_name
         picNames = promo_dict['pictures']
-        promo_id = promo_dict['promo_id']
+        promo_id = promo_dict['id']
         user_id = promo_dict['user_id']
-        
+        urls = []
         # Iterate all pic names to get them from aws
         if promo_dict['pictures']:
             urls = []
-            loop = True
-            while loop:
-                pic, seperator, pics = picNames.partition('|')
+            while True:
+                pic, separator, pics = picNames.partition('|')
                 responseAWS, statusAWS = aws_bucket.get_picture(user_id, 'Promotion', promo_id, pic)
+                print('After partition: ')
+                print(f'My pic: {pic}')
+                print(f'My separator: {separator}')
+                print(f'My pics: {pics}')
+                
                 if statusAWS == 200:
                     # put url into the pictures column of the model
                     urlPic = responseAWS['results']
                     urls.append(urlPic)
+                
                 if not pics:
-                    loop = False
+                    break
                 else:
-                    pic = pics
+                    picNames = pics
 
+        if len(urls) == 0:
+            urls == None 
         promo_dict['pictures'] = urls
+        print(f'My response: {promo_dict}')
         return make_response(jsonify({'results': promo_dict}), 200)
     else:
         return make_response(jsonify({"error": f"No Promotion object found with ID {id}"}), 404)
 
-@api_bp.route("/Request/<id>", methods=["GET"])
+@api_bp.route("/request/<id>", methods=["GET"])
 def show_request(id):
     request_obj = DBOperations().search('Request', id)
     if request_obj:

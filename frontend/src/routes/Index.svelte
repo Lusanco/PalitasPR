@@ -142,10 +142,36 @@
             : `/request-details/${service.request_id}`}
           class="w-full h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-[#f1f1f1] active:scale-95 border-b-4 border-[#cc2936]"
         >
-          <div class="w-0 h-full rounded-none md:w-1/4 skeleton"></div>
+          {#if !service.pictures}
+            <div class="self-center w-full h-40 rounded-none skeleton"></div>
+          {:else}
+            <div
+              class="hidden object-cover h-full rounded-r-none w-60 md:block rounded-l-2xl rounded-t-2xl md:w-1/4"
+            >
+              <img
+                class="hidden object-cover h-full rounded-r-none w-60 md:block rounded-l-2xl rounded-t-2xl"
+                src={service.pictures}
+                alt=""
+              />
+            </div>
+          {/if}
 
           <div class="w-1/2 h-40 p-0 md:w-1/4 md:card-body">
-            <div class="rounded-none h-1/2 md:w-0 skeleton"></div>
+            {#if !service.pictures}
+              <div
+                class="object-center rounded-none h-1/2 md:w-0 skeleton"
+              ></div>
+            {:else}
+              <div
+                class="object-cover object-center w-full rounded-none h-1/2 md:w-0"
+              >
+                <img
+                  class="object-cover w-full h-full rounded-none md:w-0"
+                  src={service.pictures}
+                  alt=""
+                />
+              </div>
+            {/if}
             <div class="p-2 md:mb-6 md:p-0 h-1/2 md:h-full">
               <h2
                 class="md:card-title text-md overflow-ellipsis line-clamp-1 md:truncate"
