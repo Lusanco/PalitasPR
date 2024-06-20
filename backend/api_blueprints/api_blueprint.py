@@ -6,6 +6,8 @@ from db.db_initial_contact import Db_initial_contact
 from werkzeug.utils import secure_filename
 import aws_bucket
 import shlex
+import asyncio
+
 api_bp = Blueprint('api', __name__)
 
 @api_bp.route('/explore', methods=['GET'])
@@ -61,31 +63,28 @@ def show_promo(id):
         promo_id = promo_dict['id']
         user_id = promo_dict['user_id']
         urls = []
-        # Iterate all pic names to get them from aws
+        # Get all pic names
         if promo_dict['pictures']:
-            urls = []
-            while True:
-                pic, separator, pics = picNames.partition('|')
-                responseAWS, statusAWS = aws_bucket.get_picture(user_id, 'Promotion', promo_id, pic)
-                print('After partition: ')
-                print(f'My pic: {pic}')
-                print(f'My separator: {separator}')
-                print(f'My pics: {pics}')
-                
-                if statusAWS == 200:
-                    # put url into the pictures column of the model
-                    urlPic = responseAWS['results']
-                    urls.append(urlPic)
-                
-                if not pics:
-                    break
-                else:
-                    picNames = pics
+            pic_list = picNames.split('|')
+
+            async def handler_getPictures(pic_list, user_id, promo_id):
+                tasks = []
+
+                for pic in pic_list:
+                    task = asyncio.create_task(aws_bucket.get_picture_async(user_id, 'Promotion', promo_id, pic))
+                    tasks.append(task)
+                awsResults = await asyncio.gather(*tasks)
+                urls = [response[0]['results'] for response in awsResults if response[1] == 200]
+                if not urls:
+                    urls = []
+                return urls
+
+            urls = asyncio.run(handler_getPictures(pic_list, user_id, promo_id))
 
         if len(urls) == 0:
             urls == None 
+
         promo_dict['pictures'] = urls
-        print(f'My response: {promo_dict}')
         return make_response(jsonify({'results': promo_dict}), 200)
     else:
         return make_response(jsonify({"error": f"No Promotion object found with ID {id}"}), 404)
