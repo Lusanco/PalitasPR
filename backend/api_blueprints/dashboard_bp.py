@@ -113,20 +113,20 @@ def promo_request():
         if status != 201:
             g.db_session.rollback()
             return make_response(jsonify({"error": response}), status)
-
+        g.db_session.flush()
         obj = response["results"]
         model_id = obj.id
 
         # 2) Associate town(s) with <promo/request> just made in step: 1)
         for town_id in towns_id:
-            response, status = DBOperations().new(
+            response, status = DBOperations(g.db_session).new(
                 {"Promo_Towns": {"promo_id": model_id, "town_id": town_id}}
             )
 
             if status != 201:
                 g.db_session.rollback()
                 return make_response(jsonify({"error": f"Adding town_id: {town_id} error"}), 500)
-
+            g.db_session.flush()
         # 3) Check if image(s) is received and put into AWS
         if 'image' in request.files:
             image = request.files
