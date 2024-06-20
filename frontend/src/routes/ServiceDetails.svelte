@@ -76,8 +76,9 @@
     >
       <!-- ServiceDetails Left -->
       <div
-        class="h-full gap-1 p-4 rounded-lg card md:border-r-2 min-h-96 md:border-[#cc2936] basis-full md:w-fit md:basis-1/2 bg-white shadow-md"
+        class="h-full gap-1 p-4 rounded-none card md:border-r-2 min-h-96 md:border-[#cc2936] basis-full md:w-fit md:basis-1/2 bg-white"
       >
+        <br />
         <h1 class="self-center text-3xl card-title text-[#1f1f1f]">
           {$response1.results.title}
         </h1>
@@ -114,8 +115,9 @@
 
       <!-- ServiceDetails Right -->
       <div
-        class="flex flex-col h-full gap-1 p-4 bg-white rounded-lg shadow-md card min-h-96 basis-full md:w-fit md:basis-1/2"
+        class="flex flex-col h-full gap-1 p-4 bg-white rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2"
       >
+        <br />
         <h1 class="self-center text-3xl card-title text-[#1f1f1f]">Reviews</h1>
         <br />
 
@@ -161,15 +163,19 @@
     </div>
     <!-- Flex Wrap -->
     <div
-      class="flex items-center justify-center w-10/12 gap-4 mx-4 md:w-11/12 md:max-w-6xl"
+      class="flex items-center justify-center w-full h-20 bg-white md:max-w-6xl"
     >
-      <a
-        use:link
-        href="/"
-        class="w-1/2 btn bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
-        >Back To Search</a
+      <div
+        class="flex items-center justify-center w-10/12 gap-4 mx-4 bg-white md:w-11/12 md:max-w-6xl"
       >
-      <Button {image} {button} />
+        <a
+          use:link
+          href="/"
+          class="w-1/2 btn bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
+          >Back To Search</a
+        >
+        <Button {image} {button} />
+      </div>
     </div>
   </div>
   <!-- Container -->
