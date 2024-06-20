@@ -88,6 +88,7 @@ def promo_request():
 
         # Get list of tuples from .form, cast into a 'dict'
         data = dict(request.form)
+        print(data)
 
         if not data:
             return make_response(jsonify({"error": "No data sent via json"}), 400)
