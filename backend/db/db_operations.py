@@ -43,8 +43,8 @@ class DBOperations:
                 'Initial_Contact': Initial_Contact
                 }
 
-    def __init__(self):
-        self.session = get_session()
+    def __init__(self, db_session):
+        self.session = db_session
 
     def new(self, front_data):
         """
@@ -125,8 +125,6 @@ class DBOperations:
                             setattr(obj, key, value)
                         else:
                             print(f"Attribute '{key}' not found in {class_name} model.")
-
-                    self.session.commit()
                     print(f"{class_name} object with ID {obj_id} updated successfully.")
                 else:
                     print(f"{class_name} object with ID {obj_id} not found.")

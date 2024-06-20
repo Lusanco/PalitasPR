@@ -22,8 +22,8 @@ class Db_user:
         * User queries
         * User route functionality  like login or signup
     '''
-    def __init__(self):
-        self.session = get_session()
+    def __init__(self, db_session):
+        self.session = db_session
 
     def login(self, email=None, password=None):
         """
