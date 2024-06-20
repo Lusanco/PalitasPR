@@ -113,8 +113,8 @@ def promo_request():
         if status != 201:
             return make_response(jsonify({"error": response}), status)
 
-        objectDict = response["results"]
-        model_id = objectDict["id"]
+        obj = response["results"]
+        model_id = obj.id
 
         # 2) Associate town(s) with <promo/request> just made in step: 1)
         for town_id in towns:
