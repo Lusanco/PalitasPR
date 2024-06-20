@@ -82,7 +82,8 @@ class Db_promotion:
                     Promotion.description,
                     Promotion.price_min,
                     Promotion.price_max,
-                    Promotion.user_id
+                    Promotion.user_id,
+                    Promotion.pictures
                 )
                 .select_from(Promotion)
                 .join(User, Promotion.user_id == User.id)
@@ -101,7 +102,8 @@ class Db_promotion:
                     Promotion.description,
                     Promotion.price_min,
                     Promotion.price_max,
-                    Promotion.user_id
+                    Promotion.user_id,
+                    Promotion.pictures
                 )
                 .order_by(Promo_Towns.promo_id)
                 .all()

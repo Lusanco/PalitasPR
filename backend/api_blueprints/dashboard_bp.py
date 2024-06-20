@@ -88,6 +88,7 @@ def promo_request():
 
         # Get list of tuples from .form, cast into a 'dict'
         data = dict(request.form)
+        print(data)
 
         if not data:
             return make_response(jsonify({"error": "No data sent via json"}), 400)
@@ -102,6 +103,8 @@ def promo_request():
         data["user_id"] = user_id
         model = data.get("model")
         towns = data.get("town")
+        towns_id = towns.split(',')
+        towns_id = [int(id.strip()) for id in towns_id]
 
         data.pop("town")
         data.pop("model")
@@ -112,11 +115,11 @@ def promo_request():
         if status != 201:
             return make_response(jsonify({"error": response}), status)
 
-        objectDict = response["results"]
-        model_id = objectDict["id"]
+        obj = response["results"]
+        model_id = obj.id
 
         # 2) Associate town(s) with <promo/request> just made in step: 1)
-        for town_id in towns:
+        for town_id in towns_id:
             response, status = DBOperations().new(
                 {"Promo_Towns": {"promo_id": model_id, "town_id": town_id}}
             )
@@ -130,14 +133,13 @@ def promo_request():
             image = image['image']
             pic_name =  secure_filename(image.filename)
             pic_bytes = image.read()
-
             if pic_name == '':
                 return make_response(jsonify({'error': 'Empty File Name'}), 400)
 
             response, status = aws_bucket.put_picture(user_id, model, model_id, pic_name, pic_bytes)
-            if status != 201:
+            if status != 200:
                 return make_response(jsonify(response), status)
-            
+
             # 4) Save picture path name
             response, status = DBOperations().update({model: {'id': model_id, 'pictures': pic_name}})
             if status != 200:
