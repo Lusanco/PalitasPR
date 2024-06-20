@@ -64,22 +64,28 @@ def show_promo(id):
         # Iterate all pic names to get them from aws
         if promo_dict['pictures']:
             urls = []
-            loop = True
-            while loop:
-                pic, seperator, pics = picNames.partition('|')
+            while True:
+                pic, separator, pics = picNames.partition('|')
                 responseAWS, statusAWS = aws_bucket.get_picture(user_id, 'Promotion', promo_id, pic)
+                print('After partition: ')
+                print(f'My pic: {pic}')
+                print(f'My separator: {separator}')
+                print(f'My pics: {pics}')
+                
                 if statusAWS == 200:
                     # put url into the pictures column of the model
                     urlPic = responseAWS['results']
                     urls.append(urlPic)
+                
                 if not pics:
-                    loop = False
+                    break
                 else:
-                    pic = pics
+                    picNames = pics
 
         if len(urls) == 0:
             urls == None 
         promo_dict['pictures'] = urls
+        print(f'My response: {promo_dict}')
         return make_response(jsonify({'results': promo_dict}), 200)
     else:
         return make_response(jsonify({"error": f"No Promotion object found with ID {id}"}), 404)
