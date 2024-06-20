@@ -38,20 +38,15 @@
 
     axios
       .get(`/api/promotion/${id}`)
-      .then((axiosResponse) => {
-        response.set(axiosResponse);
-        response1.set(axiosResponse.data);
+      .then((axiosResponse1) => {
+        response.set(axiosResponse1);
+        response1.set(axiosResponse1.data);
         console.log(".then() Response Log: ", $response1);
+        return axios.get(`/api/promotion/promo_review/${id}`);
       })
-      .catch((axiosError) => {
-        window.location.href = "/404";
-        console.log(".catch() Error Log: ", axiosError);
-      });
-    axios
-      .get(`/api/promotion/promo_review/${id}`)
-      .then((axiosResponse) => {
-        response.set(axiosResponse);
-        response2.set(axiosResponse.data);
+      .then((axiosResponse2) => {
+        response.set(axiosResponse2);
+        response2.set(axiosResponse2.data);
         console.log(".then() Response 2 Log: ", $response2);
         initialContact = {
           receiver_id: $response1.results.user_id,
@@ -60,8 +55,7 @@
         data.set(initialContact);
       })
       .catch((axiosError) => {
-        console.log($response1);
-        console.log($response2);
+        window.location.href = "/404";
         console.log(".catch() Error Log: ", axiosError);
       });
   });
