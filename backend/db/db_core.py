@@ -45,8 +45,8 @@ class Db_core:
         Examples:
         * Searchbar of landing
     '''
-    def __init__(self):
-        self.session = get_session()
+    def __init__(self, db_session):
+        self.session = db_session
 
     def landing_searchBar(self, model=None, service=None, town_id = 0):
         """
@@ -60,6 +60,8 @@ class Db_core:
 
         if model is None and service is None:
             return {'error':'model or service missing'}, 400
+        if service == None or service == '':
+            return {'error':'service name empty'}, 400
 
         service_name = unidecode(service).lower() # Normalize text
         tsquery = func.to_tsquery('english', f'{service_name}:*')
@@ -83,9 +85,9 @@ class Db_core:
         my_service_id = service_obj.id
         service_name = service_obj.name
         if model == "promotions":
-            rows = Db_promotion().get_promos_byTowns(my_service_id, town_id)
+            rows = Db_promotion(self.session).get_promos_byTowns(my_service_id, town_id)
         if model == "requests":
-            rows = Db_request().get_requests_byTowns(my_service_id, town_id)
+            rows = Db_request(self.session).get_requests_byTowns(my_service_id, town_id)
 
         list_of_models = []
 
@@ -131,8 +133,8 @@ class Db_core:
         """
 
         tasks = [
-            Db_promotion().get_user_promos(self.session, user_id),
-            Db_request().get_user_requests(self.session, user_id)
+            Db_promotion(self.session).get_user_promos(self.session, user_id),
+            Db_request(self.session).get_user_requests(self.session, user_id)
         ]
         promotions, requests = await asyncio.gather(*tasks)
         return (promotions, requests)

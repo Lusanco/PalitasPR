@@ -4,7 +4,7 @@
     the user that is signed in
 """
 
-from flask import Blueprint, jsonify, request, make_response, session
+from flask import Blueprint, jsonify, request, make_response, session, g
 from db.db_operations import DBOperations
 from db.db_core import Db_core
 import emails
@@ -20,12 +20,6 @@ import asyncio
 
 my_bp = Blueprint("my", __name__)
 
-
-@my_bp.before_request
-def keep_session_alive():
-    session.modified = True  # Before requests, keep alive session if it hasnt expired
-
-
 @my_bp.route("/promotion-request", methods=["GET", "POST", "PUT"])
 @login_required
 def promo_request():
@@ -39,7 +33,7 @@ def promo_request():
     # ---------------GET METHOD--------------------------------------------- 
     if request.method == "GET":
         async def dashboard_handler():
-            return await Db_core().dashboard_get_promos_requests(user_id)
+            return await Db_core(g.db_session).dashboard_get_promos_requests(user_id)
 
         results = asyncio.run(dashboard_handler())
         return make_response(jsonify({"results": results}), 200)
@@ -51,8 +45,9 @@ def promo_request():
         data = dict(request.form)
         model = data.get("model")
         data_to_update = data.pop('model')
-        response, status = DBOperations().update({model:data_to_update})
+        response, status = DBOperations(g.db_session).update({model:data_to_update})
         if status != 200:
+            g.db_session.rollback()
             return make_response(jsonify(response), status)
 
         # Check if image(s) is received and put into AWS
@@ -67,13 +62,16 @@ def promo_request():
 
             response, status = aws_bucket.put_picture(user_id, model, model_id, pic_name, pic_bytes)
             if status != 201:
+                g.db_session.rollback()
                 return make_response(jsonify(response), status)
 
             # Save picture path name on the model object
-            response, status = DBOperations().update({model: {'id': model_id, 'pictures': pic_name}})
+            response, status = DBOperations(g.db_session).update({model: {'id': model_id, 'pictures': pic_name}})
             if status != 200:
+                g.db_session.rollback()
                 return make_response(jsonify(response), status)
 
+        g.db_session.commit()
         return make_response(jsonify({'results': 'ok'}), 200)
     # -----------------------------------------------------------
 
@@ -110,9 +108,10 @@ def promo_request():
         data.pop("model")
 
         # 1) Create (Promo or Request)
-        response, status = DBOperations().new({model: data})
+        response, status = DBOperations(g.db_session).new({model: data})
 
         if status != 201:
+            g.db_session.rollback()
             return make_response(jsonify({"error": response}), status)
 
         obj = response["results"]
@@ -125,6 +124,7 @@ def promo_request():
             )
 
             if status != 201:
+                g.db_session.rollback()
                 return make_response(jsonify({"error": f"Adding town_id: {town_id} error"}), 500)
 
         # 3) Check if image(s) is received and put into AWS
@@ -138,13 +138,15 @@ def promo_request():
 
             response, status = aws_bucket.put_picture(user_id, model, model_id, pic_name, pic_bytes)
             if status != 200:
+                g.db_session.rollback()
                 return make_response(jsonify(response), status)
 
             # 4) Save picture path name
-            response, status = DBOperations().update({model: {'id': model_id, 'pictures': pic_name}})
+            response, status = DBOperations(g.db_session).update({model: {'id': model_id, 'pictures': pic_name}})
             if status != 200:
+                g.db_session.rollback()
                 return make_response(jsonify(response), status)
-
+        g.db_session.commit()
         return make_response(jsonify({'results': 'Created Succesfully'}), 201)
 
     # -----------------------END-------------------------------------------

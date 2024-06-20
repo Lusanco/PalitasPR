@@ -17,8 +17,8 @@ class Db_task:
         Class to call when using any Tasks(Contract) functionality
         required.
     '''
-    def __init__(self):
-        self.session = get_session()
+    def __init__(self, db_session):
+        self.session = db_session
 
     def get_tasks_by_userId(self, userId):
         '''

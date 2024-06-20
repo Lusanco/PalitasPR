@@ -2,7 +2,7 @@
     All related functions for Promotion class that involves the database
     and routes from flask.
 '''
-from db_init import get_session
+from sqlalchemy.orm import joinedload
 from models import User
 from sqlalchemy import func
 from models import (
@@ -26,89 +26,53 @@ class Db_promotion:
         * Functionalites to filter certain Promotions
         * etc..
     '''
-    def __init__(self):
-        self.session = get_session()
+    def __init__(self, db_session):
+        self.session = db_session
 
     def get_promos_byTowns(self, my_service_id, town_id):
         """
-            Query promotions based on service ID and town ID.
-            Searches for specific Promotions in a specified town with all the info related.
+        Query promotions based on service ID and town ID.
+        Searches for specific Promotions in a specified town with all the info related.
         """
-        if town_id == 0: # Do all towns
-            rows = (
-                self.session.query(
-                    Promo_Towns.promo_id,
-                    User.first_name,
-                    User.last_name,
-                    func.array_agg(Town.name),
-                    Promotion.created_at,
-                    Promotion.title,
-                    Promotion.description,
-                    Promotion.price_min,
-                    Promotion.price_max,
-                    Promotion.user_id,
-                    Promotion.pictures
-                )
-                .select_from(Promotion)
-                .join(User, Promotion.user_id == User.id)
-                .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)
-                .join(Town, Promo_Towns.town_id == Town.id)
-                .filter((Promotion.service_id == my_service_id))
-                .group_by(
-                    Promo_Towns.promo_id,
-                    User.first_name,
-                    User.last_name,
-                    Promotion.created_at,
-                    Promotion.description,
-                    Promotion.title,
-                    Promotion.price_min,
-                    Promotion.price_max,
-                    Promotion.user_id,
-                    Promotion.pictures
-                )
-                .order_by(Promo_Towns.promo_id)
-                .all()
+        query = (
+            self.session.query(
+                Promo_Towns.promo_id,
+                User.first_name,
+                User.last_name,
+                func.array_agg(Town.name),
+                Promotion.created_at,
+                Promotion.title,
+                Promotion.description,
+                Promotion.price_min,
+                Promotion.price_max,
+                Promotion.user_id,
+                Promotion.pictures
             )
-            return rows
-        else: # Specific town
-            rows = (
-                self.session.query(
-                    Promo_Towns.promo_id,
-                    User.first_name,
-                    User.last_name,
-                    func.array_agg(Town.name),
-                    Promotion.created_at,
-                    Promotion.title,
-                    Promotion.description,
-                    Promotion.price_min,
-                    Promotion.price_max,
-                    Promotion.user_id,
-                    Promotion.pictures
-                )
-                .select_from(Promotion)
-                .join(User, Promotion.user_id == User.id)
-                .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)
-                .join(Town, Promo_Towns.town_id == Town.id)
-                .filter(
-                    (Promotion.service_id == my_service_id)
-                    & ((Town.id == town_id))
-                )
-                .group_by(
-                    Promo_Towns.promo_id,
-                    User.first_name,
-                    User.last_name,
-                    Promotion.created_at,
-                    Promotion.title,
-                    Promotion.description,
-                    Promotion.price_min,
-                    Promotion.price_max,
-                    Promotion.user_id,
-                    Promotion.pictures
-                )
-                .order_by(Promo_Towns.promo_id)
-                .all()
+            .select_from(Promotion)
+            .join(User, Promotion.user_id == User.id)
+            .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)
+            .join(Town, Promo_Towns.town_id == Town.id)
+            .filter(Promotion.service_id == my_service_id)
+            .group_by(
+                Promo_Towns.promo_id,
+                User.first_name,
+                User.last_name,
+                Promotion.created_at,
+                Promotion.title,
+                Promotion.description,
+                Promotion.price_min,
+                Promotion.price_max,
+                Promotion.user_id,
+                Promotion.pictures
             )
-            return rows
+            .order_by(Promo_Towns.promo_id)
+        )
+        # If a town sent, make query by towns
+        if town_id != 0:
+            query = query.filter(Town.id == town_id)
+        # .all() submtis the request for the query
+        rows = query.all()
+        return rows
 
     async def get_user_promos(self, session, my_user_id):
         """
@@ -165,36 +129,25 @@ class Db_promotion:
         return promos_dict
 
     def get_promo_reviews(self, promo_id):
-        """
-        Retrieves reviews for a specific promo.
-
-        Args:
-            promo_id (str): The ID of the promo.
-
-        Returns:
-            list: A list of dictionaries containing review details.
-        """
         reviews = (
-            self.session.query(
-                Review
-            )
+            self.session.query(Review)
             .join(Task, Review.task_id == Task.id)
             .join(Promotion, Task.promo_id == Promotion.id)
+            .options(joinedload(Review.reviewer))  # Eager load the 'reviewer' relationship
             .filter(Promotion.id == promo_id)
             .all()
         )
 
         review_list = []
         for review in reviews:
-            user = review.reviewer
             review_dict = {
                 'id': review.id,
                 'description': review.description,
                 'rating': review.rating,
                 'pictures': review.pictures,
                 'created_at': review.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-                'first_name': user.first_name,
-                'last_name': user.last_name
+                'first_name': review.reviewer.first_name,  # Access loaded 'reviewer' directly
+                'last_name': review.reviewer.last_name
             }
             review_list.append(review_dict)
 
