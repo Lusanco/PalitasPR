@@ -57,6 +57,10 @@
     image = event.target.files[0];
     console.log("Image file selected:", event.target.files[0]);
   }
+
+  function handleButtonClick() {
+    document.getElementById("townsDropdown").classList.toggle("hidden");
+  }
 </script>
 
 <head>
@@ -99,11 +103,13 @@
 
     <div class="w-full dropdown">
       <button
+        on:click={handleButtonClick}
         tabindex="0"
         class="btn btn-base dropdown-toggle text-[#f1f1f1] bg-[#cc2936] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
         >Seleccionar pueblos</button
       >
       <ul
+        id="townsDropdown"
         tabindex="-1"
         class="grid w-full h-40 min-w-full grid-cols-1 gap-4 p-4 overflow-y-auto bg-white shadow md:grid-cols-3 text-nowrap dropdown-content rounded-box"
       >
