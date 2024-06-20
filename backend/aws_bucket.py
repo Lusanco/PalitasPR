@@ -358,3 +358,44 @@ def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content:
                         return ({'response': 'Object not found'}, 404)
                     else:
                         return ({'error': 'AWS error'}, 500)
+
+async def get_picture_async(user_id: str, model: str, model_id: str, pic_name: str):
+    """
+    Retrieve a picture from an AWS S3 bucket asynchronously.
+    """
+    if model not in ['Gallery', 'Profile', 'Cover']:
+            models_dict = {
+            'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
+            'Request': f'{user_id}/requests/{model_id}/{pic_name}',
+            'Task': f'{user_id}/tasks/{model_id}/{pic_name}',
+            'Review': f'{user_id}/reviews/{model_id}/{pic_name}'
+            }
+    else:
+        models_dict = {
+        'Profile': f'{user_id}/profile/{pic_name}',
+        'Gallery': f'{user_id}/gallery/{pic_name}',
+        'Cover': f'{user_id}/cover/{pic_name}'
+        }
+
+    if model in models_dict:
+        path = f'users/{models_dict[model]}' # This pastes users/101/promotions/001/Palitas_logo_pitch.png
+    else:
+        return ({'response': 'Model(Folder) does not not exist'}, 400)
+    try:
+        # Attempt to get the object
+        response = s3_client.get_object(Bucket='palitas-pics', Key=path)
+        
+        response = s3_client.generate_presigned_url('get_object',
+                                                    Params={'Bucket': 'palitas-pics', 'Key': path},
+                                                    ExpiresIn=3600)
+
+        return ({'results': response}, 200)
+
+    except ClientError as e:
+
+        if e.response['Error']['Code'] == 'NoSuchKey':
+            # Object does not exist, return an empty response
+            return ({'error': 'Picture not found'}, 400)
+        else:
+            # Other error occurred, raise or handle accordingly
+            return ({'error': 'Internal error aws'}, 500)
