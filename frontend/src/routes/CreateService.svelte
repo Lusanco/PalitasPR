@@ -10,7 +10,7 @@
   let model = "Promotion";
 
   let button = {
-    name: "Create Service",
+    name: "Crear Servicio",
     method: "POST",
     url: "api/dashboard/promotion-request",
     headers: "multipart/form-data",
@@ -59,11 +59,15 @@
   }
 </script>
 
+<head>
+  <title>PalitasPR | Crear Servicio</title>
+</head>
+
 <div
   class="flex flex-col items-center justify-center h-full min-h-screen bg-[#f1f1f1]"
 >
   <div
-    class="flex flex-col w-full h-full max-w-2xl gap-4 p-2 my-8 font-semibold bg-white rounded-lg shadow-lg"
+    class="flex flex-col w-full h-full max-w-2xl gap-4 p-6 my-8 font-semibold bg-white rounded-lg shadow-lg md:p-12"
   >
     <h1
       class="pt-4 text-2xl text-center text-[#1f1f1f] md:text-3xl lg:text-4xl"
@@ -71,19 +75,17 @@
       Crear Servicio
     </h1>
     <div>
-      <label for="title" class="text-[#1f1f1f]">Titulo</label>
+      <label for="title" class="text-[#1f1f1f]">Título</label>
       <input
         class="w-full input input-bordered text-[#cc2936]"
         type="text"
-        name="titulo"
-        id=""
+        name="title"
+        id="title"
         bind:value={title}
       />
     </div>
 
-    <label for="service" class="text-[#1f1f1f]"
-      >Seleccione Servicio a Brindar</label
-    >
+    <label for="service" class="text-[#1f1f1f]">Seleccionar servicio</label>
     <select
       bind:value={service_id}
       name="service"
@@ -99,13 +101,13 @@
       <button
         tabindex="0"
         class="btn btn-base dropdown-toggle text-[#f1f1f1] bg-[#cc2936] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
-        >Seleccionar Pueblos</button
+        >Seleccionar pueblos</button
       >
       <ul
         tabindex="-1"
-        class="flex flex-wrap w-full h-40 min-w-full gap-4 p-4 overflow-y-auto bg-white shadow gap-x-10 dropdown-content rounded-box"
+        class="grid w-full h-40 min-w-full grid-cols-1 gap-4 p-4 overflow-y-auto bg-white shadow md:grid-cols-3 text-nowrap dropdown-content rounded-box"
       >
-        {#each Object.entries(townsID) as [town, id]}
+        {#each Object.entries(townsID).filter(([town, id]) => town !== "all") as [town, id]}
           <li class="menu-item" value={id}>
             <input
               bind:value={id}
@@ -122,36 +124,36 @@
 
     <div class="max-h-96">
       <label for="description" class="text-[#1f1f1f]"
-        >Descripcion de su Servicio</label
+        >Descripción del servicio ofrecido</label
       >
       <textarea
         bind:value={description}
         class="w-full textarea textarea-bordered text-[#cc2936]"
         name="description"
-        id=""
+        id="description"
       ></textarea>
     </div>
     <div>
       <label for="price-min" class="text-[#1f1f1f]"
-        >Precio Minimo (Opcional)</label
+        >Precio mínimo (Opcional)</label
       >
       <input
         class="w-full input input-bordered text-[#cc2936]"
         type="number"
         name="price-min"
-        id=""
+        id="price-min"
         bind:value={price_min}
       />
     </div>
     <div>
       <label for="price-max" class="text-[#1f1f1f]"
-        >Precio Maximo (Opcional)</label
+        >Precio máximo (Opcional)</label
       >
       <input
         class="w-full input input-bordered text-[#cc2936]"
         type="number"
         name="price-max"
-        id=""
+        id="price-max"
         bind:value={price_max}
       />
     </div>
@@ -161,14 +163,17 @@
       <label for="imageInput" class="block text-sm font-medium text-[#1f1f1f]"
       ></label>
       <div class="flex w-full">
-        <input
-          type="file"
-          name="image"
-          id="imageInput"
-          on:change={handleFileChange}
-          class="w-full px-8 py-12 text-[#1f1f1f] bg-[#f1f1f1] border-2 border-[#cc2936] border-dashed rounded-md"
-          accept="image/*"
-        />
+        <label for="imageInput" class="w-full mb-2">
+          Subir imágen
+          <input
+            type="file"
+            name="image"
+            id="imageInput"
+            on:change={handleFileChange}
+            class="w-full px-8 py-12 text-[#1f1f1f] bg-[#f1f1f1] border-2 border-[#cc2936] border-dashed rounded-md"
+            accept="image/*"
+          /></label
+        >
       </div>
       {#if errorMessage}
         <p class="text-[#cc2936]">{errorMessage}</p>
