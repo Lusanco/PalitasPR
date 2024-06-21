@@ -94,3 +94,25 @@
     <Loading />
   </div>
 {/if}
+
+<!-- 
+ {#each questions as { question, answer }, index}
+      <div
+        class="max-w-3xl px-4 mx-auto bg-white border-b-2 rounded-lg border-[#cc2936] text-[#1f1f1f] transition-all duration-100 hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+      >
+        <button
+          class="w-full px-2 py-4 text-xl font-medium text-left rounded-lg focus:outline-none"
+          on:click={() => toggleItem(index)}
+        >
+          {question}
+        </button>
+        <div
+          class={`overflow-hidden transition-all duration-300 ${openIndex === index ? "max-h-screen" : "max-h-0"}`}
+        >
+          <div class="px-4 py-2">
+            <p>{answer}</p>
+          </div>
+        </div>
+      </div>
+    {/each}
+-->
