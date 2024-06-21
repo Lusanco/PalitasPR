@@ -38,7 +38,7 @@ def send_confirm_email(email, first_name, token):
 
     # Load the HTML template
     html_template = load_html_template(
-        '../email/build_production/transactional.html')
+        './email_template/email_template.html')
 
     # Inject dynamic content into the HTML template
     html_content = html_template.replace(

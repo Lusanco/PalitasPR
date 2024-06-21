@@ -43,8 +43,8 @@ class DBOperations:
                 'Initial_Contact': Initial_Contact
                 }
 
-    def __init__(self):
-        self.session = get_session()
+    def __init__(self, db_session):
+        self.session = db_session
 
     def new(self, front_data):
         """
@@ -77,13 +77,6 @@ class DBOperations:
         if model_class == User:
             self.new({'Profile': {'user_id': new_object.id, 'tasks_completed': 0, 'bio': 'Hola soy nuevo en PalitasPR!'}})
 
-        try:
-            self.session.commit()
-        except SQLAlchemyError as e:
-            self.session.rollback()
-            print(e)
-            return ({"Error": "Error"}, 500)
-
         # check if object needs aws folder
         aws_folders = {Promotion: "Promotion", Request: "Request", Review: "Review"}
         if model_class in aws_folders:
@@ -91,9 +84,7 @@ class DBOperations:
                 new_object.user_id, aws_folders[model_class], new_object.id
             )
             if response[1] != 201:
-                self.session.rollback()
                 return response
-
         return ({'results': new_object}, 201)
 
     def update(self, data):
@@ -125,8 +116,6 @@ class DBOperations:
                             setattr(obj, key, value)
                         else:
                             print(f"Attribute '{key}' not found in {class_name} model.")
-
-                    self.session.commit()
                     print(f"{class_name} object with ID {obj_id} updated successfully.")
                 else:
                     print(f"{class_name} object with ID {obj_id} not found.")

@@ -10,6 +10,7 @@ import bcrypt
 from models import User, Initial_Contact, Profile, Review, Task
 from sqlalchemy import or_
 from db.db_task import Db_task
+import aws_bucket
 
 
 class Db_user:
@@ -21,8 +22,8 @@ class Db_user:
         * User queries
         * User route functionality  like login or signup
     '''
-    def __init__(self):
-        self.session = get_session()
+    def __init__(self, db_session):
+        self.session = db_session
 
     def login(self, email=None, password=None):
         """
@@ -88,9 +89,10 @@ class Db_user:
             "last_name": last_name,
             "verification_token": verification_token,
         }
+        response, status = DBOperations(self.session).new({"User": dict_of_user})
+        if status != 201:
+            return response, status
         send_confirm_email(email, first_name, verification_token)
-        # Assuming self.new is a method that handles the creation of a new user
-        response, status = DBOperations().new({"User": dict_of_user})
         return response, status
 
     # WORKING DOWN HEERE NEED TEST
@@ -170,3 +172,13 @@ class Db_user:
         
         rating_in_stars = avg_rating * 5
         return rating_in_stars
+
+    # ONLY FOR DATABASE RESETS
+    def create_folders_for_allUsers(self):
+        '''
+            after resetting db, lets make all folders for users
+        '''
+        users = self.session.query(User).all()
+        for user in users:
+            aws_bucket.create_user_folder(user.id)
+        return 'Succes'
