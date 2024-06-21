@@ -148,3 +148,10 @@ def update_bio():
         g.db_session.rollback()
     g.db_session.commit()
     return make_response(jsonify(response), status)
+
+@user_bp.route('/status', methods=['GET'])
+def get_user_status():
+    if current_user.is_anonymous:
+        return make_response(jsonify(False))
+    else:
+        return make_response(jsonify(True))
