@@ -27,6 +27,7 @@
   let errorMessage = "";
   let selectedTowns = [];
   let townList = "";
+  let showTownsDropdown = false;
 
   $: {
     $data = {
@@ -57,13 +58,17 @@
     image = event.target.files[0];
     console.log("Image file selected:", event.target.files[0]);
   }
+
+  function toggleTownsDropdown() {
+    showTownsDropdown = !showTownsDropdown;
+  }
 </script>
 
 <div
   class="flex flex-col items-center justify-center h-full min-h-screen bg-[#f1f1f1]"
 >
   <div
-    class="flex flex-col w-full h-full max-w-2xl gap-4 p-2 my-8 font-semibold bg-white rounded-lg shadow-lg"
+    class="flex flex-col w-full h-full max-w-2xl gap-4 p-4 my-8 font-semibold bg-white rounded-lg shadow-lg"
   >
     <h1
       class="pt-4 text-2xl text-center text-[#1f1f1f] md:text-3xl lg:text-4xl"
@@ -99,25 +104,29 @@
       <button
         tabindex="0"
         class="btn btn-base dropdown-toggle text-[#f1f1f1] bg-[#cc2936] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
-        >Seleccionar Pueblos</button
-      >
-      <ul
-        tabindex="-1"
-        class="flex flex-wrap w-full h-40 min-w-full gap-4 p-4 overflow-y-auto bg-white shadow gap-x-10 dropdown-content rounded-box"
-      >
-        {#each Object.entries(townsID) as [town, id]}
-          <li class="menu-item" value={id}>
-            <input
-              bind:value={id}
-              on:change={handleTownChange}
-              type="checkbox"
-              id={`'${id}'`}
-              class="mr-2 checkbox checkbox-base"
-            />
-            {town}
-          </li>
-        {/each}
-      </ul>
+        on:click={toggleTownsDropdown}
+      >Seleccionar Pueblos</button>
+      {#if showTownsDropdown}
+        <ul
+          tabindex="-1"
+          class="flex flex-wrap w-full h-40 min-w-full gap-4 p-4 overflow-y-auto bg-white shadow gap-x-10 dropdown-content rounded-box"
+        >
+          {#each Object.entries(townsID) as [town, id]}
+            {#if town !== 'All'}
+              <li class="menu-item" value={id}>
+                <input
+                  bind:value={id}
+                  on:change={handleTownChange}
+                  type="checkbox"
+                  id={`'${id}'`}
+                  class="mr-2 checkbox checkbox-base"
+                />
+                {town}
+              </li>
+            {/if}
+          {/each}
+        </ul>
+      {/if}
     </div>
 
     <div class="max-h-96">
