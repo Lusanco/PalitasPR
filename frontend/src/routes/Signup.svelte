@@ -25,7 +25,7 @@
       "shadow-md text-[#f1f1f1] btn bg-[#cc2936] hover:bg-white hover:text-[#1f1f1f]",
     misc: { "App Location": "Signup" },
   };
-  // Button Prop Variables And Dependencies
+
   // Reactive block to update $data
   $: {
     $data = {
@@ -43,15 +43,23 @@
   // Function to handle the "Enter" key press
   function handleKeydown(event) {
     if (event.key === "Enter") {
-      // Trigger the button logic from the child component
-      if (password !== confirmPassword) {
-        password = "";
-        confirmPassword = "";
-        errorMessage = "Passwords do not match!";
+      validatePasswords();
+      if (errorMessage) {
         return; // Exit early if passwords do not match
       }
-
+      // Trigger the button logic from the child component
       buttonRef.buttonLogic();
+    }
+  }
+
+  // Function to validate passwords
+  function validatePasswords() {
+    if (password !== confirmPassword) {
+      password = null;
+      confirmPassword = null;
+      errorMessage = "Passwords do not match!";
+    } else {
+      errorMessage = ""; // Clear error message if passwords match
     }
   }
 
@@ -60,8 +68,6 @@
     button = {
       ...button,
     };
-
-    // Update the data store with the current misc values
   }
 
   $response = get(response);
@@ -151,9 +157,11 @@
         use:link
         class="link link-hover text-[#cc2936]"
         rel="noopener noreferrer"
-        href="/login">Login</a
-      >
+        href="/login">Login</a>
     </p>
+    {#if errorMessage}
+      <div class="text-center text-red-500">{errorMessage}</div>
+    {/if}
     {#if $state.hidden === true}
       <div class="hidden"></div>
     {:else if (!$state.hidden && !$state.loaded) || $state.reload}
