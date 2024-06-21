@@ -1,9 +1,6 @@
 from flask import Blueprint, jsonify, request, make_response, session
-from db.db_user import Db_user
 from db.db_operations import DBOperations
-import emails
-from flask_login import login_user, logout_user, login_required, current_user
-from db.db_promotion import Db_promotion
+from flask_login import login_required, current_user
 from db.db_task import Db_task
 
 task_bp = Blueprint('tasks', __name__)
@@ -46,5 +43,3 @@ def get_tasks():
         task_dict = active_status
         DBOperations().update({'Task': task_dict})
         session.commit
-
-        

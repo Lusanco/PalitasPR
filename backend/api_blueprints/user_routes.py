@@ -1,8 +1,8 @@
-from flask import Blueprint, jsonify, request, make_response, session, g
-from db.db_user import Db_user
-from db.db_operations import DBOperations
-import emails
+from flask import Blueprint, jsonify, request, make_response, g
 from flask_login import login_user, logout_user, login_required, current_user
+from db.db_operations import DBOperations
+from db.db_user import Db_user
+import emails
 import aws_bucket
 
 user_bp = Blueprint('user', __name__)

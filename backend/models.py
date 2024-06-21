@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 """
     All classes for tables(DataBase)
 """
@@ -6,13 +5,10 @@
 from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, Integer, Boolean,  Index
 from sqlalchemy.orm import relationship
 from base_model import BaseModel, Base, BaseModelSerial
-from flask_login import UserMixin
 from sqlalchemy.dialects.postgresql import TSVECTOR
-from sqlalchemy.event import listen
-from sqlalchemy.sql import text
+from flask_login import UserMixin
 
 
-# ASSOCIATION USER & SERVICE & TOWN CLASS
 class Promo_Towns(BaseModel, Base):
     __tablename__ = "promo_towns"
 
@@ -42,8 +38,6 @@ class Service(Base):
         Index('idx_services_tsv', 'tsv', postgresql_using='gin'),
     )
 
-
-# USER CLASS
 class User(BaseModel, UserMixin, Base):
     __tablename__ = "users"
 
@@ -54,12 +48,10 @@ class User(BaseModel, UserMixin, Base):
     verified = Column(Boolean, default=False)
     verification_token = Column(String(128), unique=True)
 
-# TOWN CLASS (Serial id int)
 class Town(BaseModelSerial, Base):
     __tablename__ = "towns"
 
     name = Column(String(50), unique=True, nullable=False)
-
 
 class Review(BaseModel, Base):
     __tablename__ = "reviews"
@@ -72,7 +64,6 @@ class Review(BaseModel, Base):
 
     reviewer = relationship("User", foreign_keys=[user_id])
 
-# W)RKING DOWN HERE NEED TESTING
 class Initial_Contact(BaseModel, Base):
     __tablename__ = 'initial_contacts'
 
@@ -82,11 +73,9 @@ class Initial_Contact(BaseModel, Base):
     read = Column(Boolean, default=False)
     sent_task = Column(Boolean, default=False)
 
-    # Relationships
     sender = relationship("User", foreign_keys=[sender_id])
     receiver = relationship("User", foreign_keys=[receiver_id])
     promo = relationship("Promotion", foreign_keys=[promo_id])
-
 
 class Task(BaseModel, Base):
     __tablename__ = "tasks"
@@ -114,7 +103,6 @@ class Promotion(BaseModel, Base):
 
     user = relationship('User', foreign_keys=[user_id])
 
-
 class Request(BaseModel, Base):
     __tablename__ = "requests"
     user_id = Column(String(255), ForeignKey("users.id"), nullable=False)
@@ -122,7 +110,6 @@ class Request(BaseModel, Base):
     title = Column(String(100), nullable=False)
     description = Column(String(255), nullable=False)
     pictures = Column(String())
-
 
 class Profile(BaseModel, Base):
     __tablename__ = "profiles"
@@ -137,5 +124,4 @@ class Profile(BaseModel, Base):
     cover_pic = Column(String(255))
     gallery = Column(String(255))
 
-    # relationships
     user = relationship('User', foreign_keys=[user_id])

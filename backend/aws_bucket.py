@@ -6,7 +6,6 @@
 '''
 import boto3
 from botocore.exceptions import ClientError
-from typing import Tuple, Dict
 
 # Specify your AWS credentials and region
 aws_access_key_id = 'AKIA4MTWIBZ4HIVJ6NWI'
@@ -35,13 +34,13 @@ def create_user_folder(user_id: str = None):
     AWS S3 Folder Structure:
     - Root: users/<user_id>/
     - Subfolders:
-      - profile/
-      - promotions/
-      - requests/
-      - tasks/
-      - reviews/
-      -gallery/
-      -profile/
+    - profile/
+    - promotions/
+    - requests/
+    - tasks/
+    - reviews/
+    -gallery/
+    -profile/
 
     Note:
     - Folders in AWS S3 must end with '/'.
@@ -64,15 +63,16 @@ def create_user_folder(user_id: str = None):
 
 
     # All folders to create
-    folders = [user_folder,
-               promotions_folder,
-               requests_folder,
-               tasks_folder,
-               reviews_folder,
-               profile_folder,
-               gallery_folder,
-               cover_folder
-               ]
+    folders = [
+        user_folder,
+        promotions_folder,
+        requests_folder,
+        tasks_folder,
+        reviews_folder,
+        profile_folder,
+        gallery_folder,
+        cover_folder
+        ]
 
     for folder in folders:
         try:
@@ -107,7 +107,7 @@ def create_model_folder(user_id: str, model: str, model_id: str):
     users/007/promotion/<model_id/
 
     Example Usage:
-     - Example: delete_picture('101', 'Promotion', '001')
+    - Example: delete_picture('101', 'Promotion', '001')
     '''
     print(f'\n\nInside createfolder: user_id:{user_id}, model:{model}, model_id:{model_id}\n\n')
     models_dict = {
