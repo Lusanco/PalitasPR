@@ -4,18 +4,17 @@
 import os
 from flask import Flask, send_from_directory, session, g
 from flask_cors import CORS
+from flask_mail import Mail
+from flask_login import LoginManager
+from datetime import timedelta
 from db.db_operations import DBOperations
+import db_init
+
 from api_blueprints.api_blueprint import api_bp
 from api_blueprints.dashboard_bp import my_bp
 from api_blueprints.user_routes import user_bp
 from api_blueprints.promotion_routes import promotion_bp
 from api_blueprints.tasks_routes import task_bp
-from flask_mail import Mail
-from flask_login import LoginManager
-from datetime import timedelta
-import db_init
-
-# app = Flask(__name__, static_folder="static", static_url_path="/")
 
 
 app = Flask(__name__, static_folder="static")
@@ -37,15 +36,15 @@ app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USERNAME"] = "antoniofdjs@gmail.com"
 app.config["MAIL_PASSWORD"] = "syhk sijd eoli tgba"
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=15)
+
 app.register_blueprint(api_bp, url_prefix="/api")
 app.register_blueprint(my_bp, url_prefix="/api/dashboard")
 app.register_blueprint(user_bp, url_prefix="/api/user")
 app.register_blueprint(promotion_bp, url_prefix="/api/promotion")
 app.register_blueprint(task_bp, url_prefix="/api/tasks")
 
-mail = Mail(app)
 login_manager = LoginManager(app)
-
+mail = Mail(app)
 CORS(app)
 
 
@@ -60,7 +59,6 @@ def load_user(user_id):
     # Implement your logic to load a user from the database based on `user_id`
     user = DBOperations(g.db_session).search("User", user_id)
     return user
-
 
 # This function will be called after each request to close the session
 @app.teardown_request

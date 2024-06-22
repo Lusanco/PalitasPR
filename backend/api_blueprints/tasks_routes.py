@@ -1,9 +1,6 @@
-from flask import Blueprint, jsonify, request, make_response, session
-from db.db_user import Db_user
+from flask import Blueprint, jsonify, request, make_response, session, g
 from db.db_operations import DBOperations
-import emails
-from flask_login import login_user, logout_user, login_required, current_user
-from db.db_promotion import Db_promotion
+from flask_login import login_required, current_user
 from db.db_task import Db_task
 
 task_bp = Blueprint('tasks', __name__)
@@ -23,7 +20,7 @@ def get_tasks():
         provider_tasks = []
         receiver_tasks = []
 
-        tasks = Db_task().get_tasks_by_userId(current_user.id)
+        tasks = Db_task(g.db_session).get_tasks_by_userId(current_user.id)
         if not tasks:
             return make_response(jsonify({"results": tasks_list}), 200)
         else:
@@ -44,7 +41,5 @@ def get_tasks():
         active_status = {'Task': {'id':'<task_id>', 'status': 'active'}}
         closed_status = {'Task': {'id':'<task_id>', 'status': 'active'}}
         task_dict = active_status
-        DBOperations().update({'Task': task_dict})
+        DBOperations(g.db_session).update({'Task': task_dict})
         session.commit
-
-        
