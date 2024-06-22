@@ -86,7 +86,7 @@
         <div
           class="flex flex-col overflow-hidden overflow-y-scroll min-h-96 h-96 element text-[#1f1f1f]"
         >
-          {#if !$response1.results.pictures}
+          {#if $response1.results.pictures === "" || null || []}
             <div class="self-center w-full h-40 rounded-none skeleton"></div>
           {:else}
             <div
@@ -149,10 +149,10 @@
                 </div>
                 <div class="flex justify-between gap-2 mt-8 text-[#1f1f1f]">
                   <div>{review.created_at}</div>
-                  <button
+                  <!-- <button
                     class="absolute btn right-4 bottom-4 bg-[#cc2936] text-white hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
                     >Images</button
-                  >
+                  > -->
                 </div>
               </div>
             {/each}
