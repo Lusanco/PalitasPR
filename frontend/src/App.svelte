@@ -33,6 +33,7 @@
   import Privacy from "./routes/Privacy.svelte";
   import Test from "./routes/TEST.svelte";
   import InitialContactSuccess from "./routes/InitialContactSuccess.svelte";
+  import Agreement from "./routes/Agreement.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -68,6 +69,7 @@
 
       <!-- Test Route -->
       <Route path="/test" component={Test} />
+      <Route path="/agreement" component={Agreement} />
     </Router>
   </Main>
   <Footer />

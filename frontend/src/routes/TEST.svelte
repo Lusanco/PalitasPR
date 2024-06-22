@@ -5,6 +5,16 @@
   import { writable } from "svelte/store";
   import { link } from "svelte-routing";
   import Loading from "../components/Loading.svelte";
+  import servicesID from "../scripts/servicesID";
+  const serviceNamesByID = Object.entries(servicesID).reduce(
+    (obj, [key, value]) => {
+      obj[value] = key;
+      return obj;
+    },
+    {}
+  );
+
+  // console.log(serviceNamesByID[1]);
 
   // Combined store for received and sent data
   let contactData = writable({ received: [], sent: [] });
@@ -69,6 +79,123 @@
   function toggleItem(index) {
     openIndex = openIndex === index ? null : index;
   }
+
+  /**
+   ** Function to handle date inputs for month, day, and year fields
+   */
+
+  let inputValue = "";
+  let bulletPoints = [];
+  let placeholderAdd = "Añadir descripción...";
+  let placeholderClient = "Pedro del Pueblo";
+
+  let placeholderService = "Jardinería";
+
+  let placeholderPhone = "787-123-4567";
+  let placeholderClientPhone = "787-765-4321";
+
+  let placeholderEmail = "juandelpueblo@mail.com";
+  let placeholderClientEmail = "pedrodelpueblo@mail.com";
+  let placeholderDate = {
+    month: "06",
+    day: "02",
+    year: "2024",
+  };
+
+  function handleInput(event) {
+    inputValue = event.target.value;
+  }
+
+  /**
+   ** Function to handle keydown events for the Description input field
+   */
+
+  function handleKeyDown(event) {
+    if (event.key === "Enter" && inputValue.trim() !== "") {
+      addBulletPoint();
+      event.preventDefault(); // Prevent default form submission
+    }
+  }
+
+  /**
+   ** Function to add bullet points to the list
+   */
+
+  function addBulletPoint() {
+    if (inputValue.trim() !== "") {
+      bulletPoints = [...bulletPoints, inputValue];
+      inputValue = ""; // Clear input after adding
+    }
+  }
+
+  /**
+   ** Function to handle date inputs for month, day, and year fields
+   */
+
+  function handleDateInput(event) {
+    const input = event.target;
+    const key = event.key;
+    const value = input.value;
+
+    // Allow numbers
+    const allowedKeys = /[0-9]/;
+    if (!allowedKeys.test(key)) {
+      event.preventDefault();
+      return;
+    }
+  }
+
+  /**
+   ** Function to restrict input to digits and dashes only, and limit to a specific
+   ** format
+   */
+
+  function restrictToNumbersAndDashes(event) {
+    const input = event.target;
+    const key = event.key;
+    const value = input.value;
+
+    // Allow numbers, dashes, and control keys (backspace, delete, arrow keys)
+    const allowedKeys = /[0-9-]|Backspace|Delete|ArrowLeft|ArrowRight|Tab/;
+    if (!allowedKeys.test(key)) {
+      event.preventDefault();
+      return;
+    }
+
+    // Add dashes to the input value
+    if ((/[0-9-]/.test(key) && value.length === 3) || value.length === 7) {
+      input.value = `${value}-`;
+    }
+    if (value.length >= 12 && /[0-9-]/.test(key)) {
+      event.preventDefault();
+    }
+  }
+
+  /**
+   ** Function to restrict input to digits, dots, and commas only for price input
+   */
+
+  function restrictToNumbersAndDecimal(event) {
+    const input = event.target;
+    const key = event.key;
+
+    // Allow numbers, dots, commas, $, and control keys (backspace, delete, arrow keys)
+    const allowedKeys = /[0-9.,$]|Backspace|Delete|ArrowLeft|ArrowRight|Tab/;
+    if (!allowedKeys.test(key)) {
+      event.preventDefault();
+      return;
+    }
+
+    // Allow only one dot or comma in the input value
+    if (key === "." && input.value.includes(key)) {
+      event.preventDefault();
+      return;
+    }
+  }
+
+  /**
+   *! Placeholder values for the form fields
+   */
 </script>
 
 <div class="flex flex-col items-center w-full min-h-screen px-4 py-20 mx-auto">
@@ -128,9 +255,14 @@
             </div>
           </button>
           <div
-            class={`overflow-hidden transition-all duration-300 ${openIndex === index ? "max-h-screen" : "max-h-0"}`}
+            class={`overflow-hidden transition-all duration-300 overflow-y-scroll ${openIndex === index ? "max-h-screen" : "max-h-0"}`}
           >
-            <div class="w-full text-center">Agreement Service</div>
+            <br />
+            <div
+              class="flex justify-center w-full pb-4 -mb-4 text-xl font-bold border-b-2 md:mb-2 md:pb-8 md:text-2xl lg:text-3xl"
+            >
+              Servicio Solicitado
+            </div>
 
             <div class="w-full text-justify">
               <span>
@@ -141,11 +273,316 @@
               </span>
             </div>
             <br />
-            <div class="w-full text-center">Agreement Terms</div>
-            <div class="px-4 py-2">
-              <p>{received.sender_first_name}</p>
+
+            <div class="w-full p-4 bg-white shadow-lg md:p-8 lg:p-12 card">
+              <div class="card-header">
+                <h1
+                  class="flex justify-center pb-4 -mb-4 text-2xl font-bold text-gray-700 border-b-2 md:mb-2 md:pb-8 md:text-4xl lg:text-5xl"
+                >
+                  Acuerdo de Servicio
+                </h1>
+              </div>
+              <div class="card-body">
+                <!--* Provider Details -->
+                <div class="pb-4 border-b-2">
+                  <h1
+                    class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                  >
+                    Detalles del Proveedor
+                  </h1>
+                  <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
+                    <!--* Provider Name -->
+                    <label
+                      for="service-provider"
+                      class="col-span-1 font-bold text-gray-500 text-md"
+                    >
+                      Nombre
+                      <input
+                        id="service-provider"
+                        type="text"
+                        readonly
+                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                        value={`${$response3.results.first_name} ${$response3.results.last_name}`}
+                      />
+                    </label>
+                    <!--* Service Provided -->
+                    <label
+                      for="service"
+                      class="col-span-1 font-bold text-gray-500 text-md"
+                    >
+                      Servicio
+                      <input
+                        id="service"
+                        type="text"
+                        readonly
+                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                        value={serviceNamesByID[$response3.results.service_id]}
+                      />
+                    </label>
+                    <!--* Provider Email -->
+                    <label
+                      for="email"
+                      class="col-span-1 font-bold text-gray-500 text-md"
+                    >
+                      Correo Electrónico
+                      <input
+                        readonly
+                        id="email"
+                        type="email"
+                        value={placeholderEmail}
+                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                      />
+                    </label>
+                    <!--* Provider Phone Number -->
+                    <label
+                      for="phone-number"
+                      class="col-span-1 font-bold text-gray-500 text-md"
+                    >
+                      Número de Teléfono
+                      <input
+                        readonly
+                        id="phone-number"
+                        required
+                        pattern="\d{3}-\d{3}-\d{4}"
+                        on:keypress={restrictToNumbersAndDashes}
+                        value={placeholderPhone}
+                        type="text"
+                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                      />
+                    </label>
+                  </div>
+                </div>
+                <!--* Client Details -->
+                <div class="pb-4 mt-4 border-b-2 md:mt-8">
+                  <h1
+                    class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                  >
+                    Detalles del Cliente
+                  </h1>
+                  <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
+                    <!--* Client Name -->
+                    <label
+                      for="service-client"
+                      class="col-span-1 font-bold text-gray-500 text-md"
+                    >
+                      Nombre
+                      <input
+                        id="service-client"
+                        type="text"
+                        readonly
+                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                        value={placeholderClient}
+                      />
+                    </label>
+                    <!--* Client Email -->
+                    <label
+                      for="clientEmail"
+                      class="col-span-1 font-bold text-gray-500 text-md"
+                    >
+                      Correo Electrónico
+                      <input
+                        readonly
+                        id="clientEmail"
+                        type="email"
+                        value={placeholderClientEmail}
+                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                      />
+                    </label>
+                    <!--* Client Phone Number -->
+                    <label
+                      for="clientPhone-number"
+                      class="col-span-1 font-bold text-gray-500 text-md"
+                    >
+                      Número de Teléfono
+                      <input
+                        id="clientPhone-number"
+                        readonly
+                        pattern="\d{3}-\d{3}-\d{4}"
+                        value={placeholderClientPhone}
+                        type="text"
+                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                      />
+                    </label>
+                  </div>
+                </div>
+                <!--* Service Details -->
+                <div class="flex flex-col gap-2 my-4">
+                  <h1
+                    class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                  >
+                    Terminos del Servicio
+                  </h1>
+                  <!--* Service Description -->
+                  <label
+                    for="agreement"
+                    class="text-lg font-semibold text-gray-500 text-start"
+                  >
+                    Descripción
+                    <div>
+                      <p class="text-xs md:text-sm">
+                        Describa el servicio ofrecido. Puede añadir más de un
+                        artículo a la lista.
+                      </p>
+                      <!--* Details input -->
+                      <div class="flex gap-2 pb-4 border-b-2">
+                        <input
+                          type="text"
+                          placeholder={placeholderAdd}
+                          bind:value={inputValue}
+                          on:input={handleInput}
+                          on:keydown={handleKeyDown}
+                          class="w-full p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                        />
+                        <button
+                          on:click={addBulletPoint}
+                          class="text-white bg-[#cc2936] border-none btn mt-[5px] hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
+                        >
+                          <i class="block fa-solid fa-plus md:hidden"></i><span
+                            class="hidden md:block">Añadir</span
+                          >
+                        </button>
+                      </div>
+
+                      <ul class="h-auto pb-4 my-4 border-b-2">
+                        {#each bulletPoints as bulletPoint}
+                          <div class="flex justify-between mx-4">
+                            <div class="flex gap-2 mt-1">
+                              <i
+                                class="fa-solid fa-check mt-[5px] text-[#cc2936]"
+                              ></i>
+                              <li class="text-base text-md">{bulletPoint}</li>
+                            </div>
+                            <div>
+                              <button
+                                on:click={() => {
+                                  bulletPoints = bulletPoints.filter(
+                                    (point) => point !== bulletPoint
+                                  );
+                                }}
+                                class="rounded btn-sm"
+                                ><i
+                                  class="fa-solid fa-trash hover:text-[#cc2936] ease-in-out transition-all duration-150"
+                                ></i></button
+                              >
+                            </div>
+                          </div>
+                        {/each}
+                      </ul>
+                    </div>
+                  </label>
+                  <!--* Price and Date -->
+                  <div
+                    class="grid items-start grid-cols-1 gap-2 md:grid-cols-2"
+                  >
+                    <div class="flex col-span-1">
+                      <label
+                        for="price"
+                        class="text-lg font-semibold text-gray-500 text-start"
+                      >
+                        Precio
+                        <!--* Price Input -->
+                        <div class="">
+                          <input
+                            id="price"
+                            type="text"
+                            placeholder="$0.00"
+                            on:keypress={restrictToNumbersAndDecimal}
+                            class="p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          />
+                        </div>
+                      </label>
+                    </div>
+                    <!--* Date Inputs -->
+                    <div class="flex col-span-1">
+                      <label
+                        for="month"
+                        class="text-lg font-semibold text-gray-500 text-start"
+                      >
+                        Fecha <span class="text-xs">(actual)</span>
+                        <!--? Month -->
+                        <div class="flex gap-2">
+                          <input
+                            id="month"
+                            type="text"
+                            placeholder="MM"
+                            readonly
+                            value={placeholderDate.month}
+                            on:keypress={handleDateInput}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          />
+                          <!--? Day -->
+                          <input
+                            id="day"
+                            type="text"
+                            placeholder="DD"
+                            readonly
+                            value={placeholderDate.day}
+                            on:keypress={handleDateInput}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          />
+                          <!--? Year -->
+                          <input
+                            id="year"
+                            type="text"
+                            placeholder="AAAA"
+                            readonly
+                            value={placeholderDate.year}
+                            on:keypress={handleDateInput}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          />
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <!--* Signature and Agreement -->
+                <!--? Signature Input -->
+                <div>
+                  <!-- <label for="signature">
+                    <h1 class="text-lg font-semibold text-gray-500 text-start">
+                      Firma <span class="text-xs">(electrónica)</span>
+                    </h1>
+                    <input
+                      id="signature"
+                      type="text"
+                      class="w-full p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0"
+                    />
+                  </label> -->
+                  <!--? Agreement Checkbox -->
+                  <div class="flex gap-2 mt-2">
+                    <input
+                      required
+                      id="accept"
+                      type="checkbox"
+                      class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-gray-300 rounded-sm ring-gray-300 mt-[5px] text-[#cc2936]"
+                    />
+                    <label for="accept">
+                      <p class="text-xs text-gray-500 md:text-base">
+                        He leído y acepto los
+                        <a
+                          href="/"
+                          class="no-underline hover:text-[#BB2532] hover:underline text-[#cc2936]"
+                          >términos y condiciones</a
+                        > de PalitasPR. De igual manera, me comprometo a cumplir
+                        con los acuerdos establecidos en este documento. Al someter
+                        este formulario, acepto que la información proporcionada
+                        es verídica y correcta y podría ser utilizada para fines
+                        de contacto y/o asuntos legales.
+                      </p>
+                    </label>
+                  </div>
+                </div>
+                <div>
+                  <!--* Submit button -->
+                  <button
+                    class="w-full p-2 mt-4 font-semibold text-white bg-[#cc2936] border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
+                    >Someter</button
+                  >
+                </div>
+              </div>
             </div>
           </div>
+          <br />
         </div>
       {/each}
     {:else}
