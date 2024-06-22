@@ -4,19 +4,16 @@
     the user that is signed in
 """
 
-from flask import Blueprint, jsonify, request, make_response, session, g
+from flask import Blueprint, jsonify, request, make_response, g
+from werkzeug.utils import secure_filename
 from db.db_operations import DBOperations
 from db.db_core import Db_core
-import emails
+import aws_bucket
+import asyncio
 from flask_login import (
-    login_user,
-    logout_user,
     login_required,
     current_user,
 )
-from werkzeug.utils import secure_filename
-import aws_bucket
-import asyncio
 
 my_bp = Blueprint("my", __name__)
 
@@ -150,57 +147,3 @@ def promo_request():
         return make_response(jsonify({'results': 'Created Succesfully'}), 201)
 
     # -----------------------END-------------------------------------------
-
-    # POST Method
-    # if request.method == 'POST':
-    #     if not request.get_json():
-    #         return (make_response({'message': 'No data received'}), 400)
-
-    #     data = request.get_json()
-    #     picture = request.files['image']
-
-    #     # A): Picture upload only
-    #     if ('model_id') in data and picture:
-    #         model = data['model']
-    #         model_id = ['model_id']
-    #         pic_name = secure_filename(picture.filename)
-    #         pic_bytes = picture.read()
-
-    #         response = aws_bucket.put_picture(current_user.id, model, model_id, pic_name, pic_bytes)
-
-    #         if response[1] == 200:
-    #             # Put pic name in database for the model column 'pictures'
-    #             response = DBOperations.update({model_id: {'pictures': pic_name}})
-
-    #             if response[1] == 200:
-    #                 make_response({'message': 'ok'}, 200)
-    #             # Data Base error
-    #             else:
-    #                 make_response({'message': 'error in database'}, 500)
-    #         # AWS error
-    #         else:
-    #             make_response(response)
-    #     # B): Make new (promo or request), folder in aws made in DBOperations.new() and then upload pic
-    #     if ('model_id') not in data and picture:
-    #         pic_name = secure_filename(picture.filename)
-    #         pic_bytes = picture.read()
-    #         model = data['model']
-    #         data.pop('model')
-    #         newModel = DBOperations().new({model: data}) # Data should be a dictionary
-
-    #         response = aws_bucket.put_picture(current_user.id, model, newModel.id, pic_name, pic_bytes)
-
-    #         if response[1] == 200: # OK, procceed to put name of pic in database for the <promo> or <request>
-    #             response = DBOperations.update({newModel.id: {'pictures': pic_name}})
-
-    #             if response[1] == 200:
-    #                 return(make_response({'message': 'ok'}, 200))
-    #             # error from DBOperations
-    #             else:
-    #                 return make_response(response) # Fail error
-    #         # error from aws bucket
-    #         else:
-    #             return make_response(response) # Fail error
-
-    #     # C) Make folder only
-    #     if ('model_id') not in data and not picture:

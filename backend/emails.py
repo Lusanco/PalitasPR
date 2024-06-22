@@ -1,16 +1,9 @@
-#!/usr/bin/python3
 '''
     Manage anything related to sending or receiving mails
 '''
-from os import getenv
-from time import time
-from sqlalchemy import create_engine, func
-from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.orm.relationships import RelationshipProperty
-from models import User, Service, Town, Review, Task
-from base_model import BaseModel, Base
-from werkzeug.security import generate_password_hash, check_password_hash
-import bcrypt
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import User
 import aws_bucket
 
 
@@ -29,7 +22,6 @@ def send_confirm_email(email, first_name, token):
         in the body of the email.
         Person receives a link to verify the email.
     '''
-    import os
     from flask_mail import Message
     from app import mail, app
 

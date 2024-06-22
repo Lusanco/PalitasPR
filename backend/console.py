@@ -4,12 +4,12 @@ Command line interface for the DB Operations
 """
 import cmd
 import shlex
-from db.db_operations import DBOperations
-from db.db_user import Db_user
-from db.db_promotion import Db_promotion
 import aws_bucket
 import time
 import random
+from db.db_operations import DBOperations
+from db.db_promotion import Db_promotion
+from db.db_user import Db_user
 
 db = DBOperations()
 db_user = Db_user()
@@ -128,17 +128,6 @@ class DBConsole(cmd.Cmd):
         else:
             print(f"No {class_name} object found with ID {obj_id}")
 
-    # def do_all(self, args):
-    #     """
-    #     Retrieve all objects in the database
-    #     """
-    #     class_name = input("Enter the class model: ")
-    #     objs = db.search_all_objects(class_name)
-    #     if objs:
-    #         for obj in objs:
-    #             print(obj.all_columns())
-    #     else:
-    #         print(f"No {class_name} objects found")
 
     def do_login(self, args):
         """

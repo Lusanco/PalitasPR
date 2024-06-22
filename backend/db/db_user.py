@@ -4,12 +4,11 @@
 '''
 from emails import send_confirm_email
 from email_validator import validate_email, EmailNotValidError
-from db_init import get_session
-from db.db_operations import DBOperations
-import bcrypt
 from models import User, Initial_Contact, Profile, Review, Task
-from sqlalchemy import or_
+from db.db_operations import DBOperations
 from db.db_task import Db_task
+from sqlalchemy import or_
+import bcrypt
 import aws_bucket
 
 
