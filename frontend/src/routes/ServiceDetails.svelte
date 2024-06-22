@@ -101,11 +101,15 @@
               />
             </div>
           {/if}
-          <h2>
-            {$response1.results.first_name}
-            {$response1.results.last_name}
-          </h2>
-          <h3>{Object.keys(servicesID)[$response1.results.service_id]}</h3>
+          <br />
+          <div class="flex flex-wrap justify-between">
+            <span>
+              {$response1.results.first_name}
+              {$response1.results.last_name}
+            </span>
+            <span>{Object.keys(servicesID)[$response1.results.service_id]}</span
+            >
+          </div>
           <hr class="border-[#cc2936]" />
           <br />
           <div>Pueblos Disponibles: Lista de Pueblos</div>
