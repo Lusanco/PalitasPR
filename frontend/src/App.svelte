@@ -39,6 +39,7 @@
   import AgreementReview from "./routes/AgreementReview.svelte";
   import Pass from "./routes/Pass.svelte";
   import NotPass from "./routes/NotPass.svelte";
+  import Tasks from "./routes/Tasks.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -70,16 +71,13 @@
         path="/initial-contact-success"
         component={InitialContactSuccess}
       />
-
-      <!--* Agreement routes -->
-      <Route path="/agreement" component={Agreement} />
-      <Route path="/agreement-review" component={AgreementReview} />
+      <Route path="/tasks" component={Tasks} />
 
       <!--! 404 / Not found -->
       <Route path="*" component={NotFound} />
 
       <!-- For development purposes only: Test Dev -->
-      <Route path="/test" component={Test} />
+      <!-- <Route path="/test" component={Test} /> -->
       <!-- For development purposes only: Login Hack -->
       <Route path="/pass" component={Pass} />
       <!-- For development purposes only: Logout Hack -->
