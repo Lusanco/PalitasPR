@@ -18,19 +18,24 @@
   let received = writable();
   let sent = writable();
   let promo = writable();
+  let userSession = writable();
 
   onMount(() => {
     axios
-      .get("/api/user/login?af1=jd123@gmail.com&af2=pwd1")
-      .then((axiosResponse1) => {
-        response.set(axiosResponse1);
-        console.log(".then() Login Log: ", axiosResponse1.data);
-        return axios.get("/api/user/contacts");
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(userStatusRes.data);
+        if ($userSession) {
+          console.log(".then() Contacts Log: ", $userSession.data);
+          return axios.get("/api/user/contacts");
+        } else {
+          userSession.set(null);
+        }
       })
-      .then((axiosResponse2) => {
-        console.log("Contacts", axiosResponse2);
-        response.set(axiosResponse2);
-        contacts.set(axiosResponse2.data);
+      .then((userContactsRes) => {
+        console.log("Contacts", userContactsRes);
+        response.set(userContactsRes);
+        contacts.set(userContactsRes.data);
         received.set($contacts.results.received);
         sent.set($contacts.results.sent);
 
@@ -55,9 +60,9 @@
         });
         return axios.get(`/api/promotion/${promo_id}`);
       })
-      .then((axiosResponse3) => {
-        promo.set(axiosResponse3.data);
-        console.log(axiosResponse3);
+      .then((promoRes) => {
+        promo.set(promoRes.data);
+        console.log($promo);
       })
       .catch((axiosError) => {
         console.error(".catch() Error Log: ", axiosError);

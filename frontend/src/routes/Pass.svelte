@@ -5,9 +5,11 @@
   onMount(() => {
     axios
       .get("/api/user/login?af1=jd123@gmail.com&af2=pwd1")
-      .then((axiosResponse1) => {
-        console.log(".then() Login Log: ", axiosResponse1.data);
-        return axios.get("/api/user/status");
+      .then((loginRes) => {
+        console.log("Login Success!", loginRes.data);
+      })
+      .catch((loginError) => {
+        console.log("Login Error", loginError);
       });
   });
 </script>
