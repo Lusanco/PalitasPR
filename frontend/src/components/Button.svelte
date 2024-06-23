@@ -136,7 +136,7 @@
     }
     if (button.misc["Tasks"]) {
       axiosLogic();
-      window.location.href = "/test";
+      window.location.reload();
       return;
     }
     axiosLogic();

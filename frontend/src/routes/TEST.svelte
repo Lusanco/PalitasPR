@@ -241,12 +241,12 @@
             on:click={() => toggleItem(index)}
             on:click={() => {
               axios
-                .put("", { receiver_read: true })
+                .put("/api/initial-contact", { receiver_read: true })
                 .then((readRes) => {
-                  console.table(readRes);
+                  console.log(readRes);
                 })
                 .catch((readErr) => {
-                  console.table(readErr);
+                  console.log(readErr);
                 });
             }}
           >
