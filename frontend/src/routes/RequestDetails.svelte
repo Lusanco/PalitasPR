@@ -50,7 +50,7 @@
         console.log(".then() Response 2 Log: ", $response2);
         initialContact = {
           receiver_id: $response1.results.user_id,
-          promo_id: $response1.results.id,
+          request_id: $response1.results.id,
         };
         data.set(initialContact);
       })
