@@ -17,90 +17,89 @@ def get_tasks():
         Get all Tasks(contracts) of a user
     '''
     #---------------------------- GET --------------------------------------------------------------
-    metodo = 'POST'
-    # if request.method == 'GET':
-    #     tasks_list = []
-    #     provider_tasks = []
-    #     receiver_tasks = []
+    if request.method == 'GET':
+        tasks_list = []
+        provider_tasks = []
+        receiver_tasks = []
 
-    #     tasks = Db_task(g.db_session).get_tasks_by_userId(current_user.id)
-    #     if not tasks:
-    #         return make_response(jsonify({"results": tasks_list}), 200)
-    #     else:
-    #         for task in tasks:
-    #             task_dict = {}
-    #             task_dict.update(task.all_columns())
+        tasks = Db_task(g.db_session).get_tasks_by_userId(current_user.id)
+        if not tasks:
+            return make_response(jsonify({"results": tasks_list}), 200)
+        else:
+            for task in tasks:
+                task_dict = {}
+                task_dict.update(task.all_columns())
 
-    #             if task.receiver_id == current_user.id:
-    #                 receiver_tasks.append(task_dict)
-    #             else:
-    #                 provider_tasks.append(task_dict)
+                if task.receiver_id == current_user.id:
+                    receiver_tasks.append(task_dict)
+                else:
+                    provider_tasks.append(task_dict)
 
-    #     tasks_list.append(provider_tasks)
-    #     tasks_list.append(receiver_tasks)
-    #     return make_response(jsonify({"results": tasks_list}), 200)
-    # # ----------------------------------------------------------------------------------------
-    # # ---------------------PUT-------------------------------------------------------------------
-    # if request.method == 'PUT':
-    #     # CANNOT change to 'pending' via this route, pending is when the task is created
+        tasks_list.append(provider_tasks)
+        tasks_list.append(receiver_tasks)
+        return make_response(jsonify({"results": tasks_list}), 200)
+    # ----------------------------------------------------------------------------------------
+    # ---------------------PUT-------------------------------------------------------------------
+    if request.method == 'PUT':
+        # CANNOT change to 'pending' via this route, pending is when the task is created
 
-    #     data = request.get_json()
-    #     # data = {'id':'<task_id>', 'status': 'open'}
-    #     # data2 = {'id':'<task_id>', 'status': 'closed'}
-    #     task_dict = data
+        data = request.get_json()
+        # data = {'id':'<task_id>', 'status': 'open'}
+        # data2 = {'id':'<task_id>', 'status': 'closed'}
+        task_dict = data
 
-    #     task = DBOperations(g.db_session).search('Task', '<task_id')
-    #     if not task:
-    #         return 'No task object found', 404
-    #     if task.status == 'closed' or task.status == 'rejected':
-    #         return 'cannot modify task', 400
+        task = DBOperations(g.db_session).search('Task', '<task_id')
+        if not task:
+            return 'No task object found', 404
+        if task.status == 'closed' or task.status == 'rejected':
+            return 'cannot modify task', 400
 
-    #     # Manage new status and old status errors
-    #     old_task_status = task.status
-    #     if 'status' in data:
-    #         if old_task_status != 'pending' and data['status'] == 'pending':
-    #             return 'Cant revert status back to pending', 400
-    #         if old_task_status == data['status']:
-    #             return 'Old status and new status are the same', 400
+        # Manage new status and old status errors
+        old_task_status = task.status
+        if 'status' in data:
+            if old_task_status != 'pending' and data['status'] == 'pending':
+                return 'Cant revert status back to pending', 400
+            if old_task_status == data['status']:
+                return 'Old status and new status are the same', 400
 
-    #     # Find contact from where task originated
-    #     initial_contact = DBOperations(g.db_session).search('Initial_Contact', task.initial_contact_id)
-    #     if not initial_contact:
-    #         return 'No initial_contact_found', 404
+        # Find contact from where task originated
+        initial_contact = DBOperations(g.db_session).search('Initial_Contact', task.initial_contact_id)
+        if not initial_contact:
+            return 'No initial_contact_found', 404
         
-    #     response, status = DBOperations(g.db_session).update({'Task': task_dict})
-    #     if status != 200:
-    #         g.db_session.rollback()
-    #         return response, status
+        response, status = DBOperations(g.db_session).update({'Task': task_dict})
+        if status != 200:
+            g.db_session.rollback()
+            return response, status
 
-    #     # Change read columns for initial_contact if  task status change
-    #     if 'status' in data:
-    #         new_status = data['status']
+        # Change read columns for initial_contact if  task status change
+        if 'status' in data:
+            new_status = data['status']
 
-    #         # Notify contact_receiver(promo owner)
-    #         if old_task_status == 'pending' and new_status == 'open':
-    #             read_recipient = 'receiver_read'
+            # Notify contact_receiver(promo owner)
+            if old_task_status == 'pending' and new_status == 'open':
+                read_recipient = 'receiver_read'
 
-    #         # Notify sender, the task was marked as closed
-    #         elif old_task_status == 'open' and new_status == 'closed':
-    #             read_recipient = 'sender_read'
+            # Notify sender, the task was marked as closed
+            elif old_task_status == 'open' and new_status == 'closed':
+                read_recipient = 'sender_read'
 
-    #         response, status = DBOperations(g.db_session).update('Initial_Contact', {'id': initial_contact.id, read_recipient: False})
-    #         if status != 200:
-    #             g.db_session.rollback()
-    #             return make_response(jsonify({'error': 'Could not change read values for initial contact'}), 500)
+            response, status = DBOperations(g.db_session).update('Initial_Contact', {'id': initial_contact.id, read_recipient: False})
+            if status != 200:
+                g.db_session.rollback()
+                return make_response(jsonify({'error': 'Could not change read values for initial contact'}), 500)
 
-    #     g.db_session.commit()    
-    #     return make_response(jsonify({'results': 'ok'}), 200)
+        g.db_session.commit()    
+        return make_response(jsonify({'results': 'ok'}), 200)
     #-------------------------------------------------------------------------------------------
     # ----------------------POST--------------------------------------------------------------
-    if metodo == 'POST':
-        # data = request.json
-        data = {
-            'initial_contact_id': '65fb8bf8-3495-44ab-a806-cbecd3953c9a',
-            'terms': 'Montar Equipo|Sesion de 3 horas',
-            'price': 200
-            }
+    if request.method == 'POST':
+        data = request.json
+        # data = {
+        #     'initial_contact_id': '65fb8bf8-3495-44ab-a806-cbecd3953c9a',
+        #     'terms': 'Montar Equipo|Sesion de 3 horas',
+        #     'price': 200
+        #     }
         keys = [
             'initial_contact_id',
             'terms',
