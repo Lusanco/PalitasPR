@@ -134,14 +134,13 @@
       backButton();
       return;
     }
-    if (button.misc["Tasks"]) {
+    if (button.misc["App Location"] === "Tasks") {
       axiosLogic();
-      function reloadTasks(event) {
-        event.preventDefault();
-        if (window.location.pathname === "/") {
+      function reloadTasks() {
+        if (window.location.pathname === "/tasks") {
           window.location.reload();
         } else {
-          window.location.href = "/";
+          window.location.href = "/tasks";
         }
       }
       reloadTasks();

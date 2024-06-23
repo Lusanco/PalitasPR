@@ -615,10 +615,10 @@
                       <label for="accept">
                         <p class="text-xs text-gray-500 md:text-base">
                           He leído y acepto los
-                          <a
-                            href="/"
+                          <!-- href="" -->
+                          <span
                             class="no-underline hover:text-[#BB2532] hover:underline text-[#cc2936]"
-                            >términos y condiciones</a
+                            >términos y condiciones</span
                           > de PalitasPR. De igual manera, me comprometo a cumplir
                           con los acuerdos establecidos en este documento. Al someter
                           este formulario, acepto que la información proporcionada
@@ -631,10 +631,6 @@
                   <div>
                     <!--* Submit button -->
                     <Button {button} {image} />
-                    <!-- <button
-                        class="w-full p-2 mb-4 mt-4 font-semibold text-white bg-[#cc2936] border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
-                        >Someter</button
-                      > -->
                     <br />
                   </div>
                 </div>
