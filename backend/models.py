@@ -105,6 +105,7 @@ class Promotion(BaseModel, Base):
     pictures = Column(String(255))
 
     user = relationship('User', foreign_keys=[user_id])
+    service = relationship('Service', foreign_keys=[service_id])
 
 class Request(BaseModel, Base):
     __tablename__ = "requests"
@@ -115,6 +116,7 @@ class Request(BaseModel, Base):
     pictures = Column(String())
 
     user = relationship('User', foreign_keys=[user_id])
+    service = relationship('Service', foreign_keys=[service_id])
 
 
 class Profile(BaseModel, Base):
