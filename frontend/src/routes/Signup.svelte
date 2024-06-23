@@ -38,6 +38,18 @@
     };
   }
 
+  // Function to validate the password fields
+  function validatePasswords() {
+    if (password !== confirmPassword) {
+      errorMessage = "Las contraseñas no coinciden.";
+      password = null;
+      confirmPassword = null;
+    } else {
+      password = password;
+      confirmPassword = confirmPassword;
+    }
+  }
+
   data.set($data);
   // Define a reference for the Button component
   let buttonRef;
@@ -175,7 +187,8 @@
       />
     </label>
 
-    <Button bind:this={buttonRef} {image} {button}></Button>
+    <Button on:click={validatePasswords} bind:this={buttonRef} {image} {button}
+    ></Button>
     <p class="pr-2 -mt-4 text-right">
       ¿Ya tienes una cuenta? <a
         use:link
@@ -193,7 +206,7 @@
       <Loading />
     {:else if $state.error}
       <div class="w-full mx-auto font-bold text-center text-stone-600">
-        Incorrect email or password, try again.
+        Correo o contraseña incorrectos. Por favor, intenta de nuevo.
       </div>
     {/if}
   </div>
