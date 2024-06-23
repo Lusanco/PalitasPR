@@ -113,6 +113,9 @@ class Request(BaseModel, Base):
     description = Column(String(255), nullable=False)
     pictures = Column(String())
 
+    user = relationship('User', foreign_keys=[user_id])
+
+
 class Profile(BaseModel, Base):
     __tablename__ = "profiles"
 
