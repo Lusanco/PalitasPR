@@ -21,7 +21,7 @@
     headers: "application/json", // "application/json"
     twcss:
       "w-full p-2 mb-4 mt-4 font-semibold text-white bg-[#cc2936] border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out",
-    misc: { "App Location": "Tasks Someter Button" },
+    misc: { "App Location": "Tasks" },
   };
 
   const serviceNamesByID = Object.entries(servicesID).reduce(
@@ -239,6 +239,16 @@
           <button
             class="flex flex-col w-full gap-1 px-2 py-4 text-lg font-medium text-left rounded-lg md:text-xl focus:outline-none"
             on:click={() => toggleItem(index)}
+            on:click={() => {
+              axios
+                .put("", { receiver_read: true })
+                .then((readRes) => {
+                  console.table(readRes);
+                })
+                .catch((readErr) => {
+                  console.table(readErr);
+                });
+            }}
           >
             <div class="flex flex-wrap justify-between w-full">
               {#if received.task.status === "closed"}
@@ -258,7 +268,7 @@
                   >{received.task.status}</span
                 >
               {/if}
-              {#if received.read === false}
+              {#if received.receiver_read === false}
                 <span class="w-10 h-10 bg-[#cc2936] rounded-badge animate-ping">
                 </span>
               {:else}
@@ -280,7 +290,7 @@
             <div
               class="flex flex-wrap justify-center w-full md:justify-between"
             >
-              <span> Add Number to response object </span>
+              <span>{received.phone}</span>
               <span> {received.sender_email} </span>
             </div>
           </button>
@@ -436,7 +446,7 @@
                           id="clientPhone-number"
                           readonly
                           pattern="\d{3}-\d{3}-\d{4}"
-                          value={"placeholderClientPhone"}
+                          value={received.phone}
                           type="text"
                           class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                         />
@@ -465,7 +475,6 @@
                         <div class="flex gap-2 pb-4 border-b-2">
                           <input
                             type="text"
-                            placeholder={"placeholderAdd"}
                             bind:value={inputValue}
                             on:input={handleInput}
                             on:keydown={handleKeyDown}

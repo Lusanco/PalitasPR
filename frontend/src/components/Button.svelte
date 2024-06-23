@@ -134,6 +134,11 @@
       backButton();
       return;
     }
+    if (button.misc["Tasks"]) {
+      axiosLogic();
+      window.location.href = "/test";
+      return;
+    }
     axiosLogic();
   }
 </script>
