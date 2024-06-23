@@ -34,6 +34,7 @@
   import Test from "./routes/TEST.svelte";
   import InitialContactSuccess from "./routes/InitialContactSuccess.svelte";
   import Agreement from "./routes/Agreement.svelte";
+  import Test2 from "./routes/TEST2.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -69,6 +70,7 @@
 
       <!-- Test Route -->
       <Route path="/test" component={Test} />
+      <Route path="/test2" component={Test2} />
       <Route path="/agreement" component={Agreement} />
     </Router>
   </Main>

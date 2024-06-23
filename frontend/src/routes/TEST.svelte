@@ -30,6 +30,7 @@
         return axios.get("/api/user/contacts");
       })
       .then((axiosResponse2) => {
+        console.log("Contacts", axiosResponse2);
         response.set(axiosResponse2);
 
         // Update the contactData store
@@ -38,11 +39,15 @@
           received: axiosResponse2.data.results.received,
           sent: axiosResponse2.data.results.sent,
         }));
+        console.log("Contacts 2", contactData);
 
+        console.log($tasks);
         // Now, set 'tasks' within this 'then' block
         tasks.set(
           $contactData.received.map((item) => Object.entries(item.task)).flat()
         );
+
+        console.log("After task.set", axiosResponse2);
 
         // *************** Finding the Specific Task Key **************
         const targetKey = "promo_id";
@@ -252,6 +257,7 @@
             >
               <span> Add Number to response object </span>
               <span> {received.sender_email} </span>
+              <!-- <span> {received.task} </span> -->
             </div>
           </button>
           <div
