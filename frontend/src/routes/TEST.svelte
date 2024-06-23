@@ -6,6 +6,12 @@
   import { link } from "svelte-routing";
   import Loading from "../components/Loading.svelte";
   import servicesID from "../scripts/servicesID";
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+
   const serviceNamesByID = Object.entries(servicesID).reduce(
     (obj, [key, value]) => {
       obj[value] = key;
@@ -14,26 +20,37 @@
     {}
   );
 
+  let bulletPointsStore = writable([]);
+  let pipeSeperatedStringStore = writable("");
+
+  $: {
+    bulletPointsStore.subscribe((value) => {
+      pipeSeperatedStringStore.set(value.join("|"));
+      console.log($pipeSeperatedStringStore);
+    });
+  }
+
   let contacts = writable();
   let received = writable();
   let sent = writable();
   let promo = writable();
   let userSession = writable();
+  let price;
 
   onMount(() => {
     axios
       .get("/api/user/status")
       .then((userStatusRes) => {
         userSession.set(userStatusRes.data);
+        // console.log(".then() Contacts Log: ", $userSession);
         if ($userSession) {
-          console.log(".then() Contacts Log: ", $userSession.data);
           return axios.get("/api/user/contacts");
         } else {
           userSession.set(null);
         }
       })
       .then((userContactsRes) => {
-        console.log("Contacts", userContactsRes);
+        // console.log("Contacts", userContactsRes);
         response.set(userContactsRes);
         contacts.set(userContactsRes.data);
         received.set($contacts.results.received);
@@ -46,23 +63,23 @@
         );
         const promo_id = foundTask.task[targetKey];
 
-        console.log("RECEIVED =>");
-        console.table($received);
-        console.log("RECEIVED.TASK =>");
-        $received.forEach((item) => {
-          console.table(item.task);
-        });
-        console.log("SENT =>");
-        console.table($sent);
-        console.log("SENT.TASK =>");
-        $sent.forEach((item) => {
-          console.table(item.task);
-        });
+        // console.log("RECEIVED =>");
+        // console.table($received);
+        // console.log("RECEIVED.TASK =>");
+        // $received.forEach((item) => {
+        //   console.table(item.task);
+        // });
+        // console.log("SENT =>");
+        // console.table($sent);
+        // console.log("SENT.TASK =>");
+        // $sent.forEach((item) => {
+        //   console.table(item.task);
+        // });
         return axios.get(`/api/promotion/${promo_id}`);
       })
       .then((promoRes) => {
         promo.set(promoRes.data);
-        console.log($promo);
+        // console.log($promo);
       })
       .catch((axiosError) => {
         console.error(".catch() Error Log: ", axiosError);
@@ -80,7 +97,6 @@
    */
 
   let inputValue = "";
-  let bulletPoints = [];
 
   function handleInput(event) {
     inputValue = event.target.value;
@@ -103,8 +119,8 @@
 
   function addBulletPoint() {
     if (inputValue.trim() !== "") {
-      bulletPoints = [...bulletPoints, inputValue];
-      inputValue = ""; // Clear input after adding
+      bulletPointsStore.update((points) => [...points, inputValue]);
+      inputValue = "";
     }
   }
 
@@ -232,7 +248,6 @@
             >
               <span> Add Number to response object </span>
               <span> {received.sender_email} </span>
-              <!-- <span> {received.task} </span> -->
             </div>
           </button>
           <div
@@ -310,7 +325,7 @@
                         readonly
                         id="email"
                         type="email"
-                        value={"placeholderEmail"}
+                        value={$userSession.email}
                         class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                       />
                     </label>
@@ -352,7 +367,7 @@
                         type="text"
                         readonly
                         class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
-                        value={"placeholderClient"}
+                        value={`${received.sender_first_name} ${received.sender_last_name}`}
                       />
                     </label>
                     <!--* Client Email -->
@@ -365,7 +380,7 @@
                         readonly
                         id="clientEmail"
                         type="email"
-                        value={"placeholderClientEmail"}
+                        value={received.sender_email}
                         class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                       />
                     </label>
@@ -425,19 +440,25 @@
                       </div>
 
                       <ul class="h-auto pb-4 my-4 border-b-2">
-                        {#each bulletPoints as bulletPoint}
+                        {#each $bulletPointsStore as bulletPoint}
                           <div class="flex justify-between mx-4">
                             <div class="flex gap-2 mt-1">
                               <i
                                 class="fa-solid fa-check mt-[5px] text-[#cc2936]"
                               ></i>
-                              <li class="text-base text-md">{bulletPoint}</li>
+                              <li
+                                class="max-w-full text-base max-h-40 text-md line-clamp-3 text-ellipsis"
+                              >
+                                {bulletPoint}
+                              </li>
                             </div>
                             <div>
                               <button
                                 on:click={() => {
-                                  bulletPoints = bulletPoints.filter(
-                                    (point) => point !== bulletPoint
+                                  bulletPointsStore.update((points) =>
+                                    points.filter(
+                                      (point) => point !== bulletPoint
+                                    )
                                   );
                                 }}
                                 class="rounded btn-sm"
@@ -465,8 +486,9 @@
                         <div class="">
                           <input
                             id="price"
-                            type="text"
+                            type="number"
                             placeholder="$0.00"
+                            bind:value={price}
                             on:keypress={restrictToNumbersAndDecimal}
                             class="p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
@@ -487,7 +509,7 @@
                             type="text"
                             placeholder="MM"
                             readonly
-                            value={"placeholderDate.month"}
+                            value={month}
                             on:keypress={handleDateInput}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
@@ -497,7 +519,7 @@
                             type="text"
                             placeholder="DD"
                             readonly
-                            value={"placeholderDate.day"}
+                            value={day}
                             on:keypress={handleDateInput}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
@@ -507,7 +529,7 @@
                             type="text"
                             placeholder="AAAA"
                             readonly
-                            value={"placeholderDate.year"}
+                            value={year}
                             on:keypress={handleDateInput}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
