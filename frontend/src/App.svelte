@@ -37,6 +37,7 @@
   // Agreement Routes
   import Agreement from "./routes/Agreement.svelte";
   import AgreementReview from "./routes/AgreementReview.svelte";
+  import Pass from "./routes/Pass.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -77,8 +78,9 @@
       <Route path="*" component={NotFound} />
 
       <!-- Test Route -->
-      <!-- <Route path="/test" component={Test} />
-      <Route path="/test2" component={Test2} /> -->
+      <Route path="/test" component={Test} />
+      <!-- For development purposes only: Login Hack -->
+      <Route path="/pass" component={Pass} />
       <Route path="/agreement" component={Agreement} />
     </Router>
   </Main>
