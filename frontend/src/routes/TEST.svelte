@@ -6,11 +6,23 @@
   import { link } from "svelte-routing";
   import Loading from "../components/Loading.svelte";
   import servicesID from "../scripts/servicesID";
+  import Button from "../components/Button.svelte";
 
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = String(today.getDate()).padStart(2, "0");
+
+  let image = null;
+  let button = {
+    name: "Someter",
+    method: "POST",
+    url: "/api/tasks/",
+    headers: "application/json", // "application/json"
+    twcss:
+      "w-full p-2 mb-4 mt-4 font-semibold text-white bg-[#cc2936] border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out",
+    misc: { "App Location": "Tasks Someter Button" },
+  };
 
   const serviceNamesByID = Object.entries(servicesID).reduce(
     (obj, [key, value]) => {
@@ -35,14 +47,27 @@
   let sent = writable();
   let promo = writable();
   let userSession = writable();
-  let price;
+  let price = "";
+  let initial_contact_id = writable(null);
+  let terms;
+
+  $: {
+    $data = {
+      initial_contact_id: $initial_contact_id,
+      terms: $pipeSeperatedStringStore,
+      price,
+    };
+
+    data.set($data);
+    console.log("Data updated:", $data);
+  }
 
   onMount(() => {
     axios
       .get("/api/user/status")
       .then((userStatusRes) => {
         userSession.set(userStatusRes.data);
-        // console.log(".then() Contacts Log: ", $userSession);
+        // console.log(".then() User Session Log: ", $userSession);
         if ($userSession) {
           return axios.get("/api/user/contacts");
         } else {
@@ -50,11 +75,12 @@
         }
       })
       .then((userContactsRes) => {
-        // console.log("Contacts", userContactsRes);
+        console.log("Contacts", userContactsRes);
         response.set(userContactsRes);
         contacts.set(userContactsRes.data);
         received.set($contacts.results.received);
         sent.set($contacts.results.sent);
+        initial_contact_id.set($received.id);
 
         // *************** Finding the Specific Task Key **************
         const targetKey = "promo_id";
@@ -89,7 +115,15 @@
   let openIndex = null;
 
   function toggleItem(index) {
-    openIndex = openIndex === index ? null : index;
+    if (openIndex === index) {
+      openIndex = null;
+      initial_contact_id.set(null); // Clear the ID when closing
+    } else {
+      openIndex = index;
+      if ($received && $received[index]) {
+        initial_contact_id.set($received[index].id);
+      }
+    }
   }
 
   /**
@@ -349,7 +383,7 @@
                           required
                           pattern="\d{3}-\d{3}-\d{4}"
                           on:keypress={restrictToNumbersAndDashes}
-                          value={"placeholderPhone"}
+                          value={$userSession.phone}
                           type="text"
                           class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                         />
@@ -586,10 +620,11 @@
                   </div>
                   <div>
                     <!--* Submit button -->
-                    <button
+                    <Button {button} {image} />
+                    <!-- <button
                       class="w-full p-2 mb-4 mt-4 font-semibold text-white bg-[#cc2936] border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
                       >Someter</button
-                    >
+                    > -->
                     <br />
                   </div>
                 </div>
