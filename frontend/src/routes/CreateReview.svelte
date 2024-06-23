@@ -19,6 +19,12 @@
     description = "";
     rating = "";
   }
+
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      handleReviewSubmit();
+    }
+  }
 </script>
 
 <div class="flex items-center justify-center min-h-screen bg-base">
@@ -34,6 +40,7 @@
           bind:value={description}
           maxlength="250"
           class="textarea textarea-bordered"
+          on:keydown={handleKeyPress}
         ></textarea>
       </div>
       <div class="form-control">
@@ -47,6 +54,7 @@
           min="1"
           max="5"
           class="input input-bordered text-[#cc2936]"
+          on:keydown={handleKeyPress}
         />
       </div>
       {#if errorMessage}
