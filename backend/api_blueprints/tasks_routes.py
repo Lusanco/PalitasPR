@@ -94,7 +94,7 @@ def get_tasks():
     #-------------------------------------------------------------------------------------------
     # ----------------------POST--------------------------------------------------------------
     if request.method == 'POST':
-        data = request.json
+        data = request.get_json()
         # data = {
         #     'initial_contact_id': '65fb8bf8-3495-44ab-a806-cbecd3953c9a',
         #     'terms': 'Montar Equipo|Sesion de 3 horas',
@@ -120,7 +120,7 @@ def get_tasks():
         # Get all info needed from the initial contact to create the task
         initial_contact = DBOperations(g.db_session).search('Initial_Contact', data['initial_contact_id'])
         if not initial_contact:
-            return make_response(jsonify({'error': f'No such intial_contact {data['initial_contact_id']}'}), 400)
+            return make_response(jsonify({'error': f"No such intial_contact {data['initial_contact_id']}"}), 400)
 
         if initial_contact.promo_id:
             model_type = 'Promotion'
