@@ -18,7 +18,7 @@ class Db_request:
         required.
 
         Examples:
-        * Request queries or mainly related to Promotion
+        * Request queries or mainly related to Request
         * Functionalites to filter certain Request
         * etc..
     '''
@@ -115,3 +115,45 @@ class Db_request:
             requests_dict.append(inner_dict)
 
         return requests_dict
+
+    def get_all_requests(self, town_id):
+        '''
+            Get all request and towns associations
+        '''
+        query = (
+            self.session.query(
+                Request_Towns.request_id,
+                User.first_name,
+                User.last_name,
+                func.array_agg(Town.name),
+                Request.created_at,
+                Request.title,
+                Request.description,
+                Request.user_id,
+                Request.pictures,
+                Service.name
+            )
+            .select_from(Request)
+            .join(User, Request.user_id == User.id)
+            .join(Request_Towns, Request.id == Request_Towns.request_id)
+            .join(Town, Request_Towns.town_id == Town.id)
+            .join(Service, Request.service_id == Service.id)
+            .group_by(
+                Request_Towns.request_id,
+                User.first_name,
+                User.last_name,
+                Request.created_at,
+                Request.title,
+                Request.description,
+                Request.user_id,
+                Request.pictures,
+                Service.name
+            )
+            .order_by(Request_Towns.request_id)
+        )
+        # If a town sent, make query by towns
+        if town_id != 0:
+            query = query.filter(Town.id == town_id)
+        # '.all()' submtis the request for the query
+        rows = query.all()
+        return rows
