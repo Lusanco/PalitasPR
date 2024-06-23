@@ -14,12 +14,10 @@
     {}
   );
 
-  // console.log(serviceNamesByID[1]);
-
-  // Combined store for received and sent data
-  let contactData = writable({ received: [], sent: [] });
-  let response3 = writable(null);
-  let tasks = writable([]);
+  let contacts = writable();
+  let received = writable();
+  let sent = writable();
+  let promo = writable();
 
   onMount(() => {
     axios
@@ -32,46 +30,33 @@
       .then((axiosResponse2) => {
         console.log("Contacts", axiosResponse2);
         response.set(axiosResponse2);
-
-        // Update the contactData store
-        contactData.update((currentData) => ({
-          ...currentData,
-          received: axiosResponse2.data.results.received,
-          sent: axiosResponse2.data.results.sent,
-        }));
-        console.log("Contacts 2", contactData);
-
-        console.log($tasks);
-        // Now, set 'tasks' within this 'then' block
-        tasks.set(
-          $contactData.received.map((item) => Object.entries(item.task)).flat()
-        );
-
-        console.log("After task.set", axiosResponse2);
+        contacts.set(axiosResponse2.data);
+        received.set($contacts.results.received);
+        sent.set($contacts.results.sent);
 
         // *************** Finding the Specific Task Key **************
         const targetKey = "promo_id";
-        const foundTask = $contactData.received.find((item) =>
+        const foundTask = $received.find((item) =>
           item.task.hasOwnProperty(targetKey)
         );
         const promo_id = foundTask.task[targetKey];
 
         console.log("RECEIVED =>");
-        console.table($contactData.received);
+        console.table($received);
         console.log("RECEIVED.TASK =>");
-        $contactData.received.forEach((item) => {
+        $received.forEach((item) => {
           console.table(item.task);
         });
         console.log("SENT =>");
-        console.table($contactData.sent);
+        console.table($sent);
         console.log("SENT.TASK =>");
-        $contactData.sent.forEach((item) => {
+        $sent.forEach((item) => {
           console.table(item.task);
         });
         return axios.get(`/api/promotion/${promo_id}`);
       })
       .then((axiosResponse3) => {
-        response3.set(axiosResponse3.data);
+        promo.set(axiosResponse3.data);
         console.log(axiosResponse3);
       })
       .catch((axiosError) => {
@@ -91,21 +76,6 @@
 
   let inputValue = "";
   let bulletPoints = [];
-  let placeholderAdd = "Añadir descripción...";
-  let placeholderClient = "Pedro del Pueblo";
-
-  let placeholderService = "Jardinería";
-
-  let placeholderPhone = "787-123-4567";
-  let placeholderClientPhone = "787-765-4321";
-
-  let placeholderEmail = "juandelpueblo@mail.com";
-  let placeholderClientEmail = "pedrodelpueblo@mail.com";
-  let placeholderDate = {
-    month: "06",
-    day: "02",
-    year: "2024",
-  };
 
   function handleInput(event) {
     inputValue = event.target.value;
@@ -206,8 +176,8 @@
 <div class="flex flex-col items-center w-full min-h-screen px-4 py-20 mx-auto">
   <h1 class="text-3xl font-semibold">Tasks</h1>
   <div class="flex flex-col w-full h-full py-4 mx-auto">
-    {#if $contactData && $response3}
-      {#each $contactData.received as received, index}
+    {#if $received && $sent && $promo && $contacts}
+      {#each $received as received, index}
         <div
           class="max-w-6xl px-4 mx-auto w-full bg-white border-b-2 rounded-lg border-[#cc2936] text-[#1f1f1f] flex flex-col transition-all duration-100 hover:bg-[#cc2936] hover:text-[#f1f1f1]"
         >
@@ -272,10 +242,10 @@
 
             <div class="w-full text-justify">
               <span>
-                {$response3.results.title}:
+                {$promo.results.title}:
               </span>
               <span>
-                {$response3.results.description}
+                {$promo.results.description}
               </span>
             </div>
             <br />
@@ -308,7 +278,7 @@
                         type="text"
                         readonly
                         class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
-                        value={`${$response3.results.first_name} ${$response3.results.last_name}`}
+                        value={`${$promo.results.first_name} ${$promo.results.last_name}`}
                       />
                     </label>
                     <!--* Service Provided -->
@@ -322,7 +292,7 @@
                         type="text"
                         readonly
                         class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
-                        value={serviceNamesByID[$response3.results.service_id]}
+                        value={serviceNamesByID[$promo.results.service_id]}
                       />
                     </label>
                     <!--* Provider Email -->
@@ -335,7 +305,7 @@
                         readonly
                         id="email"
                         type="email"
-                        value={placeholderEmail}
+                        value={"placeholderEmail"}
                         class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                       />
                     </label>
@@ -351,7 +321,7 @@
                         required
                         pattern="\d{3}-\d{3}-\d{4}"
                         on:keypress={restrictToNumbersAndDashes}
-                        value={placeholderPhone}
+                        value={"placeholderPhone"}
                         type="text"
                         class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                       />
@@ -377,7 +347,7 @@
                         type="text"
                         readonly
                         class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
-                        value={placeholderClient}
+                        value={"placeholderClient"}
                       />
                     </label>
                     <!--* Client Email -->
@@ -390,7 +360,7 @@
                         readonly
                         id="clientEmail"
                         type="email"
-                        value={placeholderClientEmail}
+                        value={"placeholderClientEmail"}
                         class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                       />
                     </label>
@@ -404,7 +374,7 @@
                         id="clientPhone-number"
                         readonly
                         pattern="\d{3}-\d{3}-\d{4}"
-                        value={placeholderClientPhone}
+                        value={"placeholderClientPhone"}
                         type="text"
                         class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                       />
@@ -433,7 +403,7 @@
                       <div class="flex gap-2 pb-4 border-b-2">
                         <input
                           type="text"
-                          placeholder={placeholderAdd}
+                          placeholder={"placeholderAdd"}
                           bind:value={inputValue}
                           on:input={handleInput}
                           on:keydown={handleKeyDown}
@@ -512,7 +482,7 @@
                             type="text"
                             placeholder="MM"
                             readonly
-                            value={placeholderDate.month}
+                            value={"placeholderDate.month"}
                             on:keypress={handleDateInput}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
@@ -522,7 +492,7 @@
                             type="text"
                             placeholder="DD"
                             readonly
-                            value={placeholderDate.day}
+                            value={"placeholderDate.day"}
                             on:keypress={handleDateInput}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
@@ -532,7 +502,7 @@
                             type="text"
                             placeholder="AAAA"
                             readonly
-                            value={placeholderDate.year}
+                            value={"placeholderDate.year"}
                             on:keypress={handleDateInput}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
