@@ -43,7 +43,7 @@ app.register_blueprint(my_bp, url_prefix="/api/dashboard")
 app.register_blueprint(user_bp, url_prefix="/api/user")
 app.register_blueprint(promotion_bp, url_prefix="/api/promotion")
 app.register_blueprint(task_bp, url_prefix="/api/tasks")
-app.register_blueprint(review_bp, url_prefix="/reviews")
+app.register_blueprint(review_bp, url_prefix="/api/reviews")
 
 login_manager = LoginManager(app)
 mail = Mail(app)
