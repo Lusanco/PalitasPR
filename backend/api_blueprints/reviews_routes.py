@@ -1,0 +1,37 @@
+from flask import Blueprint, jsonify, request, make_response, session, g
+from db.db_operations import DBOperations
+from flask_login import login_required, current_user
+review_bp = Blueprint('reviews', __name__)
+
+@review_bp.before_request
+def keep_session_alive():
+    session.modified = True
+
+@review_bp.route("/", methods=["GET", "POST", "PUT"])
+@login_required
+def review_crud():
+    '''
+        Review route CRUD methods
+    '''
+    if request.method == 'POST':
+        data = request.get_json()
+        data['user_id'] = current_user.id # Reviewer
+        keys = [
+            'description',
+            'rating',
+            'task_id',
+            ]
+        for key in keys:
+            if key not in data:
+                return make_response(jsonify({'error': f"Missing key: {key}"}), 400)
+
+        task = DBOperations(g.db_session).search('Task', data['task_id'])
+        if not task:
+            return make_response(jsonify({'error': f"No task found: {data['task_id']}"}), 400)
+        if task.status == 'closed':
+            return make_response(jsonify({'error': f"Task status is not closed: -{task.status}-"}), 400)
+        response, status = DBOperations(g.db_session).new({'Review': {data}})
+        if status != 201:
+            return make_response(jsonify(response), status)
+        g.db_session.commit()
+        return make_response(jsonify({'results': 'ok'}), 201)
