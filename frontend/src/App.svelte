@@ -78,6 +78,7 @@
 
       <!-- Test Route -->
       <Route path="/test" component={Test} />
+      <Route path="/test2" component={Test2} />
       <Route path="/agreement" component={Agreement} />
     </Router>
   </Main>

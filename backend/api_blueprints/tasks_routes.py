@@ -10,7 +10,7 @@ task_bp = Blueprint('tasks', __name__)
 def keep_session_alive():
     session.modified = True
 
-@task_bp.route("/", methods=["GET"])
+@task_bp.route("/", methods=["GET", "POST", "PUT"])
 @login_required
 def get_tasks():
     '''
