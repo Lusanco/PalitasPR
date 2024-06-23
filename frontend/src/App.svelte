@@ -33,8 +33,10 @@
   import Privacy from "./routes/Privacy.svelte";
   import Test from "./routes/TEST.svelte";
   import InitialContactSuccess from "./routes/InitialContactSuccess.svelte";
+
+  // Agreement Routes
   import Agreement from "./routes/Agreement.svelte";
-  import Test2 from "./routes/TEST2.svelte";
+  import AgreementReview from "./routes/AgreementReview.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -66,11 +68,17 @@
         path="/initial-contact-success"
         component={InitialContactSuccess}
       />
+
+      <!--* Agreement routes -->
+      <Route path="/agreement" component={Agreement} />
+      <Route path="/agreement-review" component={AgreementReview} />
+
+      <!--! 404 / Not found -->
       <Route path="*" component={NotFound} />
 
       <!-- Test Route -->
-      <Route path="/test" component={Test} />
-      <Route path="/test2" component={Test2} />
+      <!-- <Route path="/test" component={Test} />
+      <Route path="/test2" component={Test2} /> -->
       <Route path="/agreement" component={Agreement} />
     </Router>
   </Main>
