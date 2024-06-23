@@ -13,7 +13,7 @@ from api_blueprints.tasks_routes import task_bp
 from flask_mail import Mail
 from flask_login import LoginManager
 from datetime import timedelta
-from db_init import init_db
+import db_init
 
 # app = Flask(__name__, static_folder="static", static_url_path="/")
 
@@ -52,13 +52,13 @@ CORS(app)
 @app.before_request
 def keep_session_alive():
     session.modified = True
-
+    g.db_session = db_init.get_session()
 
 @login_manager.user_loader
 def load_user(user_id):
     # Assuming `user_id` is the primary key of the user in your database
     # Implement your logic to load a user from the database based on `user_id`
-    user = DBOperations().search("User", user_id)
+    user = DBOperations(g.db_session).search("User", user_id)
     return user
 
 
@@ -71,5 +71,4 @@ def close_session(exception=None):
 
 
 if __name__ == "__main__":
-    init_db()
     app.run(debug=True)

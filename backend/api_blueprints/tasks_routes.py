@@ -18,23 +18,33 @@ def get_tasks():
     '''
         Get all Tasks(contracts) of a user
     '''
-    tasks_list = []
-    provider_tasks = []
-    receiver_tasks = []
+    if request.method == 'GET':
+        tasks_list = []
+        provider_tasks = []
+        receiver_tasks = []
 
-    tasks = Db_task().get_tasks_by_userId(current_user.id)
-    if not tasks:
+        tasks = Db_task().get_tasks_by_userId(current_user.id)
+        if not tasks:
+            return make_response(jsonify({"results": tasks_list}), 200)
+        else:
+            for task in tasks:
+                task_dict = {}
+                task_dict.update(task.all_columns())
+
+                if task.receiver_id == current_user.id:
+                    receiver_tasks.append(task_dict)
+                else:
+                    provider_tasks.append(task_dict)
+
+        tasks_list.append(provider_tasks)
+        tasks_list.append(receiver_tasks)
         return make_response(jsonify({"results": tasks_list}), 200)
-    else:
-        for task in tasks:
-            task_dict = {}
-            task_dict.update(task.all_columns())
+    if request.method == 'PUT':
+        # CANNOT change to 'pending' via this route, pending is when the task is created
+        active_status = {'Task': {'id':'<task_id>', 'status': 'active'}}
+        closed_status = {'Task': {'id':'<task_id>', 'status': 'active'}}
+        task_dict = active_status
+        DBOperations().update({'Task': task_dict})
+        session.commit
 
-            if task.receiver_id == current_user.id:
-                receiver_tasks.append(task_dict)
-            else:
-                provider_tasks.append(task_dict)
-
-    tasks_list.append(provider_tasks)
-    tasks_list.append(receiver_tasks)
-    return make_response(jsonify({"results": tasks_list}), 200)
+        

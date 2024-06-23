@@ -3,6 +3,7 @@
   import townsID from "../scripts/townsID";
   import servicesID from "../scripts/servicesID";
   import Button from "../components/Button.svelte";
+  import { writable } from 'svelte/store';
 
   let image = null;
   let town = "all";
@@ -10,7 +11,7 @@
   let model = "Promotion";
 
   let button = {
-    name: "Crear Servicio",
+    name: "Create Service",
     method: "POST",
     url: "api/dashboard/promotion-request",
     headers: "multipart/form-data",
@@ -25,7 +26,7 @@
   let price_min = "";
   let price_max = "";
   let errorMessage = "";
-  let selectedTowns = [];
+  let selectedTowns = writable({});
   let townList = "";
   let showTownsDropdown = false;
 
@@ -45,13 +46,16 @@
   }
 
   function handleTownChange(event) {
-    const townId = event.target.value;
-    if (event.target.checked) {
-      selectedTowns.push(townId);
-    } else {
-      selectedTowns = selectedTowns.filter((id) => id !== townId);
-    }
-    townList = selectedTowns.join(", ");
+    const { value, checked } = event.target;
+    selectedTowns.update(selected => {
+      if (checked) {
+        selected[value] = true;
+      } else {
+        delete selected[value];
+      }
+      return selected;
+    });
+    townList = Object.keys($selectedTowns).join(", ");
   }
 
   function handleFileChange(event) {
@@ -59,20 +63,16 @@
     console.log("Image file selected:", event.target.files[0]);
   }
 
-  function handleButtonClick() {
-    document.getElementById("townsDropdown").classList.toggle("hidden");
+  function toggleTownsDropdown() {
+    showTownsDropdown = !showTownsDropdown;
   }
 </script>
-
-<head>
-  <title>PalitasPR | Crear Servicio</title>
-</head>
 
 <div
   class="flex flex-col items-center justify-center h-full min-h-screen bg-[#f1f1f1]"
 >
   <div
-    class="flex flex-col w-full h-full max-w-2xl gap-4 p-6 my-8 font-semibold bg-white rounded-lg shadow-lg md:p-12"
+    class="flex flex-col w-full h-full max-w-2xl gap-4 p-4 my-8 font-semibold bg-white rounded-lg shadow-lg"
   >
     <h1
       class="pt-4 text-2xl text-center text-[#1f1f1f] md:text-3xl lg:text-4xl"
@@ -80,89 +80,92 @@
       Crear Servicio
     </h1>
     <div>
-      <label for="title" class="text-[#1f1f1f]">Título</label>
+      <label for="title" class="text-[#1f1f1f]">Titulo</label>
       <input
         class="w-full input input-bordered text-[#cc2936]"
         type="text"
-        name="title"
-        id="title"
+        name="titulo"
+        id=""
         bind:value={title}
       />
     </div>
 
     <label for="service" class="text-[#1f1f1f]"
-      >Seleccionar servicio
-      <select
-        bind:value={service_id}
-        name="service"
-        class="block w-full select select-bordered text-[#cc2936]"
-      >
-        <option value={-1} disabled>---</option>
-        {#each Object.entries(servicesID) as [service, id]}
-          <option value={id}>{service}</option>
-        {/each}
-      </select>
-    </label>
+      >Seleccione Servicio a Brindar</label
+    >
+    <select
+      bind:value={service_id}
+      name="service"
+      class="block w-full select select-bordered text-[#cc2936]"
+    >
+      <option value={-1} disabled>---</option>
+      {#each Object.entries(servicesID) as [service, id]}
+        <option value={id}>{service}</option>
+      {/each}
+    </select>
 
     <div class="w-full dropdown">
       <button
-        on:click={handleButtonClick}
         tabindex="0"
         class="btn btn-base dropdown-toggle text-[#f1f1f1] bg-[#cc2936] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
-        >Seleccionar pueblos</button
-      >
-      <ul
-        id="townsDropdown"
-        tabindex="-1"
-        class="grid w-full h-40 min-w-full grid-cols-1 gap-4 p-4 overflow-y-auto bg-white shadow md:grid-cols-3 text-nowrap dropdown-content rounded-box"
-      >
-        {#each Object.entries(townsID).filter(([town, id]) => town !== "all") as [town, id]}
-          <li class="menu-item" value={id}>
-            <input
-              bind:value={id}
-              on:change={handleTownChange}
-              type="checkbox"
-              id={`'${id}'`}
-              class="mr-2 checkbox checkbox-base"
-            />
-            {town}
-          </li>
-        {/each}
-      </ul>
+        on:click={toggleTownsDropdown}
+      >Seleccionar Pueblos</button>
+      {#if showTownsDropdown}
+        <ul
+          tabindex="-1"
+          class="flex flex-wrap w-full h-40 min-w-full gap-4 p-4 overflow-y-auto bg-white shadow gap-x-10 dropdown-content rounded-box"
+        >
+          {#each Object.entries(townsID) as [town, id]}
+            {#if town !== 'All'}
+              <li class="menu-item" value={id}>
+                <input
+                  type="checkbox"
+                  id={`'${id}'`}
+                  class="mr-2 checkbox checkbox-base"
+                  bind:checked={$selectedTowns[id]}
+                  on:change={handleTownChange}
+                  value={id}
+                />
+                {town}
+              </li>
+            {/if}
+          {/each}
+        </ul>
+      {/if}
     </div>
 
     <div class="max-h-96">
       <label for="description" class="text-[#1f1f1f]"
-        >Descripción del servicio ofrecido</label
+        >Descripcion de su Servicio</label
       >
       <textarea
         bind:value={description}
         class="w-full textarea textarea-bordered text-[#cc2936]"
         name="description"
-        id="description"
+        id=""
       ></textarea>
     </div>
     <div>
       <label for="price-min" class="text-[#1f1f1f]"
-        >Precio mínimo (Opcional)</label
+        >Precio Minimo (Opcional)</label
       >
       <input
         class="w-full input input-bordered text-[#cc2936]"
         type="number"
         name="price-min"
-        id="price-min"
+        id=""
         bind:value={price_min}
       />
     </div>
     <div>
       <label for="price-max" class="text-[#1f1f1f]"
-        >Precio máximo (Opcional)</label
+        >Precio Maximo (Opcional)</label
       >
       <input
         class="w-full input input-bordered text-[#cc2936]"
         type="number"
         name="price-max"
-        id="price-max"
+        id=""
         bind:value={price_max}
       />
     </div>
@@ -172,17 +175,14 @@
       <label for="imageInput" class="block text-sm font-medium text-[#1f1f1f]"
       ></label>
       <div class="flex w-full">
-        <label for="imageInput" class="w-full mb-2">
-          Subir imágen
-          <input
-            type="file"
-            name="image"
-            id="imageInput"
-            on:change={handleFileChange}
-            class="w-full px-8 py-12 text-[#1f1f1f] bg-[#f1f1f1] border-2 border-[#cc2936] border-dashed rounded-md"
-            accept="image/*"
-          /></label
-        >
+        <input
+          type="file"
+          name="image"
+          id="imageInput"
+          on:change={handleFileChange}
+          class="w-full px-8 py-12 text-[#1f1f1f] bg-[#f1f1f1] border-2 border-[#cc2936] border-dashed rounded-md"
+          accept="image/*"
+        />
       </div>
       {#if errorMessage}
         <p class="text-[#cc2936]">{errorMessage}</p>

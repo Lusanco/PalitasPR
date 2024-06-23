@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, make_response, session
+from flask import Blueprint, jsonify, request, make_response, session, g
 from db.db_user import Db_user
 from db.db_operations import DBOperations
 import emails
@@ -6,11 +6,6 @@ from flask_login import login_user, logout_user, login_required, current_user
 import aws_bucket
 
 user_bp = Blueprint('user', __name__)
-
-@user_bp.before_request
-def keep_session_alive():
-    session.modified = True
-
 
 @user_bp.route("/signup", methods=["POST"])
 def user_sign_up():
@@ -22,9 +17,11 @@ def user_sign_up():
         and "email" in form_data
         and "password" in form_data
     ):
-        response, status = Db_user().sign_up(form_data)
+        response, status = Db_user(g.db_session).sign_up(form_data)
         if status != 201:
+            g.db_session.rollback()
             return make_response(jsonify(response), status)
+        g.db_session.commit()
         return make_response(jsonify({'results': 'ok'}), 201)
     else:
         return make_response(jsonify({'message': 'Missing a required field'}), 400)
@@ -46,7 +43,7 @@ def verify_email(token):
 def user_login():
     email = request.args.get('af1')
     password = request.args.get('af2')
-    response, status = Db_user().login(email, password)
+    response, status = Db_user(g.db_session).login(email, password)
     if status == 200:
         user = response['message']
         response['message'] = 'OK'
@@ -69,7 +66,7 @@ def delete_object(model, model_id):
     """
     # if model == 'Profile':
     #     model_id = current_user.id
-    response, status = DBOperations().delete_object(model, model_id, current_user.id)
+    response, status = DBOperations(g.db_session).delete_object(model, model_id, current_user.id)
     return make_response(jsonify(response), status)
 
 
@@ -79,7 +76,7 @@ def get_contacts():
     '''
         Get all initial contact messages for the user and tasks
     '''
-    response, status = Db_user().get_contacts_section(current_user.id)
+    response, status = Db_user(g.db_session).get_contacts_section(current_user.id)
     # MODIFY i need to retrieve the tasks of this user and
     # associate the task with the initial contact
     return make_response(jsonify(response), status)
@@ -91,10 +88,10 @@ def get_my_profile():
         Get the user's profile
     '''
     if request.method == 'GET':
-        profile = Db_user().get_profile_by_userId(current_user.id)
+        profile = Db_user(g.db_session).get_profile_by_userId(current_user.id)
         if not profile:
             return make_response(jsonify({'error': 'Profile does not exist'}), 404)
-        rating = Db_user().rating(current_user.id)
+        rating = Db_user(g.db_session).rating(current_user.id)
         profile_dict = {}
         profile_dict.update(profile.all_columns())
         profile_dict['first_name'] = current_user.first_name
@@ -106,7 +103,7 @@ def get_my_profile():
         #TESTING
         # data = request.data  This must be a dictionary, must validate keys here or in dboperations.update
         data = {'Profile': {'id': 'profile_id', 'bio': 'Updated bio...'}}
-        response, status = DBOperations().update({'Profile': {data}})
+        response, status = DBOperations(g.db_session).update({'Profile': {data}})
         return make_response(jsonify(response), status)
 
     if request.method == 'POST':
@@ -131,14 +128,30 @@ def get_profile(profile_id):
     '''
         Get a user's profile(not your own)
     '''
-    profile = DBOperations().search('Profile', profile_id)
+    profile = DBOperations(g.db_session).search('Profile', profile_id)
     if not profile:
         return make_response(jsonify({'error': 'Profile does not exist'}), 404)
-    user = DBOperations().search('User', profile.user_id)
-    rating = Db_user().rating(profile.user_id)
+    user = DBOperations(g.db_session).search('User', profile.user_id)
+    rating = Db_user(g.db_session).rating(profile.user_id)
     profile_dict = {}
     profile_dict.update(profile.all_columns())
     profile_dict['first_name'] = user.first_name
     profile_dict['last_name'] = user.last_name
     profile_dict['rating'] = rating
     return make_response(jsonify({'results': profile_dict}), 200)
+
+@user_bp.route('/update', methods=['GET'])
+@login_required
+def update_bio():
+    response, status = DBOperations(g.db_session).update({'User': {'last_name': 'Doe', 'id': current_user.id}})
+    if status != 200:
+        g.db_session.rollback()
+    g.db_session.commit()
+    return make_response(jsonify(response), status)
+
+@user_bp.route('/status', methods=['GET'])
+def get_user_status():
+    if current_user.is_anonymous:
+        return make_response(jsonify(False))
+    else:
+        return make_response(jsonify(True))
