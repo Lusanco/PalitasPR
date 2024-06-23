@@ -13,11 +13,11 @@
   let button = {
     name: "Solicitar servicio",
     method: "POST",
-    url: "api/dashboard/request-service",
+    url: "api/dashboard/promotion-request",
     headers: "multipart/form-data",
     twcss:
       "px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
-    misc: { "App Location": "RequestService Form" },
+    misc: { "App Location": "CreateRequest Form" },
   };
 
   let title = "";
@@ -41,20 +41,6 @@
     data.set($data);
     console.log("Data updated:", $data);
   }
-
-  axios
-    .post("/api/dashboard/request-service", {
-      title,
-      town: townList,
-      service_id,
-      description,
-    })
-    .then((response) => {
-      console.log("Response:", response);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
 
   function handleTownChange(event) {
     const townId = event.target.value;
