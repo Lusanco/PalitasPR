@@ -251,15 +251,16 @@
             </div>
           </button>
           <div
-            class={`overflow-hidden transition-all duration-300 overflow-y-scroll ${openIndex === index ? "max-h-screen" : "max-h-0"}`}
+            class={`overflow-hidden transition-all duration-300  rounded-2xl  ${openIndex === index ? "max-h-screen" : "max-h-0"}`}
           >
             <br />
             <div
-              class="flex justify-center w-full pb-4 -mb-4 text-xl font-bold border-b-2 md:mb-2 md:pb-8 md:text-2xl lg:text-3xl"
+              class="flex justify-center w-full pb-4 -mb-4 text-xl font-bold md:border-b-2 md:mb-2 md:pb-8 md:text-2xl lg:text-3xl"
             >
               Servicio Solicitado
             </div>
 
+            <br />
             <div class="w-full text-justify">
               <span>
                 {$promo.results.title}:
@@ -270,278 +271,286 @@
             </div>
             <br />
 
-            <div class="w-full p-4 bg-white shadow-lg md:p-8 lg:p-12 card">
-              <div class="card-header">
-                <h1
-                  class="flex justify-center pb-4 -mb-4 text-2xl font-bold text-gray-700 border-b-2 md:mb-2 md:pb-8 md:text-4xl lg:text-5xl"
-                >
-                  Acuerdo de Servicio
-                </h1>
-              </div>
-              <div class="card-body">
-                <!--* Provider Details -->
-                <div class="pb-4 border-b-2">
+            <div
+              class="w-full min-w-full min-h-full bg-white shadow-lg rounded-2xl"
+            >
+              <div
+                class="flex flex-col overflow-y-scroll min-h-40 max-h-96 md:p-8 lg:p-12 md:card"
+              >
+                <br />
+                <div class="card-header">
                   <h1
-                    class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                    class="flex justify-center pb-4 text-2xl font-bold text-gray-700 border-b-2 md:mb-2 md:pb-8 md:text-4xl lg:text-5xl"
                   >
-                    Detalles del Proveedor
+                    Acuerdo de Servicio
                   </h1>
-                  <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
-                    <!--* Provider Name -->
-                    <label
-                      for="service-provider"
-                      class="col-span-1 font-bold text-gray-500 text-md"
-                    >
-                      Nombre
-                      <input
-                        id="service-provider"
-                        type="text"
-                        readonly
-                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
-                        value={`${$promo.results.first_name} ${$promo.results.last_name}`}
-                      />
-                    </label>
-                    <!--* Service Provided -->
-                    <label
-                      for="service"
-                      class="col-span-1 font-bold text-gray-500 text-md"
-                    >
-                      Servicio
-                      <input
-                        id="service"
-                        type="text"
-                        readonly
-                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
-                        value={serviceNamesByID[$promo.results.service_id]}
-                      />
-                    </label>
-                    <!--* Provider Email -->
-                    <label
-                      for="email"
-                      class="col-span-1 font-bold text-gray-500 text-md"
-                    >
-                      Correo Electrónico
-                      <input
-                        readonly
-                        id="email"
-                        type="email"
-                        value={$userSession.email}
-                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                      />
-                    </label>
-                    <!--* Provider Phone Number -->
-                    <label
-                      for="phone-number"
-                      class="col-span-1 font-bold text-gray-500 text-md"
-                    >
-                      Número de Teléfono
-                      <input
-                        readonly
-                        id="phone-number"
-                        required
-                        pattern="\d{3}-\d{3}-\d{4}"
-                        on:keypress={restrictToNumbersAndDashes}
-                        value={"placeholderPhone"}
-                        type="text"
-                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                      />
-                    </label>
-                  </div>
                 </div>
-                <!--* Client Details -->
-                <div class="pb-4 mt-4 border-b-2 md:mt-8">
-                  <h1
-                    class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
-                  >
-                    Detalles del Cliente
-                  </h1>
-                  <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
-                    <!--* Client Name -->
-                    <label
-                      for="service-client"
-                      class="col-span-1 font-bold text-gray-500 text-md"
+                <br />
+                <div class="px-2 md:card-body">
+                  <!--* Provider Details -->
+                  <div class="pb-4 border-b-2">
+                    <h1
+                      class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
                     >
-                      Nombre
-                      <input
-                        id="service-client"
-                        type="text"
-                        readonly
-                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
-                        value={`${received.sender_first_name} ${received.sender_last_name}`}
-                      />
-                    </label>
-                    <!--* Client Email -->
-                    <label
-                      for="clientEmail"
-                      class="col-span-1 font-bold text-gray-500 text-md"
-                    >
-                      Correo Electrónico
-                      <input
-                        readonly
-                        id="clientEmail"
-                        type="email"
-                        value={received.sender_email}
-                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                      />
-                    </label>
-                    <!--* Client Phone Number -->
-                    <label
-                      for="clientPhone-number"
-                      class="col-span-1 font-bold text-gray-500 text-md"
-                    >
-                      Número de Teléfono
-                      <input
-                        id="clientPhone-number"
-                        readonly
-                        pattern="\d{3}-\d{3}-\d{4}"
-                        value={"placeholderClientPhone"}
-                        type="text"
-                        class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                      />
-                    </label>
-                  </div>
-                </div>
-                <!--* Service Details -->
-                <div class="flex flex-col gap-2 my-4">
-                  <h1
-                    class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
-                  >
-                    Terminos del Servicio
-                  </h1>
-                  <!--* Service Description -->
-                  <label
-                    for="agreement"
-                    class="text-lg font-semibold text-gray-500 text-start"
-                  >
-                    Descripción
-                    <div>
-                      <p class="text-xs md:text-sm">
-                        Describa el servicio ofrecido. Puede añadir más de un
-                        artículo a la lista.
-                      </p>
-                      <!--* Details input -->
-                      <div class="flex gap-2 pb-4 border-b-2">
+                      Detalles del Proveedor
+                    </h1>
+                    <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
+                      <!--* Provider Name -->
+                      <label
+                        for="service-provider"
+                        class="col-span-1 font-bold text-gray-500 text-md"
+                      >
+                        Nombre
                         <input
+                          id="service-provider"
                           type="text"
-                          placeholder={"placeholderAdd"}
-                          bind:value={inputValue}
-                          on:input={handleInput}
-                          on:keydown={handleKeyDown}
-                          class="w-full p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          readonly
+                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                          value={`${$promo.results.first_name} ${$promo.results.last_name}`}
                         />
-                        <button
-                          on:click={addBulletPoint}
-                          class="text-white bg-[#cc2936] border-none btn mt-[5px] hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
-                        >
-                          <i class="block fa-solid fa-plus md:hidden"></i><span
-                            class="hidden md:block">Añadir</span
-                          >
-                        </button>
-                      </div>
-
-                      <ul class="h-auto pb-4 my-4 border-b-2">
-                        {#each $bulletPointsStore as bulletPoint}
-                          <div class="flex justify-between mx-4">
-                            <div class="flex gap-2 mt-1">
-                              <i
-                                class="fa-solid fa-check mt-[5px] text-[#cc2936]"
-                              ></i>
-                              <li
-                                class="max-w-full text-base max-h-40 text-md line-clamp-3 text-ellipsis"
-                              >
-                                {bulletPoint}
-                              </li>
-                            </div>
-                            <div>
-                              <button
-                                on:click={() => {
-                                  bulletPointsStore.update((points) =>
-                                    points.filter(
-                                      (point) => point !== bulletPoint
-                                    )
-                                  );
-                                }}
-                                class="rounded btn-sm"
-                                ><i
-                                  class="fa-solid fa-trash hover:text-[#cc2936] ease-in-out transition-all duration-150"
-                                ></i></button
-                              >
-                            </div>
-                          </div>
-                        {/each}
-                      </ul>
-                    </div>
-                  </label>
-                  <!--* Price and Date -->
-                  <div
-                    class="grid items-start grid-cols-1 gap-2 md:grid-cols-2"
-                  >
-                    <div class="flex col-span-1">
-                      <label
-                        for="price"
-                        class="text-lg font-semibold text-gray-500 text-start"
-                      >
-                        Precio
-                        <!--* Price Input -->
-                        <div class="">
-                          <input
-                            id="price"
-                            type="number"
-                            placeholder="$0.00"
-                            bind:value={price}
-                            on:keypress={restrictToNumbersAndDecimal}
-                            class="p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                          />
-                        </div>
                       </label>
-                    </div>
-                    <!--* Date Inputs -->
-                    <div class="flex col-span-1">
+                      <!--* Service Provided -->
                       <label
-                        for="month"
-                        class="text-lg font-semibold text-gray-500 text-start"
+                        for="service"
+                        class="col-span-1 font-bold text-gray-500 text-md"
                       >
-                        Fecha <span class="text-xs">(actual)</span>
-                        <!--? Month -->
-                        <div class="flex gap-2">
-                          <input
-                            id="month"
-                            type="text"
-                            placeholder="MM"
-                            readonly
-                            value={month}
-                            on:keypress={handleDateInput}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                          />
-                          <!--? Day -->
-                          <input
-                            id="day"
-                            type="text"
-                            placeholder="DD"
-                            readonly
-                            value={day}
-                            on:keypress={handleDateInput}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                          />
-                          <!--? Year -->
-                          <input
-                            id="year"
-                            type="text"
-                            placeholder="AAAA"
-                            readonly
-                            value={year}
-                            on:keypress={handleDateInput}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                          />
-                        </div>
+                        Servicio
+                        <input
+                          id="service"
+                          type="text"
+                          readonly
+                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                          value={serviceNamesByID[$promo.results.service_id]}
+                        />
+                      </label>
+                      <!--* Provider Email -->
+                      <label
+                        for="email"
+                        class="col-span-1 font-bold text-gray-500 text-md"
+                      >
+                        Correo Electrónico
+                        <input
+                          readonly
+                          id="email"
+                          type="email"
+                          value={$userSession.email}
+                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                        />
+                      </label>
+                      <!--* Provider Phone Number -->
+                      <label
+                        for="phone-number"
+                        class="col-span-1 font-bold text-gray-500 text-md"
+                      >
+                        Número de Teléfono
+                        <input
+                          readonly
+                          id="phone-number"
+                          required
+                          pattern="\d{3}-\d{3}-\d{4}"
+                          on:keypress={restrictToNumbersAndDashes}
+                          value={"placeholderPhone"}
+                          type="text"
+                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                        />
                       </label>
                     </div>
                   </div>
-                </div>
-                <!--* Signature and Agreement -->
-                <!--? Signature Input -->
-                <div>
-                  <!-- <label for="signature">
+                  <!--* Client Details -->
+                  <div class="pb-4 mt-4 border-b-2 md:mt-8">
+                    <h1
+                      class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                    >
+                      Detalles del Cliente
+                    </h1>
+                    <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
+                      <!--* Client Name -->
+                      <label
+                        for="service-client"
+                        class="col-span-1 font-bold text-gray-500 text-md"
+                      >
+                        Nombre
+                        <input
+                          id="service-client"
+                          type="text"
+                          readonly
+                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                          value={`${received.sender_first_name} ${received.sender_last_name}`}
+                        />
+                      </label>
+                      <!--* Client Email -->
+                      <label
+                        for="clientEmail"
+                        class="col-span-1 font-bold text-gray-500 text-md"
+                      >
+                        Correo Electrónico
+                        <input
+                          readonly
+                          id="clientEmail"
+                          type="email"
+                          value={received.sender_email}
+                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                        />
+                      </label>
+                      <!--* Client Phone Number -->
+                      <label
+                        for="clientPhone-number"
+                        class="col-span-1 font-bold text-gray-500 text-md"
+                      >
+                        Número de Teléfono
+                        <input
+                          id="clientPhone-number"
+                          readonly
+                          pattern="\d{3}-\d{3}-\d{4}"
+                          value={"placeholderClientPhone"}
+                          type="text"
+                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  <!--* Service Details -->
+                  <div class="flex flex-col gap-2 my-4">
+                    <h1
+                      class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                    >
+                      Terminos del Servicio
+                    </h1>
+                    <!--* Service Description -->
+                    <label
+                      for="agreement"
+                      class="text-lg font-semibold text-gray-500 text-start"
+                    >
+                      Descripción
+                      <div>
+                        <p class="text-xs md:text-sm">
+                          Describa el servicio ofrecido. Puede añadir más de un
+                          artículo a la lista.
+                        </p>
+                        <!--* Details input -->
+                        <div class="flex gap-2 pb-4 border-b-2">
+                          <input
+                            type="text"
+                            placeholder={"placeholderAdd"}
+                            bind:value={inputValue}
+                            on:input={handleInput}
+                            on:keydown={handleKeyDown}
+                            class="w-full p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          />
+                          <button
+                            on:click={addBulletPoint}
+                            class="text-white bg-[#cc2936] border-none btn mt-[5px] hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
+                          >
+                            <i class="block fa-solid fa-plus md:hidden"
+                            ></i><span class="hidden md:block">Añadir</span>
+                          </button>
+                        </div>
+
+                        <ul class="h-auto pb-4 my-4 border-b-2">
+                          {#each $bulletPointsStore as bulletPoint}
+                            <div class="flex justify-between md:mx-4">
+                              <div class="flex gap-2 mt-1">
+                                <i
+                                  class="fa-solid fa-check mt-[5px] text-[#cc2936]"
+                                ></i>
+                                <li class="overflow-hidden text-base text-md">
+                                  <p
+                                    class="max-w-full line-clamp-none md:line-clamp-4 overflow-ellipsis"
+                                  >
+                                    {bulletPoint}
+                                  </p>
+                                </li>
+                              </div>
+                              <div>
+                                <button
+                                  on:click={() => {
+                                    bulletPointsStore.update((points) =>
+                                      points.filter(
+                                        (point) => point !== bulletPoint
+                                      )
+                                    );
+                                  }}
+                                  class="rounded btn-sm"
+                                  ><i
+                                    class="fa-solid fa-trash hover:text-[#cc2936] ease-in-out transition-all duration-150"
+                                  ></i></button
+                                >
+                              </div>
+                            </div>
+                          {/each}
+                        </ul>
+                      </div>
+                    </label>
+                    <!--* Price and Date -->
+                    <div
+                      class="grid items-start grid-cols-1 gap-2 md:grid-cols-2"
+                    >
+                      <div class="flex col-span-1">
+                        <label
+                          for="price"
+                          class="text-lg font-semibold text-gray-500 text-start"
+                        >
+                          Precio
+                          <!--* Price Input -->
+                          <div class="">
+                            <input
+                              id="price"
+                              type="number"
+                              placeholder="$0.00"
+                              bind:value={price}
+                              on:keypress={restrictToNumbersAndDecimal}
+                              class="p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            />
+                          </div>
+                        </label>
+                      </div>
+                      <!--* Date Inputs -->
+                      <div class="flex col-span-1">
+                        <label
+                          for="month"
+                          class="text-lg font-semibold text-gray-500 text-start"
+                        >
+                          Fecha <span class="text-xs">(actual)</span>
+                          <!--? Month -->
+                          <div class="flex gap-2">
+                            <input
+                              id="month"
+                              type="text"
+                              placeholder="MM"
+                              readonly
+                              value={month}
+                              on:keypress={handleDateInput}
+                              class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            />
+                            <!--? Day -->
+                            <input
+                              id="day"
+                              type="text"
+                              placeholder="DD"
+                              readonly
+                              value={day}
+                              on:keypress={handleDateInput}
+                              class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            />
+                            <!--? Year -->
+                            <input
+                              id="year"
+                              type="text"
+                              placeholder="AAAA"
+                              readonly
+                              value={year}
+                              on:keypress={handleDateInput}
+                              class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            />
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <!--* Signature and Agreement -->
+                  <!--? Signature Input -->
+                  <div>
+                    <!-- <label for="signature">
                     <h1 class="text-lg font-semibold text-gray-500 text-start">
                       Firma <span class="text-xs">(electrónica)</span>
                     </h1>
@@ -551,36 +560,38 @@
                       class="w-full p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0"
                     />
                   </label> -->
-                  <!--? Agreement Checkbox -->
-                  <div class="flex gap-2 mt-2">
-                    <input
-                      required
-                      id="accept"
-                      type="checkbox"
-                      class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-gray-300 rounded-sm ring-gray-300 mt-[5px] text-[#cc2936]"
-                    />
-                    <label for="accept">
-                      <p class="text-xs text-gray-500 md:text-base">
-                        He leído y acepto los
-                        <a
-                          href="/"
-                          class="no-underline hover:text-[#BB2532] hover:underline text-[#cc2936]"
-                          >términos y condiciones</a
-                        > de PalitasPR. De igual manera, me comprometo a cumplir
-                        con los acuerdos establecidos en este documento. Al someter
-                        este formulario, acepto que la información proporcionada
-                        es verídica y correcta y podría ser utilizada para fines
-                        de contacto y/o asuntos legales.
-                      </p>
-                    </label>
+                    <!--? Agreement Checkbox -->
+                    <div class="flex gap-2 mt-2">
+                      <input
+                        required
+                        id="accept"
+                        type="checkbox"
+                        class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-gray-300 rounded-sm ring-gray-300 mt-[5px] text-[#cc2936]"
+                      />
+                      <label for="accept">
+                        <p class="text-xs text-gray-500 md:text-base">
+                          He leído y acepto los
+                          <a
+                            href="/"
+                            class="no-underline hover:text-[#BB2532] hover:underline text-[#cc2936]"
+                            >términos y condiciones</a
+                          > de PalitasPR. De igual manera, me comprometo a cumplir
+                          con los acuerdos establecidos en este documento. Al someter
+                          este formulario, acepto que la información proporcionada
+                          es verídica y correcta y podría ser utilizada para fines
+                          de contacto y/o asuntos legales.
+                        </p>
+                      </label>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <!--* Submit button -->
-                  <button
-                    class="w-full p-2 mt-4 font-semibold text-white bg-[#cc2936] border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
-                    >Someter</button
-                  >
+                  <div>
+                    <!--* Submit button -->
+                    <button
+                      class="w-full p-2 mb-4 mt-4 font-semibold text-white bg-[#cc2936] border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
+                      >Someter</button
+                    >
+                    <br />
+                  </div>
                 </div>
               </div>
             </div>
