@@ -130,6 +130,7 @@ class Db_user:
                 contact_dict['sender_first_name'] = sender.first_name
                 contact_dict['sender_last_name'] = sender.last_name
                 contact_dict['sender_email']= sender.email
+                contact_dict['phone'] = sender.phone
                 contact_dict.pop('receiver_id')
                 received_contacts.append(contact_dict)
             else: # sent_contacts: User is sender, we need receiver_info
@@ -137,6 +138,7 @@ class Db_user:
                 contact_dict['receiver_first_name'] = receiver.first_name
                 contact_dict['receiver_last_name'] = receiver.last_name
                 contact_dict['receiver_email']= receiver.email
+                contact_dict['phone'] = receiver.phone
                 contact_dict.pop('sender_id')
                 sent_contacts.append(contact_dict)
 
