@@ -132,13 +132,3 @@ def send_contact():
     if status != 201:
         return make_response(jsonify(response), status)
     return make_response(jsonify({'results': 'ok'}), 201)
-
-@api_bp.route('/testing', methods=['GET'])
-def testing():
-    my_object = {
-        'sent':{
-            'name': 'alfrecito',
-            'age': '1000',
-            'task': {'price': '200'}}
-    }
-    return make_response(jsonify({'results': my_object}), 200)
