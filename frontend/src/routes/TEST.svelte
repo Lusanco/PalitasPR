@@ -258,7 +258,11 @@
             }}
           >
             <div class="flex flex-wrap justify-between w-full">
-              {#if received.task.status === "closed"}
+              {#if received.task === null}
+                <span class="bg-[#f1f1f1] p-2 rounded-badge text-[#1f1f1f]"
+                  >new</span
+                >
+              {:else if received.task.status === "closed"}
                 <span class="bg-[#f1f1f1] p-2 rounded-badge text-[#1f1f1f]"
                   >{received.task.status}</span
                 >
