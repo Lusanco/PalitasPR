@@ -55,14 +55,16 @@ class Db_user:
         """
         import secrets
 
+        keys=['phone', 'first_name', 'last_name', 'password', 'email']
         email = data["email"]
         first_name = data["first_name"]
         last_name = data["last_name"]
         password = data["password"]
+        phone = data['phone']
 
-        if not (email and first_name and last_name and password):
-            print("error: Missing required fields.")
-            return {"error": "Missing a required field"}, 400
+        for key in keys:
+            if key not in keys:
+                return {"error": "Missing a required field"}, 400
 
         try:
             validate_email(email)
@@ -87,6 +89,7 @@ class Db_user:
             "first_name": first_name,
             "last_name": last_name,
             "verification_token": verification_token,
+            'phone': phone
         }
         response, status = DBOperations(self.session).new({"User": dict_of_user})
         if status != 201:
