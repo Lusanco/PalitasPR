@@ -174,4 +174,6 @@ def send_contact():
                 return make_response(jsonify({'error': 'Cannot update ilegal value'}), 400)
 
         response, status = DBOperations(g.db_session).update({'Initial_Contact': data})
+        if status == 200:
+            g.db_session.commit()
         return make_response(jsonify(response), status)

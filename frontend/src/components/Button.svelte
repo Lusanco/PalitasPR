@@ -136,7 +136,15 @@
     }
     if (button.misc["Tasks"]) {
       axiosLogic();
-      window.location.reload();
+      function reloadTasks(event) {
+        event.preventDefault();
+        if (window.location.pathname === "/") {
+          window.location.reload();
+        } else {
+          window.location.href = "/";
+        }
+      }
+      reloadTasks();
       return;
     }
     axiosLogic();

@@ -241,8 +241,15 @@
             on:click={() => toggleItem(index)}
             on:click={() => {
               axios
-                .put("/api/initial-contact", { receiver_read: true })
+                .put("/api/initial-contact", {
+                  id: $initial_contact_id,
+                  receiver_read: true,
+                })
                 .then((readRes) => {
+                  console.log({
+                    id: $initial_contact_id,
+                    receiver_read: true,
+                  });
                   console.log(readRes);
                 })
                 .catch((readErr) => {
@@ -271,7 +278,7 @@
               {#if received.receiver_read === false}
                 <span class="w-10 h-10 bg-[#cc2936] rounded-badge animate-ping">
                 </span>
-              {:else}
+              {:else if received.receiver_read === true}
                 <span class="w-10 h-10 bg-[#f1f1f1] rounded-badge"> </span>
               {/if}
             </div>
