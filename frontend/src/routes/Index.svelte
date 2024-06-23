@@ -144,14 +144,14 @@
         >
           {#if !service.pictures}
             <div
-              class="hidden object-cover h-full rounded-none min-w-60 max-w-60 md:block md:w-1/4 skeleton"
+              class="hidden object-cover h-full rounded-none max-h-40 min-w-60 max-w-60 md:block md:w-1/4 skeleton"
             ></div>
           {:else}
             <div
               class="hidden object-cover h-full rounded-none min-w-60 max-w-60 md:block md:w-1/4"
             >
               <img
-                class="hidden object-cover h-full rounded-none min-w-60 max-w-60 md:block"
+                class="hidden object-cover h-full rounded-none max-h-40 min-w-60 max-w-60 md:block"
                 src={service.pictures}
                 alt=""
               />
