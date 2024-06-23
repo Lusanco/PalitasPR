@@ -22,8 +22,8 @@
   let title = "";
   let service_id = "";
   let description = "";
-  let price_min = "";
-  let price_max = "";
+  // let price_min = "";
+  // let price_max = "";
   let errorMessage = "";
   let selectedTowns = [];
   let townList = "";
@@ -35,8 +35,8 @@
       town: townList,
       service_id,
       description,
-      price_min,
-      price_max,
+      // price_min,
+      // price_max,
     };
 
     data.set($data);
@@ -142,7 +142,7 @@
       ></textarea>
     </div>
     <div>
-      <label for="price-min" class="text-[#1f1f1f]"
+      <!-- <label for="price-min" class="text-[#1f1f1f]"
         >Precio mínimo (Opcional)</label
       >
       <input
@@ -163,7 +163,7 @@
         name="price-max"
         id="price-max"
         bind:value={price_max}
-      />
+      /> -->
     </div>
     <div
       class="flex flex-col items-center justify-center w-full m-auto mx-auto space-y-1 text-[#1f1f1f]"

@@ -1,8 +1,4 @@
-from flask import Blueprint, jsonify, request, make_response, session, g
-from db.db_user import Db_user
-from db.db_operations import DBOperations
-import emails
-from flask_login import login_user, logout_user, login_required, current_user
+from flask import Blueprint, jsonify, make_response, g
 from db.db_promotion import Db_promotion
 
 promotion_bp = Blueprint('promotion', __name__)

@@ -24,6 +24,7 @@
         response1.set(axiosResponse.data);
         console.log(".then() Login Log: ", $response1);
         return axios.get("/api/user/my-profile");
+        // change for /api/user/profile/:id
       })
       .then((axiosResponse2) => {
         response.set(axiosResponse2);

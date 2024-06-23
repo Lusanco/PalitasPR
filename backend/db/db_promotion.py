@@ -6,13 +6,8 @@ from sqlalchemy.orm import joinedload
 from models import User
 from sqlalchemy import func
 from models import (
-    User,
-    Service,
-    Town,
-    Promo_Towns,
-    Promotion,
-    Review,
-    Task
+    User, Service, Town, Promo_Towns, 
+    Promotion, Review, Task
 ) 
 
 

@@ -1,8 +1,8 @@
-from flask import Blueprint, jsonify, request, make_response, session, g
-from db.db_user import Db_user
-from db.db_operations import DBOperations
-import emails
+from flask import Blueprint, jsonify, request, make_response, g
 from flask_login import login_user, logout_user, login_required, current_user
+from db.db_operations import DBOperations
+from db.db_user import Db_user
+import emails
 import aws_bucket
 
 user_bp = Blueprint('user', __name__)
@@ -150,8 +150,19 @@ def update_bio():
     return make_response(jsonify(response), status)
 
 @user_bp.route('/status', methods=['GET'])
+@login_required
 def get_user_status():
     if current_user.is_anonymous:
-        return make_response(jsonify(False))
+        return make_response(jsonify(False), 501)
     else:
-        return make_response(jsonify(True))
+        user_info = {}
+        user_info.update(current_user.all_columns())
+        user_info.pop('password')
+        user_info.pop('verified')
+        user_info.pop('verification_token')
+        user_info.pop('updated_at')
+        user_info.pop('created_at')
+        profile = Db_user(g.db_session).get_profile_by_userId(user_info.get('id'))
+        user_info['profile_id'] = profile.id
+        
+        return make_response(jsonify(user_info), 200)

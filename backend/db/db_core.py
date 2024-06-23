@@ -9,31 +9,12 @@
     4) etc...
 
 '''
-from email_validator import validate_email, EmailNotValidError
-from db_init import get_session
 from db.db_promotion import Db_promotion
 from db.db_request import Db_request
-from models import User
-from sqlalchemy.exc import SQLAlchemyError
-import asyncio
-from sqlalchemy.dialects.postgresql import to_tsquery
-from sqlalchemy import func
 from sqlalchemy import func
 from unidecode import unidecode
-from aws_bucket import create_model_folder
-from db_init import get_session
-from models import (
-    User,
-    Service,
-    Town,
-    Promo_Towns,
-    Review,
-    Task,
-    Promotion,
-    Request,
-    Request_Towns,
-    Promotion,
-) 
+from models import Service
+import asyncio
 
 
 class Db_core:
@@ -65,7 +46,7 @@ class Db_core:
 
         service_name = unidecode(service).lower() # Normalize text
         tsquery = func.to_tsquery('english', f'{service_name}:*')
-         # Find service using full-text search
+        # Find service using full-text search
         service_obj = (
             self.session.query(Service)
             .filter(Service.tsv.op('@@')(tsquery))

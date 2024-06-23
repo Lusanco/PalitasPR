@@ -140,7 +140,7 @@
           href={service.promo_id
             ? `/service-details/${service.promo_id}`
             : `/request-details/${service.request_id}`}
-          class="w-full h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-[#f1f1f1] active:scale-95 overflow-hidden border-b-4 border-[#cc2936]"
+          class="w-full min-h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-[#f1f1f1] active:scale-95 overflow-hidden border-b-4 border-[#cc2936]"
         >
           {#if !service.pictures}
             <div

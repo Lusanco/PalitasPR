@@ -2,8 +2,6 @@
     All related functions for Request class(service requests) that involves the database
     and routes from flask.
 '''
-from db_init import get_session
-from models import User
 from sqlalchemy import func
 from models import (
     User,

@@ -1,11 +1,9 @@
 from flask import Blueprint, jsonify, request, make_response, g
 from flask_login import current_user, login_required
+from werkzeug.utils import secure_filename
 from db.db_operations import DBOperations
 from db.db_core import Db_core
-from db.db_initial_contact import Db_initial_contact
-from werkzeug.utils import secure_filename
 import aws_bucket
-import shlex
 import asyncio
 
 api_bp = Blueprint('api', __name__)
@@ -102,7 +100,7 @@ def put_pic():
     print("Pic ROUTE ACTIVATED")
     if 'image' not in request.files:
         return make_response({'message': 'No file part'}, 400)
- 
+
     file = request.files['image']
     print(file)
     if file.filename == '':
@@ -134,3 +132,13 @@ def send_contact():
     if status != 201:
         return make_response(jsonify(response), status)
     return make_response(jsonify({'results': 'ok'}), 201)
+
+@api_bp.route('/testing', methods=['GET'])
+def testing():
+    my_object = {
+        'sent':{
+            'name': 'alfrecito',
+            'age': '1000',
+            'task': {'price': '200'}}
+    }
+    return make_response(jsonify({'results': my_object}), 200)

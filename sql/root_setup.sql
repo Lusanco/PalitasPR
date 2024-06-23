@@ -73,13 +73,27 @@ CREATE TABLE promotions (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
 
+-- Create table for public requests of services
+CREATE TABLE requests (
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+    user_id varchar REFERENCES users(id) NOT NULL,
+    service_id INT REFERENCES services(id) NOT NULL,
+    title VARCHAR(100) not NULL,
+    description Text NOT NULL,
+    pictures varchar(255),
+    created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+
 -- Create table for Initial Contacts
 CREATE Table initial_contacts (
         id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
         sender_id varchar(50) REFERENCES users(id) NOT NULL,
         receiver_id varchar(50) REFERENCES users(id) NOT NULL,
-        promo_id varchar(50) References promotions(id) ON DELETE CASCADE NOT NULL,
-        read BOOLEAN DEFAULT False,
+        promo_id varchar(50) References promotions(id) ON DELETE CASCADE,
+        request_id varchar(50) References requests(id) ON DELETE CASCADE,
+        receiver_read BOOLEAN DEFAULT False,
+        sender_read BOOLEAN DEFAULT False,
         sent_task BOOLEAN DEFAULT False,
         created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -88,15 +102,16 @@ CREATE Table initial_contacts (
 -- Create table for tasks
 CREATE TABLE tasks (
     id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
-	promo_id varchar(50) References promotions(id) ON DELETE CASCADE NOT NULL,
+	promo_id varchar(50) References promotions(id) ON DELETE CASCADE,
+    request_id varchar(50) References requests(id) ON DELETE CASCADE,
     provider_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     receiver_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     initial_contact_id varchar(50) REFERENCES initial_contacts(id) ON DELETE CASCADE NOT NULL,
     receiver_confirm BOOLEAN,
-    is_read BOOLEAN DEFAULT False,
     service_id INT REFERENCES services(id) ON DELETE CASCADE NOT NULL,
     description Text NOT NULL,
     status VARCHAR(10) DEFAULT 'pending' CHECK(status in ('open', 'closed', 'pending')),
+    price INT DEFAULT 120,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -120,17 +135,6 @@ CREATE TABLE towns (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create table for public requests of services
-CREATE TABLE requests (
-    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
-    user_id varchar REFERENCES users(id) NOT NULL,
-    service_id INT REFERENCES services(id) NOT NULL,
-    title VARCHAR(100) not NULL,
-    description Text NOT NULL,
-    pictures varchar(255),
-    created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    );
 
 -- Create table for promo/towns assoc
 CREATE TABLE promo_towns (
@@ -835,12 +839,13 @@ AND u.last_name = 'Rodriguez';
 
 -- Create initial contact, task and review
 -- Initial contact A1
-INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, receiver_read, sender_read, sent_task)
 SELECT 
     u1.id AS sender_id,           -- Jane Smith (service requester)
     u2.id AS receiver_id,         -- John Doe (service provider)
     p.id AS promo_id, 
-    true AS read, 
+    true AS receiver_read,
+    true AS sender_read,
     true AS sent_task
 FROM 
     users u1
@@ -853,7 +858,7 @@ WHERE
 LIMIT 1; -- Sender (service requester)
 
 -- Task A1
-INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
+INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description)
 SELECT 
     p.id AS promo_id, 
     u2.id AS provider_id,        -- John Doe (service provider)
@@ -861,8 +866,7 @@ SELECT
     ic.id AS initial_contact_id,
     p.service_id AS service_id, 
     'closed' AS status, 
-    'TASK DESCRIPTION: ' || p.title AS description,
-    true AS is_read
+    'TASK DESCRIPTION: ' || p.title AS description
 FROM 
     promotions p
 JOIN 
@@ -886,12 +890,13 @@ VALUES (
 );
 
 -- Initial contact A2
-INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, receiver_read, sender_read, sent_task)
 SELECT 
     u1.id AS sender_id,           -- Hector Torres (service requester)
     u2.id AS receiver_id,         -- John Doe (service provider)
     p.id AS promo_id, 
-    true AS read, 
+    true AS receiver_read, 
+    true AS sender_read,
     true AS sent_task
 FROM 
     users u1
@@ -904,7 +909,7 @@ WHERE
 LIMIT 1; -- Sender (service requester)
 
 -- Task A2
-INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
+INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description)
 SELECT 
     p.id AS promo_id, 
     u2.id AS provider_id,        -- John Doe (service provider)
@@ -912,8 +917,7 @@ SELECT
     ic.id AS initial_contact_id,
     p.service_id AS service_id, 
     'closed' AS status, 
-    '2 TASK DESCRIPTION: ' || p.title AS description,
-    true AS is_read
+    '2 TASK DESCRIPTION: ' || p.title AS description
 FROM 
     promotions p
 JOIN 
@@ -937,12 +941,13 @@ VALUES (
 );
 
 -- Initial contact B1 (Assuming this is a separate promotion)
-INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, receiver_read, sender_read, sent_task)
 SELECT 
     u1.id AS sender_id,           -- John Doe (service requester)
     u2.id AS receiver_id,         -- Hector Torres (service provider)
     p.id AS promo_id, 
-    true AS read, 
+    true AS receiver_read,
+    true AS sender_read,
     true AS sent_task
 FROM 
     users u1
@@ -955,7 +960,7 @@ WHERE
 LIMIT 1; -- Sender (service requester)
 
 -- Task B1
-INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
+INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description)
 SELECT 
     p.id AS promo_id, 
     u2.id AS provider_id,        -- Hector Torres (service provider)
@@ -963,8 +968,7 @@ SELECT
     ic.id AS initial_contact_id,
     p.service_id AS service_id, 
     'closed' AS status, 
-    'TASK DESCRIPTION: ' || p.title AS description,
-    true AS is_read
+    'TASK DESCRIPTION: ' || p.title AS description
 FROM 
     promotions p
 JOIN 
@@ -988,12 +992,13 @@ VALUES (
 );
 
 -- Initial contact C1 (Assuming this is a separate promotion)
-INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, receiver_read, sender_read, sent_task)
 SELECT 
     u1.id AS sender_id,           -- John Doe (service requester)
     u2.id AS receiver_id,         -- Jane Smith (service provider)
     p.id AS promo_id, 
-    true AS read, 
+    true AS receiver_read,
+    true AS sender_read,
     true AS sent_task
 FROM 
     users u1
@@ -1006,7 +1011,7 @@ WHERE
 LIMIT 1; -- Sender (service requester)
 
 -- Task C1
-INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
+INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description)
 SELECT 
     p.id AS promo_id, 
     u2.id AS provider_id,        -- Jane Smith (service provider)
@@ -1014,8 +1019,7 @@ SELECT
     ic.id AS initial_contact_id,
     p.service_id AS service_id, 
     'closed' AS status, 
-    'TASK DESCRIPTION: ' || p.title AS description,
-    true AS is_read
+    'TASK DESCRIPTION: ' || p.title AS description
 FROM 
     promotions p
 JOIN 
