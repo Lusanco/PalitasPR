@@ -3,11 +3,12 @@
   import townsID from "../scripts/townsID";
   import servicesID from "../scripts/servicesID";
   import Button from "../components/Button.svelte";
+  import axios from "axios";
 
   let image = null;
   let town = "all";
   let towns;
-  let model = "requests";
+  let model = "Request";
 
   let button = {
     name: "Solicitar servicio",
@@ -22,8 +23,6 @@
   let title = "";
   let service_id = "";
   let description = "";
-  // let price_min = "";
-  // let price_max = "";
   let errorMessage = "";
   let selectedTowns = [];
   let townList = "";
@@ -42,6 +41,20 @@
     data.set($data);
     console.log("Data updated:", $data);
   }
+
+  axios
+    .post("/api/dashboard/request-service", {
+      title,
+      town: townList,
+      service_id,
+      description,
+    })
+    .then((response) => {
+      console.log("Response:", response);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 
   function handleTownChange(event) {
     const townId = event.target.value;
@@ -172,7 +185,7 @@
       ></label>
       <div class="flex w-full">
         <label for="imageInput" class="w-full mb-2">
-          Subir imágen
+          Subir imagen
           <input
             type="file"
             name="image"
