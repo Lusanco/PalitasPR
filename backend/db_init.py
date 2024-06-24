@@ -7,8 +7,6 @@ import os
 
 load_dotenv()
 
-print("HOLAAAAA")
-print(os.getenv("DB_URL"))
 db_url = os.getenv("DB_URL")
 
 engine = create_engine(
