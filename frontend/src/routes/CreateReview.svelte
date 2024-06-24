@@ -1,6 +1,7 @@
 <script>
   import { writable } from 'svelte/store';
   import axios from 'axios';
+  export let taskId;
 
   let description = "";
   let rating = "";
@@ -18,9 +19,10 @@
     }
 
     try {
-      const response = await axios.post('/api/reviews', {
+      const response = await axios.post('/api/reviews/', {
         description,
-        rating: numericRating
+        rating: numericRating,
+        task_id: taskId
       }, {
         headers: {
           'Content-Type': 'application/json'
