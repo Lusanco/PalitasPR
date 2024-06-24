@@ -1,10 +1,9 @@
 from flask import Blueprint, jsonify, make_response, g
-from db.db_promotion import Db_promotion
-import asyncio
+from db.db_request_towns import Db_request_towns
 from db.db_operations import DBOperations
 from db.db_user import Db_user
-from db.db_request_towns import Db_request_towns
 import aws_bucket
+import asyncio
 
 request_bp = Blueprint('request', __name__)
 

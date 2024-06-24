@@ -26,10 +26,6 @@ def user_sign_up():
     else:
         return make_response(jsonify({'message': 'Missing a required field'}), 400)
 
-# initiAl_contacts.py 
-# Db_initiAL_contacts
-# /api/initial-contact
-#
 @user_bp.route("/verify_email/<token>", methods=["GET"])
 def verify_email(token):
     if not token:

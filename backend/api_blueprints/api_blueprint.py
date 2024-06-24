@@ -4,7 +4,6 @@ from werkzeug.utils import secure_filename
 from db.db_operations import DBOperations
 from db.db_core import Db_core
 import aws_bucket
-import asyncio
 
 api_bp = Blueprint('api', __name__)
 
