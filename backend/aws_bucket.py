@@ -6,16 +6,20 @@
 '''
 import boto3
 from botocore.exceptions import ClientError
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Specify your AWS credentials and region
-aws_access_key_id = 'AKIA4MTWIBZ4HIVJ6NWI'
-aws_secret_access_key = 'GTpG38b2yUeu+VkFew+nxScVY7IVfOjyK3p43k56'
-region_name = 'us-east-2'
+aws_access_key = os.getenv("AWS_ACCESS_KEY")
+aws_secret_key = os.getenv("AWS_SECRET_KEY")
+region_name = os.getenv("AWS_BUCKET_REGION")
 
 # Initialize the S3 client
 s3_client = boto3.client('s3', 
-                        aws_access_key_id=aws_access_key_id,
-                        aws_secret_access_key=aws_secret_access_key,
+                        aws_access_key_id=aws_access_key,
+                        aws_secret_access_key=aws_secret_key,
                         region_name=region_name)
 
 def create_user_folder(user_id: str = None):

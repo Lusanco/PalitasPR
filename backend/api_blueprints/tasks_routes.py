@@ -2,8 +2,6 @@ from flask import Blueprint, jsonify, request, make_response, session, g
 from db.db_operations import DBOperations
 from flask_login import login_required, current_user
 from db.db_task import Db_task
-from db.db_promotion import Db_promotion
-from db.db_request import Db_request
 task_bp = Blueprint('tasks', __name__)
 
 @task_bp.before_request

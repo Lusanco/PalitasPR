@@ -5,15 +5,13 @@
 """
 
 from flask import Blueprint, jsonify, request, make_response, g
+from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from db.db_operations import DBOperations
 from db.db_core import Db_core
 import aws_bucket
 import asyncio
-from flask_login import (
-    login_required,
-    current_user,
-)
+
 
 my_bp = Blueprint("my", __name__)
 
@@ -121,7 +119,7 @@ def promo_request():
                     {"Promo_Towns": {"promo_id": model_id, "town_id": town_id}}
                 )
             else:
-                 response, status = DBOperations(g.db_session).new(
+                response, status = DBOperations(g.db_session).new(
                     {"Request_Towns": {"request_id": model_id, "town_id": town_id}}
                 )
             if status != 201:

@@ -1,9 +1,15 @@
 # db.py
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from contextlib import contextmanager
+import os
 
-db_url = 'postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres'
+load_dotenv()
+
+print("HOLAAAAA")
+print(os.getenv("DB_URL"))
+db_url = os.getenv("DB_URL")
 
 engine = create_engine(
     db_url,

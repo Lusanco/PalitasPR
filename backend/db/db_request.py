@@ -4,11 +4,8 @@
 '''
 from sqlalchemy import func
 from models import (
-    User,
-    Service,
-    Town,
-    Request_Towns,
-    Request,
+    User, Service, Town,
+    Request_Towns, Request,
 ) 
 
 

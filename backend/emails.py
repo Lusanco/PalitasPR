@@ -5,10 +5,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import User
 import aws_bucket
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
-engine = create_engine(
-    'postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')
+db_url = os.getenv("DB_URL")
+engine = create_engine(db_url)
+
 
 
 def load_html_template(template_path):
@@ -30,7 +34,7 @@ def send_confirm_email(email, first_name, token):
 
     # Load the HTML template
     html_template = load_html_template(
-        './email_template/email_template.html')
+        'backend/email_template/email_template.html')
 
     # Inject dynamic content into the HTML template
     html_content = html_template.replace(

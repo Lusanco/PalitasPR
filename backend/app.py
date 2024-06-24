@@ -16,6 +16,11 @@ from api_blueprints.user_routes import user_bp
 from api_blueprints.promotion_routes import promotion_bp
 from api_blueprints.tasks_routes import task_bp
 from api_blueprints.reviews_routes import review_bp
+from api_blueprints.requests_routes import request_bp
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 app = Flask(__name__, static_folder="static")
@@ -30,12 +35,12 @@ def serve(path):
         return send_from_directory(app.static_folder, "index.html")
 
 
-app.config["SECRET_KEY"] = "demo_dev_pwd"
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["SECRET_KEY"] = os.getenv("APP_SECRET_KEY")
+app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
 app.config["MAIL_PORT"] = 587
 app.config["MAIL_USE_TLS"] = True
-app.config["MAIL_USERNAME"] = "antoniofdjs@gmail.com"
-app.config["MAIL_PASSWORD"] = "syhk sijd eoli tgba"
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USER")
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PWD")
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=15)
 
 app.register_blueprint(api_bp, url_prefix="/api")
@@ -44,6 +49,7 @@ app.register_blueprint(user_bp, url_prefix="/api/user")
 app.register_blueprint(promotion_bp, url_prefix="/api/promotion")
 app.register_blueprint(task_bp, url_prefix="/api/tasks")
 app.register_blueprint(review_bp, url_prefix="/api/reviews")
+app.register_blueprint(request_bp, url_prefix="/api/request")
 
 login_manager = LoginManager(app)
 mail = Mail(app)

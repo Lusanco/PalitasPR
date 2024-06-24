@@ -3,10 +3,7 @@
     and routes from flask.
 '''
 from sqlalchemy import or_
-from models import (
-    User,
-    Task
-) 
+from models import User, Task
 
 
 class Db_task:
