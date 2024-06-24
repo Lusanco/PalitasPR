@@ -21,6 +21,7 @@
 
   const response1 = writable(null);
   const response2 = writable(null);
+  let profileID = writable("");
 
   let id;
   let currentUrl;
@@ -41,6 +42,7 @@
       .then((axiosResponse1) => {
         response.set(axiosResponse1);
         response1.set(axiosResponse1.data);
+        profileID.set($response1.results.profile_id);
         console.log(".then() Response Log: ", $response1);
         return axios.get(`/api/promotion/promo_review/${id}`);
       })
@@ -65,7 +67,7 @@
   <title>PalitasPR | Service Details</title>
 </head>
 
-{#if $response1 && $response2}
+{#if $response1 && $response2 && $profileID}
   <!-- ServiceDetails Container -->
   <div
     class="flex flex-col items-center justify-center w-full h-full min-h-screen py-20 m-auto bg-[#f1f1f1]"
@@ -182,7 +184,7 @@
             >
             <a
               use:link
-              href="/"
+              href={`/profile/${$profileID}`}
               class="md:w-1/3 btn w-full bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
               >Go To Profile</a
             >
