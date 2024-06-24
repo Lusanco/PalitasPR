@@ -16,6 +16,7 @@ from api_blueprints.user_routes import user_bp
 from api_blueprints.promotion_routes import promotion_bp
 from api_blueprints.tasks_routes import task_bp
 from api_blueprints.reviews_routes import review_bp
+from api_blueprints.requests_routes import request_bp
 
 
 app = Flask(__name__, static_folder="static")
@@ -44,6 +45,7 @@ app.register_blueprint(user_bp, url_prefix="/api/user")
 app.register_blueprint(promotion_bp, url_prefix="/api/promotion")
 app.register_blueprint(task_bp, url_prefix="/api/tasks")
 app.register_blueprint(review_bp, url_prefix="/api/reviews")
+app.register_blueprint(request_bp, url_prefix="/api/request")
 
 login_manager = LoginManager(app)
 mail = Mail(app)
