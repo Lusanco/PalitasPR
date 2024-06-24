@@ -25,7 +25,7 @@ class Db_request_towns:
         '''
         town_names = self.session.query(Town.name)\
             .join(Request_Towns, Request_Towns.town_id == Town.id)\
-            .filter(Request_Towns.promo_id == promoID)\
+            .filter(Request_Towns.request_id == promoID)\
             .all()
         if not town_names:
             return None
