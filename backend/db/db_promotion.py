@@ -6,13 +6,8 @@ from sqlalchemy.orm import joinedload
 from models import User
 from sqlalchemy import func
 from models import (
-    User,
-    Service,
-    Town,
-    Promo_Towns,
-    Promotion,
-    Review,
-    Task
+    User, Service, Town, Promo_Towns, 
+    Promotion, Review, Task
 ) 
 
 
@@ -150,5 +145,48 @@ class Db_promotion:
                 'last_name': review.reviewer.last_name
             }
             review_list.append(review_dict)
-
         return review_list
+
+    def get_all_promotions(self, town_id):
+        print(f"All promotions for town_id {town_id}")
+        query = (
+            self.session.query(
+                Promo_Towns.promo_id,
+                User.first_name,
+                User.last_name,
+                func.array_agg(Town.name),
+                Promotion.created_at,
+                Promotion.title,
+                Promotion.description,
+                Promotion.price_min,
+                Promotion.price_max,
+                Promotion.user_id,
+                Promotion.pictures,
+                Service.name
+            )
+            .select_from(Promotion)
+            .join(User, Promotion.user_id == User.id)
+            .join(Promo_Towns, Promotion.id == Promo_Towns.promo_id)
+            .join(Town, Promo_Towns.town_id == Town.id)
+            .join(Service, Promotion.service_id == Service.id)
+            .group_by(
+                Promo_Towns.promo_id,
+                User.first_name,
+                User.last_name,
+                Promotion.created_at,
+                Promotion.title,
+                Promotion.description,
+                Promotion.price_min,
+                Promotion.price_max,
+                Promotion.user_id,
+                Promotion.pictures,
+                Service.name
+            )
+            .order_by(Promo_Towns.promo_id)
+        )
+        # If a town sent, make query by towns
+        if town_id != 0:
+            query = query.filter(Town.id == town_id)
+        # '.all()' submtis the request for the query
+        rows = query.all()
+        return rows

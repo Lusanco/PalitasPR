@@ -3,12 +3,7 @@
     and routes from flask.
 '''
 from db_init import get_session
-from models import User
-from sqlalchemy import func
 from db.db_operations import DBOperations
-from models import (
-    Initial_Contact
-) 
 
 
 class Db_initial_contact:

@@ -2,14 +2,8 @@
     All related functions for Tasks class that involves the database
     and routes from flask.
 '''
-from db_init import get_session
-from models import User
-from sqlalchemy import func, or_
-from models import (
-    User,
-    Task,
-    Initial_Contact
-) 
+from sqlalchemy import or_
+from models import User, Task
 
 
 class Db_task:

@@ -18,16 +18,16 @@ class BaseModel:
     )
 
     created_at = Column(
-        DateTime(timezone=True),  # Adjusted for timezone
+        DateTime(timezone=True),
         nullable=False,
-        default=func.now()  # Use database's current timestamp function
+        default=func.now()
     )
 
     updated_at = Column(
-        DateTime(timezone=True),  # Adjusted for timezone
+        DateTime(timezone=True),
         nullable=False,
-        default=func.now(),  # Use database's current timestamp function
-        onupdate=func.now()  # Use database's current timestamp function for updates
+        default=func.now(),
+        onupdate=func.now()
     )
 
     def __init__(self, *args, **kwargs):
@@ -72,16 +72,16 @@ class BaseModelSerial:
     )
 
     created_at = Column(
-        DateTime(timezone=True),  # Adjusted for timezone
+        DateTime(timezone=True),
         nullable=False,
-        default=func.now()  # Use database's current timestamp function
+        default=func.now()
     )
 
     updated_at = Column(
-        DateTime(timezone=True),  # Adjusted for timezone
+        DateTime(timezone=True),
         nullable=False,
-        default=func.now(),  # Use database's current timestamp function
-        onupdate=func.now()  # Use database's current timestamp function for updates
+        default=func.now(),
+        onupdate=func.now()
     )
 
     def __init__(self, *args, **kwargs):

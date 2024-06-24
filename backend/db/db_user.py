@@ -4,13 +4,12 @@
 '''
 from emails import send_confirm_email
 from email_validator import validate_email, EmailNotValidError
-from db_init import get_session
-from db.db_operations import DBOperations
-import bcrypt
 from models import User, Initial_Contact, Profile, Review, Task
-from sqlalchemy import or_
+from db.db_operations import DBOperations
 from db.db_task import Db_task
+from sqlalchemy import or_
 import aws_bucket
+import bcrypt
 
 
 class Db_user:
@@ -56,14 +55,16 @@ class Db_user:
         """
         import secrets
 
+        keys=['phone', 'first_name', 'last_name', 'password', 'email']
         email = data["email"]
         first_name = data["first_name"]
         last_name = data["last_name"]
         password = data["password"]
+        phone = data['phone']
 
-        if not (email and first_name and last_name and password):
-            print("error: Missing required fields.")
-            return {"error": "Missing a required field"}, 400
+        for key in keys:
+            if key not in keys:
+                return {"error": "Missing a required field"}, 400
 
         try:
             validate_email(email)
@@ -88,6 +89,7 @@ class Db_user:
             "first_name": first_name,
             "last_name": last_name,
             "verification_token": verification_token,
+            'phone': phone
         }
         response, status = DBOperations(self.session).new({"User": dict_of_user})
         if status != 201:
@@ -128,6 +130,7 @@ class Db_user:
                 contact_dict['sender_first_name'] = sender.first_name
                 contact_dict['sender_last_name'] = sender.last_name
                 contact_dict['sender_email']= sender.email
+                contact_dict['phone'] = sender.phone
                 contact_dict.pop('receiver_id')
                 received_contacts.append(contact_dict)
             else: # sent_contacts: User is sender, we need receiver_info
@@ -135,6 +138,7 @@ class Db_user:
                 contact_dict['receiver_first_name'] = receiver.first_name
                 contact_dict['receiver_last_name'] = receiver.last_name
                 contact_dict['receiver_email']= receiver.email
+                contact_dict['phone'] = receiver.phone
                 contact_dict.pop('sender_id')
                 sent_contacts.append(contact_dict)
 

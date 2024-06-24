@@ -134,6 +134,18 @@
       backButton();
       return;
     }
+    if (button.misc["App Location"] === "Tasks") {
+      axiosLogic();
+      function reloadTasks() {
+        if (window.location.pathname === "/tasks") {
+          window.location.reload();
+        } else {
+          window.location.href = "/tasks";
+        }
+      }
+      reloadTasks();
+      return;
+    }
     axiosLogic();
   }
 </script>

@@ -9,31 +9,12 @@
     4) etc...
 
 '''
-from email_validator import validate_email, EmailNotValidError
-from db_init import get_session
 from db.db_promotion import Db_promotion
 from db.db_request import Db_request
-from models import User
-from sqlalchemy.exc import SQLAlchemyError
-import asyncio
-from sqlalchemy.dialects.postgresql import to_tsquery
-from sqlalchemy import func
 from sqlalchemy import func
 from unidecode import unidecode
-from aws_bucket import create_model_folder
-from db_init import get_session
-from models import (
-    User,
-    Service,
-    Town,
-    Promo_Towns,
-    Review,
-    Task,
-    Promotion,
-    Request,
-    Request_Towns,
-    Promotion,
-) 
+from models import Service
+import asyncio
 
 
 class Db_core:
@@ -60,70 +41,107 @@ class Db_core:
 
         if model is None and service is None:
             return {'error':'model or service missing'}, 400
+
         if service == None or service == '':
-            return {'error':'service name empty'}, 400
+            if model == 'promotions':
+                rows = Db_promotion(self.session).get_all_promotions(town_id)
+            else:
+                rows = Db_request(self.session).get_all_requests(town_id)
+            service_name = None
+        else: # With service specific to find
+            service_name = unidecode(service).lower() # Normalize text
+            tsquery = func.to_tsquery('english', f'{service_name}:*')
+            # Find service using full-text search
+            service_obj = (
+                self.session.query(Service)
+                .filter(Service.tsv.op('@@')(tsquery))
+                .all()
+            )
 
-        service_name = unidecode(service).lower() # Normalize text
-        tsquery = func.to_tsquery('english', f'{service_name}:*')
-         # Find service using full-text search
-        service_obj = (
-            self.session.query(Service)
-            .filter(Service.tsv.op('@@')(tsquery))
-            .all()
-        )
+            # Testing here, best match search
+            print('My services: ')
+            print(len(service_obj))
+            if len(service_obj) > 0:
+                for service in service_obj:
+                    print(f'{service.name}')
+                service_obj = service_obj[0]
+            if not service_obj:
+                return {'error': f'No service found with name: {service_name}'}, 404 
 
-        # Testing here, best match search
-        print('My services: ')
-        print(len(service_obj))
-        if len(service_obj) > 0:
-            for service in service_obj:
-                print(f'{service.name}')
-            service_obj = service_obj[0]
-        if not service_obj:
-            return {'error': f'No service found with name: {service_name}'}, 404 
-
-        my_service_id = service_obj.id
-        service_name = service_obj.name
-        if model == "promotions":
-            rows = Db_promotion(self.session).get_promos_byTowns(my_service_id, town_id)
-        if model == "requests":
-            rows = Db_request(self.session).get_requests_byTowns(my_service_id, town_id)
+            my_service_id = service_obj.id
+            service_name = service_obj.name
+            if model == "promotions":
+                rows = Db_promotion(self.session).get_promos_byTowns(my_service_id, town_id)
+            if model == "requests":
+                rows = Db_request(self.session).get_requests_byTowns(my_service_id, town_id)
 
         list_of_models = []
 
         # append dicts of models to list_of_models based on query results
         for row in rows:
-            if model == "promotions":
-                model_dict = {
-                    "promo_id": str(row.promo_id),
-                    'user_id': row.user_id,
-                    "service": service_name,
-                    "title": row.title,
-                    "description": row.description,
-                    "price_min": row.price_min,
-                    "price_max": row.price_max,
-                    "first_name": row.first_name,
-                    "last_name": row.last_name,
-                    "towns": row[3],
-                    "created_at": row.created_at.strftime("%Y-%m-%d"),
-                    'pictures': row.pictures
-                }
-                list_of_models.append(model_dict)
-            else: # Requests dict...
-                model_dict = {
-                    "request_id": str(row.request_id),
-                    'user_id': row.user_id,
-                    "service": service_name,
-                    "title": row.title,
-                    "description": row.description,
-                    "first_name": row.first_name,
-                    "last_name": row.last_name,
-                    "towns": row[3],
-                    "created_at": row.created_at.strftime("%Y-%m-%d"),
-                    'pictures': row.pictures
-                }
-                list_of_models.append(model_dict)
-
+            if service_name: # doing a specific service ------------------------------
+                if model == "promotions":
+                    model_dict = {
+                        "promo_id": str(row.promo_id),
+                        'user_id': row.user_id,
+                        "service": service_name,
+                        "title": row.title,
+                        "description": row.description,
+                        "price_min": row.price_min,
+                        "price_max": row.price_max,
+                        "first_name": row.first_name,
+                        "last_name": row.last_name,
+                        "towns": row[3],
+                        "created_at": row.created_at.strftime("%Y-%m-%d"),
+                        'pictures': row.pictures
+                    }
+                    list_of_models.append(model_dict)
+                else: # Requests dict...
+                    model_dict = {
+                        "request_id": str(row.request_id),
+                        'user_id': row.user_id,
+                        "service": service_name,
+                        "title": row.title,
+                        "description": row.description,
+                        "first_name": row.first_name,
+                        "last_name": row.last_name,
+                        "towns": row[3],
+                        "created_at": row.created_at.strftime("%Y-%m-%d"),
+                        'pictures': row.pictures
+                    }
+                    list_of_models.append(model_dict)
+            else: # no specific service---------------------------------------------
+                if model == "promotions":
+                    model_dict = {
+                        "promo_id": str(row.promo_id),
+                        'user_id': row.user_id,
+                        "service": row.name, # Service name
+                        "title": row.title,
+                        "description": row.description,
+                        "price_min": row.price_min,
+                        "price_max": row.price_max,
+                        "first_name": row.first_name,
+                        "last_name": row.last_name,
+                        "towns": row[3],
+                        "created_at": row.created_at.strftime("%Y-%m-%d"),
+                        'pictures': row.pictures
+                    }
+                    list_of_models.append(model_dict)
+                else: # Requests dict...
+                    model_dict = {
+                        "request_id": str(row.request_id),
+                        'user_id': row.user_id,
+                        "service": row.name, #Service name
+                        "title": row.title,
+                        "description": row.description,
+                        "first_name": row.first_name,
+                        "last_name": row.last_name,
+                        "towns": row[3],
+                        "created_at": row.created_at.strftime("%Y-%m-%d"),
+                        'pictures': row.pictures
+                    }
+                    list_of_models.append(model_dict)
+            # ------------------------------------------------------------------------------
         return {'results': list_of_models}, 200
 
     async def dashboard_get_promos_requests(self, user_id):

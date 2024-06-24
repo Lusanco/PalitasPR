@@ -10,12 +10,12 @@
 
   let image = null;
   let button = {
-    name: "Send Initial Contact",
+    name: "Send Contact",
     method: "POST",
     url: "/api/initial-contact",
     headers: "application/json",
     twcss:
-      "w-1/2 btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
+      "md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
     misc: { "App Location": "Service Details" },
   };
 
@@ -72,11 +72,11 @@
   >
     <!-- ServiceDetails Flex Wrap -->
     <div
-      class="flex flex-wrap items-center justify-center w-full m-auto md:max-w-6xl"
+      class="flex flex-wrap items-center justify-center w-full h-full m-auto bg-white md:max-w-6xl join min-h-96"
     >
       <!-- ServiceDetails Left -->
       <div
-        class="h-full gap-1 p-4 rounded-none card md:border-r-2 min-h-96 md:border-[#cc2936] basis-full md:w-fit md:basis-1/2 bg-white"
+        class="h-full gap-1 p-4 element overflow-y-auto rounded-none card md:border-r-2 min-h-96 md:border-[#cc2936] basis-full md:w-fit md:basis-1/2 bg-white"
       >
         <br />
         <h1 class="self-center text-3xl card-title text-[#1f1f1f]">
@@ -86,11 +86,13 @@
         <div
           class="flex flex-col overflow-hidden overflow-y-scroll min-h-96 h-96 element text-[#1f1f1f]"
         >
-          {#if !$response1.results.pictures}
-            <div class="self-center w-full h-40 rounded-none skeleton"></div>
+          {#if $response1.results.pictures === "" || null || []}
+            <div
+              class="self-center w-full h-40 rounded-none skeleton min-h-40"
+            ></div>
           {:else}
             <div
-              class="self-center object-cover w-full h-40 rounded-none max-h-40"
+              class="self-center object-cover w-full h-40 rounded-none max-h-40 min-h-40"
             >
               <img
                 class="self-center object-cover w-full h-40 rounded-none max-h-40"
@@ -99,11 +101,18 @@
               />
             </div>
           {/if}
-          <h2>
-            {$response1.results.first_name}
-            {$response1.results.last_name}
-          </h2>
-          <h3>{Object.keys(servicesID)[$response1.results.service_id]}</h3>
+          <br />
+          <div class="flex flex-wrap justify-between">
+            <span>
+              {$response1.results.first_name}
+              {$response1.results.last_name}
+            </span>
+            <span>{Object.keys(servicesID)[$response1.results.service_id]}</span
+            >
+          </div>
+          <hr class="border-[#cc2936]" />
+          <br />
+          <div>Pueblos Disponibles: Lista de Pueblos</div>
           <hr class="border-[#cc2936]" />
           <br />
           <p class="self-center w-full text-justify min-h-40">
@@ -122,7 +131,7 @@
         <br />
 
         <div
-          class="flex flex-col gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96"
+          class="flex flex-col gap-2 overflow-hidden overflow-y-scroll element min-h-96 h-96"
         >
           {#if $response2.results === null}
             <div
@@ -149,33 +158,39 @@
                 </div>
                 <div class="flex justify-between gap-2 mt-8 text-[#1f1f1f]">
                   <div>{review.created_at}</div>
-                  <button
+                  <!-- <button
                     class="absolute btn right-4 bottom-4 bg-[#cc2936] text-white hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
                     >Images</button
-                  >
+                  > -->
                 </div>
               </div>
             {/each}
           {/if}
         </div>
+        <!-- Flex Wrap -->
+        <div
+          class="flex items-center justify-center w-full bg-white h-fit md:max-w-6xl"
+        >
+          <div
+            class="flex flex-col items-center justify-center w-10/12 gap-4 mx-4 bg-white md:flex-row md:w-11/12 md:max-w-6xl"
+          >
+            <a
+              use:link
+              href="/"
+              class="md:w-1/3 btn w-full bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
+              >Back To Search</a
+            >
+            <a
+              use:link
+              href="/"
+              class="md:w-1/3 btn w-full bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
+              >Go To Profile</a
+            >
+            <Button {image} {button} />
+          </div>
+        </div>
       </div>
       <!-- Right -->
-    </div>
-    <!-- Flex Wrap -->
-    <div
-      class="flex items-center justify-center w-full h-20 bg-white md:max-w-6xl"
-    >
-      <div
-        class="flex items-center justify-center w-10/12 gap-4 mx-4 bg-white md:w-11/12 md:max-w-6xl"
-      >
-        <a
-          use:link
-          href="/"
-          class="w-1/2 btn bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
-          >Back To Search</a
-        >
-        <Button {image} {button} />
-      </div>
     </div>
   </div>
   <!-- Container -->

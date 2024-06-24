@@ -9,10 +9,11 @@
   let response1 = writable(null);
   let response2 = writable(null);
   let response3 = writable([]);
+  let images = writable([]);
+  let profilePic = writable("");
+  let coverPic = writable("");
 
   onMount(() => {
-    console.log("Before axios");
-
     axios
       .get("/api/user/logout")
       .then((axiosResponse) => {
@@ -20,21 +21,21 @@
         return axios.get("/api/user/login?af1=jd123@gmail.com&af2=pwd1");
       })
       .then((axiosResponse) => {
-        response.set(axiosResponse);
-        response1.set(axiosResponse.data);
-        console.log(".then() Login Log: ", $response1);
+        console.log(".then() Login Log: ", axiosResponse);
         return axios.get("/api/user/my-profile");
       })
       .then((axiosResponse2) => {
-        response.set(axiosResponse2);
         response2.set(axiosResponse2.data);
-        console.log(".then() Response 2 Log: ", $response2);
-        return axios.get("/api/dashboard/promotion-request");
-      })
-      .then((axiosResponse3) => {
-        response.set(axiosResponse3);
-        response3.set(axiosResponse3.data.results[0] || []);
-        console.log(".then() Response 3 Log: ", $response3);
+        console.log(".then() Response 2 Log: ", axiosResponse2);
+
+        let galleryImages = axiosResponse2.data.results.gallery;
+        if (typeof galleryImages === "string") {
+          galleryImages = [galleryImages];
+        }
+        images.set(galleryImages);
+
+        profilePic.set(axiosResponse2.data.results.profile_pic);
+        coverPic.set(axiosResponse2.data.results.cover_pic);
       })
       .catch((axiosError) => {
         console.log(".catch() Error Log: ", axiosError);
@@ -49,38 +50,50 @@
 {#if $response2}
   <!-- Profile Container -->
   <div class="flex flex-col items-center min-h-screen">
-    <div class="flex w-screen max-w-6xl mx-auto bg-[#f1f1f1]">
+    <div class="flex w-screen max-w-6xl mx-auto bg-white">
       <!-- Upper Half -->
       <div class="w-screen border-x-0 border-t-0 border-b-2 border-[#cc2936]">
         <!-- Profile Cover -->
         <div
           class="flex border-[#cc2936] border-b-2 border-x-0 border-t-0 w-screen max-w-6xl mx-auto rounded-none h-60 max-h-96 skeleton"
-        ></div>
+        >
+          <img
+            src={$coverPic}
+            alt="Banner"
+            class="object-cover w-full h-full"
+          />
+        </div>
         <!-- Profile Container -->
-        <div class="flex flex-col items-center w-full pb-4 bg-[#f1f1f1]">
+        <div class="flex flex-col items-center w-full pb-4 bg-white">
           <!-- Profile Picture -->
           <div
             class="w-40 border-[#cc2936] border-2 h-40 -mt-20 rounded-full skeleton"
-          ></div>
+          >
+            <img
+              src={$profilePic}
+              alt="Profile Pic"
+              class="w-full h-full bg-cover rounded-full"
+            />
+          </div>
           <h1 class="py-2 text-xl font-semibold text-[#1f1f1f]">
             {`${$response2.results.first_name} ${$response2.results.last_name}`}
           </h1>
         </div>
         <!-- Profile Details -->
         <div
-          class="flex flex-wrap p-4 mt-4 rounded-none md:-mt-24 bg-[#f1f1f1] md:bg-transparent"
+          class="flex flex-wrap p-4 mt-4 bg-white rounded-none md:-mt-24 md:bg-transparent"
         >
           <div class="flex flex-wrap justify-between w-full px-4">
             <span class="w-full text-center md:text-left md:w-fit"
               >{$response2.results.job_title}</span
             >
-            <span class="w-full text-center md:w-fit md:text-right">
+            <!-- <span class="w-full text-center md:w-fit md:text-right">
               Placeholder, PR
-            </span>
+            </span> -->
           </div>
           <div class="flex flex-wrap justify-between w-full px-4">
             <span class="w-full text-center md:text-left md:w-fit"
-              >Completed: {$response2.results.tasks_completed}
+              >Completado: {$response2.results.tasks_completed}
               {$response2.results.tasks_completed === 1
                 ? "Palita"
                 : "Palitas"}</span
@@ -92,7 +105,7 @@
         </div>
 
         <!-- Description -->
-        <div class="rounded-none card bg-[#f1f1f1]">
+        <div class="bg-white rounded-none card">
           <p
             class="h-full text-justify line-clamp-none overflow-ellipsis card-body"
           >
@@ -105,59 +118,67 @@
     </div>
     <br />
     <!-- Bottom Half -->
-    <div class="flex flex-wrap w-full h-full max-w-6xl bg-[#f1f1f1]">
+    <div class="flex flex-wrap w-full h-full max-w-6xl bg-white rounded-md">
       <!-- Leftmost -->
       <div class="w-full min-h-20 md:w-2/3">
         <!-- Services -->
         <div
-          class="flex flex-col h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2"
+          class="flex flex-col w-full h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:basis-1/2"
         >
-          <h1 class="self-center text-3xl text-[#1f1f1f] card-title">
-            Services
+          <h1 class="font-semibold text-3xl text-[#1f1f1f] card-title">
+            Servicios
           </h1>
           <br />
 
           <div
-            class="flex flex-col gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96 element"
+            class="flex flex-col w-full gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96 element"
           >
-            {#each $response3 as service}
-              <!-- New Card Start -->
-              <a
-                use:link
-                href={service.promo_id
-                  ? `/service-details/${service.promo_id}`
-                  : `/request-details/${service.request_id}`}
-                class="w-full h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-[#f1f1f1] active:scale-95 border-b-4 border-[#cc2936]"
+            {#if $response3.length === 0}
+              <div
+                class="font-bold text-xl flex flex-col justify-center items-center text-[#cc2936] text-center h-full w-full"
               >
-                <div class="w-1/2 h-40 p-0 px-2 md:w-1/4 md:card-body">
-                  <div
-                    class="flex flex-col justify-center h-full my-auto text-left"
-                  >
-                    <h2
-                      class="md:text-lg overflow-ellipsis line-clamp-1 md:truncate"
+                Aún no ha publicado servicios.
+              </div>
+            {:else}
+              {#each $response3 as service}
+                <!-- New Card Start -->
+                <a
+                  use:link
+                  href={service.promo_id
+                    ? `/service-details/${service.promo_id}`
+                    : `/request-details/${service.request_id}`}
+                  class="w-full h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-white active:scale-95 border-b-4 border-[#cc2936]"
+                >
+                  <div class="w-1/2 h-40 p-0 px-2 md:w-1/4 md:card-body">
+                    <div
+                      class="flex flex-col justify-center h-full my-auto text-left"
                     >
-                      {service.title}
-                    </h2>
-                    <p
-                      class="text-sm md:-mt-2 overflow-ellipsis line-clamp-1 md:truncate"
-                    >
-                      {service.first_name}
-                      {service.last_name}
-                    </p>
-                    <h3 class="hidden text-lg md:block">Published</h3>
-                    <p class="text-sm md:-mt-2">{service.created_at}</p>
+                      <h2
+                        class="md:text-lg overflow-ellipsis line-clamp-1 md:truncate"
+                      >
+                        {service.title}
+                      </h2>
+                      <p
+                        class="text-sm md:-mt-2 overflow-ellipsis line-clamp-1 md:truncate"
+                      >
+                        {service.first_name}
+                        {service.last_name}
+                      </p>
+                      <h3 class="hidden text-lg md:block">Published</h3>
+                      <p class="text-sm md:-mt-2">{service.created_at}</p>
+                    </div>
                   </div>
-                </div>
-                <div class="w-1/2 h-40 p-2 md:w-2/4 md:card-body">
-                  <p
-                    class="h-full text-sm text-justify md:text-base line-clamp-4 overflow-ellipsis"
-                  >
-                    {service.description}
-                  </p>
-                </div>
-              </a>
-              <!-- New Card End -->
-            {/each}
+                  <div class="w-1/2 h-40 p-2 md:w-2/4 md:card-body">
+                    <p
+                      class="h-full text-sm text-justify md:text-base line-clamp-4 overflow-ellipsis"
+                    >
+                      {service.description}
+                    </p>
+                  </div>
+                </a>
+                <!-- New Card End -->
+              {/each}
+            {/if}
           </div>
         </div>
       </div>
@@ -165,20 +186,22 @@
       <div class="w-full min-h-20 md:w-1/3">
         <!-- Gallery -->
         <div
-          class="flex flex-col h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2 bg-[#f1f1f1]"
+          class="flex flex-col h-full gap-1 p-4 bg-white rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2"
         >
           <h1 class="self-center text-3xl text-[#1f1f1f] card-title">
-            Gallery
+            Galería
           </h1>
           <br />
 
           <div
             class="flex flex-wrap justify-center gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96 element"
           >
-            {#each [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as image}
+            {#each $images as image}
               <div
                 class="rounded-none min-w-72 min-h-36 max-w-72 max-h-36 skeleton"
-              ></div>
+              >
+                <img src={image} alt="Gallery Pic" />
+              </div>
             {/each}
           </div>
         </div>

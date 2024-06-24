@@ -13,11 +13,12 @@
   let password;
   let confirmPassword;
   let email;
+  let phone;
   let af1 = null;
   let af2 = null;
   let errorMessage;
   let button = {
-    name: "Signup",
+    name: "Crear cuenta",
     method: "POST",
     url: "/api/user/signup",
     headers: "application/json",
@@ -32,8 +33,21 @@
       first_name,
       last_name,
       email,
+      phone,
       password,
     };
+  }
+
+  // Function to validate the password fields
+  function validatePasswords() {
+    if (password !== confirmPassword) {
+      errorMessage = "Las contraseñas no coinciden.";
+      password = null;
+      confirmPassword = null;
+    } else {
+      password = password;
+      confirmPassword = confirmPassword;
+    }
   }
 
   data.set($data);
@@ -52,15 +66,26 @@
     }
   }
 
-  // Function to validate passwords
-  function validatePasswords() {
-    if (password !== confirmPassword) {
-      password = null;
-      confirmPassword = null;
-      errorMessage = "Passwords do not match!";
-    } else {
-      errorMessage = ""; // Clear error message if passwords match
+  // Function to handle the phone number input
+  function handlePhoneNum(event) {
+    let input = event.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+
+    if (input.length > 10) {
+      input = input.slice(0, 10); // Restrict length to 10 digits
     }
+
+    let formattedValue = "";
+    if (input.length > 0) {
+      formattedValue += input.substring(0, 3);
+    }
+    if (input.length > 3) {
+      formattedValue += "-" + input.substring(3, 6);
+    }
+    if (input.length > 6) {
+      formattedValue += "-" + input.substring(6, 10);
+    }
+
+    phone = formattedValue;
   }
 
   // Reactive statement to update button store when misc store changes
@@ -96,42 +121,53 @@
 >
   <div class="flex flex-col max-w-sm gap-4 px-1">
     <div class="text-center">
-      <h1 class="text-4xl font-bold text-[#1f1f1f]">Signup</h1>
-      <p class="text-sm text-[#cc2936]">Signup to create your account</p>
+      <h1 class="text-4xl font-bold text-[#1f1f1f]">Crear cuenta</h1>
+      <p class="text-sm text-[#cc2936]">Crea tu cuenta</p>
       <br />
     </div>
-    <label class="flex items-center gap-2 bg-white input input-bordered">
-      <p class="text-center w-14">First</p>
+    <label class="flex items-center gap-5 bg-white input input-bordered">
+      <p class="text-center w-14">Nombre</p>
       <input
         bind:value={first_name}
         on:keydown={handleKeydown}
         type="text"
         class="border-none focus:ring-0 grow text-[#cc2936]"
-        placeholder="John"
+        placeholder="Juan"
       />
     </label>
-    <label class="flex items-center gap-2 bg-white input input-bordered">
-      <p class="text-center w-14">Last</p>
+    <label class="flex items-center gap-5 bg-white input input-bordered">
+      <p class="text-center w-14">Apellido</p>
       <input
         bind:value={last_name}
         on:keydown={handleKeydown}
         type="text"
         class="border-none focus:ring-0 grow text-[#cc2936]"
-        placeholder="Doe"
+        placeholder="del Pueblo"
       />
     </label>
-    <label class="flex items-center gap-2 bg-white input input-bordered">
-      <p class="text-center w-14">Email</p>
+    <label class="flex items-center gap-5 bg-white input input-bordered">
+      <p class=" w-14">Correo</p>
       <input
         bind:value={email}
         on:keydown={handleKeydown}
         type="email"
         class="border-none focus:ring-0 grow text-[#cc2936]"
-        placeholder="user@email.com"
+        placeholder="juandpueblo@email.com"
       />
     </label>
-    <label class="flex items-center gap-2 bg-white input input-bordered">
-      <p class="text-center w-14">Password</p>
+    <label class="flex items-center gap-5 bg-white input input-bordered">
+      <p class="text-center w-14">Teléfono</p>
+      <input
+        bind:value={phone}
+        on:input={handlePhoneNum}
+        on:keydown={handleKeydown}
+        type="tel"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
+        placeholder="787-555-5555"
+      />
+    </label>
+    <label class="flex items-center gap-5 bg-white input input-bordered">
+      <p class="text-center w-14">Contraseña</p>
       <input
         bind:value={password}
         on:keydown={handleKeydown}
@@ -140,8 +176,8 @@
         placeholder="********"
       />
     </label>
-    <label class="flex items-center gap-2 bg-white input input-bordered">
-      <p class="text-center w-14">Confirm</p>
+    <label class="flex items-center gap-5 bg-white input input-bordered">
+      <p class="text-center w-14">Confirmar</p>
       <input
         bind:value={confirmPassword}
         on:keydown={handleKeydown}
@@ -151,13 +187,15 @@
       />
     </label>
 
-    <Button bind:this={buttonRef} {image} {button}></Button>
+    <Button on:click={validatePasswords} bind:this={buttonRef} {image} {button}
+    ></Button>
     <p class="pr-2 -mt-4 text-right">
-      Have an account? <a
+      ¿Ya tienes una cuenta? <a
         use:link
         class="link link-hover text-[#cc2936]"
         rel="noopener noreferrer"
-        href="/login">Login</a>
+        href="/login">Iniciar sesión</a
+      >.
     </p>
     {#if errorMessage}
       <div class="text-center text-red-500">{errorMessage}</div>
@@ -168,7 +206,7 @@
       <Loading />
     {:else if $state.error}
       <div class="w-full mx-auto font-bold text-center text-stone-600">
-        Incorrect email or password, try again.
+        Correo o contraseña incorrectos. Por favor, intenta de nuevo.
       </div>
     {/if}
   </div>

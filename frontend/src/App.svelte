@@ -33,6 +33,14 @@
   import Privacy from "./routes/Privacy.svelte";
   import Test from "./routes/TEST.svelte";
   import InitialContactSuccess from "./routes/InitialContactSuccess.svelte";
+
+  // Agreement Routes
+  import Agreement from "./routes/Agreement.svelte";
+  import AgreementReview from "./routes/AgreementReview.svelte";
+  import Pass from "./routes/Pass.svelte";
+  import NotPass from "./routes/NotPass.svelte";
+  import Tasks from "./routes/Tasks.svelte";
+  import CreateReview from "./routes/CreateReview.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -53,7 +61,7 @@
       <Route path="/request-details/:id" component={RequestDetails} />
       <Route path="/manage-services" component={ManageServices} />
       <Route path="/manage-requests" component={ManageRequests} />
-      <Route path="/profile" component={Profile} />
+      <Route path="/profile/:id" component={Profile} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/faq" component={Faq} />
@@ -64,10 +72,18 @@
         path="/initial-contact-success"
         component={InitialContactSuccess}
       />
+      <Route path="/tasks" component={Tasks} />
+      <Route path="/create-review/:id" component={CreateReview} />
+
+      <!--! 404 / Not found -->
       <Route path="*" component={NotFound} />
 
-      <!-- Test Route -->
-      <Route path="/test" component={Test} />
+      <!-- For development purposes only: Test Dev -->
+      <!-- <Route path="/test" component={Test} /> -->
+      <!-- For development purposes only: Login Hack -->
+      <Route path="/pass" component={Pass} />
+      <!-- For development purposes only: Logout Hack -->
+      <Route path="/logout" component={NotPass} />
     </Router>
   </Main>
   <Footer />

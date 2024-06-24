@@ -23,6 +23,7 @@ CREATE TABLE users (
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(50),
     verified BOOLEAN DEFAULT false,
     verification_token VARCHAR(128) UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -73,13 +74,27 @@ CREATE TABLE promotions (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
 
+-- Create table for public requests of services
+CREATE TABLE requests (
+    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
+    user_id varchar REFERENCES users(id) NOT NULL,
+    service_id INT REFERENCES services(id) NOT NULL,
+    title VARCHAR(100) not NULL,
+    description Text NOT NULL,
+    pictures varchar(255),
+    created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+
 -- Create table for Initial Contacts
 CREATE Table initial_contacts (
         id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
         sender_id varchar(50) REFERENCES users(id) NOT NULL,
         receiver_id varchar(50) REFERENCES users(id) NOT NULL,
-        promo_id varchar(50) References promotions(id) ON DELETE CASCADE NOT NULL,
-        read BOOLEAN DEFAULT False,
+        promo_id varchar(50) References promotions(id) ON DELETE CASCADE,
+        request_id varchar(50) References requests(id) ON DELETE CASCADE,
+        receiver_read BOOLEAN DEFAULT False,
+        sender_read BOOLEAN DEFAULT False,
         sent_task BOOLEAN DEFAULT False,
         created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -88,15 +103,16 @@ CREATE Table initial_contacts (
 -- Create table for tasks
 CREATE TABLE tasks (
     id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
-	promo_id varchar(50) References promotions(id) ON DELETE CASCADE NOT NULL,
+	promo_id varchar(50) References promotions(id) ON DELETE CASCADE,
+    request_id varchar(50) References requests(id) ON DELETE CASCADE,
     provider_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     receiver_id varchar(50) REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     initial_contact_id varchar(50) REFERENCES initial_contacts(id) ON DELETE CASCADE NOT NULL,
     receiver_confirm BOOLEAN,
-    is_read BOOLEAN DEFAULT False,
     service_id INT REFERENCES services(id) ON DELETE CASCADE NOT NULL,
     description Text NOT NULL,
     status VARCHAR(10) DEFAULT 'pending' CHECK(status in ('open', 'closed', 'pending')),
+    price INT DEFAULT 120,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -120,17 +136,6 @@ CREATE TABLE towns (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create table for public requests of services
-CREATE TABLE requests (
-    id VARCHAR(50) PRIMARY KEY DEFAULT gen_random_uuid()::VARCHAR(50),
-    user_id varchar REFERENCES users(id) NOT NULL,
-    service_id INT REFERENCES services(id) NOT NULL,
-    title VARCHAR(100) not NULL,
-    description Text NOT NULL,
-    pictures varchar(255),
-    created_at TIMESTAMP  WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    );
 
 -- Create table for promo/towns assoc
 CREATE TABLE promo_towns (
@@ -166,38 +171,38 @@ CREATE TABLE profiles (
 );
 
 -- Insert sample data into users table with simulated email addresses
-INSERT INTO users (id, first_name, last_name, email, password, verified)
+INSERT INTO users (id, first_name, last_name, email, password, verified, phone)
 VALUES
-    (gen_random_uuid(), 'John', 'Doe', 'jd123@gmail.com', crypt('pwd1', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Jane', 'Smith', 'jane006@gmail.com', crypt('pwd1', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Luis', 'Santiago', 'bestbeast@gmail.com', crypt('pwd3', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Hector', 'Torres', 'hector.torres@gmail.com', crypt('pwd4', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Angelica', 'Diaz', 'angelicadiaz09@gmail.com', crypt('pwd5', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Erick', 'Santiago', 'ericksan_san@gmail.com', crypt('pwd6', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Maria', 'Garcia', 'maria1990@gmail.com', crypt('pwd7', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Carlos', 'Martinez', 'carlos.martinez@gmail.com', crypt('pwd8', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Sofia', 'Rodriguez', 'sofia.rodri@gmail.com', crypt('pwd9', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Daniel', 'Lopez', 'daniellopezPR@gmail.com', crypt('pwd10', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Laura', 'Hernandez', 'lauritaPR@gmail.com', crypt('pwd11', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Pedro', 'Gonzalez', 'pedro.gonzalez@gmail.com', crypt('pwd12', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Ana', 'Perez', 'ana.perez@gmail.com', crypt('pwd13', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Javier', 'Sanchez', 'javier.sanchez@gmail.com', crypt('pwd14', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Marta', 'Lopez', 'marta.lopez@gmail.com', crypt('pwd15', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Gabriel', 'Rivera', 'gabriel.rivera@gmail.com', crypt('pwd16', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Veronica', 'Gomez', 'veronica.gomez@gmail.com', crypt('pwd17', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Miguel', 'Diaz', 'miguel.diaz@gmail.com', crypt('pwd18', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Julia', 'Fernandez', 'julia.fernandez@gmail.com', crypt('pwd19', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Roberto', 'Ramirez', 'roberto.ramirez@gmail.com', crypt('pwd20', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Alice', 'Brown', 'alice.brown@outlook.com', crypt('pwd21', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'David', 'Wilson', 'david.wilson@outlook.com', crypt('pwd22', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Emma', 'Jones', 'emma.jones@outlook.com', crypt('pwd23', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'James', 'Taylor', 'james.taylor@outlook.com', crypt('pwd24', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Olivia', 'Davis', 'olivia787@outlook.com', crypt('pwd25', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Michael', 'Evans', 'michael_office@outlook.com', crypt('pwd26', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Sophia', 'Clark', 'sophia.clark@outlook.com', crypt('pwd27', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Alexander', 'Thomas', 'alexander.thomas@outlook.com', crypt('pwd28', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Ava', 'White', 'ava.white@outlook.com', crypt('pwd29', gen_salt('bf', 12)), true),
-    (gen_random_uuid(), 'Matthew', 'Walker', 'matthew.walker@outlook.com', crypt('pwd30', gen_salt('bf', 12)), true);
+    (gen_random_uuid(), 'John', 'Doe', 'jd123@gmail.com', crypt('pwd1', gen_salt('bf', 12)), true, '787-555-9999'),
+    (gen_random_uuid(), 'Jane', 'Smith', 'jane006@gmail.com', crypt('pwd1', gen_salt('bf', 12)), true, '787-191-0000'),
+    (gen_random_uuid(), 'Luis', 'Santiago', 'bestbeast@gmail.com', crypt('pwd3', gen_salt('bf', 12)), true, '787-000-6032'),
+    (gen_random_uuid(), 'Hector', 'Torres', 'hector.torres@gmail.com', crypt('pwd4', gen_salt('bf', 12)), true, '787-435-1111'),
+    (gen_random_uuid(), 'Angelica', 'Diaz', 'angelicadiaz09@gmail.com', crypt('pwd5', gen_salt('bf', 12)), true, '787-404-6000'),
+    (gen_random_uuid(), 'Erick', 'Santiago', 'ericksan_san@gmail.com', crypt('pwd6', gen_salt('bf', 12)), true, '787-123-1012'),
+    (gen_random_uuid(), 'Maria', 'Garcia', 'maria1990@gmail.com', crypt('pwd7', gen_salt('bf', 12)), true, '787-590-4040'),
+    (gen_random_uuid(), 'Carlos', 'Martinez', 'carlos.martinez@gmail.com', crypt('pwd8', gen_salt('bf', 12)), true, '787-566-9239'),
+    (gen_random_uuid(), 'Sofia', 'Rodriguez', 'sofia.rodri@gmail.com', crypt('pwd9', gen_salt('bf', 12)), true, '787-004-0234'),
+    (gen_random_uuid(), 'Daniel', 'Lopez', 'daniellopezPR@gmail.com', crypt('pwd10', gen_salt('bf', 12)), true, '787-005-0134'),
+    (gen_random_uuid(), 'Laura', 'Hernandez', 'lauritaPR@gmail.com', crypt('pwd11', gen_salt('bf', 12)), true, '787-005-0231'),
+    (gen_random_uuid(), 'Pedro', 'Gonzalez', 'pedro.gonzalez@gmail.com', crypt('pwd12', gen_salt('bf', 12)), true, '787-008-0334'),
+    (gen_random_uuid(), 'Ana', 'Perez', 'ana.perez@gmail.com', crypt('pwd13', gen_salt('bf', 12)), true, '787-011-0224'),
+    (gen_random_uuid(), 'Javier', 'Sanchez', 'javier.sanchez@gmail.com', crypt('pwd14', gen_salt('bf', 12)), true, '787-054-0334'),
+    (gen_random_uuid(), 'Marta', 'Lopez', 'marta.lopez@gmail.com', crypt('pwd15', gen_salt('bf', 12)), true, '787-007-0234'),
+    (gen_random_uuid(), 'Gabriel', 'Rivera', 'gabriel.rivera@gmail.com', crypt('pwd16', gen_salt('bf', 12)), true, '787-084-0278'),
+    (gen_random_uuid(), 'Veronica', 'Gomez', 'veronica.gomez@gmail.com', crypt('pwd17', gen_salt('bf', 12)), true, '787-021-0234'),
+    (gen_random_uuid(), 'Miguel', 'Diaz', 'miguel.diaz@gmail.com', crypt('pwd18', gen_salt('bf', 12)), true, '939-004-0234'),
+    (gen_random_uuid(), 'Julia', 'Fernandez', 'julia.fernandez@gmail.com', crypt('pwd19', gen_salt('bf', 12)), true, '939-009-0234'),
+    (gen_random_uuid(), 'Roberto', 'Ramirez', 'roberto.ramirez@gmail.com', crypt('pwd20', gen_salt('bf', 12)), true, '787-030-0123'),
+    (gen_random_uuid(), 'Alice', 'Brown', 'alice.brown@outlook.com', crypt('pwd21', gen_salt('bf', 12)), true, '787-008-0124'),
+    (gen_random_uuid(), 'David', 'Wilson', 'david.wilson@outlook.com', crypt('pwd22', gen_salt('bf', 12)), true, '787-123-3424'),
+    (gen_random_uuid(), 'Emma', 'Jones', 'emma.jones@outlook.com', crypt('pwd23', gen_salt('bf', 12)), true, '787-763-0643'),
+    (gen_random_uuid(), 'James', 'Taylor', 'james.taylor@outlook.com', crypt('pwd24', gen_salt('bf', 12)), true, '787-121-0224'),
+    (gen_random_uuid(), 'Olivia', 'Davis', 'olivia787@outlook.com', crypt('pwd25', gen_salt('bf', 12)), true, '787-678-0122'),
+    (gen_random_uuid(), 'Michael', 'Evans', 'michael_office@outlook.com', crypt('pwd26', gen_salt('bf', 12)), true, '787-048-0824'),
+    (gen_random_uuid(), 'Sophia', 'Clark', 'sophia.clark@outlook.com', crypt('pwd27', gen_salt('bf', 12)), true, '787-028-0144'),
+    (gen_random_uuid(), 'Alexander', 'Thomas', 'alexander.thomas@outlook.com', crypt('pwd28', gen_salt('bf', 12)), true, '787-777-0129'),
+    (gen_random_uuid(), 'Ava', 'White', 'ava.white@outlook.com', crypt('pwd29', gen_salt('bf', 12)), true, '787-111-0124'),
+    (gen_random_uuid(), 'Matthew', 'Walker', 'matthew.walker@outlook.com', crypt('pwd30', gen_salt('bf', 12)), true, '787-333-0324');
 -- Insert sample data into services table
 INSERT INTO services (name)
 VALUES
@@ -835,12 +840,13 @@ AND u.last_name = 'Rodriguez';
 
 -- Create initial contact, task and review
 -- Initial contact A1
-INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, receiver_read, sender_read, sent_task)
 SELECT 
     u1.id AS sender_id,           -- Jane Smith (service requester)
     u2.id AS receiver_id,         -- John Doe (service provider)
     p.id AS promo_id, 
-    true AS read, 
+    true AS receiver_read,
+    true AS sender_read,
     true AS sent_task
 FROM 
     users u1
@@ -853,7 +859,7 @@ WHERE
 LIMIT 1; -- Sender (service requester)
 
 -- Task A1
-INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
+INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description)
 SELECT 
     p.id AS promo_id, 
     u2.id AS provider_id,        -- John Doe (service provider)
@@ -861,8 +867,7 @@ SELECT
     ic.id AS initial_contact_id,
     p.service_id AS service_id, 
     'closed' AS status, 
-    'TASK DESCRIPTION: ' || p.title AS description,
-    true AS is_read
+    'TASK DESCRIPTION: ' || p.title AS description
 FROM 
     promotions p
 JOIN 
@@ -886,12 +891,13 @@ VALUES (
 );
 
 -- Initial contact A2
-INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, receiver_read, sender_read, sent_task)
 SELECT 
     u1.id AS sender_id,           -- Hector Torres (service requester)
     u2.id AS receiver_id,         -- John Doe (service provider)
     p.id AS promo_id, 
-    true AS read, 
+    true AS receiver_read, 
+    true AS sender_read,
     true AS sent_task
 FROM 
     users u1
@@ -904,7 +910,7 @@ WHERE
 LIMIT 1; -- Sender (service requester)
 
 -- Task A2
-INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
+INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description)
 SELECT 
     p.id AS promo_id, 
     u2.id AS provider_id,        -- John Doe (service provider)
@@ -912,8 +918,7 @@ SELECT
     ic.id AS initial_contact_id,
     p.service_id AS service_id, 
     'closed' AS status, 
-    '2 TASK DESCRIPTION: ' || p.title AS description,
-    true AS is_read
+    '2 TASK DESCRIPTION: ' || p.title AS description
 FROM 
     promotions p
 JOIN 
@@ -937,12 +942,13 @@ VALUES (
 );
 
 -- Initial contact B1 (Assuming this is a separate promotion)
-INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, receiver_read, sender_read, sent_task)
 SELECT 
     u1.id AS sender_id,           -- John Doe (service requester)
     u2.id AS receiver_id,         -- Hector Torres (service provider)
     p.id AS promo_id, 
-    true AS read, 
+    true AS receiver_read,
+    true AS sender_read,
     true AS sent_task
 FROM 
     users u1
@@ -955,7 +961,7 @@ WHERE
 LIMIT 1; -- Sender (service requester)
 
 -- Task B1
-INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
+INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description)
 SELECT 
     p.id AS promo_id, 
     u2.id AS provider_id,        -- Hector Torres (service provider)
@@ -963,8 +969,7 @@ SELECT
     ic.id AS initial_contact_id,
     p.service_id AS service_id, 
     'closed' AS status, 
-    'TASK DESCRIPTION: ' || p.title AS description,
-    true AS is_read
+    'TASK DESCRIPTION: ' || p.title AS description
 FROM 
     promotions p
 JOIN 
@@ -988,12 +993,13 @@ VALUES (
 );
 
 -- Initial contact C1 (Assuming this is a separate promotion)
-INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, read, sent_task)
+INSERT INTO initial_contacts (sender_id, receiver_id, promo_id, receiver_read, sender_read, sent_task)
 SELECT 
     u1.id AS sender_id,           -- John Doe (service requester)
     u2.id AS receiver_id,         -- Jane Smith (service provider)
     p.id AS promo_id, 
-    true AS read, 
+    true AS receiver_read,
+    true AS sender_read,
     true AS sent_task
 FROM 
     users u1
@@ -1006,7 +1012,7 @@ WHERE
 LIMIT 1; -- Sender (service requester)
 
 -- Task C1
-INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description, is_read)
+INSERT INTO tasks (promo_id, provider_id, receiver_id, initial_contact_id, service_id, status, description)
 SELECT 
     p.id AS promo_id, 
     u2.id AS provider_id,        -- Jane Smith (service provider)
@@ -1014,8 +1020,7 @@ SELECT
     ic.id AS initial_contact_id,
     p.service_id AS service_id, 
     'closed' AS status, 
-    'TASK DESCRIPTION: ' || p.title AS description,
-    true AS is_read
+    'TASK DESCRIPTION: ' || p.title AS description
 FROM 
     promotions p
 JOIN 

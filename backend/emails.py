@@ -1,21 +1,18 @@
-#!/usr/bin/python3
 '''
     Manage anything related to sending or receiving mails
 '''
-from os import getenv
-from time import time
-from sqlalchemy import create_engine, func
-from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.orm.relationships import RelationshipProperty
-from models import User, Service, Town, Review, Task
-from base_model import BaseModel, Base
-from werkzeug.security import generate_password_hash, check_password_hash
-import bcrypt
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import User
 import aws_bucket
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
-engine = create_engine(
-    'postgresql://demo_dev:demo_dev_pwd@demodb.ctossyay6vcz.us-east-2.rds.amazonaws.com/postgres')
+db_url = os.getenv("DB_URL")
+engine = create_engine(db_url)
+
 
 
 def load_html_template(template_path):
@@ -29,7 +26,6 @@ def send_confirm_email(email, first_name, token):
         in the body of the email.
         Person receives a link to verify the email.
     '''
-    import os
     from flask_mail import Message
     from app import mail, app
 
@@ -38,7 +34,7 @@ def send_confirm_email(email, first_name, token):
 
     # Load the HTML template
     html_template = load_html_template(
-        './email_template/email_template.html')
+        'backend/email_template/email_template.html')
 
     # Inject dynamic content into the HTML template
     html_content = html_template.replace(
