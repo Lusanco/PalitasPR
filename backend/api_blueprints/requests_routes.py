@@ -3,6 +3,7 @@ from db.db_promotion import Db_promotion
 import asyncio
 from db.db_operations import DBOperations
 from db.db_user import Db_user
+from db.db_request_towns import Db_request_towns
 import aws_bucket
 
 request_bp = Blueprint('request', __name__)
@@ -18,6 +19,7 @@ def show_request(id):
         request_dict['last_name'] = request.user.last_name
         profile = Db_user(g.db_session).get_profile_by_userId(request.user.id)
         request_dict['profile_id'] = profile.id
+        request_dict['towns'] = Db_request_towns(g.db_session).get_towns_for_request(request_dict['id'])
         picNames = request_dict['pictures']
         request_id = request_dict['id']
         user_id = request_dict['user_id']
