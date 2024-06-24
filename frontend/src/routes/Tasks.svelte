@@ -50,6 +50,7 @@
   let price = "";
   let initial_contact_id = writable(null);
   let terms;
+  let sentReceived = writable(true);
 
   $: {
     $data = {
@@ -230,6 +231,25 @@
 
 <div class="flex flex-col items-center w-full min-h-screen px-4 py-20 mx-auto">
   <h1 class="text-3xl font-semibold">Tasks</h1>
+  <br />
+  <div
+    class="flex flex-wrap items-center justify-center w-full gap-1 mx-auto md:gap-2"
+  >
+    <button
+      on:click={() => {
+        sentReceived.set(true);
+      }}
+      class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+      >Received</button
+    >
+    <button
+      on:click={() => {
+        sentReceived.set(false);
+      }}
+      class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+      >Sent</button
+    >
+  </div>
   <div class="flex flex-col w-full h-full py-4 mx-auto">
     {#if $received && $sent && $promo && $contacts}
       {#each $received as received, index}
@@ -638,6 +658,18 @@
             </div>
           </div>
           <br />
+          <div
+            class="flex flex-wrap items-center justify-center w-full gap-1 mx-auto md:gap-2"
+          >
+            <button
+              class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+              >Delete Task</button
+            >
+            <button
+              class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+              >Leave Review</button
+            >
+          </div>
         </div>
       {/each}
     {:else}

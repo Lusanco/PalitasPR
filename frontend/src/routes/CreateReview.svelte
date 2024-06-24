@@ -1,11 +1,28 @@
 <script>
-  import { writable } from 'svelte/store';
-  import axios from 'axios';
+  import { writable } from "svelte/store";
+  import axios from "axios";
+  import { onMount } from "svelte";
   export let taskId;
 
   let description = "";
   let rating = "";
   let errorMessage = "";
+
+  onMount(() => {
+    axios
+      .post("/api/reviews/", {
+        // description rating task_id str
+        description,
+        // rating: numericRating,
+        task_id: taskId,
+      })
+      .then((reviewRes) => {
+        console.log(reviewRes);
+      })
+      .catch((reviewErr) => {
+        console.log(reviewErr);
+      });
+  });
 
   async function handleReviewSubmit() {
     if (description.length > 250) {
@@ -19,18 +36,22 @@
     }
 
     try {
-      const response = await axios.post('/api/reviews/', {
-        description,
-        rating: numericRating,
-        task_id: taskId
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
+      const response = await axios.post(
+        "/api/reviews/",
+        {
+          description,
+          rating: numericRating,
+          task_id: taskId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      });
+      );
 
       if (response.status !== 200) {
-        throw new Error('Error al enviar la reseña');
+        throw new Error("Error al enviar la reseña");
       }
 
       errorMessage = "";
@@ -42,7 +63,7 @@
   }
 
   function handleKeyPress(event) {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleReviewSubmit();
     }
   }
@@ -82,7 +103,10 @@
         <p class="text-red-500">{errorMessage}</p>
       {/if}
       <div class="mt-4 form-control">
-        <button on:click={handleReviewSubmit} class="btn bg-[#cc2936] text-white hover:text-[#1f1f1f] hover:bg-white">
+        <button
+          on:click={handleReviewSubmit}
+          class="btn bg-[#cc2936] text-white hover:text-[#1f1f1f] hover:bg-white"
+        >
           Enviar Reseña
         </button>
       </div>
