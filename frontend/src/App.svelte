@@ -60,7 +60,7 @@
       <Route path="/request-details/:id" component={RequestDetails} />
       <Route path="/manage-services" component={ManageServices} />
       <Route path="/manage-requests" component={ManageRequests} />
-      <Route path="/profile" component={Profile} />
+      <Route path="/profile/:id" component={Profile} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/faq" component={Faq} />
