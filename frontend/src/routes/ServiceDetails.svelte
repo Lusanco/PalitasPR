@@ -102,7 +102,7 @@
             </div>
           {/if}
           <br />
-          <div class="flex flex-wrap justify-between">
+          <div class="flex flex-wrap justify-between text-xl">
             <span>
               {$response1.results.first_name}
               {$response1.results.last_name}
@@ -110,12 +110,17 @@
             <span>{Object.keys(servicesID)[$response1.results.service_id]}</span
             >
           </div>
+          <!-- <br> -->
           <hr class="border-[#cc2936]" />
-          <br />
-          <div>Pueblos Disponibles: Lista de Pueblos</div>
+          <div class="mt-2">
+            Pueblos Disponibles: {#each $response1.results.towns as town}
+              <span class="mx-1">{town},</span>
+            {/each}
+          </div>
+          <!-- <hr class="border-[#cc2936]" /> -->
+          <h3 class="mt-5 text-xl">Descripción</h3>
           <hr class="border-[#cc2936]" />
-          <br />
-          <p class="self-center w-full text-justify min-h-40">
+          <p class="self-center w-full mt-2 text-justify min-h-40">
             {$response1.results.description}
           </p>
         </div>
