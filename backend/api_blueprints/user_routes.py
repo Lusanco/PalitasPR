@@ -26,10 +26,6 @@ def user_sign_up():
     else:
         return make_response(jsonify({'message': 'Missing a required field'}), 400)
 
-# initiAl_contacts.py 
-# Db_initiAL_contacts
-# /api/initial-contact
-#
 @user_bp.route("/verify_email/<token>", methods=["GET"])
 def verify_email(token):
     if not token:
@@ -138,6 +134,37 @@ def get_profile(profile_id):
     profile_dict['first_name'] = user.first_name
     profile_dict['last_name'] = user.last_name
     profile_dict['rating'] = rating
+
+    #Get picture urls cover_pic, profile_pic, gallery:
+    if profile_dict.get('profile_pic') is not None:
+        responseAWS, statusAWS = aws_bucket.get_picture(user.id, 'Profile', None, profile_dict['profile_pic'])
+        if statusAWS != 200:
+            profile_dict['profile_pic'] = None
+        else:
+            profile_dict['profile_pic'] = responseAWS['results']
+
+    if profile_dict.get('cover_pic') is not None:
+        responseAWS, statusAWS = aws_bucket.get_picture(user.id, 'Cover', None, profile_dict['cover_pic'])
+        if statusAWS != 200:
+            profile_dict['cover_pic'] = None
+        else:
+            profile_dict['cover_pic'] = responseAWS['results']
+
+    if profile_dict.get('gallery'):
+        gallery = profile_dict.get('gallery')
+        pictures= gallery.split('|')
+        urls = []
+        for pic in pictures:
+            responseAWS, statusAWS = aws_bucket.get_picture(user.id, 'Gallery', None, pic)
+            if statusAWS == 200:
+                # put url into the pictures column of the model
+                urlPic = responseAWS['results']
+                urls.append(urlPic)
+        if len(urls) != 0:
+            profile_dict['gallery'] = urls
+        else:
+            profile_dict['gallery'] = None
+
     return make_response(jsonify({'results': profile_dict}), 200)
 
 @user_bp.route('/update', methods=['GET'])

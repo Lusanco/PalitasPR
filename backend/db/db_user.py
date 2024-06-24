@@ -8,8 +8,8 @@ from models import User, Initial_Contact, Profile, Review, Task
 from db.db_operations import DBOperations
 from db.db_task import Db_task
 from sqlalchemy import or_
-import bcrypt
 import aws_bucket
+import bcrypt
 
 
 class Db_user:

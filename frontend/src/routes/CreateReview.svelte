@@ -1,11 +1,30 @@
 <script>
-  import { writable } from 'svelte/store';
+  import { writable } from "svelte/store";
+  import axios from "axios";
+  import { onMount } from "svelte";
+  export let taskId;
 
   let description = "";
   let rating = "";
   let errorMessage = "";
 
-  function handleReviewSubmit() {
+  onMount(() => {
+    axios
+      .post("/api/reviews/", {
+        // description rating task_id str
+        description,
+        // rating: numericRating,
+        task_id: taskId,
+      })
+      .then((reviewRes) => {
+        console.log(reviewRes);
+      })
+      .catch((reviewErr) => {
+        console.log(reviewErr);
+      });
+  });
+
+  async function handleReviewSubmit() {
     if (description.length > 250) {
       errorMessage = "La descripción no puede exceder los 250 caracteres.";
       return;
@@ -15,13 +34,36 @@
       errorMessage = "La puntuación debe estar entre 1 y 5.";
       return;
     }
-    errorMessage = "";
-    description = "";
-    rating = "";
+
+    try {
+      const response = await axios.post(
+        "/api/reviews/",
+        {
+          description,
+          rating: numericRating,
+          task_id: taskId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status !== 200) {
+        throw new Error("Error al enviar la reseña");
+      }
+
+      errorMessage = "";
+      description = "";
+      rating = "";
+    } catch (error) {
+      errorMessage = error.message;
+    }
   }
 
   function handleKeyPress(event) {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleReviewSubmit();
     }
   }
@@ -61,7 +103,10 @@
         <p class="text-red-500">{errorMessage}</p>
       {/if}
       <div class="mt-4 form-control">
-        <button on:click={handleReviewSubmit} class="btn bg-[#cc2936] text-white hover:text-[#1f1f1f] hover:bg-white">
+        <button
+          on:click={handleReviewSubmit}
+          class="btn bg-[#cc2936] text-white hover:text-[#1f1f1f] hover:bg-white"
+        >
           Enviar Reseña
         </button>
       </div>

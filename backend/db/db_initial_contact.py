@@ -4,9 +4,6 @@
 '''
 from db_init import get_session
 from db.db_operations import DBOperations
-from models import (
-    Initial_Contact
-) 
 
 
 class Db_initial_contact:

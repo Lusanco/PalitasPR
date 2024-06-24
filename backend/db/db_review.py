@@ -1,11 +1,7 @@
 '''
     All related operations to reviews
 '''
-from sqlalchemy import func
-from models import (
-    User,
-    Review
-) 
+from models import Review
 
 
 class Db_review:

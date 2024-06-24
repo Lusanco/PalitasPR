@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, make_response, session, g
 from db.db_operations import DBOperations
 from flask_login import login_required, current_user
 from db.db_review import Db_review
+
 review_bp = Blueprint('reviews', __name__)
 
 @review_bp.before_request

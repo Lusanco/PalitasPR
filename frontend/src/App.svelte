@@ -40,6 +40,7 @@
   import Pass from "./routes/Pass.svelte";
   import NotPass from "./routes/NotPass.svelte";
   import Tasks from "./routes/Tasks.svelte";
+  import CreateReview from "./routes/CreateReview.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -72,6 +73,7 @@
         component={InitialContactSuccess}
       />
       <Route path="/tasks" component={Tasks} />
+      <Route path="/create-review/:id" component={CreateReview} />
 
       <!--! 404 / Not found -->
       <Route path="*" component={NotFound} />

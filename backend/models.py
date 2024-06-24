@@ -2,11 +2,14 @@
     All classes for tables(DataBase)
 """
 
-from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, Integer, Boolean,  Index
 from sqlalchemy.orm import relationship
 from base_model import BaseModel, Base, BaseModelSerial
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from flask_login import UserMixin
+from sqlalchemy import (
+    Column, String, ForeignKey, UniqueConstraint, 
+    Integer, Boolean,  Index
+    )
 
 
 class Promo_Towns(BaseModel, Base):

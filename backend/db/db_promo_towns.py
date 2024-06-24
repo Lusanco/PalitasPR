@@ -2,13 +2,8 @@
     All related functions for Promo_Towns class that involves the database
     and routes from flask.
 '''
-from sqlalchemy.orm import joinedload
-from models import User
-from sqlalchemy import func
-from models import (
-    User, Service, Town, Promo_Towns, 
-    Promotion, Review, Task,
-) 
+
+from models import Town, Promo_Towns
 
 
 class Db_promo_towns:
