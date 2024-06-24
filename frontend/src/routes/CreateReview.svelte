@@ -1,11 +1,13 @@
 <script>
   import { writable } from 'svelte/store';
+  import axios from 'axios';
+  export let taskId;
 
   let description = "";
   let rating = "";
   let errorMessage = "";
 
-  function handleReviewSubmit() {
+  async function handleReviewSubmit() {
     if (description.length > 250) {
       errorMessage = "La descripción no puede exceder los 250 caracteres.";
       return;
@@ -15,9 +17,28 @@
       errorMessage = "La puntuación debe estar entre 1 y 5.";
       return;
     }
-    errorMessage = "";
-    description = "";
-    rating = "";
+
+    try {
+      const response = await axios.post('/api/reviews/', {
+        description,
+        rating: numericRating,
+        task_id: taskId
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status !== 200) {
+        throw new Error('Error al enviar la reseña');
+      }
+
+      errorMessage = "";
+      description = "";
+      rating = "";
+    } catch (error) {
+      errorMessage = error.message;
+    }
   }
 
   function handleKeyPress(event) {
