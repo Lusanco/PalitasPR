@@ -11,17 +11,19 @@ db_url = os.getenv("DB_URL")
 engine = create_engine(
     db_url,
     pool_size=20,
-    max_overflow=10, 
-    pool_timeout=30, 
-    pool_recycle=1800, 
-    pool_pre_ping=True
-    )
+    max_overflow=10,
+    pool_timeout=30,
+    pool_recycle=1800,
+    pool_pre_ping=True,
+)
 
 session_factory = sessionmaker(bind=engine)
 Session = scoped_session(session_factory)
 
 from base_model import Base
+
 Base.metadata.bind = engine
+
 
 @contextmanager
 def session_scope():
@@ -32,9 +34,11 @@ def session_scope():
     finally:
         session.close()
 
+
 def init_db():
     with session_scope() as session:
         Base.metadata.create_all(session.get_bind())
+
 
 def get_session():
     with session_scope() as session:

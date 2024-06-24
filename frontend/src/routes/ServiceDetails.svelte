@@ -15,7 +15,7 @@
     url: "/api/initial-contact",
     headers: "application/json",
     twcss:
-      "md:w-1/3 btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
+      "md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
     misc: { "App Location": "Service Details" },
   };
 
@@ -169,21 +169,21 @@
         </div>
         <!-- Flex Wrap -->
         <div
-          class="flex items-center justify-center w-full h-20 bg-white md:max-w-6xl"
+          class="flex items-center justify-center w-full bg-white h-fit md:max-w-6xl"
         >
           <div
-            class="flex items-center justify-center w-10/12 gap-4 mx-4 bg-white md:w-11/12 md:max-w-6xl"
+            class="flex flex-col items-center justify-center w-10/12 gap-4 mx-4 bg-white md:flex-row md:w-11/12 md:max-w-6xl"
           >
             <a
               use:link
               href="/"
-              class="md:w-1/3 btn bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
+              class="md:w-1/3 btn w-full bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
               >Back To Search</a
             >
             <a
               use:link
               href="/"
-              class="md:w-1/3 btn bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
+              class="md:w-1/3 btn w-full bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
               >Go To Profile</a
             >
             <Button {image} {button} />
