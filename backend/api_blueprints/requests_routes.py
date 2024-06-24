@@ -8,7 +8,7 @@ import aws_bucket
 request_bp = Blueprint('request', __name__)
 
 
-@request_bp.route("/request/<id>", methods=["GET"])
+@request_bp.route("/<id>", methods=["GET"])
 def show_request(id):
     request = DBOperations(g.db_session).search('Request', id)
     if request:
