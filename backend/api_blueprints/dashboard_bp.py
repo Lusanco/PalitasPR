@@ -16,8 +16,8 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 
 
-
 my_bp = Blueprint("my", __name__)
+
 
 @my_bp.route("/promotion-request", methods=["GET", "POST", "PUT"])
 @login_required
@@ -29,7 +29,7 @@ def promo_request():
     """
     user_id = current_user.id
 
-    # ---------------GET METHOD--------------------------------------------- 
+    # ---------------GET METHOD---------------------------------------------
     if request.method == "GET":
         async def dashboard_handler():
             return await Db_core(g.db_session).dashboard_get_promos_requests(user_id)
@@ -44,7 +44,8 @@ def promo_request():
         data = dict(request.form)
         model = data.get("model")
         data_to_update = data.pop('model')
-        response, status = DBOperations(g.db_session).update({model:data_to_update})
+        response, status = DBOperations(
+            g.db_session).update({model: data_to_update})
         if status != 200:
             g.db_session.rollback()
             return make_response(jsonify(response), status)
@@ -53,19 +54,21 @@ def promo_request():
         if 'image' in request.files:
             image = request.files
             image = image['image']
-            pic_name =  secure_filename(image.filename)
+            pic_name = secure_filename(image.filename)
             pic_bytes = image.read()
 
             if pic_name == '':
                 return make_response(jsonify({'error': 'Empty File Name'}), 400)
 
-            response, status = aws_bucket.put_picture(user_id, model, model_id, pic_name, pic_bytes)
+            response, status = aws_bucket.put_picture(
+                user_id, model, model_id, pic_name, pic_bytes)
             if status != 201:
                 g.db_session.rollback()
                 return make_response(jsonify(response), status)
 
             # Save picture path name on the model object
-            response, status = DBOperations(g.db_session).update({model: {'id': model_id, 'pictures': pic_name}})
+            response, status = DBOperations(g.db_session).update(
+                {model: {'id': model_id, 'pictures': pic_name}})
             if status != 200:
                 g.db_session.rollback()
                 return make_response(jsonify(response), status)
@@ -135,18 +138,20 @@ def promo_request():
         if 'image' in request.files:
             image = request.files
             image = image['image']
-            pic_name =  secure_filename(image.filename)
+            pic_name = secure_filename(image.filename)
             pic_bytes = image.read()
             if pic_name == '':
                 return make_response(jsonify({'error': 'Empty File Name'}), 400)
 
-            response, status = aws_bucket.put_picture(user_id, model, model_id, pic_name, pic_bytes)
+            response, status = aws_bucket.put_picture(
+                user_id, model, model_id, pic_name, pic_bytes)
             if status != 200:
                 g.db_session.rollback()
                 return make_response(jsonify(response), status)
 
             # 4) Save picture path name
-            response, status = DBOperations(g.db_session).update({model: {'id': model_id, 'pictures': pic_name}})
+            response, status = DBOperations(g.db_session).update(
+                {model: {'id': model_id, 'pictures': pic_name}})
             if status != 200:
                 g.db_session.rollback()
                 return make_response(jsonify(response), status)
@@ -162,8 +167,9 @@ def get_profile_promotions(profile_id):
     """
     Retrieve all promotions associated with a given profile_id.
     """
-    profile = g.db_session.query(Profile).filter(Profile.id == profile_id).first()
-    
+    profile = g.db_session.query(Profile).filter(
+        Profile.id == profile_id).first()
+
     if not profile:
         return make_response(jsonify({'error': f'No profile found with id: {profile_id}'}), 404)
 
@@ -171,13 +177,13 @@ def get_profile_promotions(profile_id):
 
     # Get all promotions for the user, including service and town information
     promotions = (g.db_session.query(Promotion, User, Service, func.array_agg(Town.name).label('towns'))
-                .join(User, Promotion.user_id == User.id)
-                .join(Service, Promotion.service_id == Service.id)
-                .outerjoin(Promo_Towns, Promotion.id == Promo_Towns.promo_id)
-                .outerjoin(Town, Promo_Towns.town_id == Town.id)
-                .filter(Promotion.user_id == user_id)
-                .group_by(Promotion.id, User.id, Service.id)
-                .all())
+                  .join(User, Promotion.user_id == User.id)
+                  .join(Service, Promotion.service_id == Service.id)
+                  .outerjoin(Promo_Towns, Promotion.id == Promo_Towns.promo_id)
+                  .outerjoin(Town, Promo_Towns.town_id == Town.id)
+                  .filter(Promotion.user_id == user_id)
+                  .group_by(Promotion.id, User.id, Service.id)
+                  .all())
 
     promotion_list = []
     for promo, user, service, towns in promotions:
@@ -197,4 +203,4 @@ def get_profile_promotions(profile_id):
         }
         promotion_list.append(promo_dict)
 
-    return make_response(jsonify({'results': [promotion_list]}), 200)
+    return make_response(jsonify({'results': promotion_list}), 200)
