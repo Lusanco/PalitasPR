@@ -1,8 +1,10 @@
 <script>
-  import { state, data } from "../scripts/stores";
+  import { state, data, userSession } from "../scripts/stores";
   import townsID from "../scripts/townsID";
   import servicesID from "../scripts/servicesID";
   import Button from "../components/Button.svelte";
+  import { onMount } from "svelte";
+  import axios from "axios";
 
   let image = null;
   let town = "all";
@@ -43,6 +45,20 @@
     data.set($data);
     console.log("Data updated:", $data);
   }
+
+  onMount(() => {
+    axios
+    .get("/api/user/status")
+    .then((userStatusRes) => {
+      userSession.set(true);
+      console.log(userStatusRes.data);
+    })
+    .catch((userStatusErr) => {
+      userSession.set(false);
+      console.log(userStatusErr);
+      console.log($userSession)
+    })
+  })
 
   function handleTownChange(event) {
     const townId = event.target.value;
