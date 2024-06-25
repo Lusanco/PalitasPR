@@ -13,6 +13,8 @@
   let profilePic = writable("");
   let coverPic = writable("");
 
+  let promotions = writable([]);
+
   let id;
   let currentUrl;
   let urlArr;
@@ -47,6 +49,13 @@
 
         profilePic.set(axiosResponse2.data.results.profile_pic || "");
         coverPic.set(axiosResponse2.data.results.cover_pic || "");
+
+        return axios.get(`/api/dashboard/profile-promotions/${id}`);
+      })
+      .then((axiosResponse3) => {
+        promotions.set(axiosResponse3.data.results);
+        console.log(".then() Response 3 Log: ", axiosResponse3);
+        console.log("Promotions: ", $promotions);
       })
       .catch((userStatusErr) => {
         userSession.set(false);
@@ -149,14 +158,14 @@
           <div
             class="flex flex-col w-full gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96 element"
           >
-            {#if $response3.length === 0}
+            {#if $promotions.length === 0}
               <div
                 class="font-bold text-xl flex flex-col justify-center items-center text-[#cc2936] text-center h-full w-full"
               >
                 Aún no ha publicado servicios.
               </div>
             {:else}
-              {#each $response2 as service}
+              {#each $promotions as service}
                 <!-- New Card Start -->
                 <a
                   use:link
