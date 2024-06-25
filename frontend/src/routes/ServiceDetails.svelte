@@ -7,6 +7,7 @@
   import servicesID from "../scripts/servicesID";
   import Button from "../components/Button.svelte";
   import { get } from "svelte/store";
+  import Profile from "./Profile.svelte";
 
   let image = null;
   let button = {
@@ -124,6 +125,7 @@
             {$response1.results.description}
           </p>
         </div>
+        <br />
       </div>
       <!-- Left -->
 
@@ -172,6 +174,7 @@
             {/each}
           {/if}
         </div>
+        <br />
         <!-- Flex Wrap -->
         <div
           class="flex items-center justify-center w-full bg-white h-fit md:max-w-6xl"
@@ -187,7 +190,7 @@
             >
             <a
               use:link
-              href="/"
+              href="/profile/{$response1.results.profile_id}"
               class="md:w-1/3 btn w-full bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
               >Go To Profile</a
             >
