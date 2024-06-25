@@ -2,7 +2,7 @@
 <script>
   import { onMount } from "svelte";
   import axios from "axios";
-  import { response } from "../scripts/stores";
+  import { response, userSession } from "../scripts/stores";
   import { writable } from "svelte/store";
   import { link } from "svelte-routing";
 
@@ -13,6 +13,20 @@
   let profilePic = writable("");
   let coverPic = writable("");
 
+  onMount(() => {
+    axios
+    .get("/api/user/status")
+    .then((userStatusRes) => {
+      userSession.set(true);
+      console.log(userStatusRes.data);
+    })
+    .catch((userStatusErr) => {
+      userSession.set(false);
+      console.log(userStatusErr);
+      console.log($userSession);
+    })
+  })
+  
   onMount(() => {
     axios
       .get("/api/user/logout")
