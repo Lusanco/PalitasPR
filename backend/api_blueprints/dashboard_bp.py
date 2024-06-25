@@ -159,6 +159,9 @@ def promo_request():
 @my_bp.route("/profile-promotions/<profile_id>", methods=["GET"])
 @login_required
 def get_profile_promotions(profile_id):
+    """
+    Retrieve all promotions associated with a given profile_id.
+    """
     profile = g.db_session.query(Profile).filter(Profile.id == profile_id).first()
     
     if not profile:
@@ -180,16 +183,16 @@ def get_profile_promotions(profile_id):
     for promo, user, service, towns in promotions:
         promo_dict = {
             "promo_id": str(promo.id),
-            # "user_id": promo.user_id,
             "first_name": user.first_name,
             "last_name": user.last_name,
             "service": service.name,
             "title": promo.title,
             "description": promo.description,
-            # "price_min": promo.price_min,
-            # "price_max": promo.price_max,
             "pictures": promo.pictures,
             "created_at": promo.created_at.strftime("%Y-%m-%d"),
+            # "price_max": promo.price_max,
+            # "price_min": promo.price_min,
+            # "user_id": promo.user_id,
             "towns": towns if towns[0] is not None else []
         }
         promotion_list.append(promo_dict)
