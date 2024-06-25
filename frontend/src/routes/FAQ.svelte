@@ -1,5 +1,23 @@
 <script>
+  import { onMount } from "svelte";
+  import { userSession } from "../scripts/stores";
+  import axios from "axios";
+
   let openIndex = null;
+
+  onMount(() => {
+    axios
+    .get("/api/user/status")
+    .then((userStatusRes) => {
+      userSession.set(true);
+      console.log(userStatusRes.data);
+    })
+    .catch((userStatusErr) => {
+      userSession.set(false);
+      console.log(userStatusErr);
+      console.log($userSession);
+    })
+  })
 
   function toggleItem(index) {
     openIndex = openIndex === index ? null : index;

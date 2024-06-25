@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import axios from "axios";
-  import { data, response } from "../scripts/stores";
+  import { data, response, userSession } from "../scripts/stores";
   import { writable } from "svelte/store";
   import { link } from "svelte-routing";
   import Loading from "../components/Loading.svelte";
@@ -46,11 +46,11 @@
   let received = writable();
   let sent = writable();
   let promo = writable();
-  let userSession = writable();
   let price = "";
   let initial_contact_id = writable(null);
   let terms;
   let sentReceived = writable(true);
+  let userDetails = writable(null);
 
   $: {
     $data = {
@@ -67,13 +67,12 @@
     axios
       .get("/api/user/status")
       .then((userStatusRes) => {
-        userSession.set(userStatusRes.data);
+        userSession.set(true);
+        userDetails.set(userStatusRes.data);
+        console.log($userDetails);
+
         // console.log(".then() User Session Log: ", $userSession);
-        if ($userSession) {
-          return axios.get("/api/user/contacts");
-        } else {
-          userSession.set(null);
-        }
+        return axios.get("/api/user/contacts");
       })
       .then((userContactsRes) => {
         console.log("Contacts", userContactsRes);
@@ -109,6 +108,7 @@
         // console.log($promo);
       })
       .catch((axiosError) => {
+        userSession.set(false);
         console.error(".catch() Error Log: ", axiosError);
       });
   });
@@ -408,7 +408,7 @@
                           readonly
                           id="email"
                           type="email"
-                          value={$userSession.email}
+                          value={$userDetails.email}
                           class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                         />
                       </label>
@@ -424,7 +424,7 @@
                           required
                           pattern="\d{3}-\d{3}-\d{4}"
                           on:keypress={restrictToNumbersAndDashes}
-                          value={$userSession.phone}
+                          value={$userDetails.phone}
                           type="text"
                           class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                         />
