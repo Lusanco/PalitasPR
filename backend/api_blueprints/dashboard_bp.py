@@ -9,8 +9,12 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from db.db_operations import DBOperations
 from db.db_core import Db_core
+from models import Profile, Promotion, User, Service, Promo_Towns, Town
 import aws_bucket
 import asyncio
+from sqlalchemy.orm import joinedload
+from sqlalchemy import func
+
 
 
 my_bp = Blueprint("my", __name__)
@@ -150,3 +154,44 @@ def promo_request():
         return make_response(jsonify({'results': 'Created Succesfully'}), 201)
 
     # -----------------------END-------------------------------------------
+
+
+@my_bp.route("/profile-promotions/<profile_id>", methods=["GET"])
+@login_required
+def get_profile_promotions(profile_id):
+    profile = g.db_session.query(Profile).filter(Profile.id == profile_id).first()
+    
+    if not profile:
+        return make_response(jsonify({'error': f'No profile found with id: {profile_id}'}), 404)
+
+    user_id = profile.user_id
+
+    # Get all promotions for the user, including service and town information
+    promotions = (g.db_session.query(Promotion, User, Service, func.array_agg(Town.name).label('towns'))
+                .join(User, Promotion.user_id == User.id)
+                .join(Service, Promotion.service_id == Service.id)
+                .outerjoin(Promo_Towns, Promotion.id == Promo_Towns.promo_id)
+                .outerjoin(Town, Promo_Towns.town_id == Town.id)
+                .filter(Promotion.user_id == user_id)
+                .group_by(Promotion.id, User.id, Service.id)
+                .all())
+
+    promotion_list = []
+    for promo, user, service, towns in promotions:
+        promo_dict = {
+            "promo_id": str(promo.id),
+            # "user_id": promo.user_id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "service": service.name,
+            "title": promo.title,
+            "description": promo.description,
+            # "price_min": promo.price_min,
+            # "price_max": promo.price_max,
+            "pictures": promo.pictures,
+            "created_at": promo.created_at.strftime("%Y-%m-%d"),
+            "towns": towns if towns[0] is not None else []
+        }
+        promotion_list.append(promo_dict)
+
+    return make_response(jsonify({'results': [promotion_list]}), 200)
