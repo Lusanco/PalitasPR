@@ -15,34 +15,35 @@
     url: "/api/initial-contact",
     headers: "application/json",
     twcss:
-      "w-1/3 btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
+      "md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
     misc: { "App Location": "Service Details" },
   };
 
   const response1 = writable(null);
   const response2 = writable(null);
+  let profileID = writable("");
 
   let id;
   let currentUrl;
   let urlArr;
   let initialContact;
 
-  onMount(() => {
-    axios
-    .get("/api/user/status")
-    .then((userStatusRes) => {
-      userSession.set(true);
-      console.log(userStatusRes.data);
-    })
-    .catch((userStatusErr) => {
-      userSession.set(false);
-      console.log(userStatusErr);
-      console.log($userSession);
-    })
-  })
-  
   function showModal(event) {}
   onMount(() => {
+    // Fetch user status
+    axios
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+      });
+
+    // Get current URL and split to find ID
     console.log("RequestDetails Component Has Mounted");
     currentUrl = window.location.href;
     console.log("Current URL: ", currentUrl);
@@ -50,6 +51,7 @@
     id = urlArr[urlArr.length - 1];
     console.log("RequestDetails Component ID: ", id);
 
+    // Fetch request details and reviews
     axios
       .get(`/api/request/${id}`)
       .then((axiosResponse1) => {
@@ -147,7 +149,7 @@
         <div
           class="flex flex-col gap-2 overflow-hidden overflow-y-scroll element min-h-96 h-96"
         >
-          {#if $response2.results === null}
+          {#if !$response2.results || $response2.results.length === 0}
             <div
               class="font-bold text-xl flex flex-col justify-center items-center text-[#cc2936] text-center h-full w-full"
             >
@@ -186,21 +188,21 @@
     </div>
     <!-- Flex Wrap -->
     <div
-      class="flex items-center justify-center w-full h-20 bg-white md:max-w-6xl"
+      class="flex items-center justify-center w-full bg-white h-fit md:max-w-6xl"
     >
       <div
-        class="flex items-center justify-center w-10/12 gap-4 mx-4 bg-white md:w-11/12 md:max-w-6xl"
+        class="flex flex-col items-center justify-center w-10/12 gap-4 mx-4 bg-white md:flex-row md:w-11/12 md:max-w-6xl"
       >
         <a
           use:link
           href="/"
-          class="w-1/3 btn bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
+          class="md:w-1/3 btn w-full bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
           >Back To Search</a
         >
         <a
           use:link
-          href="/"
-          class="w-1/3 btn bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
+          href={`/profile/${$profileID}`}
+          class="md:w-1/3 btn w-full bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
           >Go To Profile</a
         >
         <Button {image} {button} />
