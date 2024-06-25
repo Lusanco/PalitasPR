@@ -69,6 +69,7 @@
           request_id: $response1.results.id,
         };
         data.set(initialContact);
+        profileID.set($response1.results.profile_id);
       })
       .catch((axiosError) => {
         window.location.href = "/404";
