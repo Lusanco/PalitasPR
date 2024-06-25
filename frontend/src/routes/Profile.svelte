@@ -13,29 +13,32 @@
   let profilePic = writable("");
   let coverPic = writable("");
 
+  let id;
+  let currentUrl;
+  let urlArr;
+
   onMount(() => {
+    console.log("Profile Component Has Mounted");
+    currentUrl = window.location.href;
+    console.log("Current URL: ", currentUrl);
+    urlArr = currentUrl.split("/");
+    id = urlArr[urlArr.length - 1];
+    console.log("Profile ID: ", id);
+
     axios
-      .get("/api/user/logout")
-      .then((axiosResponse) => {
-        console.log(".then() Logout Log: ", axiosResponse);
-        return axios.get("/api/user/login?af1=jd123@gmail.com&af2=pwd1");
-      })
-      .then((axiosResponse) => {
-        console.log(".then() Login Log: ", axiosResponse);
-        return axios.get("/api/user/my-profile");
-      })
+      .get(`/api/user/profile/${id}`)
       .then((axiosResponse2) => {
         response2.set(axiosResponse2.data);
         console.log(".then() Response 2 Log: ", axiosResponse2);
 
-        let galleryImages = axiosResponse2.data.results.gallery;
+        let galleryImages = axiosResponse2.data.results.gallery || [];
         if (typeof galleryImages === "string") {
           galleryImages = [galleryImages];
         }
         images.set(galleryImages);
 
-        profilePic.set(axiosResponse2.data.results.profile_pic);
-        coverPic.set(axiosResponse2.data.results.cover_pic);
+        profilePic.set(axiosResponse2.data.results.profile_pic || "");
+        coverPic.set(axiosResponse2.data.results.cover_pic || "");
       })
       .catch((axiosError) => {
         console.log(".catch() Error Log: ", axiosError);
@@ -140,7 +143,7 @@
                 Aún no ha publicado servicios.
               </div>
             {:else}
-              {#each $response3 as service}
+              {#each $response2 as service}
                 <!-- New Card Start -->
                 <a
                   use:link
