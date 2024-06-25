@@ -128,7 +128,11 @@
           </div>
           <hr class="border-[#cc2936]" />
           <br />
-          <div>Pueblos Disponibles: Lista de Pueblos</div>
+          <div class="mt-2">
+            Pueblos Disponibles: {#each $response1.results.towns as town}
+              <span class="mx-1">{town},</span>
+            {/each}
+          </div>
           <hr class="border-[#cc2936]" />
           <br />
           <p class="self-center w-full text-justify min-h-40">
