@@ -55,19 +55,17 @@
     axios
       .get(`/api/promotion/${id}`)
       .then((axiosResponse1) => {
-        response.set(axiosResponse1);
         response1.set(axiosResponse1.data);
-        profileID.set($response1.results.profile_id);
-        console.log(".then() Response Log: ", $response1);
+        profileID.set(axiosResponse1.data.results.profile_id);
+        console.log(".then() Response Log: ", axiosResponse1.data);
         return axios.get(`/api/promotion/promo_review/${id}`);
       })
       .then((axiosResponse2) => {
-        response.set(axiosResponse2);
         response2.set(axiosResponse2.data);
-        console.log(".then() Response 2 Log: ", $response2);
+        console.log(".then() Response 2 Log: ", axiosResponse2.data);
         initialContact = {
-          receiver_id: $response1.results.user_id,
-          promo_id: $response1.results.id,
+          receiver_id: get(response1).results.user_id,
+          promo_id: get(response1).results.id,
         };
         data.set(initialContact);
       })
@@ -103,7 +101,7 @@
         <div
           class="flex flex-col overflow-hidden overflow-y-scroll min-h-96 h-96 element text-[#1f1f1f]"
         >
-          {#if $response1.results.pictures === "" || null || []}
+          {#if !$response1.results.pictures || $response1.results.pictures.length === 0}
             <div
               class="self-center w-full h-40 rounded-none skeleton min-h-40"
             ></div>
@@ -156,7 +154,7 @@
         <div
           class="flex flex-col gap-2 overflow-hidden overflow-y-scroll element min-h-96 h-96"
         >
-          {#if $response2.results === null}
+          {#if !$response2.results || $response2.results.length === 0}
             <div
               class="font-bold text-xl flex flex-col justify-center items-center text-[#cc2936] text-center h-full w-full"
             >
