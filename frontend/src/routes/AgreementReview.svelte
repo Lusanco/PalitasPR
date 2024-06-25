@@ -1,4 +1,8 @@
 <script>
+  import { onMount } from "svelte";
+  import { userSession } from "../scripts/stores";
+  import axios from "axios";
+
   /**
    ** Function to handle date inputs for month, day, and year fields
    */
@@ -31,6 +35,20 @@
    ** Function to handle date inputs for month, day, and year fields
    */
 
+   onMount(() => {
+    axios
+    .get("/api/user/status")
+    .then((userStatusRes) => {
+      userSession.set(true);
+      console.log(userStatusRes.data);
+    })
+    .catch((userStatusErr) => {
+      userSession.set(false);
+      console.log(userStatusErr);
+      console.log($userSession)
+    })
+  })
+  
   function handleDateInput(event) {
     const input = event.target;
     const key = event.key;

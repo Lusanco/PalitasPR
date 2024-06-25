@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import axios from "axios";
-  import { state, data, response } from "../scripts/stores";
+  import { state, data, response, userSession } from "../scripts/stores";
   import { writable } from "svelte/store";
   import { link } from "svelte-routing";
   import servicesID from "../scripts/servicesID";
@@ -28,6 +28,20 @@
   let urlArr;
   let initialContact;
 
+  onMount(() => {
+    axios
+    .get("/api/user/status")
+    .then((userStatusRes) => {
+      userSession.set(true);
+      console.log(userStatusRes.data);
+    })
+    .catch((userStatusErr) => {
+      userSession.set(false);
+      console.log(userStatusErr);
+      console.log($userSession);
+    })
+  })
+  
   function showModal(event) {}
   onMount(() => {
     console.log("ServiceDetails Component Has Mounted");

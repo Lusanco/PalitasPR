@@ -2,9 +2,10 @@
   import { link } from "svelte-routing";
   import Loading from "../components/Loading.svelte";
   import Button from "../components/Button.svelte";
-  import { state, data, response } from "../scripts/stores";
+  import { state, data, response, userSession } from "../scripts/stores";
   import { get } from "svelte/store";
   import { onMount } from "svelte";
+  import axios from "axios";
 
   // Button Prop Variables And Dependencies
   let image = null;
@@ -24,6 +25,20 @@
 
   // Define a reference for the Button component
   let buttonRef;
+
+  onMount(() => {
+    axios
+    .get("/api/user/status")
+    .then((userStatusRes) => {
+      userSession.set(true);
+      console.log(userStatusRes.data);
+    })
+    .catch((userStatusErr) => {
+      userSession.set(false);
+      console.log(userStatusErr);
+      console.log($userSession);
+    })
+  })
 
   // Function to handle the "Enter" key press
   function handleKeydown(event) {
