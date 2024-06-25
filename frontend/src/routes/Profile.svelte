@@ -19,14 +19,22 @@
 
   onMount(() => {
     console.log("Profile Component Has Mounted");
-    currentUrl = window.location.href;
+
+    const currentUrl = window.location.href;
     console.log("Current URL: ", currentUrl);
-    urlArr = currentUrl.split("/");
-    id = urlArr[urlArr.length - 1];
+
+    const urlArr = currentUrl.split("/");
+    const id = urlArr[urlArr.length - 1];
     console.log("Profile ID: ", id);
 
     axios
-      .get(`/api/user/profile/${id}`)
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+
+        return axios.get(`/api/user/profile/${id}`);
+      })
       .then((axiosResponse2) => {
         response2.set(axiosResponse2.data);
         console.log(".then() Response 2 Log: ", axiosResponse2);
@@ -39,6 +47,11 @@
 
         profilePic.set(axiosResponse2.data.results.profile_pic || "");
         coverPic.set(axiosResponse2.data.results.cover_pic || "");
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
       })
       .catch((axiosError) => {
         console.log(".catch() Error Log: ", axiosError);
