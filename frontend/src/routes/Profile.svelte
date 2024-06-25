@@ -2,7 +2,7 @@
 <script>
   import { onMount } from "svelte";
   import axios from "axios";
-  import { response } from "../scripts/stores";
+  import { response, userSession } from "../scripts/stores";
   import { writable } from "svelte/store";
   import { link } from "svelte-routing";
 

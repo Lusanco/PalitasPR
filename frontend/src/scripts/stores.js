@@ -8,3 +8,5 @@ export const state = writable({
   reload: false,
   error: false,
 });
+
+export const userSession = writable(false);
