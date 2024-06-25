@@ -142,7 +142,7 @@
             : `/request-details/${service.request_id}`}
           class="w-full min-h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-[#f1f1f1] active:scale-95 overflow-hidden border-b-4 border-[#cc2936]"
         >
-          {#if !service.pictures}
+          {#if !service.pictures[0] || ""}
             <div
               class="hidden object-cover h-full rounded-none max-h-40 min-w-60 max-w-60 md:block md:w-1/4 skeleton"
             ></div>
