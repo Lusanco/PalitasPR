@@ -1,5 +1,22 @@
 <script>
   import Team from "../components/Team.svelte";
+  import { userSession } from "../scripts/stores";
+  import axios from "axios";
+  import { onMount } from "svelte";
+
+  onMount(() => {
+    axios
+    .get("/api/user/status")
+    .then((userStatusRes) => {
+      userSession.set(true);
+      console.log(userStatusRes.data);
+    })
+    .catch((userStatusErr) => {
+      userSession.set(false);
+      console.log(userStatusErr);
+      console.log($userSession)
+    })
+  })
 
   function scrollToTeam() {
     const teamSection = document.getElementById("team");
