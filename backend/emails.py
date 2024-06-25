@@ -14,7 +14,6 @@ db_url = os.getenv("DB_URL")
 engine = create_engine(db_url)
 
 
-
 def load_html_template(template_path):
     with open(template_path, 'r') as file:
         return file.read()
@@ -34,7 +33,7 @@ def send_confirm_email(email, first_name, token):
 
     # Load the HTML template
     html_template = load_html_template(
-        'backend/email_template/email_template.html')
+        './email_template/email_template.html')
 
     # Inject dynamic content into the HTML template
     html_content = html_template.replace(
