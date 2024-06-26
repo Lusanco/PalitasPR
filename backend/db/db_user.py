@@ -123,14 +123,25 @@ class Db_user:
                 contact_dict['task'] = None
             # DO NOT TOUCH LINE BELOW, adding object to session, prevent detached objects error on lazy loads
             initialContact = self.session.merge(initialContact)
-
             # received_contacts: The user is the receiver, we need sender info
             if user_id == initialContact.receiver_id:
                 sender = initialContact.sender
+                receiver = initialContact.receiver
                 contact_dict['sender_first_name'] = sender.first_name
                 contact_dict['sender_last_name'] = sender.last_name
                 contact_dict['sender_email']= sender.email
                 contact_dict['phone'] = sender.phone
+
+                if task:
+                    contact_dict['task']['receiver_email'] = contact_dict['sender_email']
+                    contact_dict['task']['receiver_first_name'] = contact_dict['sender_first_name']
+                    contact_dict['task']['receiver_last_name'] = contact_dict['sender_last_name']
+                    contact_dict['task']['receiver_phone'] = contact_dict['phone']
+                    contact_dict['task']['provider_first_name'] = receiver.first_name
+                    contact_dict['task']['provider_last_name'] = receiver.last_name
+                    contact_dict['task']['provider_email']= receiver.email
+                    contact_dict['task']['provider_phone'] = receiver.phone
+
                 contact_dict.pop('receiver_id')
                 received_contacts.append(contact_dict)
             else: # sent_contacts: User is sender, we need receiver_info
