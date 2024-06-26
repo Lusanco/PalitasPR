@@ -7,6 +7,7 @@
   import Loading from "../components/Loading.svelte";
   import servicesID from "../scripts/servicesID";
   import Button from "../components/Button.svelte";
+  import { split } from "postcss/lib/list";
 
   const today = new Date();
   const year = today.getFullYear();
@@ -104,8 +105,8 @@
           taskClosed = true;
         }
 
-        if ($received[0].task != null) {
-          myTask = $received[0].task;
+        if ($received[1].task != null) {
+          myTask = $received[1].task;
         }
         console.log("MY TASK =>", myTask);
 
@@ -249,28 +250,6 @@
   /**
    ** Values for the form fields
    */
-
-  /* let createdAt = myTask.created_at;
-  let date = {
-    month: createdAt[1],
-    day: createdAt[2],
-    year: createdAt[3],
-  }; */
-
-  /* let formValues = {
-    service_provider: myTask.,
-    service: "",
-    email: "",
-    phone_number: "",
-    service_client: "",
-    client_email: "",
-    client_phone_number: "",
-    agreement: "",
-    price: "",
-    month: "",
-    day: "",
-    year: "",
-  } */
 </script>
 
 <div class="flex flex-col items-center w-full min-h-screen px-4 py-20 mx-auto">
@@ -295,7 +274,7 @@
     >
   </div>
   <div class="flex flex-col w-full h-full py-4 mx-auto">
-    {#if $received && $sent && $promo && $contacts}
+    {#if $received && $sent && $contacts}
       {#each $received as received, index}
         <div
           class="max-w-6xl px-4 mx-auto w-full bg-white border-b-2 rounded-lg border-[#cc2936] text-[#1f1f1f] flex flex-col transition-all duration-100 hover:bg-[#cc2936] hover:text-[#f1f1f1]"
@@ -383,12 +362,8 @@
 
             <br />
             <div class="w-full text-justify">
-              <span>
-                {$promo.results.title}:
-              </span>
-              <span>
-                {$promo.results.description}
-              </span>
+              <span> Promo Title: </span>
+              <span> Promo description </span>
             </div>
             <br />
 
@@ -428,7 +403,7 @@
                             type="text"
                             readonly
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
-                            value={`${$promo.results.first_name} ${$promo.results.last_name}`}
+                            value={`${userDetails.first_name} + " " + ${userDetails.last_name}`}
                           />
                         </label>
                         <!--* Service Provided -->
@@ -916,6 +891,7 @@
                                 readonly
                                 id="month"
                                 type="text"
+                                value={myTask.created_at.split(" ")[1]}
                                 class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                               <!--? Day -->
@@ -923,6 +899,7 @@
                                 readonly
                                 id="day"
                                 type="text"
+                                value={myTask.created_at.split(" ")[2]}
                                 class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                               <!--? Year -->
@@ -930,6 +907,7 @@
                                 readonly
                                 id="year"
                                 type="text"
+                                value={myTask.created_at.split(" ")[3]}
                                 class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                             </div>
