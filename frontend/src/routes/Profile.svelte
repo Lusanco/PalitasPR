@@ -6,7 +6,7 @@
   import { writable } from "svelte/store";
   import { link } from "svelte-routing";
 
-  let response1 = writable(null);
+  let axStatus = writable(null);
   let response2 = writable(null);
   let response3 = writable([]);
   let images = writable([]);
@@ -34,21 +34,32 @@
       .then((userStatusRes) => {
         userSession.set(true);
         console.log(userStatusRes.data);
-
+        console.log(userStatusRes.status);
         return axios.get(`/api/user/profile/${id}`);
       })
-      .then((axiosResponse2) => {
-        response2.set(axiosResponse2.data);
-        console.log(".then() Response 2 Log: ", axiosResponse2);
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log("userStatusErr: ", userStatusErr.response.status);
+        if (userStatusErr.response.status === 401) {
+          window.location.href = "/login-to-continue";
+        }
+        if (userStatusErr.response.status === 404) {
+          window.location.href = "/404";
+        }
+        return axios.get(`/api/user/profile/${id}`);
+      })
+      .then((profileRes) => {
+        response2.set(profileRes.data);
+        console.log(".then() Response 2 Log: ", profileRes);
 
-        let galleryImages = axiosResponse2.data.results.gallery || [];
+        let galleryImages = profileRes.data.results.gallery || [];
         if (typeof galleryImages === "string") {
           galleryImages = [galleryImages];
         }
         images.set(galleryImages);
 
-        profilePic.set(axiosResponse2.data.results.profile_pic || "");
-        coverPic.set(axiosResponse2.data.results.cover_pic || "");
+        profilePic.set(profileRes.data.results.profile_pic || "");
+        coverPic.set(profileRes.data.results.cover_pic || "");
 
         return axios.get(`/api/dashboard/profile-promotions/${id}`);
       })
@@ -56,11 +67,6 @@
         promotions.set(axiosResponse3.data.results);
         console.log(".then() Response 3 Log: ", axiosResponse3);
         console.log("Promotions: ", $promotions);
-      })
-      .catch((userStatusErr) => {
-        userSession.set(false);
-        console.log(userStatusErr);
-        console.log($userSession);
       })
       .catch((axiosError) => {
         console.log(".catch() Error Log: ", axiosError);
