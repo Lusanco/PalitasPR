@@ -250,6 +250,13 @@
    ** Values for the form fields
    */
 
+  /* let createdAt = myTask.created_at;
+  let date = {
+    month: createdAt[1],
+    day: createdAt[2],
+    year: createdAt[3],
+  }; */
+
   /* let formValues = {
     service_provider: myTask.,
     service: "",
@@ -731,9 +738,12 @@
                         >
                           Nombre
                           <input
+                            readonly
                             id="service-provider"
                             type="text"
-                            readonly
+                            value={myTask.provider_first_name +
+                              " " +
+                              myTask.provider_last_name}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                           />
                         </label>
@@ -744,9 +754,10 @@
                         >
                           Servicio
                           <input
+                            readonly
                             id="service"
                             type="text"
-                            readonly
+                            value={myTask.service}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                           />
                         </label>
@@ -760,6 +771,7 @@
                             readonly
                             id="email"
                             type="email"
+                            value={myTask.provider_email}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -772,10 +784,8 @@
                           <input
                             readonly
                             id="phone-number"
-                            required
-                            pattern="\d{3}-\d{3}-\d{4}"
-                            on:keypress={restrictToNumbersAndDashes}
                             type="text"
+                            value={myTask.provider_phone}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -796,9 +806,12 @@
                         >
                           Nombre
                           <input
+                            readonly
                             id="service-client"
                             type="text"
-                            readonly
+                            value={myTask.receiver_first_name +
+                              " " +
+                              myTask.receiver_last_name}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                           />
                         </label>
@@ -812,6 +825,7 @@
                             readonly
                             id="clientEmail"
                             type="email"
+                            value={myTask.receiver_email}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -822,10 +836,10 @@
                         >
                           Número de Teléfono
                           <input
-                            id="clientPhone-number"
                             readonly
-                            pattern="\d{3}-\d{3}-\d{4}"
+                            id="clientPhone-number"
                             type="text"
+                            value={myTask.receiver_phone}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -852,7 +866,7 @@
                           <!--* Details input -->
                           <div class="border-[1px] mt-4 -mb-1"></div>
                           <ul class="h-auto pb-4 my-4 border-b-2">
-                            {#each bulletPoints as bulletPoint}
+                            {#each myTask.description as bulletPoint}
                               <div class="flex justify-between mx-4">
                                 <div class="flex gap-2 mt-1">
                                   <i
@@ -883,8 +897,7 @@
                                 readonly
                                 id="price"
                                 type="text"
-                                value="$100.00"
-                                on:keypress={restrictToNumbersAndDecimal}
+                                value={"$" + myTask.price}
                                 class="p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                             </div>
@@ -900,29 +913,23 @@
                             <!--? Month -->
                             <div class="flex gap-2">
                               <input
+                                readonly
                                 id="month"
                                 type="text"
-                                placeholder="MM"
-                                readonly
-                                on:keypress={handleDateInput}
                                 class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                               <!--? Day -->
                               <input
+                                readonly
                                 id="day"
                                 type="text"
-                                placeholder="DD"
-                                readonly
-                                on:keypress={handleDateInput}
                                 class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                               <!--? Year -->
                               <input
+                                readonly
                                 id="year"
                                 type="text"
-                                placeholder="AAAA"
-                                readonly
-                                on:keypress={handleDateInput}
                                 class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                             </div>
