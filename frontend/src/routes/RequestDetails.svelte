@@ -72,6 +72,7 @@
         profileID.set($response1.results.profile_id);
       })
       .catch((axiosError) => {
+        userSession.set(false);
         window.location.href = "/404";
         console.log(".catch() Error Log: ", axiosError);
       });
