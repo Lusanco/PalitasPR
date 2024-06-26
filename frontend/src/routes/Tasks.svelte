@@ -51,6 +51,7 @@
   let terms;
   let sentReceived = writable(true);
   let userDetails = writable(null);
+  let taskClosed = false
 
   $: {
     $data = {
@@ -83,11 +84,14 @@
         initial_contact_id.set($received.id);
 
         // *************** Finding the Specific Task Key **************
-        const targetKey = "promo_id";
-        const foundTask = $received.find((item) =>
-          item.task.hasOwnProperty(targetKey)
-        );
-        const promo_id = foundTask.task[targetKey];
+        // const targetKey = "promo_id";
+        // const foundTask = $received.find((item) =>
+        //   item.promo_id
+        // );
+        const promo_id = $received[0].promo_id;
+        if($received[0].task != null && $received[0].task.status === 'closed'){
+          taskClosed = true;
+        }
 
         // console.log("RECEIVED =>");
         // console.table($received);
@@ -503,6 +507,7 @@
                           artículo a la lista.
                         </p>
                         <!--* Details input -->
+                        <!-- When task === null -->
                         <div class="flex gap-2 pb-4 border-b-2">
                           <input
                             type="text"
@@ -518,8 +523,9 @@
                             <i class="block fa-solid fa-plus md:hidden"
                             ></i><span class="hidden md:block">Añadir</span>
                           </button>
-                        </div>
-
+                        </div> 
+                          <!-- WHEN task exists: $bulletPointsStore = task.terms = ['termino1', 'termino2']-->
+                           <!-- 'Termino1|Termino2|Termino3' -->
                         <ul class="h-auto pb-4 my-4 border-b-2">
                           {#each $bulletPointsStore as bulletPoint}
                             <div class="flex justify-between md:mx-4">
@@ -566,6 +572,7 @@
                         >
                           Precio
                           <!--* Price Input -->
+                          <!-- WHEN TASK EXISTS price = task.price -->
                           <div class="">
                             <input
                               id="price"
@@ -579,6 +586,7 @@
                         </label>
                       </div>
                       <!--* Date Inputs -->
+                      <!-- WHEN TASK EXISTS: date = task.created_at -->
                       <div class="flex col-span-1">
                         <label
                           for="month"
@@ -650,6 +658,7 @@
                   </div>
                   <div>
                     <!--* Submit button -->
+                    <!-- WHEN TASK EXISTS: no submit button -->
                     <Button {button} {image} />
                     <br />
                   </div>
@@ -665,10 +674,12 @@
               class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
               >Delete Task</button
             >
+            {#if taskClosed === true}
             <button
               class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
               >Leave Review</button
             >
+            {/if}
           </div>
         </div>
       {/each}
