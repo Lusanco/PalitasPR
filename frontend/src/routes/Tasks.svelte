@@ -25,12 +25,6 @@
     misc: { "App Location": "Tasks" },
   };
 
-  /* 
-    initial_contact_id
-    terms
-    price
-  */
-
   const serviceNamesByID = Object.entries(servicesID).reduce(
     (obj, [key, value]) => {
       obj[value] = key;
@@ -52,12 +46,12 @@
   let contacts = writable();
   let received = writable();
   let sent = writable();
-  let promo = writable();
+  let promo = writable("");
   let price = "";
   let initial_contact_id = writable(null);
   let terms;
   let sentReceived = writable(true);
-  let userDetails = writable(null);
+  let userDetails = writable("");
   let taskClosed = false;
   let myTask = "";
   let bulletPoints = [];
@@ -79,9 +73,9 @@
       .then((userStatusRes) => {
         userSession.set(true);
         userDetails.set(userStatusRes.data);
+        console.log("userStatusRes", userStatusRes.data);
         console.log($userDetails);
 
-        // console.log(".then() User Session Log: ", $userSession);
         return axios.get("/api/user/contacts");
       })
       .then((userContactsRes) => {
@@ -92,11 +86,6 @@
         sent.set($contacts.results.sent);
         initial_contact_id.set($received.id);
 
-        // *************** Finding the Specific Task Key **************
-        // const targetKey = "promo_id";
-        // const foundTask = $received.find((item) =>
-        //   item.promo_id
-        // );
         const promo_id = $received[0].promo_id;
         if (
           $received[0].task != null &&
@@ -110,23 +99,11 @@
         }
         console.log("MY TASK =>", myTask);
 
-        // console.log("RECEIVED =>");
-        // console.table($received);
-        // console.log("RECEIVED.TASK =>");
-        // $received.forEach((item) => {
-        //   console.table(item.task);
-        // });
-        // console.log("SENT =>");
-        // console.table($sent);
-        // console.log("SENT.TASK =>");
-        // $sent.forEach((item) => {
-        //   console.table(item.task);
-        // });
         return axios.get(`/api/promotion/${promo_id}`);
       })
       .then((promoRes) => {
-        promo.set(promoRes.data);
-        // console.log($promo);
+        promo.set(promoRes.data.results);
+        console.log("Promo", promoRes.data);
       })
       .catch((axiosError) => {
         userSession.set(false);
@@ -245,7 +222,7 @@
     }
   }
 
-  /* console.log("This is the result of received.task", $received.task); */
+  console.log("This is the result of userDetails", $userDetails);
 
   /**
    ** Values for the form fields
@@ -362,12 +339,12 @@
 
             <br />
             <div class="w-full text-justify">
-              <span> Promo Title: </span>
-              <span> Promo description </span>
+              <span> {$promo.title}: </span>
+              <span> {$promo.description} </span>
             </div>
             <br />
 
-            {#if myTask === null}
+            {#if received.task === null}
               <div
                 class="w-full min-w-full min-h-full bg-white shadow-lg rounded-2xl"
               >
@@ -399,11 +376,11 @@
                         >
                           Nombre
                           <input
+                            readonly
                             id="service-provider"
                             type="text"
-                            readonly
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
-                            value={`${userDetails.first_name} + " " + ${userDetails.last_name}`}
+                            value={`${$userDetails.first_name} ${$userDetails.last_name}`}
                           />
                         </label>
                         <!--* Service Provided -->
@@ -413,11 +390,11 @@
                         >
                           Servicio
                           <input
+                            readonly
                             id="service"
                             type="text"
-                            readonly
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
-                            value={serviceNamesByID[$promo.results.service_id]}
+                            value="Service Name"
                           />
                         </label>
                         <!--* Provider Email -->
@@ -443,11 +420,8 @@
                           <input
                             readonly
                             id="phone-number"
-                            required
-                            pattern="\d{3}-\d{3}-\d{4}"
-                            on:keypress={restrictToNumbersAndDashes}
-                            value={$userDetails.phone}
                             type="text"
+                            value={$userDetails.phone}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -468,11 +442,11 @@
                         >
                           Nombre
                           <input
+                            readonly
                             id="service-client"
                             type="text"
-                            readonly
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                             value={`${received.sender_first_name} ${received.sender_last_name}`}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                           />
                         </label>
                         <!--* Client Email -->
@@ -716,9 +690,9 @@
                             readonly
                             id="service-provider"
                             type="text"
-                            value={myTask.provider_first_name +
+                            value={received.task.provider_first_name +
                               " " +
-                              myTask.provider_last_name}
+                              received.task.provider_last_name}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                           />
                         </label>
@@ -732,7 +706,7 @@
                             readonly
                             id="service"
                             type="text"
-                            value={myTask.service}
+                            value={received.task.service}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                           />
                         </label>
@@ -746,7 +720,7 @@
                             readonly
                             id="email"
                             type="email"
-                            value={myTask.provider_email}
+                            value={received.task.provider_email}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -760,7 +734,7 @@
                             readonly
                             id="phone-number"
                             type="text"
-                            value={myTask.provider_phone}
+                            value={received.task.provider_phone}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -784,9 +758,9 @@
                             readonly
                             id="service-client"
                             type="text"
-                            value={myTask.receiver_first_name +
+                            value={received.task.receiver_first_name +
                               " " +
-                              myTask.receiver_last_name}
+                              received.task.receiver_last_name}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                           />
                         </label>
@@ -800,7 +774,7 @@
                             readonly
                             id="clientEmail"
                             type="email"
-                            value={myTask.receiver_email}
+                            value={received.task.receiver_email}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -814,7 +788,7 @@
                             readonly
                             id="clientPhone-number"
                             type="text"
-                            value={myTask.receiver_phone}
+                            value={received.task.receiver_phone}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -841,7 +815,7 @@
                           <!--* Details input -->
                           <div class="border-[1px] mt-4 -mb-1"></div>
                           <ul class="h-auto pb-4 my-4 border-b-2">
-                            {#each myTask.description as bulletPoint}
+                            {#each received.task.description as bulletPoint}
                               <div class="flex justify-between mx-4">
                                 <div class="flex gap-2 mt-1">
                                   <i
@@ -872,7 +846,7 @@
                                 readonly
                                 id="price"
                                 type="text"
-                                value={"$" + myTask.price}
+                                value={"$" + received.task.price}
                                 class="p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                             </div>
@@ -891,7 +865,7 @@
                                 readonly
                                 id="month"
                                 type="text"
-                                value={myTask.created_at.split(" ")[1]}
+                                value={received.task.created_at.split(" ")[1]}
                                 class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                               <!--? Day -->
@@ -899,7 +873,7 @@
                                 readonly
                                 id="day"
                                 type="text"
-                                value={myTask.created_at.split(" ")[2]}
+                                value={received.task.created_at.split(" ")[2]}
                                 class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                               <!--? Year -->
@@ -907,7 +881,7 @@
                                 readonly
                                 id="year"
                                 type="text"
-                                value={myTask.created_at.split(" ")[3]}
+                                value={received.task.created_at.split(" ")[3]}
                                 class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                             </div>
@@ -933,7 +907,8 @@
                       <!--? Agreement Checkbox -->
                       <div class="flex gap-2 mt-2">
                         <input
-                          required
+                          disabled
+                          checked
                           id="accept"
                           type="checkbox"
                           class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-gray-300 rounded-sm ring-gray-300 mt-[5px] text-[#cc2936]"
@@ -954,13 +929,13 @@
                         </label>
                       </div>
                     </div>
-                    <div>
-                      <!--* Submit button -->
-                      <button
+                    <!-- <div> -->
+                    <!--* Submit button -->
+                    <!-- <button
                         class="w-full p-2 mt-4 font-semibold text-white bg-[#cc2936] border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
                         >Someter</button
                       >
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </div>
