@@ -1,14 +1,24 @@
-<!-- Revised: Livan - Instrucctions in Trello -->
 <script>
   import { link } from "svelte-routing";
+  import { userSession } from "../scripts/stores";
   let menuOpen = false;
 
   function toggleMenu() {
     menuOpen = !menuOpen;
   }
+
+  function closeMenu(event) {
+    // Verifica si el clic fue fuera del menú y del botón
+    if (menuOpen && !event.target.closest('#navbar-cta') && !event.target.closest('button[aria-controls="navbar-cta"]')) {
+      menuOpen = false;
+    }
+  }
+
+  // Agrega el evento de clic al documento
+  document.addEventListener('click', closeMenu);
 </script>
 
-<div class="flex justify-end m-2 bg-transparent md:hidden">
+<div class="flex justify-end m-2 bg-transparent">
   <button
     type="button"
     class="inline-flex items-center justify-center w-16 h-16 p-2 text-sm text-[#cc2936] rounded-lg hover:opacity-90 focus:outline-none focus:ring-0"
@@ -19,7 +29,6 @@
     <span class="sr-only">Open main menu</span>
     <svg
       class="w-5 h-5"
-      aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 17 14"
@@ -36,59 +45,42 @@
 </div>
 
 <div
-  class={`z-50 bg-teal-50 absolute left-0 right-0 ${menuOpen ? "block" : "hidden"} md:hidden bg-transparent`}
+  class={`z-50 bg-base fixed top-20 right-0 left-0 ${menuOpen ? "block" : "hidden"} bg-transparent md:left-auto md:w-80`}
   id="navbar-cta"
 >
   <ul
-    class="z-50 flex flex-col p-2 mt-1 space-y-2 font-medium rounded-b-lg bg-slate-200 rtl:space-x-reverse"
+    class="w-full p-4 shadow-lg md:w-80 menu bg-base-200 rounded-box"
   >
     <li>
       <a
         use:link
         href="/"
-        class="block px-3 py-2 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+        class="block px-5 py-4 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
         >Home</a
       >
     </li>
     <li>
       <a
         use:link
-        href="/aboutus"
-        class="block px-3 py-2 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
-        >About Us</a
+        href="/dashboard"
+        class="block px-5 py-4 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+        >Dashboard</a
       >
     </li>
     <li>
       <a
         use:link
-        href="/services"
-        class="block px-3 py-2 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
-        >Services</a
+        href="/profile/:id"
+        class="block px-5 py-4 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+        >Profile</a
       >
     </li>
-    <li>
+    <li class="">
       <a
         use:link
-        href="/contact"
-        class="block px-3 py-2 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
-        >Contact</a
-      >
-    </li>
-    <!-- Hide these items on medium and larger screens -->
-    <li class="md:hidden">
-      <a
-        use:link
-        href="/login"
-        class="block px-4 py-2 text-sm font-medium text-center text-white bg-[#cc2936] rounded-lg"
-        >Sign In</a
-      >
-    </li>
-    <li class="md:hidden">
-      <a
-        use:link
-        href="/signup"
-        class="block px-4 py-2 text-sm font-medium text-center text-white bg-[#cc2936] rounded-lg"
-        >Sign Up</a
+        href="/logout"
+        class="mt-2 block px-4 py-3 text-sm font-medium text-center text-white bg-[#cc2936] hover:text-gray-800 rounded-lg"
+        >Logout</a
       >
     </li>
   </ul>
