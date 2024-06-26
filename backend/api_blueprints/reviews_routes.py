@@ -15,13 +15,12 @@ def review_crud():
     '''
         Review route CRUD methods
     '''
-    metodo = 'GET'
-    if metodo == 'GET':
-        print('Inside GET reviews')
+    if request.method == 'GET':
         reviews_list = Db_review(g.db_session).get_all_reviews()
         if not reviews_list:
             return make_response(jsonify({'results': None}), 200)
         return make_response(jsonify({'results': reviews_list}), 200)
+
     if request.method == 'POST':
         data = request.get_json()
         data['user_id'] = current_user.id # Reviewer

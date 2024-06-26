@@ -4,7 +4,7 @@
 '''
 from emails import send_confirm_email
 from email_validator import validate_email, EmailNotValidError
-from models import User, Initial_Contact, Profile, Review, Task
+from models import User, Initial_Contact, Profile, Review, Task, Service
 from db.db_operations import DBOperations
 from db.db_task import Db_task
 from sqlalchemy import or_
@@ -120,6 +120,9 @@ class Db_user:
             if task:
                 contact_dict['task'] = task.all_columns()
                 contact_dict['task']['description'] = task.description.split('|')
+                contact_dict['task'].pop('service_id')
+                service = self.session.query(Service.name).filter(Service.id == task.service_id).first()
+                contact_dict['task']['service'] = service[0]
             else:
                 contact_dict['task'] = None
             # DO NOT TOUCH LINE BELOW, adding object to session, prevent detached objects error on lazy loads
