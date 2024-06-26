@@ -30,21 +30,6 @@
   let initialContact;
 
   onMount(() => {
-    axios
-      .get("/api/user/status")
-      .then((userStatusRes) => {
-        userSession.set(true);
-        console.log(userStatusRes.data);
-      })
-      .catch((userStatusErr) => {
-        userSession.set(false);
-        console.log(userStatusErr);
-        console.log($userSession);
-      });
-  });
-
-  function showModal(event) {}
-  onMount(() => {
     console.log("ServiceDetails Component Has Mounted");
     currentUrl = window.location.href;
     console.log("Current URL: ", currentUrl);
@@ -53,16 +38,27 @@
     console.log("ServiceDetails Component ID: ", id);
 
     axios
-      .get(`/api/promotion/${id}`)
-      .then((axiosResponse1) => {
-        response1.set(axiosResponse1.data);
-        profileID.set(axiosResponse1.data.results.profile_id);
-        console.log(".then() Response Log: ", axiosResponse1.data);
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+        return axios.get(`/api/promotion/${id}`);
+      })
+      .catch((userStatusErr) => {
+        if (userStatusErr.status === 401) {
+          window.location.href = "/404";
+        }
+        return axios.get(`/api/promotion/${id}`);
+      })
+      .then((promoIDRes) => {
+        response1.set(promoIDRes.data);
+        profileID.set(promoIDRes.data.results.profile_id);
+        console.log(".then() promoIDRes Log: ", promoIDRes.data);
         return axios.get(`/api/promotion/promo_review/${id}`);
       })
-      .then((axiosResponse2) => {
-        response2.set(axiosResponse2.data);
-        console.log(".then() Response 2 Log: ", axiosResponse2.data);
+      .then((promoReviewRes) => {
+        response2.set(promoReviewRes.data);
+        console.log(".then() promoReviewRes Log: ", promoReviewRes.data);
         initialContact = {
           receiver_id: get(response1).results.user_id,
           promo_id: get(response1).results.id,
@@ -70,7 +66,7 @@
         data.set(initialContact);
       })
       .catch((axiosError) => {
-        window.location.href = "/404";
+        userSession.set(false);
         console.log(".catch() Error Log: ", axiosError);
       });
   });
