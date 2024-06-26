@@ -247,8 +247,23 @@
   /* console.log("This is the result of received.task", $received.task); */
 
   /**
-   *! Placeholder values for the form fields
+   ** Values for the form fields
    */
+
+  /* let formValues = {
+    service_provider: myTask.,
+    service: "",
+    email: "",
+    phone_number: "",
+    service_client: "",
+    client_email: "",
+    client_phone_number: "",
+    agreement: "",
+    price: "",
+    month: "",
+    day: "",
+    year: "",
+  } */
 </script>
 
 <div class="flex flex-col items-center w-full min-h-screen px-4 py-20 mx-auto">
@@ -341,10 +356,12 @@
               </span>
             </div>
             <div
-              class="flex flex-wrap justify-center w-full md:justify-between"
+              class="flex flex-wrap justify-center w-full gap-2 md:justify-between"
             >
-              <span>{received.phone}</span>
-              <span> {received.sender_email} </span>
+              <span class="text-center md:text-start">{received.phone}</span>
+              <span class="text-center md:text-end">
+                {received.sender_email}
+              </span>
             </div>
           </button>
           <div
