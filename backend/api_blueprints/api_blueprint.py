@@ -86,8 +86,9 @@ def send_contact():
         response, status = DBOperations(g.db_session).new({'Initial_Contact': data})
         if status != 201:
             return make_response(jsonify(response), status)
+        g.db_session.commit()
         return make_response(jsonify({'results': 'ok'}), 201)
-    
+
     if request.method == 'PUT':
         data = request.get_json()
         keys = ['receiver_id', 'sender_id','promo_id']
