@@ -117,6 +117,8 @@ class Db_user:
             contact_dict = {}
             contact_dict.update(initialContact.all_columns())
             task = Db_task(self.session).get_task_by_contactId(initialContact.id)
+            contact_dict['promo_title'] = initialContact.promo.title
+            contact_dict['promo_description'] = initialContact.promo.description
 
             if task:
                 contact_dict['task'] = task.all_columns()
