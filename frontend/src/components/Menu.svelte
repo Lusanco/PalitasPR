@@ -2,6 +2,8 @@
   import { link } from "svelte-routing";
   import { userSession } from "../scripts/stores";
   import { onMount } from "svelte";
+  import axios from "axios";
+  import { writable } from "svelte/store";
   let menuOpen = false;
 
   function toggleMenu() {
@@ -10,19 +12,32 @@
 
   function closeMenu(event) {
     // Verifica si el clic fue fuera del menú y del botón
-    if (menuOpen && !event.target.closest('#navbar-cta') && !event.target.closest('button[aria-controls="navbar-cta"]')) {
+    if (
+      menuOpen &&
+      !event.target.closest("#navbar-cta") &&
+      !event.target.closest('button[aria-controls="navbar-cta"]')
+    ) {
       menuOpen = false;
     }
   }
+  let profileID = writable();
 
   // Agrega el evento de clic al documento
   onMount(() => {
-  document.addEventListener('click', closeMenu);
+    axios
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        profileID.set(userStatusRes.data.profile_id);
+      })
+      .catch((userStatusErr) => {
+        console.log("User Status Err: ", userStatusErr);
+      });
+    document.addEventListener("click", closeMenu);
 
-  return () => {
-    document.removeEventListener('click', closeMenu);
-  };
-});
+    return () => {
+      document.removeEventListener("click", closeMenu);
+    };
+  });
 </script>
 
 <div class="flex justify-end m-2 bg-transparent">
@@ -55,16 +70,13 @@
   class={`z-50 bg-[#f1f1f1] fixed top-20 right-0 left-0 ${menuOpen ? "block" : "hidden"} bg-transparent md:left-auto md:w-80`}
   id="navbar-cta"
 >
-  <ul
-    class="w-full p-4 shadow-lg md:w-80 menu bg-[#f1f1f1] rounded-box"
-  >
+  <ul class="w-full p-4 shadow-lg md:w-80 menu bg-[#f1f1f1] rounded-box">
     <li>
       <a
         use:link
         href="/"
         class="block px-5 py-4 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
-        on:click|preventDefault={toggleMenu}
-        >Home</a
+        on:click|preventDefault={toggleMenu}>Home</a
       >
     </li>
     <li>
@@ -72,26 +84,38 @@
         use:link
         href="/dashboard"
         class="block px-5 py-4 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
-        on:click|preventDefault={toggleMenu}
-        >Dashboard</a
+        on:click|preventDefault={toggleMenu}>Dashboard</a
       >
     </li>
     <li>
       <a
         use:link
-        href="/profile/:id"
+        href={`/profile/${$profileID}`}
         class="block px-5 py-4 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
-        on:click|preventDefault={toggleMenu}
-        >Profile</a
+        on:click|preventDefault={toggleMenu}>Profile</a
       >
     </li>
     <li class="">
       <a
         use:link
-        href="/logout"
+        on:click={() => {
+          axios
+            .get("/api/user/logout")
+            .then((logoutRes) => {
+              if (window.location.pathname === "/") {
+                window.location.reload();
+              } else {
+                window.location.href = "/";
+              }
+              console.log(logoutRes);
+            })
+            .catch((logoutErr) => {
+              console.log(logoutErr);
+            });
+        }}
+        href="/"
         class="mt-2 block px-4 py-3 text-sm font-medium text-center text-white bg-[#cc2936] hover:text-gray-800 rounded-lg"
-        on:click|preventDefault={toggleMenu}
-        >Logout</a
+        on:click|preventDefault={toggleMenu}>Logout</a
       >
     </li>
   </ul>
