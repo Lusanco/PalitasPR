@@ -71,7 +71,7 @@ def load_user(user_id):
 # This function will be called after each request to close the session
 @app.teardown_request
 def close_session(exception=None):
-    session = g.pop("session", None)
+    session = g.pop("db_session", None)
     if session is not None:
         session.close()
 
