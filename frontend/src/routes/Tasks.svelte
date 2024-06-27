@@ -1,4 +1,6 @@
 <script>
+  // @ts-nocheck
+
   import { onMount } from "svelte";
   import axios from "axios";
   import { data, response, userSession } from "../scripts/stores";
@@ -47,14 +49,37 @@
   let received = writable();
   let sent = writable();
   let promo = writable("");
-  let price = "";
   let initial_contact_id = writable(null);
-  let terms;
   let sentReceived = writable(true);
+  let contactRes = writable();
   let userDetails = writable("");
+  let price = "";
+  let terms;
   let taskClosed = false;
   let myTask = "";
   let bulletPoints = [];
+
+  /* 
+    let sentReceived = writable(true);
+    let contactRes = writable();
+
+
+    $received.last_name
+    $contactRes.last_name
+
+    If ($sentReceived === true){
+      contactRes.set($received);
+    } else if ($sentReceived === false){
+      contactRes.set($sent);
+    }
+  
+    EN LA PARTE DE PROMO_ID EL REQUEST
+    {#if $sentReceived === true}
+      Contenido de PromoID
+    {:else}
+      <div class="hidden"></div>
+    {/if}
+  */
 
   $: {
     $data = {
@@ -80,24 +105,24 @@
       })
       .then((userContactsRes) => {
         console.log("Contacts", userContactsRes);
-        response.set(userContactsRes);
         contacts.set(userContactsRes.data);
         received.set($contacts.results.received);
         sent.set($contacts.results.sent);
         initial_contact_id.set($received.id);
 
-        const promo_id = $received[0].promo_id;
+        if ($sentReceived === true) {
+          contactRes.set($received);
+        } else if ($sentReceived === false) {
+          contactRes.set($sent);
+        }
+
+        const promo_id = $contactRes[0].promo_id;
         if (
-          $received[0].task != null &&
-          $received[0].task.status === "closed"
+          $contactRes[0].task != null &&
+          $contactRes[0].task.status === "closed"
         ) {
           taskClosed = true;
         }
-
-        if ($received[1].task != null) {
-          myTask = $received[1].task;
-        }
-        console.log("MY TASK =>", myTask);
 
         return axios.get(`/api/promotion/${promo_id}`);
       })
@@ -223,6 +248,7 @@
   }
 
   console.log("This is the result of userDetails", $userDetails);
+  console.log("ContactRes", $contactRes);
 
   /**
    ** Values for the form fields
@@ -251,8 +277,8 @@
     >
   </div>
   <div class="flex flex-col w-full h-full py-4 mx-auto">
-    {#if $received && $sent && $contacts}
-      {#each $received as received, index}
+    {#if $contactRes}
+      {#each $contactRes as response, index}
         <div
           class="max-w-6xl px-4 mx-auto w-full bg-white border-b-2 rounded-lg border-[#cc2936] text-[#1f1f1f] flex flex-col transition-all duration-100 hover:bg-[#cc2936] hover:text-[#f1f1f1]"
         >
@@ -278,31 +304,31 @@
             }}
           >
             <div class="flex flex-wrap justify-between w-full">
-              {#if received.task === null}
+              {#if contactRes.task === null}
                 <span class="bg-[#f1f1f1] p-2 rounded-badge text-[#1f1f1f]"
                   >new</span
                 >
-              {:else if received.task.status === "closed"}
+              {:else if contactRes.task.status === "closed"}
                 <span class="bg-[#f1f1f1] p-2 rounded-badge text-[#1f1f1f]"
-                  >{received.task.status}</span
+                  >{contactRes.task.status}</span
                 >
-              {:else if received.task.status === "active"}
+              {:else if contactRes.task.status === "active"}
                 <span class="p-2 bg-green-500 rounded-badge text-[#1f1f1f]"
-                  >{received.task.status}</span
+                  >{contactRes.task.status}</span
                 >
-              {:else if received.task.status === "pending"}
+              {:else if contactRes.task.status === "pending"}
                 <span class="p-2 bg-yellow-500 rounded-badge text-[#1f1f1f]"
-                  >{received.task.status}</span
+                  >{contactRes.task.status}</span
                 >
-              {:else if received.task.status === "rejected"}
+              {:else if contactRes.task.status === "rejected"}
                 <span class="p-2 bg-red-500 rounded-badge text-[#1f1f1f]"
-                  >{received.task.status}</span
+                  >{contactRes.task.status}</span
                 >
               {/if}
-              {#if received.receiver_read === false}
+              {#if contactRes.receiver_read === false}
                 <span class="w-10 h-10 bg-[#cc2936] rounded-badge animate-ping">
                 </span>
-              {:else if received.receiver_read === true}
+              {:else if contactRes.receiver_read === true}
                 <span class="w-10 h-10 bg-[#f1f1f1] rounded-badge"> </span>
               {/if}
             </div>
@@ -311,19 +337,19 @@
               class="flex flex-wrap justify-center w-full md:justify-between"
             >
               <span>
-                Name: {received.sender_first_name}
-                {received.sender_last_name}
+                Name: {contactRes.sender_first_name}
+                {contactRes.sender_last_name}
               </span>
               <span>
-                {received.updated_at}
+                {contactRes.updated_at}
               </span>
             </div>
             <div
               class="flex flex-wrap justify-center w-full gap-2 md:justify-between"
             >
-              <span class="text-center md:text-start">{received.phone}</span>
+              <span class="text-center md:text-start">{contactRes.phone}</span>
               <span class="text-center md:text-end">
-                {received.sender_email}
+                {contactRes.sender_email}
               </span>
             </div>
           </button>
@@ -344,7 +370,7 @@
             </div>
             <br />
 
-            {#if received.task === null}
+            {#if contactRes.task === null}
               <div
                 class="w-full min-w-full min-h-full bg-white shadow-lg rounded-2xl"
               >
@@ -445,7 +471,7 @@
                             readonly
                             id="service-client"
                             type="text"
-                            value={`${received.sender_first_name} ${received.sender_last_name}`}
+                            value={`${contactRes.sender_first_name} ${contactRes.sender_last_name}`}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                           />
                         </label>
@@ -459,7 +485,7 @@
                             readonly
                             id="clientEmail"
                             type="email"
-                            value={received.sender_email}
+                            value={contactRes.sender_email}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -473,7 +499,7 @@
                             id="clientPhone-number"
                             readonly
                             pattern="\d{3}-\d{3}-\d{4}"
-                            value={received.phone}
+                            value={contactRes.phone}
                             type="text"
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
@@ -690,9 +716,9 @@
                             readonly
                             id="service-provider"
                             type="text"
-                            value={received.task.provider_first_name +
+                            value={contactRes.task.provider_first_name +
                               " " +
-                              received.task.provider_last_name}
+                              contactRes.task.provider_last_name}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                           />
                         </label>
@@ -706,7 +732,7 @@
                             readonly
                             id="service"
                             type="text"
-                            value={received.task.service}
+                            value={contactRes.task.service}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                           />
                         </label>
@@ -720,7 +746,7 @@
                             readonly
                             id="email"
                             type="email"
-                            value={received.task.provider_email}
+                            value={contactRes.task.provider_email}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -734,7 +760,7 @@
                             readonly
                             id="phone-number"
                             type="text"
-                            value={received.task.provider_phone}
+                            value={contactRes.task.provider_phone}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -758,9 +784,9 @@
                             readonly
                             id="service-client"
                             type="text"
-                            value={received.task.receiver_first_name +
+                            value={contactRes.task.receiver_first_name +
                               " " +
-                              received.task.receiver_last_name}
+                              contactRes.task.receiver_last_name}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                           />
                         </label>
@@ -774,7 +800,7 @@
                             readonly
                             id="clientEmail"
                             type="email"
-                            value={received.task.receiver_email}
+                            value={contactRes.task.receiver_email}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -788,7 +814,7 @@
                             readonly
                             id="clientPhone-number"
                             type="text"
-                            value={received.task.receiver_phone}
+                            value={contactRes.task.receiver_phone}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -815,7 +841,7 @@
                           <!--* Details input -->
                           <div class="border-[1px] mt-4 -mb-1"></div>
                           <ul class="h-auto pb-4 my-4 border-b-2">
-                            {#each received.task.description as bulletPoint}
+                            {#each contactRes.task.description as bulletPoint}
                               <div class="flex justify-between mx-4">
                                 <div class="flex gap-2 mt-1">
                                   <i
@@ -846,7 +872,7 @@
                                 readonly
                                 id="price"
                                 type="text"
-                                value={"$" + received.task.price}
+                                value={"$" + contactRes.task.price}
                                 class="p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                             </div>
@@ -865,7 +891,7 @@
                                 readonly
                                 id="month"
                                 type="text"
-                                value={received.task.created_at.split(" ")[1]}
+                                value={contactRes.task.created_at.split(" ")[1]}
                                 class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                               <!--? Day -->
@@ -873,7 +899,7 @@
                                 readonly
                                 id="day"
                                 type="text"
-                                value={received.task.created_at.split(" ")[2]}
+                                value={contactRes.task.created_at.split(" ")[2]}
                                 class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                               <!--? Year -->
@@ -881,7 +907,7 @@
                                 readonly
                                 id="year"
                                 type="text"
-                                value={received.task.created_at.split(" ")[3]}
+                                value={contactRes.task.created_at.split(" ")[3]}
                                 class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                               />
                             </div>
