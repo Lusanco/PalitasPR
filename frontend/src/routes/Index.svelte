@@ -5,7 +5,7 @@
   import Button from "../components/Button.svelte";
   import { state, data, response, userSession } from "../scripts/stores";
   import { get } from "svelte/store";
-  import { link } from "svelte-routing";
+  import { Link, link } from "svelte-routing";
   import { onMount } from "svelte";
   import axios from "axios";
 
@@ -151,9 +151,8 @@
       <!-- {#each services as service} -->
       {#each $response.data.results as service}
         <!-- New Card Start -->
-        <a
-          use:link
-          href={service.promo_id
+        <Link
+          to={service.promo_id
             ? `/service-details/${service.promo_id}`
             : `/request-details/${service.request_id}`}
           class="w-full min-h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-[#f1f1f1] active:scale-95 overflow-hidden border-b-4 border-[#cc2936]"
@@ -211,7 +210,7 @@
               {service.description}
             </p>
           </div>
-        </a>
+        </Link>
         <!-- New Card End -->
       {/each}
     </div>
