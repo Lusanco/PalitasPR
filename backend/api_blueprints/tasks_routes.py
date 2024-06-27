@@ -45,8 +45,8 @@ def get_tasks():
         # data = {'id':'<task_id>', 'status': 'open'}
         # data2 = {'id':'<task_id>', 'status': 'closed'}
         task_dict = data
-
-        task = DBOperations(g.db_session).search('Task', '<task_id')
+        task_id = data.get('id')
+        task = DBOperations(g.db_session).search('Task', task_id)
         if not task:
             return 'No task object found', 404
         if task.status == 'closed' or task.status == 'rejected':
@@ -64,7 +64,7 @@ def get_tasks():
         initial_contact = DBOperations(g.db_session).search('Initial_Contact', task.initial_contact_id)
         if not initial_contact:
             return 'No initial_contact_found', 404
-        
+
         response, status = DBOperations(g.db_session).update({'Task': task_dict})
         if status != 200:
             g.db_session.rollback()
