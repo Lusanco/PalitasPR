@@ -18,7 +18,7 @@
     headers: "multipart/form-data",
     twcss:
       "px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
-    misc: { "App Location": "CreateService Form" },
+    misc: { "App Location": "Crear Servicio" },
   };
 
   let title = "";
@@ -48,17 +48,17 @@
 
   onMount(() => {
     axios
-    .get("/api/user/status")
-    .then((userStatusRes) => {
-      userSession.set(true);
-      console.log(userStatusRes.data);
-    })
-    .catch((userStatusErr) => {
-      userSession.set(false);
-      console.log(userStatusErr);
-      console.log($userSession)
-    })
-  })
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+      });
+  });
 
   function handleTownChange(event) {
     const townId = event.target.value;

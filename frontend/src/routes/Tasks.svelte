@@ -124,15 +124,21 @@
           contactRes.set($sent);
           console.log("ContactRes Sent", $contactRes);
         }
+        let promo_id;
+        if (!$contactRes === null || !$contactRes[0] === null) {
+          promo_id = $contactRes[0].promo_id;
+          if (
+            $contactRes[0].task != null &&
+            $contactRes[0].task.status === "closed"
+          ) {
+            taskClosed = true;
+          }
 
-        const promo_id = $contactRes[0].promo_id;
-        if (
-          $contactRes[0].task != null &&
-          $contactRes[0].task.status === "closed"
-        ) {
-          taskClosed = true;
+          return axios.get(`/api/promotion/${promo_id}`);
         }
-
+        if (promo_id === null) {
+          promo_id = "No valid ID";
+        }
         return axios.get(`/api/promotion/${promo_id}`);
       })
       .then((promoRes) => {

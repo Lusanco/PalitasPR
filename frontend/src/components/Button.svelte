@@ -119,6 +119,17 @@
 
   // Function to handle button click
   export function buttonLogic() {
+    if (button.misc["App Location"] === "Crear Servicio") {
+      axiosLogic();
+      // $SDResponse = get(response);
+      console.log("Before IF", $response.status);
+      if ($response.status === 201) {
+        // console.log("IN IF", $SDResponse);
+        window.location.href = "/create-service-success";
+      }
+      // console.log("After IF", $SDResponse);
+      return;
+    }
     if (button.misc["App Location"] === "Service Details") {
       axiosLogic();
       $SDResponse = get(response);
