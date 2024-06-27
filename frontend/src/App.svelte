@@ -44,6 +44,7 @@
 
   // QR | Ath Movil
   import QR from "./components/QR.svelte";
+  import EmailSuccess from "./routes/EmailSuccess.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -77,6 +78,7 @@
       />
       <Route path="/tasks" component={Tasks} />
       <Route path="/create-review/:id" component={CreateReview} />
+      <Route path="/email-success" component={EmailSuccess} />
 
       <!--* QR | Ath Movil -->
       <Route path="/qr" component={QR} />
