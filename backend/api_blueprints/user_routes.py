@@ -118,54 +118,67 @@ def get_my_profile():
         return make_response(jsonify(response), status)
 
 
-@user_bp.route('/profile/<profile_id>', methods=['GET'])
+@user_bp.route('/profile/<profile_id>', methods=['GET', 'PUT'])
 @login_required
 def get_profile(profile_id):
     '''
         Get a user's profile(not your own)
     '''
-    profile = DBOperations(g.db_session).search('Profile', profile_id)
-    if not profile:
-        return make_response(jsonify({'error': 'Profile does not exist'}), 404)
-    user = DBOperations(g.db_session).search('User', profile.user_id)
-    rating = Db_user(g.db_session).rating(profile.user_id)
-    profile_dict = {}
-    profile_dict.update(profile.all_columns())
-    profile_dict['first_name'] = user.first_name
-    profile_dict['last_name'] = user.last_name
-    profile_dict['rating'] = rating
+    if request.method == 'GET':
+        profile = DBOperations(g.db_session).search('Profile', profile_id)
+        if not profile:
+            return make_response(jsonify({'error': 'Profile does not exist'}), 404)
+        user = DBOperations(g.db_session).search('User', profile.user_id)
+        rating = Db_user(g.db_session).rating(profile.user_id)
+        profile_dict = {}
+        profile_dict.update(profile.all_columns())
+        profile_dict['first_name'] = user.first_name
+        profile_dict['last_name'] = user.last_name
+        profile_dict['rating'] = rating
 
-    #Get picture urls cover_pic, profile_pic, gallery:
-    if profile_dict.get('profile_pic') is not None:
-        responseAWS, statusAWS = aws_bucket.get_picture(user.id, 'Profile', None, profile_dict['profile_pic'])
-        if statusAWS != 200:
-            profile_dict['profile_pic'] = None
-        else:
-            profile_dict['profile_pic'] = responseAWS['results']
+        #Get picture urls cover_pic, profile_pic, gallery:
+        if profile_dict.get('profile_pic') is not None:
+            responseAWS, statusAWS = aws_bucket.get_picture(user.id, 'Profile', None, profile_dict['profile_pic'])
+            if statusAWS != 200:
+                profile_dict['profile_pic'] = None
+            else:
+                profile_dict['profile_pic'] = responseAWS['results']
 
-    if profile_dict.get('cover_pic') is not None:
-        responseAWS, statusAWS = aws_bucket.get_picture(user.id, 'Cover', None, profile_dict['cover_pic'])
-        if statusAWS != 200:
-            profile_dict['cover_pic'] = None
-        else:
-            profile_dict['cover_pic'] = responseAWS['results']
+        if profile_dict.get('cover_pic') is not None:
+            responseAWS, statusAWS = aws_bucket.get_picture(user.id, 'Cover', None, profile_dict['cover_pic'])
+            if statusAWS != 200:
+                profile_dict['cover_pic'] = None
+            else:
+                profile_dict['cover_pic'] = responseAWS['results']
 
-    if profile_dict.get('gallery'):
-        gallery = profile_dict.get('gallery')
-        pictures= gallery.split('|')
-        urls = []
-        for pic in pictures:
-            responseAWS, statusAWS = aws_bucket.get_picture(user.id, 'Gallery', None, pic)
-            if statusAWS == 200:
-                # put url into the pictures column of the model
-                urlPic = responseAWS['results']
-                urls.append(urlPic)
-        if len(urls) != 0:
-            profile_dict['gallery'] = urls
-        else:
-            profile_dict['gallery'] = None
+        if profile_dict.get('gallery'):
+            gallery = profile_dict.get('gallery')
+            pictures= gallery.split('|')
+            urls = []
+            for pic in pictures:
+                responseAWS, statusAWS = aws_bucket.get_picture(user.id, 'Gallery', None, pic)
+                if statusAWS == 200:
+                    # put url into the pictures column of the model
+                    urlPic = responseAWS['results']
+                    urls.append(urlPic)
+            if len(urls) != 0:
+                profile_dict['gallery'] = urls
+            else:
+                profile_dict['gallery'] = None
 
-    return make_response(jsonify({'results': profile_dict}), 200)
+        return make_response(jsonify({'results': profile_dict}), 200)
+
+    if request.method == 'PUT':
+        data = request.get_json()
+        if 'qr_pic' in data:
+            data.pop('qr_pic')
+        data['id'] = profile_id
+        
+        response, status = DBOperations(g.db_session).update({'Profile': data})
+        if status == 200:
+            g.db_session.commit()
+        return make_response(jsonify(response), status)
+
 
 @user_bp.route('/update', methods=['GET'])
 @login_required
