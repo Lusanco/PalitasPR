@@ -117,6 +117,7 @@ class Db_user:
             contact_dict = {}
             contact_dict.update(initialContact.all_columns())
             task = Db_task(self.session).get_task_by_contactId(initialContact.id)
+
             if task:
                 contact_dict['task'] = task.all_columns()
                 contact_dict['task']['description'] = task.description.split('|')
@@ -125,6 +126,7 @@ class Db_user:
                 contact_dict['task']['service'] = service[0]
             else:
                 contact_dict['task'] = None
+                contact_dict['service'] = self.session.query(Service.name).filter(Service.id == initialContact.promo.service_id).first()[0]
             # DO NOT TOUCH LINE BELOW, adding object to session, prevent detached objects error on lazy loads
             # initialContact = self.session.merge(initialContact)
             # received_contacts: The user is the receiver, we need sender info
