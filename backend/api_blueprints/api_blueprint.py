@@ -18,13 +18,14 @@ def explore():
     service = request.args.get('search')
     town = request.args.get('town')
     response, status = Db_core(g.db_session).landing_searchBar(model, service, town)
+    if response['results'] is  None:
+        return make_response(jsonify({'results': None}), 404)
     if status != 200:
         return make_response(jsonify(response), status)
     else:
         # empty list from query, return None and 404 
         if len(response['results']) == 0:
-            response['results'] = None
-            status = 404
+            return make_response(jsonify({'results': None}), 404)
         # Get first picture name to fetch from aws
         for model in response['results']:
             if model['pictures']:
