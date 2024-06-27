@@ -117,8 +117,24 @@
     console.log("Back Button");
   }
 
-  // Function to handle button click
+  // Function to handle button click "Create Review"
   export function buttonLogic() {
+    if (button.misc["App Location"] === "Create Review") {
+      axiosLogic();
+      console.log("Before IF", $response.status);
+      if ($response.status === 200) {
+        window.location.href = "/create-review-success";
+      }
+      return;
+    }
+    if (button.misc["App Location"] === "Crear Servicio") {
+      axiosLogic();
+      console.log("Before IF", $response.status);
+      if ($response.status === 201) {
+        window.location.href = "/create-service-success";
+      }
+      return;
+    }
     if (button.misc["App Location"] === "Service Details") {
       axiosLogic();
       $SDResponse = get(response);

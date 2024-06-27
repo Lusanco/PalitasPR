@@ -1,12 +1,16 @@
 <script>
+  // @ts-nocheck
+
   import { onMount } from "svelte";
   import axios from "axios";
   import { data, response, userSession } from "../scripts/stores";
   import { writable } from "svelte/store";
-  import { link } from "svelte-routing";
+  import { Link, link } from "svelte-routing";
   import Loading from "../components/Loading.svelte";
   import servicesID from "../scripts/servicesID";
   import Button from "../components/Button.svelte";
+  import { split } from "postcss/lib/list";
+  import { afterUpdate } from "svelte";
 
   const today = new Date();
   const year = today.getFullYear();
@@ -45,12 +49,44 @@
   let contacts = writable();
   let received = writable();
   let sent = writable();
-  let promo = writable();
-  let price = "";
+  let promo = writable("");
   let initial_contact_id = writable(null);
-  let terms;
   let sentReceived = writable(true);
-  let userDetails = writable(null);
+  let contactRes = writable([]);
+  let userDetails = writable("");
+  let price = "";
+  let terms;
+  let taskClosed = false;
+  let myTask = "";
+  let bulletPoints = [];
+
+  let contactResponses = [];
+
+  afterUpdate(() => {
+    contactResponses = [...$contactRes];
+  });
+
+  /* 
+    let sentReceived = writable(true);
+    let contactRes = writable();
+
+
+    $received.last_name
+    $contactRes.last_name
+
+    If ($sentReceived === true){
+      contactRes.set($received);
+    } else if ($sentReceived === false){
+      contactRes.set($sent);
+    }
+  
+    EN LA PARTE DE PROMO_ID EL REQUEST
+    {#if $sentReceived === true}
+      Contenido de PromoID
+    {:else}
+      <div class="hidden"></div>
+    {/if}
+  */
 
   $: {
     $data = {
@@ -69,43 +105,45 @@
       .then((userStatusRes) => {
         userSession.set(true);
         userDetails.set(userStatusRes.data);
+        console.log("userStatusRes", userStatusRes.data);
         console.log($userDetails);
 
-        // console.log(".then() User Session Log: ", $userSession);
         return axios.get("/api/user/contacts");
       })
       .then((userContactsRes) => {
         console.log("Contacts", userContactsRes);
-        response.set(userContactsRes);
         contacts.set(userContactsRes.data);
         received.set($contacts.results.received);
         sent.set($contacts.results.sent);
         initial_contact_id.set($received.id);
 
-        // *************** Finding the Specific Task Key **************
-        const targetKey = "promo_id";
-        const foundTask = $received.find((item) =>
-          item.task.hasOwnProperty(targetKey)
-        );
-        const promo_id = foundTask.task[targetKey];
+        if ($sentReceived === true) {
+          contactRes.set($received);
+          console.log("ContactRes Received", $contactRes);
+        } else if ($sentReceived === false) {
+          contactRes.set($sent);
+          console.log("ContactRes Sent", $contactRes);
+        }
+        let promo_id;
+        if (!$contactRes === null || !$contactRes[0] === null) {
+          promo_id = $contactRes[0].promo_id;
+          if (
+            $contactRes[0].task != null &&
+            $contactRes[0].task.status === "closed"
+          ) {
+            taskClosed = true;
+          }
 
-        // console.log("RECEIVED =>");
-        // console.table($received);
-        // console.log("RECEIVED.TASK =>");
-        // $received.forEach((item) => {
-        //   console.table(item.task);
-        // });
-        // console.log("SENT =>");
-        // console.table($sent);
-        // console.log("SENT.TASK =>");
-        // $sent.forEach((item) => {
-        //   console.table(item.task);
-        // });
+          return axios.get(`/api/promotion/${promo_id}`);
+        }
+        if (promo_id === null) {
+          promo_id = "No valid ID";
+        }
         return axios.get(`/api/promotion/${promo_id}`);
       })
       .then((promoRes) => {
-        promo.set(promoRes.data);
-        // console.log($promo);
+        promo.set(promoRes.data.results);
+        console.log("Promo", promoRes.data);
       })
       .catch((axiosError) => {
         userSession.set(false);
@@ -224,8 +262,38 @@
     }
   }
 
+  function handleReceivedClick() {
+    axios
+      .get("/api/user/contacts")
+      .then((userContactsRes) => {
+        contacts.set(userContactsRes.data);
+        received.set(userContactsRes.data.results.received);
+        contactRes.set(userContactsRes.data.results.received);
+        sentReceived.set(true);
+      })
+      .catch((error) => {
+        console.error("Error fetching received contacts:", error);
+      });
+  }
+
+  function handleSentClick() {
+    axios
+      .get("/api/user/contacts")
+      .then((userContactsRes) => {
+        contacts.set(userContactsRes.data);
+        sent.set(userContactsRes.data.results.sent);
+        contactRes.set(userContactsRes.data.results.sent);
+        sentReceived.set(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching sent contacts:", error);
+      });
+  }
+
+  console.log("This is the result of userDetails", $userDetails);
+
   /**
-   *! Placeholder values for the form fields
+   ** Values for the form fields
    */
 </script>
 
@@ -236,23 +304,21 @@
     class="flex flex-wrap items-center justify-center w-full gap-1 mx-auto md:gap-2"
   >
     <button
-      on:click={() => {
-        sentReceived.set(true);
-      }}
+      on:click={handleReceivedClick}
       class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
-      >Received</button
     >
+      Received
+    </button>
     <button
-      on:click={() => {
-        sentReceived.set(false);
-      }}
+      on:click={handleSentClick}
       class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
-      >Sent</button
     >
+      Sent
+    </button>
   </div>
   <div class="flex flex-col w-full h-full py-4 mx-auto">
-    {#if $received && $sent && $promo && $contacts}
-      {#each $received as received, index}
+    {#if $contactRes}
+      {#each contactResponses as response, index}
         <div
           class="max-w-6xl px-4 mx-auto w-full bg-white border-b-2 rounded-lg border-[#cc2936] text-[#1f1f1f] flex flex-col transition-all duration-100 hover:bg-[#cc2936] hover:text-[#f1f1f1]"
         >
@@ -278,31 +344,31 @@
             }}
           >
             <div class="flex flex-wrap justify-between w-full">
-              {#if received.task === null}
+              {#if response.task === null}
                 <span class="bg-[#f1f1f1] p-2 rounded-badge text-[#1f1f1f]"
                   >new</span
                 >
-              {:else if received.task.status === "closed"}
+              {:else if response.task.status === "closed"}
                 <span class="bg-[#f1f1f1] p-2 rounded-badge text-[#1f1f1f]"
-                  >{received.task.status}</span
+                  >{response.task.status}</span
                 >
-              {:else if received.task.status === "active"}
+              {:else if response.task.status === "active"}
                 <span class="p-2 bg-green-500 rounded-badge text-[#1f1f1f]"
-                  >{received.task.status}</span
+                  >{response.task.status}</span
                 >
-              {:else if received.task.status === "pending"}
+              {:else if response.task.status === "pending"}
                 <span class="p-2 bg-yellow-500 rounded-badge text-[#1f1f1f]"
-                  >{received.task.status}</span
+                  >{response.task.status}</span
                 >
-              {:else if received.task.status === "rejected"}
+              {:else if response.task.status === "rejected"}
                 <span class="p-2 bg-red-500 rounded-badge text-[#1f1f1f]"
-                  >{received.task.status}</span
+                  >{response.task.status}</span
                 >
               {/if}
-              {#if received.receiver_read === false}
+              {#if response.receiver_read === false}
                 <span class="w-10 h-10 bg-[#cc2936] rounded-badge animate-ping">
                 </span>
-              {:else if received.receiver_read === true}
+              {:else if response.receiver_read === true}
                 <span class="w-10 h-10 bg-[#f1f1f1] rounded-badge"> </span>
               {/if}
             </div>
@@ -311,18 +377,23 @@
               class="flex flex-wrap justify-center w-full md:justify-between"
             >
               <span>
-                Name: {received.sender_first_name}
-                {received.sender_last_name}
+                Name: {$sentReceived
+                  ? `${response.contact_first_name} ${response.contact_last_name}`
+                  : `${$userDetails.first_name} ${$userDetails.last_name}`}
               </span>
               <span>
-                {received.updated_at}
+                {response.updated_at}
               </span>
             </div>
             <div
-              class="flex flex-wrap justify-center w-full md:justify-between"
+              class="flex flex-wrap justify-center w-full gap-2 md:justify-between"
             >
-              <span>{received.phone}</span>
-              <span> {received.sender_email} </span>
+              <span class="text-center md:text-start">
+                {$sentReceived ? response.phone : $userDetails.phone}
+              </span>
+              <span class="text-center md:text-end">
+                {$sentReceived ? response.contact_email : $userDetails.email}
+              </span>
             </div>
           </button>
           <div
@@ -337,325 +408,672 @@
 
             <br />
             <div class="w-full text-justify">
-              <span>
-                {$promo.results.title}:
-              </span>
-              <span>
-                {$promo.results.description}
-              </span>
+              <span>{response.promo_title} -</span>
+              <span>{response.promo_description}</span>
             </div>
             <br />
 
-            <div
-              class="w-full min-w-full min-h-full bg-white shadow-lg rounded-2xl"
-            >
+            {#if response.task === null}
               <div
-                class="flex flex-col overflow-y-scroll min-h-40 max-h-96 md:p-8 lg:p-12 md:card"
+                class="w-full min-w-full min-h-full bg-white shadow-lg rounded-2xl"
               >
-                <br />
-                <div class="card-header">
-                  <h1
-                    class="flex justify-center pb-4 text-2xl font-bold text-gray-700 border-b-2 md:mb-2 md:pb-8 md:text-4xl lg:text-5xl"
-                  >
-                    Acuerdo de Servicio
-                  </h1>
-                </div>
-                <br />
-                <div class="px-2 md:card-body">
-                  <!--* Provider Details -->
-                  <div class="pb-4 border-b-2">
+                <div
+                  class="flex flex-col overflow-y-scroll min-h-40 max-h-96 md:p-8 lg:p-12 md:card"
+                >
+                  <br />
+                  <div class="card-header">
                     <h1
-                      class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                      class="flex justify-center pb-4 text-2xl font-bold text-gray-700 border-b-2 md:mb-2 md:pb-8 md:text-4xl lg:text-5xl"
                     >
-                      Detalles del Proveedor
+                      Acuerdo de Servicio
                     </h1>
-                    <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
-                      <!--* Provider Name -->
-                      <label
-                        for="service-provider"
-                        class="col-span-1 font-bold text-gray-500 text-md"
-                      >
-                        Nombre
-                        <input
-                          id="service-provider"
-                          type="text"
-                          readonly
-                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
-                          value={`${$promo.results.first_name} ${$promo.results.last_name}`}
-                        />
-                      </label>
-                      <!--* Service Provided -->
-                      <label
-                        for="service"
-                        class="col-span-1 font-bold text-gray-500 text-md"
-                      >
-                        Servicio
-                        <input
-                          id="service"
-                          type="text"
-                          readonly
-                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
-                          value={serviceNamesByID[$promo.results.service_id]}
-                        />
-                      </label>
-                      <!--* Provider Email -->
-                      <label
-                        for="email"
-                        class="col-span-1 font-bold text-gray-500 text-md"
-                      >
-                        Correo Electrónico
-                        <input
-                          readonly
-                          id="email"
-                          type="email"
-                          value={$userDetails.email}
-                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                        />
-                      </label>
-                      <!--* Provider Phone Number -->
-                      <label
-                        for="phone-number"
-                        class="col-span-1 font-bold text-gray-500 text-md"
-                      >
-                        Número de Teléfono
-                        <input
-                          readonly
-                          id="phone-number"
-                          required
-                          pattern="\d{3}-\d{3}-\d{4}"
-                          on:keypress={restrictToNumbersAndDashes}
-                          value={$userDetails.phone}
-                          type="text"
-                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                        />
-                      </label>
-                    </div>
                   </div>
-                  <!--* Client Details -->
-                  <div class="pb-4 mt-4 border-b-2 md:mt-8">
-                    <h1
-                      class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
-                    >
-                      Detalles del Cliente
-                    </h1>
-                    <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
-                      <!--* Client Name -->
-                      <label
-                        for="service-client"
-                        class="col-span-1 font-bold text-gray-500 text-md"
+                  <br />
+                  <div class="px-2 md:card-body">
+                    <!--* Provider Details -->
+                    <div class="pb-4 border-b-2">
+                      <h1
+                        class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
                       >
-                        Nombre
-                        <input
-                          id="service-client"
-                          type="text"
-                          readonly
-                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
-                          value={`${received.sender_first_name} ${received.sender_last_name}`}
-                        />
-                      </label>
-                      <!--* Client Email -->
-                      <label
-                        for="clientEmail"
-                        class="col-span-1 font-bold text-gray-500 text-md"
-                      >
-                        Correo Electrónico
-                        <input
-                          readonly
-                          id="clientEmail"
-                          type="email"
-                          value={received.sender_email}
-                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                        />
-                      </label>
-                      <!--* Client Phone Number -->
-                      <label
-                        for="clientPhone-number"
-                        class="col-span-1 font-bold text-gray-500 text-md"
-                      >
-                        Número de Teléfono
-                        <input
-                          id="clientPhone-number"
-                          readonly
-                          pattern="\d{3}-\d{3}-\d{4}"
-                          value={received.phone}
-                          type="text"
-                          class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                        />
-                      </label>
-                    </div>
-                  </div>
-                  <!--* Service Details -->
-                  <div class="flex flex-col gap-2 my-4">
-                    <h1
-                      class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
-                    >
-                      Terminos del Servicio
-                    </h1>
-                    <!--* Service Description -->
-                    <label
-                      for="agreement"
-                      class="text-lg font-semibold text-gray-500 text-start"
-                    >
-                      Descripción
-                      <div>
-                        <p class="text-xs md:text-sm">
-                          Describa el servicio ofrecido. Puede añadir más de un
-                          artículo a la lista.
-                        </p>
-                        <!--* Details input -->
-                        <div class="flex gap-2 pb-4 border-b-2">
+                        Detalles del Proveedor
+                      </h1>
+                      <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
+                        <!--* Provider Name -->
+                        <label
+                          for="service-provider"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Nombre
                           <input
+                            readonly
+                            id="service-provider"
                             type="text"
-                            bind:value={inputValue}
-                            on:input={handleInput}
-                            on:keydown={handleKeyDown}
-                            class="w-full p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                            value={$sentReceived
+                              ? `${$userDetails.first_name} ${$userDetails.last_name}`
+                              : `${response.contact_first_name} ${response.contact_last_name}`}
                           />
-                          <button
-                            on:click={addBulletPoint}
-                            class="text-white bg-[#cc2936] border-none btn mt-[5px] hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
-                          >
-                            <i class="block fa-solid fa-plus md:hidden"
-                            ></i><span class="hidden md:block">Añadir</span>
-                          </button>
-                        </div>
-
-                        <ul class="h-auto pb-4 my-4 border-b-2">
-                          {#each $bulletPointsStore as bulletPoint}
-                            <div class="flex justify-between md:mx-4">
-                              <div class="flex gap-2 mt-1">
-                                <i
-                                  class="fa-solid fa-check mt-[5px] text-[#cc2936]"
-                                ></i>
-                                <li class="overflow-hidden text-base text-md">
-                                  <p
-                                    class="max-w-full line-clamp-none md:line-clamp-4 overflow-ellipsis"
+                        </label>
+                        <!--* Service Provided -->
+                        <label
+                          for="service"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Servicio
+                          <input
+                            readonly
+                            id="service"
+                            type="text"
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                            value={`${response.service}`}
+                          />
+                        </label>
+                        <!-- 
+                        condition       received     sent
+                        $sentReceived ? response. : response.
+                         -->
+                        <!--* Provider Email -->
+                        <label
+                          for="email"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Correo Electrónico
+                          <input
+                            readonly
+                            id="email"
+                            type="email"
+                            value={$sentReceived
+                              ? `${$userDetails.email}`
+                              : `${response.contact_email}`}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          />
+                        </label>
+                        <!--* Provider Phone Number -->
+                        <label
+                          for="phone-number"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Número de Teléfono
+                          <input
+                            readonly
+                            id="phone-number"
+                            type="text"
+                            value={$sentReceived
+                              ? `${$userDetails.phone}`
+                              : `${response.phone}`}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                    <!--* Client Details -->
+                    <div class="pb-4 mt-4 border-b-2 md:mt-8">
+                      <h1
+                        class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                      >
+                        Detalles del Cliente
+                      </h1>
+                      <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
+                        <!--* Client Name -->
+                        <label
+                          for="service-client"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Nombre
+                          <input
+                            readonly
+                            id="service-client"
+                            type="text"
+                            value={$sentReceived
+                              ? `${response.contact_first_name} ${response.contact_last_name}`
+                              : `${$userDetails.first_name} ${$userDetails.last_name}`}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                          />
+                        </label>
+                        <!--* Client Email -->
+                        <label
+                          for="clientEmail"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Correo Electrónico
+                          <input
+                            readonly
+                            id="clientEmail"
+                            type="email"
+                            value={$sentReceived
+                              ? `${response.contact_email}`
+                              : `${$userDetails.email}`}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          />
+                        </label>
+                        <!--* Client Phone Number -->
+                        <label
+                          for="clientPhone-number"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Número de Teléfono
+                          <input
+                            id="clientPhone-number"
+                            readonly
+                            value={$sentReceived
+                              ? `${response.phone}`
+                              : `${$userDetails.phone}`}
+                            type="text"
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                    <!--* Service Details -->
+                    <div class="flex flex-col gap-2 my-4">
+                      <h1
+                        class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                      >
+                        Terminos del Servicio
+                      </h1>
+                      <!--* Service Description -->
+                      <label
+                        for="agreement"
+                        class="text-lg font-semibold text-gray-500 text-start"
+                      >
+                        Descripción
+                        <div>
+                          <p class="text-xs md:text-sm">
+                            Describa el servicio ofrecido. Puede añadir más de
+                            un artículo a la lista.
+                          </p>
+                          <!--* Details input -->
+                          <!-- When task === null -->
+                          <div class="flex gap-2 pb-4 border-b-2">
+                            <input
+                              type="text"
+                              bind:value={inputValue}
+                              on:input={handleInput}
+                              on:keydown={handleKeyDown}
+                              class="w-full p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            />
+                            <button
+                              on:click={addBulletPoint}
+                              class="text-white bg-[#cc2936] border-none btn mt-[5px] hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
+                            >
+                              <i class="block fa-solid fa-plus md:hidden"
+                              ></i><span class="hidden md:block">Añadir</span>
+                            </button>
+                          </div>
+                          <!-- WHEN task exists: $bulletPointsStore = task.terms = ['termino1', 'termino2']-->
+                          <!-- 'Termino1|Termino2|Termino3' -->
+                          <ul class="h-auto pb-4 my-4 border-b-2">
+                            {#each $bulletPointsStore as bulletPoint}
+                              <div class="flex justify-between md:mx-4">
+                                <div class="flex gap-2 mt-1">
+                                  <i
+                                    class="fa-solid fa-check mt-[5px] text-[#cc2936]"
+                                  ></i>
+                                  <li class="overflow-hidden text-base text-md">
+                                    <p
+                                      class="max-w-full line-clamp-none md:line-clamp-4 overflow-ellipsis"
+                                    >
+                                      {bulletPoint}
+                                    </p>
+                                  </li>
+                                </div>
+                                <div>
+                                  <button
+                                    on:click={() => {
+                                      bulletPointsStore.update((points) =>
+                                        points.filter(
+                                          (point) => point !== bulletPoint
+                                        )
+                                      );
+                                    }}
+                                    class="rounded btn-sm"
+                                    ><i
+                                      class="fa-solid fa-trash hover:text-[#cc2936] ease-in-out transition-all duration-150"
+                                    ></i></button
                                   >
-                                    {bulletPoint}
-                                  </p>
-                                </li>
+                                </div>
                               </div>
-                              <div>
-                                <button
-                                  on:click={() => {
-                                    bulletPointsStore.update((points) =>
-                                      points.filter(
-                                        (point) => point !== bulletPoint
-                                      )
-                                    );
-                                  }}
-                                  class="rounded btn-sm"
-                                  ><i
-                                    class="fa-solid fa-trash hover:text-[#cc2936] ease-in-out transition-all duration-150"
-                                  ></i></button
-                                >
-                              </div>
-                            </div>
-                          {/each}
-                        </ul>
-                      </div>
-                    </label>
-                    <!--* Price and Date -->
-                    <div
-                      class="grid items-start grid-cols-1 gap-2 md:grid-cols-2"
-                    >
-                      <div class="flex col-span-1">
-                        <label
-                          for="price"
-                          class="text-lg font-semibold text-gray-500 text-start"
-                        >
-                          Precio
-                          <!--* Price Input -->
-                          <div class="">
-                            <input
-                              id="price"
-                              type="number"
-                              placeholder="$0.00"
-                              bind:value={price}
-                              on:keypress={restrictToNumbersAndDecimal}
-                              class="p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                            />
-                          </div>
-                        </label>
-                      </div>
-                      <!--* Date Inputs -->
-                      <div class="flex col-span-1">
-                        <label
-                          for="month"
-                          class="text-lg font-semibold text-gray-500 text-start"
-                        >
-                          Fecha <span class="text-xs">(actual)</span>
-                          <!--? Month -->
-                          <div class="flex gap-2">
-                            <input
-                              id="month"
-                              type="text"
-                              placeholder="MM"
-                              readonly
-                              value={month}
-                              on:keypress={handleDateInput}
-                              class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                            />
-                            <!--? Day -->
-                            <input
-                              id="day"
-                              type="text"
-                              placeholder="DD"
-                              readonly
-                              value={day}
-                              on:keypress={handleDateInput}
-                              class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                            />
-                            <!--? Year -->
-                            <input
-                              id="year"
-                              type="text"
-                              placeholder="AAAA"
-                              readonly
-                              value={year}
-                              on:keypress={handleDateInput}
-                              class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
-                            />
-                          </div>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <!--* Signature and Agreement -->
-                  <!--? Signature Input -->
-                  <div>
-                    <!--? Agreement Checkbox -->
-                    <div class="flex gap-2 mt-2">
-                      <input
-                        required
-                        id="accept"
-                        type="checkbox"
-                        class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-gray-300 rounded-sm ring-gray-300 mt-[5px] text-[#cc2936]"
-                      />
-                      <label for="accept">
-                        <p class="text-xs text-gray-500 md:text-base">
-                          He leído y acepto los
-                          <!-- href="" -->
-                          <span
-                            class="no-underline hover:text-[#BB2532] hover:underline text-[#cc2936]"
-                            >términos y condiciones</span
-                          > de PalitasPR. De igual manera, me comprometo a cumplir
-                          con los acuerdos establecidos en este documento. Al someter
-                          este formulario, acepto que la información proporcionada
-                          es verídica y correcta y podría ser utilizada para fines
-                          de contacto y/o asuntos legales.
-                        </p>
+                            {/each}
+                          </ul>
+                        </div>
                       </label>
+                      <!--* Price and Date -->
+                      <div
+                        class="grid items-start grid-cols-1 gap-2 md:grid-cols-2"
+                      >
+                        <div class="flex col-span-1">
+                          <label
+                            for="price"
+                            class="text-lg font-semibold text-gray-500 text-start"
+                          >
+                            Precio
+                            <!--* Price Input -->
+                            <!-- WHEN TASK EXISTS price = task.price -->
+                            <div class="">
+                              <input
+                                id="price"
+                                type="number"
+                                placeholder="$0.00"
+                                bind:value={price}
+                                on:keypress={restrictToNumbersAndDecimal}
+                                class="p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                              />
+                            </div>
+                          </label>
+                        </div>
+                        <!--* Date Inputs -->
+                        <!-- WHEN TASK EXISTS: date = task.created_at -->
+                        <div class="flex col-span-1">
+                          <label
+                            for="month"
+                            class="text-lg font-semibold text-gray-500 text-start"
+                          >
+                            Fecha <span class="text-xs">(actual)</span>
+                            <!--? Month -->
+                            <div class="flex gap-2">
+                              <input
+                                id="month"
+                                type="text"
+                                placeholder="MM"
+                                readonly
+                                value={month}
+                                on:keypress={handleDateInput}
+                                class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                              />
+                              <!--? Day -->
+                              <input
+                                id="day"
+                                type="text"
+                                placeholder="DD"
+                                readonly
+                                value={day}
+                                on:keypress={handleDateInput}
+                                class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                              />
+                              <!--? Year -->
+                              <input
+                                id="year"
+                                type="text"
+                                placeholder="AAAA"
+                                readonly
+                                value={year}
+                                on:keypress={handleDateInput}
+                                class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                              />
+                            </div>
+                          </label>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <!--* Submit button -->
-                    <Button {button} {image} />
-                    <br />
+                    <!--* Signature and Agreement -->
+                    <!--? Signature Input -->
+                    <div>
+                      <!--? Agreement Checkbox -->
+                      <div class="flex gap-2 mt-2">
+                        <input
+                          required
+                          id="accept"
+                          type="checkbox"
+                          class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-gray-300 rounded-sm ring-gray-300 mt-[5px] text-[#cc2936]"
+                        />
+                        <label for="accept">
+                          <p class="text-xs text-gray-500 md:text-base">
+                            He leído y acepto los
+                            <!-- href="" -->
+                            <span
+                              class="no-underline hover:text-[#BB2532] hover:underline text-[#cc2936]"
+                              >términos y condiciones</span
+                            > de PalitasPR. De igual manera, me comprometo a cumplir
+                            con los acuerdos establecidos en este documento. Al someter
+                            este formulario, acepto que la información proporcionada
+                            es verídica y correcta y podría ser utilizada para fines
+                            de contacto y/o asuntos legales.
+                          </p>
+                        </label>
+                      </div>
+                    </div>
+                    <div>
+                      <!--* Submit button -->
+                      <!-- WHEN TASK EXISTS: no submit button -->
+                      <Button {button} {image} />
+                      <br />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            {:else}
+              <div
+                class="w-full min-w-full min-h-full bg-white shadow-lg rounded-2xl"
+              >
+                <div
+                  class="flex flex-col overflow-y-scroll min-h-40 max-h-96 md:p-8 lg:p-12 md:card"
+                >
+                  <div class="card-header">
+                    <h1
+                      class="flex justify-center pb-4 -mb-4 text-2xl font-bold text-gray-700 border-b-2 md:mb-2 md:pb-8 md:text-4xl lg:text-5xl"
+                    >
+                      Revisión de Acuerdo de Servicio
+                    </h1>
+                  </div>
+                  <div class="card-body">
+                    <!--* Provider Details -->
+                    <div class="pb-4 border-b-2">
+                      <h1
+                        class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                      >
+                        Detalles del Proveedor
+                      </h1>
+                      <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
+                        <!--* Provider Name -->
+                        <label
+                          for="service-provider"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Nombre
+                          <input
+                            readonly
+                            id="service-provider"
+                            type="text"
+                            value={response.task.provider_first_name +
+                              " " +
+                              response.task.provider_last_name}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                          />
+                        </label>
+                        <!--* Service Provided -->
+                        <label
+                          for="service"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Servicio
+                          <input
+                            readonly
+                            id="service"
+                            type="text"
+                            value={response.task.service}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                          />
+                        </label>
+                        <!--* Provider Email -->
+                        <label
+                          for="email"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Correo Electrónico
+                          <input
+                            readonly
+                            id="email"
+                            type="email"
+                            value={response.task.provider_email}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          />
+                        </label>
+                        <!--* Provider Phone Number -->
+                        <label
+                          for="phone-number"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Número de Teléfono
+                          <input
+                            readonly
+                            id="phone-number"
+                            type="text"
+                            value={response.task.provider_phone}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                    <!--* Client Details -->
+                    <div class="pb-4 mt-4 border-b-2 md:mt-8">
+                      <h1
+                        class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                      >
+                        Detalles del Cliente
+                      </h1>
+                      <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
+                        <!--* Client Name -->
+                        <label
+                          for="service-client"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Nombre
+                          <input
+                            readonly
+                            id="service-client"
+                            type="text"
+                            value={response.task.receiver_first_name +
+                              " " +
+                              response.task.receiver_last_name}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                          />
+                        </label>
+                        <!--* Client Email -->
+                        <label
+                          for="clientEmail"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Correo Electrónico
+                          <input
+                            readonly
+                            id="clientEmail"
+                            type="email"
+                            value={response.task.receiver_email}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          />
+                        </label>
+                        <!--* Client Phone Number -->
+                        <label
+                          for="clientPhone-number"
+                          class="col-span-1 font-bold text-gray-500 text-md"
+                        >
+                          Número de Teléfono
+                          <input
+                            readonly
+                            id="clientPhone-number"
+                            type="text"
+                            value={response.task.receiver_phone}
+                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                    <!--* Service Details -->
+                    <div class="flex flex-col gap-2 my-4">
+                      <h1
+                        class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                      >
+                        Detalles del servicio
+                      </h1>
+                      <!--* Service Description -->
+                      <label
+                        for="agreement"
+                        class="text-lg font-semibold text-gray-500 text-start"
+                      >
+                        Descripción
+                        <div>
+                          <p class="text-xs md:text-sm">
+                            Detalles del servicio adquirido. Favor leer
+                            detenidamente cada punto.
+                          </p>
+                          <!--* Details input -->
+                          <div class="border-[1px] mt-4 -mb-1"></div>
+                          <ul class="h-auto pb-4 my-4 border-b-2">
+                            {#each response.task.description as bulletPoint}
+                              <div class="flex justify-between mx-4">
+                                <div class="flex gap-2 mt-1">
+                                  <i
+                                    class="fa-solid fa-check mt-[5px] text-[#cc2936]"
+                                  ></i>
+                                  <li class="text-base text-md">
+                                    {bulletPoint}
+                                  </li>
+                                </div>
+                              </div>
+                            {/each}
+                          </ul>
+                        </div>
+                      </label>
+                      <!--* Price and Date -->
+                      <div
+                        class="grid items-start grid-cols-1 gap-2 md:grid-cols-2"
+                      >
+                        <div class="flex col-span-1">
+                          <label
+                            for="price"
+                            class="text-lg font-semibold text-gray-500 text-start"
+                          >
+                            Precio
+                            <!--* Price Input -->
+                            <div class="">
+                              <input
+                                readonly
+                                id="price"
+                                type="text"
+                                value={"$" + response.task.price}
+                                class="p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                              />
+                            </div>
+                          </label>
+                        </div>
+                        <!--* Date Inputs -->
+                        <div class="flex col-span-1">
+                          <label
+                            for="month"
+                            class="text-lg font-semibold text-gray-500 text-start"
+                          >
+                            Fecha <span class="text-xs">(actual)</span>
+                            <!--? Month -->
+                            <div class="flex gap-2">
+                              <input
+                                readonly
+                                id="month"
+                                type="text"
+                                value={response.task.created_at.split(" ")[1]}
+                                class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                              />
+                              <!--? Day -->
+                              <input
+                                readonly
+                                id="day"
+                                type="text"
+                                value={response.task.created_at.split(" ")[2]}
+                                class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                              />
+                              <!--? Year -->
+                              <input
+                                readonly
+                                id="year"
+                                type="text"
+                                value={response.task.created_at.split(" ")[3]}
+                                class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                              />
+                            </div>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <!--* Signature and Agreement -->
+                    <div>
+                      <!--? Signature Input -->
+                      <!-- <label for="signature">
+                        <h1
+                          class="text-lg font-semibold text-gray-500 text-start"
+                        >
+                          Firma <span class="text-xs">(electrónica)</span>
+                        </h1>
+                        <input
+                          id="signature"
+                          type="text"
+                          class="w-full p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0"
+                        />
+                      </label> -->
+                      <!--? Agreement Checkbox -->
+                      <div class="flex gap-2 mt-2">
+                        <!-- <input
+                          disabled
+                          checked
+                          id="accept"
+                          type="checkbox"
+                          class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-gray-300 rounded-sm ring-gray-300 mt-[5px] text-[#cc2936]"
+                        /> -->
+                        <label for="accept">
+                          <p class="text-xs text-gray-500 md:text-base">
+                            He leído y acepto los
+                            <a
+                              href="/"
+                              class="no-underline hover:text-[#BB2532] hover:underline text-[#cc2936]"
+                              >términos y condiciones</a
+                            > de PalitasPR. De igual manera, me comprometo a cumplir
+                            con los acuerdos establecidos en este documento. Al someter
+                            este formulario, acepto que la información proporcionada
+                            es verídica y correcta y podría ser utilizada para fines
+                            de contacto y/o asuntos legales.
+                          </p>
+                        </label>
+                      </div>
+                    </div>
+                    <!-- <div> -->
+                    <!--* Submit button -->
+                    <!-- <button
+                        class="w-full p-2 mt-4 font-semibold text-white bg-[#cc2936] border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
+                        >Someter</button
+                      >
+                    </div> -->
+                    {#if response.task.status === "pending"}
+                      {#if response.task.receiver_id === $userDetails.id}
+                        <button
+                          on:click={() => {
+                            axios
+                              .put("/api/tasks/", {
+                                id: response.task.id,
+                                status: "active",
+                              })
+                              .then((submit) => {
+                                console.log("Data submitted", submit);
+                              })
+                              .catch((submitErr) => {
+                                console.error(
+                                  "Error submitting data",
+                                  submitErr
+                                );
+                              });
+                          }}
+                          class="flex-1 mt-2 btn"
+                        >
+                          Someter
+                        </button>
+                      {/if}
+                    {/if}
+                    {#if response.task.status === "active"}
+                      {#if response.task.provider_id === $userDetails.id}
+                        <button
+                          on:click={() => {
+                            axios
+                              .put("/api/tasks/", {
+                                id: response.task.id,
+                                status: "closed",
+                              })
+                              .then((submit) => {
+                                console.log("Data submitted", submit);
+                              })
+                              .catch((submitErr) => {
+                                console.error(
+                                  "Error submitting data",
+                                  submitErr
+                                );
+                              });
+                          }}
+                          class="flex-1 mt-2 btn"
+                        >
+                          Cerrar
+                        </button>
+                      {/if}
+                    {/if}
+                  </div>
+                </div>
+              </div>
+            {/if}
           </div>
           <br />
           <div
@@ -665,10 +1083,16 @@
               class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
               >Delete Task</button
             >
-            <button
-              class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
-              >Leave Review</button
-            >
+            {#if response.task && response.task.status === "closed"}
+              <!-- Add an additional check for response.task to avoid null/undefined errors -->
+              {#if response.task.receiver_id === $userDetails.id}
+                <Link
+                  to="/create-review/{response.task.id}"
+                  class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+                  >Leave Review</Link
+                >
+              {/if}
+            {/if}
           </div>
         </div>
       {/each}

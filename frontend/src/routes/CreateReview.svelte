@@ -2,44 +2,53 @@
   import { writable } from "svelte/store";
   import axios from "axios";
   import { onMount } from "svelte";
-  import { userSession } from "../scripts/stores";
-  export let taskId;
+  import { userSession, data } from "../scripts/stores";
+  import Button from "../components/Button.svelte";
 
   let description = "";
   let rating = "";
   let errorMessage = "";
+  let id;
+  let currentUrl;
+  let urlArr;
+  let initialContact;
+  let image = null;
+  let button = {
+    name: "Enviar Reseña",
+    method: "POST",
+    url: "/api/reviews/",
+    headers: "application/json", // "application/json"
+    twcss: "btn bg-[#cc2936] text-white hover:bg-[#BB2532]",
+    misc: { "App Location": "Create Review" },
+  };
+  function logFormData(data) {
+    for (let pair of data.entries()) {
+      console.log(pair[0] + ": " + pair[1]);
+    }
+  }
 
   onMount(() => {
+    console.log("CreateReview Component Has Mounted");
+    currentUrl = window.location.href;
+    console.log("Current URL: ", currentUrl);
+    urlArr = currentUrl.split("/");
+    id = urlArr[urlArr.length - 1];
+    console.log("CreateReview Component ID: ", id);
+
     axios
-    .get("/api/user/status")
-    .then((userStatusRes) => {
-      userSession.set(true);
-      console.log(userStatusRes.data);
-    })
-    .catch((userStatusErr) => {
-      userSession.set(false);
-      console.log(userStatusErr);
-      console.log($userSession)
-    })
-  })
-  
-  onMount(() => {
-    axios
-      .post("/api/reviews/", {
-        // description rating task_id str
-        description,
-        // rating: numericRating,
-        task_id: taskId,
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
       })
-      .then((reviewRes) => {
-        console.log(reviewRes);
-      })
-      .catch((reviewErr) => {
-        console.log(reviewErr);
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
       });
   });
 
-  async function handleReviewSubmit() {
+  function handleReviewSubmit() {
     if (description.length > 250) {
       errorMessage = "La descripción no puede exceder los 250 caracteres.";
       return;
@@ -49,32 +58,17 @@
       errorMessage = "La puntuación debe estar entre 1 y 5.";
       return;
     }
+  }
 
-    try {
-      const response = await axios.post(
-        "/api/reviews/",
-        {
-          description,
-          rating: numericRating,
-          task_id: taskId,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  $: {
+    $data = {
+      description,
+      rating,
+      task_id: id,
+    };
 
-      if (response.status !== 200) {
-        throw new Error("Error al enviar la reseña");
-      }
-
-      errorMessage = "";
-      description = "";
-      rating = "";
-    } catch (error) {
-      errorMessage = error.message;
-    }
+    data.set($data);
+    console.log("Data updated:", $data);
   }
 
   function handleKeyPress(event) {
@@ -85,7 +79,7 @@
 </script>
 
 <div class="flex items-center justify-center min-h-screen bg-base">
-  <div class="w-full max-w-lg p-4 bg-white shadow-xl card">
+  <div class="w-full max-w-3xl p-4 m-5 bg-white shadow-xl card">
     <div class="card-body">
       <h2 class="card-title">Deja tu reseña</h2>
       <div class="form-control">
@@ -96,7 +90,7 @@
           id="description"
           bind:value={description}
           maxlength="250"
-          class="textarea textarea-bordered"
+          class="h-36 textarea textarea-bordered"
           on:keydown={handleKeyPress}
         ></textarea>
       </div>
@@ -117,13 +111,8 @@
       {#if errorMessage}
         <p class="text-red-500">{errorMessage}</p>
       {/if}
-      <div class="mt-4 form-control">
-        <button
-          on:click={handleReviewSubmit}
-          class="btn bg-[#cc2936] text-white hover:text-[#1f1f1f] hover:bg-white"
-        >
-          Enviar Reseña
-        </button>
+      <div class="mt-5 form-control">
+        <Button {image} {button} />
       </div>
     </div>
   </div>

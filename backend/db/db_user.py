@@ -4,7 +4,7 @@
 '''
 from emails import send_confirm_email
 from email_validator import validate_email, EmailNotValidError
-from models import User, Initial_Contact, Profile, Review, Task
+from models import User, Initial_Contact, Profile, Review, Task, Service
 from db.db_operations import DBOperations
 from db.db_task import Db_task
 from sqlalchemy import or_
@@ -117,28 +117,68 @@ class Db_user:
             contact_dict = {}
             contact_dict.update(initialContact.all_columns())
             task = Db_task(self.session).get_task_by_contactId(initialContact.id)
+            contact_dict['promo_title'] = initialContact.promo.title
+            contact_dict['promo_description'] = initialContact.promo.description
+
             if task:
                 contact_dict['task'] = task.all_columns()
+                contact_dict['task']['description'] = task.description.split('|')
+                contact_dict['task'].pop('service_id')
+                service = self.session.query(Service.name).filter(Service.id == task.service_id).first()
+                contact_dict['task']['service'] = service[0]
+
+                # LOGIC FOR PICTURE QR:
+                # if contact_dict['task']['status'] == 'closed' or contact_dict['task']['status'] == 'reviewed':
+                    # profile = self.get_profile_by_userId(user_id)
+                    #responseAWS, statusAWS = aws_bucket.get_picture('user_id', 'qr_pic', none, profile.qr_pic)
+                    # if statusAWS == 200:
+                        # contact_dict['task']['qr_pic'] = responseAWS['results']
             else:
                 contact_dict['task'] = None
+                contact_dict['service'] = self.session.query(Service.name).filter(Service.id == initialContact.promo.service_id).first()[0]
             # DO NOT TOUCH LINE BELOW, adding object to session, prevent detached objects error on lazy loads
-            initialContact = self.session.merge(initialContact)
-
+            # initialContact = self.session.merge(initialContact)
             # received_contacts: The user is the receiver, we need sender info
             if user_id == initialContact.receiver_id:
                 sender = initialContact.sender
-                contact_dict['sender_first_name'] = sender.first_name
-                contact_dict['sender_last_name'] = sender.last_name
-                contact_dict['sender_email']= sender.email
+                receiver = initialContact.receiver
+                contact_dict['contact_first_name'] = sender.first_name
+                contact_dict['contact_last_name'] = sender.last_name
+                contact_dict['contact_email']= sender.email
                 contact_dict['phone'] = sender.phone
+
+                # Prepare task: contact sender is task receiver | contact receiver is task provider
+                if task:
+                    contact_dict['task']['receiver_email'] = contact_dict['contact_email']
+                    contact_dict['task']['receiver_first_name'] = contact_dict['contact_first_name']
+                    contact_dict['task']['receiver_last_name'] = contact_dict['contact_last_name']
+                    contact_dict['task']['receiver_phone'] = contact_dict['phone']
+                    contact_dict['task']['provider_first_name'] = receiver.first_name
+                    contact_dict['task']['provider_last_name'] = receiver.last_name
+                    contact_dict['task']['provider_email']= receiver.email
+                    contact_dict['task']['provider_phone'] = receiver.phone
+
                 contact_dict.pop('receiver_id')
                 received_contacts.append(contact_dict)
             else: # sent_contacts: User is sender, we need receiver_info
                 receiver = initialContact.receiver
-                contact_dict['receiver_first_name'] = receiver.first_name
-                contact_dict['receiver_last_name'] = receiver.last_name
-                contact_dict['receiver_email']= receiver.email
+                sender = initialContact.sender
+                contact_dict['contact_first_name'] = receiver.first_name
+                contact_dict['contact_last_name'] = receiver.last_name
+                contact_dict['contact_email']= receiver.email
                 contact_dict['phone'] = receiver.phone
+
+                # Prepare task: contact sender is task provider | contact receiver is task receiver
+                if task:
+                    contact_dict['task']['provider_email'] = contact_dict['contact_email']
+                    contact_dict['task']['provider_first_name'] = contact_dict['contact_first_name']
+                    contact_dict['task']['provider_last_name'] = contact_dict['contact_last_name']
+                    contact_dict['task']['provider_phone'] = contact_dict['phone']
+                    contact_dict['task']['receiver_first_name'] = sender.first_name
+                    contact_dict['task']['receiver_last_name'] = sender.last_name
+                    contact_dict['task']['receiver_email']= sender.email
+                    contact_dict['task']['receiver_phone'] = sender.phone
+
                 contact_dict.pop('sender_id')
                 sent_contacts.append(contact_dict)
 

@@ -5,7 +5,7 @@
   import Button from "../components/Button.svelte";
   import { state, data, response, userSession } from "../scripts/stores";
   import { get } from "svelte/store";
-  import { link } from "svelte-routing";
+  import { Link, link } from "svelte-routing";
   import { onMount } from "svelte";
   import axios from "axios";
 
@@ -31,17 +31,17 @@
 
   onMount(() => {
     axios
-    .get("/api/user/status")
-    .then((userStatusRes) => {
-      userSession.set(true);
-      console.log(userStatusRes.data);
-    })
-    .catch((userStatusErr) => {
-      userSession.set(false);
-      console.log(userStatusErr);
-      console.log($userSession);
-    })
-  })
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+      });
+  });
 
   // Function to handle the "Enter" key press
   function handleKeydown(event) {
@@ -86,7 +86,7 @@
           bind:value={search}
           on:keydown={handleKeydown}
           placeholder="Search for..."
-          class="w-full col-span-2 border-t-0 border-b-2 rounded-none border-x-0 border-[#cc2936] input input-bordered focus:outline-none text-[#cc2936]"
+          class="bg-white w-full col-span-2 border-t-0 border-b-2 rounded-none border-x-0 border-[#cc2936] input input-bordered focus:outline-none text-[#cc2936]"
         />
       </div>
       <div
@@ -96,7 +96,7 @@
         <!-- Model Filter Start -->
         <select
           bind:value={model}
-          class="w-full border-none select select-bordered focus:outline-none text-[#cc2936]"
+          class="bg-white w-full border-none select select-bordered focus:outline-none text-[#cc2936]"
         >
           <option value="promotions">Promotions</option>
           <option value="requests">Requests</option>
@@ -105,7 +105,7 @@
         <!-- Town Filter Start -->
         <select
           bind:value={town}
-          class="w-full border-none select select-bordered focus:outline-none text-[#cc2936]"
+          class="bg-white w-full border-none select select-bordered focus:outline-none text-[#cc2936]"
         >
           <option value="all" disabled>Town</option>
           {#each Object.entries(townsID) as [town, id]}
@@ -151,14 +151,13 @@
       <!-- {#each services as service} -->
       {#each $response.data.results as service}
         <!-- New Card Start -->
-        <a
-          use:link
-          href={service.promo_id
+        <Link
+          to={service.promo_id
             ? `/service-details/${service.promo_id}`
             : `/request-details/${service.request_id}`}
           class="w-full min-h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-[#f1f1f1] active:scale-95 overflow-hidden border-b-4 border-[#cc2936]"
         >
-          {#if !service.pictures[0] || ""}
+          {#if !service.pictures}
             <div
               class="hidden object-cover h-full rounded-none max-h-40 min-w-60 max-w-60 md:block md:w-1/4 skeleton"
             ></div>
@@ -211,7 +210,7 @@
               {service.description}
             </p>
           </div>
-        </a>
+        </Link>
         <!-- New Card End -->
       {/each}
     </div>
