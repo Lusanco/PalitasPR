@@ -1,8 +1,8 @@
 <script>
-  import Link from "../components/Link.svelte";
   import { onMount } from "svelte";
   import { userSession } from "../scripts/stores";
   import axios from "axios";
+  import { Link } from "svelte-routing";
 
   onMount(() => {
     axios
@@ -33,10 +33,22 @@
     <div
       class="grid w-full grid-cols-2 grid-rows-2 gap-2 p-4 m-4 md:p-8 md:gap-3 md:m-12"
     >
-      <Link name="Create Service" {twcss} href="/create-service"></Link>
-      <Link name="Create Request" {twcss} href="/create-request"></Link>
-      <Link name="Tasks" {twcss} href="/tasks"></Link>
-      <Link name="Profile" {twcss} href="/profile"></Link>
+      <Link
+        class="w-full h-24 md:h-32 rounded-lg text-[#1f1f1f] bg-white flex flex-col justify-center items-center font-bold shadow-md text-md md:text-2xl hover:bg-[#cc2936] hover:text-white transition duration-300 ease-in-out cursor-pointer text-center"
+        to="/create-service">Create Service</Link
+      >
+      <Link
+        class="w-full h-24 md:h-32 rounded-lg text-[#1f1f1f] bg-white flex flex-col justify-center items-center font-bold shadow-md text-md md:text-2xl hover:bg-[#cc2936] hover:text-white transition duration-300 ease-in-out cursor-pointer text-center"
+        to="/create-request">Create Request</Link
+      >
+      <Link
+        class="w-full h-24 md:h-32 rounded-lg text-[#1f1f1f] bg-white flex flex-col justify-center items-center font-bold shadow-md text-md md:text-2xl hover:bg-[#cc2936] hover:text-white transition duration-300 ease-in-out cursor-pointer text-center"
+        to="/tasks">Tasks</Link
+      >
+      <Link
+        class="w-full h-24 md:h-32 rounded-lg text-[#1f1f1f] bg-white flex flex-col justify-center items-center font-bold shadow-md text-md md:text-2xl hover:bg-[#cc2936] hover:text-white transition duration-300 ease-in-out cursor-pointer text-center"
+        to="/profile">Profile</Link
+      >
     </div>
   </div>
 </div>
