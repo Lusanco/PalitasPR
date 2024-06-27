@@ -52,11 +52,11 @@
 </div>
 
 <div
-  class={`z-50 bg-base fixed top-20 right-0 left-0 ${menuOpen ? "block" : "hidden"} bg-transparent md:left-auto md:w-80`}
+  class={`z-50 bg-[#f1f1f1] fixed top-20 right-0 left-0 ${menuOpen ? "block" : "hidden"} bg-transparent md:left-auto md:w-80`}
   id="navbar-cta"
 >
   <ul
-    class="w-full p-4 shadow-lg md:w-80 menu bg-base-200 rounded-box"
+    class="w-full p-4 shadow-lg md:w-80 menu bg-[#f1f1f1] rounded-box"
   >
     <li>
       <a
