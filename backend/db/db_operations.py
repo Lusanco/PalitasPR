@@ -64,6 +64,7 @@ class DBOperations:
             self.new({'Profile': {'user_id': new_object.id, 'tasks_completed': 0, 'bio': 'Hola soy nuevo en PalitasPR!'}})
 
         # check if object needs aws folder
+        # NEED TO CHANGE THIS TO ROUTES, FOR CASES WHERE AWS FAILS AND THE DATA WAS ALREADY SAVED IN DB...
         aws_folders = {Promotion: "Promotion", Request: "Request", Review: "Review"}
         if model_class in aws_folders:
             response = create_model_folder(
