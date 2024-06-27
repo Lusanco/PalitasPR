@@ -5,7 +5,7 @@
   import axios from "axios";
   import { data, response, userSession } from "../scripts/stores";
   import { writable } from "svelte/store";
-  import { link } from "svelte-routing";
+  import { Link, link } from "svelte-routing";
   import Loading from "../components/Loading.svelte";
   import servicesID from "../scripts/servicesID";
   import Button from "../components/Button.svelte";
@@ -402,8 +402,8 @@
 
             <br />
             <div class="w-full text-justify">
-              <span> {$promo.title}: </span>
-              <span> {$promo.description} </span>
+              <span>{response.promo_title}</span>
+              <span>{response.promo_description}</span>
             </div>
             <br />
 
@@ -1039,6 +1039,31 @@
                         </button>
                       {/if}
                     {/if}
+                    {#if response.task.status === "active"}
+                      {#if response.task.provider_id === $userDetails.id}
+                        <button
+                          on:click={() => {
+                            axios
+                              .put("/api/tasks/", {
+                                id: response.task.id,
+                                status: "closed",
+                              })
+                              .then((submit) => {
+                                console.log("Data submitted", submit);
+                              })
+                              .catch((submitErr) => {
+                                console.error(
+                                  "Error submitting data",
+                                  submitErr
+                                );
+                              });
+                          }}
+                          class="flex-1 mt-2 btn"
+                        >
+                          Cerrar
+                        </button>
+                      {/if}
+                    {/if}
                   </div>
                 </div>
               </div>
@@ -1052,11 +1077,15 @@
               class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
               >Delete Task</button
             >
-            {#if taskClosed === true}
-              <button
-                class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
-                >Leave Review</button
-              >
+            {#if response.task && response.task.status === "closed"}
+              <!-- Add an additional check for response.task to avoid null/undefined errors -->
+              {#if response.task.receiver_id === $userDetails.id}
+                <Link
+                  to="/create-review/{response.task.id}"
+                  class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+                  >Leave Review</Link
+                >
+              {/if}
             {/if}
           </div>
         </div>
