@@ -140,16 +140,16 @@ class Db_user:
             if user_id == initialContact.receiver_id:
                 sender = initialContact.sender
                 receiver = initialContact.receiver
-                contact_dict['sender_first_name'] = sender.first_name
-                contact_dict['sender_last_name'] = sender.last_name
-                contact_dict['sender_email']= sender.email
+                contact_dict['contact_first_name'] = sender.first_name
+                contact_dict['contact_last_name'] = sender.last_name
+                contact_dict['contact_email']= sender.email
                 contact_dict['phone'] = sender.phone
 
                 # Prepare task: contact sender is task receiver | contact receiver is task provider
                 if task:
-                    contact_dict['task']['receiver_email'] = contact_dict['sender_email']
-                    contact_dict['task']['receiver_first_name'] = contact_dict['sender_first_name']
-                    contact_dict['task']['receiver_last_name'] = contact_dict['sender_last_name']
+                    contact_dict['task']['receiver_email'] = contact_dict['contact_email']
+                    contact_dict['task']['receiver_first_name'] = contact_dict['contact_first_name']
+                    contact_dict['task']['receiver_last_name'] = contact_dict['contact_last_name']
                     contact_dict['task']['receiver_phone'] = contact_dict['phone']
                     contact_dict['task']['provider_first_name'] = receiver.first_name
                     contact_dict['task']['provider_last_name'] = receiver.last_name
@@ -161,16 +161,16 @@ class Db_user:
             else: # sent_contacts: User is sender, we need receiver_info
                 receiver = initialContact.receiver
                 sender = initialContact.sender
-                contact_dict['receiver_first_name'] = receiver.first_name
-                contact_dict['receiver_last_name'] = receiver.last_name
-                contact_dict['receiver_email']= receiver.email
+                contact_dict['contact_first_name'] = receiver.first_name
+                contact_dict['contact_last_name'] = receiver.last_name
+                contact_dict['contact_email']= receiver.email
                 contact_dict['phone'] = receiver.phone
 
                 # Prepare task: contact sender is task provider | contact receiver is task receiver
                 if task:
-                    contact_dict['task']['provider_email'] = contact_dict['receiver_email']
-                    contact_dict['task']['provider_first_name'] = contact_dict['receiver_first_name']
-                    contact_dict['task']['provider_last_name'] = contact_dict['receiver_last_name']
+                    contact_dict['task']['provider_email'] = contact_dict['contact_email']
+                    contact_dict['task']['provider_first_name'] = contact_dict['contact_first_name']
+                    contact_dict['task']['provider_last_name'] = contact_dict['contact_last_name']
                     contact_dict['task']['provider_phone'] = contact_dict['phone']
                     contact_dict['task']['receiver_first_name'] = sender.first_name
                     contact_dict['task']['receiver_last_name'] = sender.last_name
