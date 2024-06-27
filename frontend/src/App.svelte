@@ -41,6 +41,9 @@
   import NotPass from "./routes/NotPass.svelte";
   import Tasks from "./routes/Tasks.svelte";
   import CreateReview from "./routes/CreateReview.svelte";
+
+  // QR | Ath Movil
+  import QR from "./components/QR.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -74,6 +77,9 @@
       />
       <Route path="/tasks" component={Tasks} />
       <Route path="/create-review/:id" component={CreateReview} />
+
+      <!--* QR | Ath Movil -->
+      <Route path="/qr" component={QR} />
 
       <!--! 404 / Not found -->
       <Route path="*" component={NotFound} />
