@@ -86,7 +86,7 @@
           bind:value={search}
           on:keydown={handleKeydown}
           placeholder="Search for..."
-          class="w-full col-span-2 border-t-0 border-b-2 rounded-none border-x-0 border-[#cc2936] input input-bordered focus:outline-none text-[#cc2936]"
+          class="bg-white w-full col-span-2 border-t-0 border-b-2 rounded-none border-x-0 border-[#cc2936] input input-bordered focus:outline-none text-[#cc2936]"
         />
       </div>
       <div
@@ -96,7 +96,7 @@
         <!-- Model Filter Start -->
         <select
           bind:value={model}
-          class="w-full border-none select select-bordered focus:outline-none text-[#cc2936]"
+          class="bg-white w-full border-none select select-bordered focus:outline-none text-[#cc2936]"
         >
           <option value="promotions">Promotions</option>
           <option value="requests">Requests</option>
@@ -105,7 +105,7 @@
         <!-- Town Filter Start -->
         <select
           bind:value={town}
-          class="w-full border-none select select-bordered focus:outline-none text-[#cc2936]"
+          class="bg-white w-full border-none select select-bordered focus:outline-none text-[#cc2936]"
         >
           <option value="all" disabled>Town</option>
           {#each Object.entries(townsID) as [town, id]}
