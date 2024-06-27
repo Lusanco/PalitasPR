@@ -386,7 +386,7 @@
                 {$sentReceived ? response.phone : $userDetails.phone}
               </span>
               <span class="text-center md:text-end">
-                {$sentReceived ? response.receiver_email : $userDetails.email}
+                {$sentReceived ? response.contact_email : $userDetails.email}
               </span>
             </div>
           </button>
@@ -550,7 +550,7 @@
                             id="clientPhone-number"
                             readonly
                             value={$sentReceived
-                              ? `${response.contact_phone}`
+                              ? `${response.phone}`
                               : `${$userDetails.phone}`}
                             type="text"
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
@@ -768,9 +768,9 @@
                             readonly
                             id="service-provider"
                             type="text"
-                            value={response.task.contact_first_name +
+                            value={response.task.provider_first_name +
                               " " +
-                              response.task.contact_last_name}
+                              response.task.provider_last_name}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                           />
                         </label>
@@ -836,9 +836,9 @@
                             readonly
                             id="service-client"
                             type="text"
-                            value={response.task.contact_first_name +
+                            value={response.task.receiver_first_name +
                               " " +
-                              response.task.contact_last_name}
+                              response.task.receiver_last_name}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
                           />
                         </label>
@@ -852,7 +852,7 @@
                             readonly
                             id="clientEmail"
                             type="email"
-                            value={response.task.contact_email}
+                            value={response.task.receiver_email}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -866,7 +866,7 @@
                             readonly
                             id="clientPhone-number"
                             type="text"
-                            value={response.task.contact_phone}
+                            value={response.task.receiver_phone}
                             class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
                           />
                         </label>
@@ -984,13 +984,13 @@
                       </label> -->
                       <!--? Agreement Checkbox -->
                       <div class="flex gap-2 mt-2">
-                        <input
+                        <!-- <input
                           disabled
                           checked
                           id="accept"
                           type="checkbox"
                           class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-gray-300 rounded-sm ring-gray-300 mt-[5px] text-[#cc2936]"
-                        />
+                        /> -->
                         <label for="accept">
                           <p class="text-xs text-gray-500 md:text-base">
                             He leído y acepto los
@@ -1014,6 +1014,31 @@
                         >Someter</button
                       >
                     </div> -->
+                    {#if response.task.status === "pending"}
+                      {#if response.task.receiver_id === $userDetails.id}
+                        <button
+                          on:click={() => {
+                            axios
+                              .put("/api/tasks/", {
+                                id: response.task.id,
+                                status: "open",
+                              })
+                              .then((submit) => {
+                                console.log("Data submitted", submit);
+                              })
+                              .catch((submitErr) => {
+                                console.error(
+                                  "Error submitting data",
+                                  submitErr
+                                );
+                              });
+                          }}
+                          class="flex-1 mt-2 btn"
+                        >
+                          Someter
+                        </button>
+                      {/if}
+                    {/if}
                   </div>
                 </div>
               </div>
