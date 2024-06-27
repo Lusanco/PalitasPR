@@ -1,6 +1,7 @@
 <script>
   import { link } from "svelte-routing";
   import { userSession } from "../scripts/stores";
+  import { onMount } from "svelte";
   let menuOpen = false;
 
   function toggleMenu() {
@@ -15,7 +16,13 @@
   }
 
   // Agrega el evento de clic al documento
+  onMount(() => {
   document.addEventListener('click', closeMenu);
+
+  return () => {
+    document.removeEventListener('click', closeMenu);
+  };
+});
 </script>
 
 <div class="flex justify-end m-2 bg-transparent">
@@ -56,6 +63,7 @@
         use:link
         href="/"
         class="block px-5 py-4 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+        on:click|preventDefault={toggleMenu}
         >Home</a
       >
     </li>
@@ -64,6 +72,7 @@
         use:link
         href="/dashboard"
         class="block px-5 py-4 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+        on:click|preventDefault={toggleMenu}
         >Dashboard</a
       >
     </li>
@@ -72,6 +81,7 @@
         use:link
         href="/profile/:id"
         class="block px-5 py-4 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+        on:click|preventDefault={toggleMenu}
         >Profile</a
       >
     </li>
@@ -80,6 +90,7 @@
         use:link
         href="/logout"
         class="mt-2 block px-4 py-3 text-sm font-medium text-center text-white bg-[#cc2936] hover:text-gray-800 rounded-lg"
+        on:click|preventDefault={toggleMenu}
         >Logout</a
       >
     </li>
