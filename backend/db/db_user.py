@@ -168,14 +168,14 @@ class Db_user:
 
                 # Prepare task: contact sender is task provider | contact receiver is task receiver
                 if task:
-                    contact_dict['task']['receiver_email'] = contact_dict['receiver_email']
-                    contact_dict['task']['receiver_first_name'] = contact_dict['receiver_first_name']
-                    contact_dict['task']['receiver_last_name'] = contact_dict['receiver_last_name']
-                    contact_dict['task']['receiver_phone'] = contact_dict['phone']
-                    contact_dict['task']['provider_first_name'] = sender.first_name
-                    contact_dict['task']['provider_last_name'] = sender.last_name
-                    contact_dict['task']['provider_email']= sender.email
-                    contact_dict['task']['provider_phone'] = sender.phone
+                    contact_dict['task']['provider_email'] = contact_dict['receiver_email']
+                    contact_dict['task']['provider_first_name'] = contact_dict['receiver_first_name']
+                    contact_dict['task']['provider_last_name'] = contact_dict['receiver_last_name']
+                    contact_dict['task']['provider_phone'] = contact_dict['phone']
+                    contact_dict['task']['receiver_first_name'] = sender.first_name
+                    contact_dict['task']['receiver_last_name'] = sender.last_name
+                    contact_dict['task']['receiver_email']= sender.email
+                    contact_dict['task']['receiver_phone'] = sender.phone
 
                 contact_dict.pop('sender_id')
                 sent_contacts.append(contact_dict)
