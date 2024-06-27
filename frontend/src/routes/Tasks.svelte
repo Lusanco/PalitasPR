@@ -1021,7 +1021,7 @@
                             axios
                               .put("/api/tasks/", {
                                 id: response.task.id,
-                                status: "open",
+                                status: "active",
                               })
                               .then((submit) => {
                                 console.log("Data submitted", submit);
