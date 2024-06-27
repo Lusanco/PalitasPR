@@ -79,14 +79,15 @@ def get_tasks():
             new_status = data['status']
 
             # Notify contact_receiver(promo owner)
-            if old_task_status == 'pending' and new_status == 'open':
+            if old_task_status == 'pending' and new_status == 'active':
                 read_recipient = 'receiver_read'
 
             # Notify sender, the task was marked as closed
-            elif old_task_status == 'open' and new_status == 'closed':
+            elif old_task_status == 'active' and new_status == 'closed':
                 read_recipient = 'sender_read'
 
-            contact_dict = {'id': initial_contact.id, 'receiver_read': False}
+            contact_dict = {'id': initial_contact.id,
+                            f'{read_recipient}': False}
             response, status = DBOperations(g.db_session).update(
                 {'Initial_Contact': contact_dict})
             if status != 200:
