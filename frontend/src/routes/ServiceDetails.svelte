@@ -3,7 +3,7 @@
   import axios from "axios";
   import { state, data, response, userSession } from "../scripts/stores";
   import { writable } from "svelte/store";
-  import { link } from "svelte-routing";
+  import { Link, link } from "svelte-routing";
   import servicesID from "../scripts/servicesID";
   import Button from "../components/Button.svelte";
   import { get } from "svelte/store";
@@ -16,7 +16,7 @@
     url: "/api/initial-contact",
     headers: "application/json",
     twcss:
-      "md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
+      "md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md flex flex-col justify-center items-center",
     misc: { "App Location": "Service Details" },
   };
 
@@ -192,19 +192,26 @@
           <div
             class="flex flex-col items-center justify-center w-10/12 gap-4 mx-4 bg-white md:flex-row md:w-11/12 md:max-w-6xl"
           >
-            <a
-              use:link
-              href="/"
-              class="md:w-1/3 btn w-full bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
-              >Back To Search</a
+            <Link
+              class="md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md flex flex-col justify-center items-center"
+              to="/">Back To Search</Link
             >
-            <a
-              use:link
-              href={`/profile/${$profileID}`}
-              class="md:w-1/3 btn w-full bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
-              >Go To Profile</a
-            >
-            <Button {image} {button} />
+            {#if $userSession === false}
+              <Link
+                class="md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md flex flex-col justify-center items-center"
+                to="/login-to-continue">Go To Profile</Link
+              >
+              <Link
+                class="md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md flex flex-col justify-center items-center"
+                to="/login-to-continue">Send Contact</Link
+              >
+            {:else}
+              <Link
+                class="md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md flex flex-col justify-center items-center"
+                to={`/profile/${$profileID}`}>Go To Profile</Link
+              >
+              <Button {image} {button} />
+            {/if}
           </div>
         </div>
       </div>
