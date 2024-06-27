@@ -402,7 +402,7 @@
 
             <br />
             <div class="w-full text-justify">
-              <span>{response.promo_title}</span>
+              <span>{response.promo_title} -</span>
               <span>{response.promo_description}</span>
             </div>
             <br />
