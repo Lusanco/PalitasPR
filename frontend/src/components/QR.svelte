@@ -1,7 +1,7 @@
 <script>
   import axios from "axios";
 
-  let image = "";
+  let image = null;
   let fileInput;
 
   function handleFileChange(event) {
@@ -37,13 +37,13 @@
 
 <!--* QR -->
 <div class="flex items-center justify-center min-h-screen m-5 overflow-x-auto">
-  <!-- {#if image} -->
   <div class="w-full p-12 m-2 bg-white rounded-md md:m-20 card">
     <h1
       class="text-xl md:text-4xl text-center mb-8 md:mb-12 font-semibold text-[#1f1f1f]"
     >
       Sube tu QR de Ath Movil aquí
     </h1>
+    <!-- {#if image === null} -->
     <input
       type="file"
       name="image"
@@ -71,8 +71,8 @@
         <i class="mt-1 text-lg fa-solid fa-xmark"></i> Cancel
       </button>
     </div>
+    <!-- {/if} -->
   </div>
-  <!-- {/if} -->
 </div>
 
 <style></style>
