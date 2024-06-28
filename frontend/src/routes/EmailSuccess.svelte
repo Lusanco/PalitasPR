@@ -19,10 +19,6 @@
   });
 </script>
 
-<head>
-  <title>PalitasPR | Signup Succees</title>
-</head>
-
 <div
   class="flex flex-col items-center justify-center max-w-lg min-h-screen py-20 m-auto text-[#1f1f1f]"
 >
