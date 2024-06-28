@@ -18,7 +18,7 @@ def explore():
     service = request.args.get('search')
     town = request.args.get('town')
     page = int(request.args.get('page', 1))
-    limit = int(request.args.get('limit', 15))
+    limit = int(request.args.get('limit', 10))
     response, status = Db_core(g.db_session).landing_searchBar(model, service, town, page, limit)
     if response['results'] is  None:
         return make_response(jsonify({'results': None}), 404)
