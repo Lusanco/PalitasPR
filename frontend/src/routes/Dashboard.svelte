@@ -5,7 +5,7 @@
   import { Link } from "svelte-routing";
   import { writable } from "svelte/store";
 
-  let profileID = writable()
+  let profileID = writable();
 
   // Check if the user is logged in
   onMount(() => {
@@ -14,7 +14,7 @@
       .get("/api/user/status")
       .then((userStatusRes) => {
         userSession.set(true);
-        profileID.set(userStatusRes.data.profile_id)
+        profileID.set(userStatusRes.data.profile_id);
         console.log(userStatusRes.data);
       })
       // Catch errors
@@ -25,10 +25,6 @@
       });
   });
 </script>
-
-<head>
-  <title>PalitasPR | Dashboard</title>
-</head>
 
 <div
   class="flex flex-col items-center justify-center h-full min-h-screen bg-base"
