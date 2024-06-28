@@ -18,14 +18,24 @@
   const day = String(today.getDate()).padStart(2, "0");
 
   let image = null;
-  let button = {
+  let someterTask = {
     name: "Someter",
     method: "POST",
     url: "/api/tasks/",
     headers: "application/json", // "application/json"
     twcss:
       "w-full p-2 mb-4 mt-4 font-semibold text-white bg-[#cc2936] border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out",
-    misc: { "App Location": "Tasks" },
+    misc: { "App Location": "Submit Task" },
+  };
+
+  let deleteTask = {
+    name: "Delete",
+    method: "PUT",
+    url: "/api/tasks/",
+    headers: "application/json", // "application/json"
+    twcss:
+      "grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white",
+    misc: { "App Location": "Delete Task" },
   };
 
   const serviceNamesByID = Object.entries(servicesID).reduce(
@@ -54,6 +64,7 @@
   let sentReceived = writable(true);
   let contactRes = writable([]);
   let userDetails = writable("");
+  let whoDeleted = writable();
   let price = "";
   let terms;
   let taskClosed = false;
@@ -87,13 +98,26 @@
       <div class="hidden"></div>
     {/if}
   */
+  // if sender *sent initial cotnact is sender_hide if received inital contact pues receiver_hide
 
   $: {
-    $data = {
-      initial_contact_id: $initial_contact_id,
-      terms: $pipeSeperatedStringStore,
-      price,
-    };
+    if (initial_contact_id && terms && price) {
+      $data = {
+        initial_contact_id: $initial_contact_id,
+        terms: $pipeSeperatedStringStore,
+        price,
+      };
+    } else if ($sentReceived) {
+      $data = {
+        initial_contact_id: $initial_contact_id,
+        receiver_hide: true,
+      };
+    } else if ($sentReceived === false) {
+      $data = {
+        initial_contact_id: $initial_contact_id,
+        sender_hide: true,
+      };
+    }
 
     data.set($data);
     console.log("Data updated:", $data);
@@ -735,7 +759,7 @@
                     <div>
                       <!--* Submit button -->
                       <!-- WHEN TASK EXISTS: no submit button -->
-                      <Button {button} {image} />
+                      <Button button={someterTask} {image} />
                       <br />
                     </div>
                   </div>
@@ -1079,6 +1103,8 @@
           <div
             class="flex flex-wrap items-center justify-center w-full gap-1 mx-auto md:gap-2"
           >
+            <!-- Delete Task (Archive) -->
+            <Button button={deleteTask} {image} />
             <button
               class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
               >Delete Task</button
