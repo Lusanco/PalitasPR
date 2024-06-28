@@ -49,6 +49,22 @@
   let bulletPointsStore = writable([]);
   let pipeSeperatedStringStore = writable("");
 
+  // MODIFIED: Reactive statement for clearing inputs
+  $: {
+    if ($sentReceived !== undefined || $contactRes[0]?.id !== undefined) {
+      clearInputs();
+      console.log("Inputs cleared due to sentReceived or contactRes change");
+    }
+  }
+
+  // ADDED: Function to clear inputs
+  function clearInputs() {
+    price = "";
+    bulletPointsStore.set([]);
+    inputValue = "";
+    // Clear any other inputs you have
+  }
+
   $: {
     bulletPointsStore.subscribe((value) => {
       pipeSeperatedStringStore.set(value.join("|"));
@@ -84,48 +100,114 @@
       terms: $pipeSeperatedStringStore,
       price,
     };
-    sentReceived.set($sentReceived);
-    if (
-      $submitData.initial_contact_id &&
-      $submitData.terms &&
-      $submitData.price &&
-      $contactRes[0].promo_id &&
-      $sentReceived
-    ) {
-      data.set($submitData);
-      console.log("If Submit on Received: ", $data);
-    } else if (
-      $submitData.initial_contact_id &&
-      $submitData.terms &&
-      $submitData.price &&
-      $contactRes[0].request_id &&
-      !$sentReceived
-    ) {
-      data.set($submitData);
-      console.log("If Submit on Sent: ", $data);
-    } else if (
-      !$submitData.initial_contact_id ||
-      !$submitData.terms ||
-      (!$submitData.price && $sentReceived)
-    ) {
-      $data = {
-        initial_contact_id: $initial_contact_id,
-        receiver_hide: $sentReceived,
-      };
-      data.set($data);
-      console.log("Else If For Received: ", $data);
-    } else if (
-      !$submitData.initial_contact_id ||
-      !$submitData.terms ||
-      (!$submitData.price && !$sentReceived)
-    ) {
-      $data = {
-        initial_contact_id: $initial_contact_id,
-        sender_hide: !$sentReceived,
-      };
-      data.set($data);
-      console.log("Else If For Sent: ", $data);
+    // sentReceived.set($sentReceived);
+    if ($sentReceived) {
+      sentReceived.set(true);
+      console.log("Inside Received If Block");
+      if (
+        $submitData.initial_contact_id &&
+        $submitData.terms &&
+        $submitData.price &&
+        $contactRes[0].promo_id
+      ) {
+        console.log("If promo_id exist: ", $contactRes[0].promo_id);
+        data.set($submitData);
+        console.log("If Submit on Received: ", $data);
+      } else if (
+        $submitData.initial_contact_id &&
+        $submitData.terms &&
+        $submitData.price &&
+        $contactRes[0].request_id
+      ) {
+        console.log("If request_id exist: ", $contactRes[0].request_id);
+        data.set($submitData);
+        console.log("If Submit on Sent: ", $data);
+      } else if (
+        !$submitData.initial_contact_id ||
+        !$submitData.terms ||
+        !$submitData.price
+      ) {
+        $data = {
+          initial_contact_id: $initial_contact_id,
+          receiver_hide: $sentReceived,
+        };
+        data.set($data);
+        console.log("Else If For Received: ", $data);
+      }
+      console.log("End of Received If Block");
+    } else {
+      console.log("Inside Sent Else Block");
+      if (
+        $submitData.initial_contact_id &&
+        $submitData.terms &&
+        $submitData.price &&
+        $contactRes[0].promo_id
+      ) {
+        console.log("If promo_id exist: ", $contactRes[0].promo_id);
+        data.set($submitData);
+        console.log("If Submit on Received: ", $data);
+      } else if (
+        $submitData.initial_contact_id &&
+        $submitData.terms &&
+        $submitData.price &&
+        $contactRes[0].request_id
+      ) {
+        console.log("If request_id exist: ", $contactRes[0].request_id);
+        data.set($submitData);
+        console.log("If Submit on Sent: ", $data);
+      } else if (
+        !$submitData.initial_contact_id ||
+        !$submitData.terms ||
+        !$submitData.price
+      ) {
+        $data = {
+          initial_contact_id: $initial_contact_id,
+          sender_hide: !$sentReceived,
+        };
+        data.set($data);
+        console.log("Else If For Sent: ", $data);
+      }
+      console.log("End of Sent If Block");
     }
+    // if (
+    //   $submitData.initial_contact_id &&
+    //   $submitData.terms &&
+    //   $submitData.price &&
+    //   $contactRes[0].promo_id &&
+    //   $sentReceived
+    // ) {
+    //   data.set($submitData);
+    //   console.log("If Submit on Received: ", $data);
+    // } else if (
+    //   $submitData.initial_contact_id &&
+    //   $submitData.terms &&
+    //   $submitData.price &&
+    //   $contactRes[0].request_id &&
+    //   !$sentReceived
+    // ) {
+    //   data.set($submitData);
+    //   console.log("If Submit on Sent: ", $data);
+    // } else if (
+    //   !$submitData.initial_contact_id ||
+    //   (!$submitData.terms && !$submitData.price && $sentReceived)
+    // ) {
+    //   $data = {
+    //     initial_contact_id: $initial_contact_id,
+    //     receiver_hide: $sentReceived,
+    //   };
+    //   data.set($data);
+    //   console.log("Else If For Received: ", $data);
+    // } else if (
+    //   !$submitData.initial_contact_id ||
+    //   (!$submitData.terms && !$submitData.price && !$sentReceived)
+    // ) {
+    //   $data = {
+    //     initial_contact_id: $initial_contact_id,
+    //     sender_hide: !$sentReceived,
+    //   };
+    //   data.set($data);
+    //   console.log("Else If For Sent: ", $data);
+    // }
   }
 
   onMount(() => {
@@ -327,10 +409,6 @@
   }
 
   console.log("This is the result of userDetails", $userDetails);
-
-  /**
-   ** Values for the form fields
-   */
 </script>
 
 <div class="flex flex-col items-center w-full min-h-screen px-4 py-20 mx-auto">
