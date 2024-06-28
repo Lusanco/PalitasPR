@@ -19,10 +19,6 @@
   });
 </script>
 
-<head>
-  <title>PalitasPR | Create Review Success</title>
-</head>
-
 <div
   class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto text-[#1f1f1f] rounded-md sm:p-10"
 >
