@@ -28,17 +28,17 @@
 
   onMount(() => {
     axios
-    .get("/api/user/status")
-    .then((userStatusRes) => {
-      userSession.set(true);
-      console.log(userStatusRes.data);
-    })
-    .catch((userStatusErr) => {
-      userSession.set(false);
-      console.log(userStatusErr);
-      console.log($userSession);
-    })
-  })
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+      });
+  });
 
   // Function to handle the "Enter" key press
   function handleKeydown(event) {
@@ -77,10 +77,6 @@
     errorMessage = ""; // Clear any previous error messages on component mount
   });
 </script>
-
-<head>
-  <title>PalitasPR | Login</title>
-</head>
 
 <div
   class="flex flex-col items-center justify-center h-full min-h-screen py-20 m-auto"
