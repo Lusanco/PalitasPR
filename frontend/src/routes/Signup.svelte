@@ -41,18 +41,18 @@
 
   onMount(() => {
     axios
-    .get("/api/user/status")
-    .then((userStatusRes) => {
-      userSession.set(true);
-      console.log(userStatusRes.data);
-    })
-    .catch((userStatusErr) => {
-      userSession.set(false);
-      console.log(userStatusErr);
-      console.log($userSession);
-    })
-  })
-  
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+      });
+  });
+
   // Function to validate the password fields
   function validatePasswords() {
     if (password !== confirmPassword) {
@@ -126,10 +126,6 @@
     errorMessage = ""; // Clear any previous error messages on component mount
   });
 </script>
-
-<head>
-  <title>PalitasPR | Signup</title>
-</head>
 
 <div
   class="flex flex-col items-center justify-center h-full min-h-screen py-20 m-auto"
