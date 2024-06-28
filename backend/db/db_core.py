@@ -15,6 +15,7 @@ from sqlalchemy import func
 from unidecode import unidecode
 from models import Service
 import asyncio
+import math
 
 
 class Db_core:
@@ -29,7 +30,7 @@ class Db_core:
     def __init__(self, db_session):
         self.session = db_session
 
-    def landing_searchBar(self, model=None, service=None, town_id = 0):
+    def landing_searchBar(self, model=None, service=None, town_id = 0, page=1, limit=15):
         """
         Main search for services provided in specific towns based on the provided model, service, and town ID.
         This represents the user typing inside the landing page searchbar looking for a certain service.
@@ -41,12 +42,14 @@ class Db_core:
 
         if model is None and service is None:
             return {'error':'model or service missing'}, 400
+        
+        offset = (page -1) * limit
 
         if service == None or service == '':
             if model == 'promotions':
-                rows = Db_promotion(self.session).get_all_promotions(town_id)
+                total_count, rows = Db_promotion(self.session).get_all_promotions(town_id, page, limit)
             else:
-                rows = Db_request(self.session).get_all_requests(town_id)
+                total_count, rows = Db_request(self.session).get_all_requests(town_id, page, limit)
             service_name = None
         else: # With service specific to find
             service_name = unidecode(service).lower() # Normalize text
@@ -71,9 +74,9 @@ class Db_core:
             my_service_id = service_obj.id
             service_name = service_obj.name
             if model == "promotions":
-                rows = Db_promotion(self.session).get_promos_byTowns(my_service_id, town_id)
+                total_count, rows = Db_promotion(self.session).get_promos_byTowns(my_service_id, town_id, page, limit)
             if model == "requests":
-                rows = Db_request(self.session).get_requests_byTowns(my_service_id, town_id)
+                total_count, rows = Db_request(self.session).get_requests_byTowns(my_service_id, town_id, page, limit)
 
         list_of_models = []
 
@@ -142,7 +145,13 @@ class Db_core:
                     }
                     list_of_models.append(model_dict)
             # ------------------------------------------------------------------------------
-        return {'results': list_of_models}, 200
+        return {
+                'results': list_of_models,
+                'total_count': total_count,
+                'page': page,
+                'limit': limit,
+                'total_pages': math.ceil(total_count / limit)
+                }, 200
 
     async def dashboard_get_promos_requests(self, user_id):
         """
