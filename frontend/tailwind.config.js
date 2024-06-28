@@ -5,4 +5,18 @@ export default {
     extend: {},
   },
   plugins: [require("@tailwindcss/forms"), require("daisyui")],
+  daisyui: {
+    themes: [
+      {
+        theme: {
+          "primary": "#F1F5F9",
+          "secondary": "#2F3037",
+          "neutral": "#C6CBD2",
+          "accent": "#166534",
+          "accentHover": "#12542B",
+          "error": "#cc2936",
+        },
+      },
+    ],
+  },
 };
