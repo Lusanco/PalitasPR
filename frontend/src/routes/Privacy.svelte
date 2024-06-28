@@ -5,24 +5,20 @@
 
   onMount(() => {
     axios
-    .get("/api/user/status")
-    .then((userStatusRes) => {
-      userSession.set(true);
-      console.log(userStatusRes.data);
-    })
-    .catch((userStatusErr) => {
-      userSession.set(false);
-      console.log(userStatusErr);
-      console.log($userSession);
-    })
-  })
-  
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+      });
+  });
+
   let currentDate = new Date().toLocaleDateString();
 </script>
-
-<head>
-  <title>PalitasPR | Privacy</title>
-</head>
 
 <div class="container max-w-6xl px-4 py-8 mx-auto my-20 bg-[#f1f1f1]">
   <h1 class="text-4xl font-bold text-center text-[#1f1f1f]">
