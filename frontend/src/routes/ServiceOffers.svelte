@@ -60,20 +60,20 @@
    * ! Test functions
    */
 
-   onMount(() => {
+  onMount(() => {
     axios
-    .get("/api/user/status")
-    .then((userStatusRes) => {
-      userSession.set(true);
-      console.log(userStatusRes.data);
-    })
-    .catch((userStatusErr) => {
-      userSession.set(false);
-      console.log(userStatusErr);
-      console.log($userSession);
-    })
-  })
-  
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+      });
+  });
+
   function handleCard() {
     alert("Close button is working!");
   }
@@ -91,10 +91,6 @@
     menu.classList.toggle("hidden");
   }
 </script>
-
-<head>
-  <title>PalitasPR | Service Offers</title>
-</head>
 
 <!-- 
   ? Container
