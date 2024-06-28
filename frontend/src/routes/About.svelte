@@ -6,27 +6,23 @@
 
   onMount(() => {
     axios
-    .get("/api/user/status")
-    .then((userStatusRes) => {
-      userSession.set(true);
-      console.log(userStatusRes.data);
-    })
-    .catch((userStatusErr) => {
-      userSession.set(false);
-      console.log(userStatusErr);
-      console.log($userSession)
-    })
-  })
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+      });
+  });
 
   function scrollToTeam() {
     const teamSection = document.getElementById("team");
     teamSection.scrollIntoView({ behavior: "smooth" });
   }
 </script>
-
-<head>
-  <title>PalitasPR | About</title>
-</head>
 
 <div class="mt-20 bg-white scroll-smooth">
   <div class="relative bg-[#f1f1f1] h-[32rem]">
