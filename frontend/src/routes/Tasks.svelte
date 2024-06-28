@@ -63,8 +63,9 @@
   let initial_contact_id = writable(null);
   let sentReceived = writable(true);
   let contactRes = writable([]);
+  let promoRequestID = writable();
   let userDetails = writable("");
-  let whoDeleted = writable();
+  let submitData = writable();
   let price = "";
   let terms;
   let taskClosed = false;
@@ -77,50 +78,54 @@
     contactResponses = [...$contactRes];
   });
 
-  /* 
-    let sentReceived = writable(true);
-    let contactRes = writable();
-
-
-    $received.last_name
-    $contactRes.last_name
-
-    If ($sentReceived === true){
-      contactRes.set($received);
-    } else if ($sentReceived === false){
-      contactRes.set($sent);
-    }
-  
-    EN LA PARTE DE PROMO_ID EL REQUEST
-    {#if $sentReceived === true}
-      Contenido de PromoID
-    {:else}
-      <div class="hidden"></div>
-    {/if}
-  */
-  // if sender *sent initial cotnact is sender_hide if received inital contact pues receiver_hide
-
   $: {
-    if (initial_contact_id && terms && price) {
+    $submitData = {
+      initial_contact_id: $initial_contact_id,
+      terms: $pipeSeperatedStringStore,
+      price,
+    };
+    sentReceived.set($sentReceived);
+    if (
+      $submitData.initial_contact_id &&
+      $submitData.terms &&
+      $submitData.price &&
+      $contactRes[0].promo_id &&
+      $sentReceived
+    ) {
+      data.set($submitData);
+      console.log("If Submit on Received: ", $data);
+    } else if (
+      $submitData.initial_contact_id &&
+      $submitData.terms &&
+      $submitData.price &&
+      $contactRes[0].request_id &&
+      !$sentReceived
+    ) {
+      data.set($submitData);
+      console.log("If Submit on Sent: ", $data);
+    } else if (
+      !$submitData.initial_contact_id ||
+      !$submitData.terms ||
+      (!$submitData.price && $sentReceived)
+    ) {
       $data = {
         initial_contact_id: $initial_contact_id,
-        terms: $pipeSeperatedStringStore,
-        price,
+        receiver_hide: $sentReceived,
       };
-    } else if ($sentReceived) {
+      data.set($data);
+      console.log("Else If For Received: ", $data);
+    } else if (
+      !$submitData.initial_contact_id ||
+      !$submitData.terms ||
+      (!$submitData.price && !$sentReceived)
+    ) {
       $data = {
         initial_contact_id: $initial_contact_id,
-        receiver_hide: true,
+        sender_hide: !$sentReceived,
       };
-    } else if ($sentReceived === false) {
-      $data = {
-        initial_contact_id: $initial_contact_id,
-        sender_hide: true,
-      };
+      data.set($data);
+      console.log("Else If For Sent: ", $data);
     }
-
-    data.set($data);
-    console.log("Data updated:", $data);
   }
 
   onMount(() => {
@@ -150,6 +155,11 @@
         }
         let promo_id;
         if (!$contactRes === null || !$contactRes[0] === null) {
+          promoRequestID.set(
+            $contactRes[0].promo_id
+              ? $contactRes[0].promo_id
+              : $contactRes[0].request_id
+          );
           promo_id = $contactRes[0].promo_id;
           if (
             $contactRes[0].task != null &&
@@ -294,6 +304,7 @@
         received.set(userContactsRes.data.results.received);
         contactRes.set(userContactsRes.data.results.received);
         sentReceived.set(true);
+        console.log($sentReceived);
       })
       .catch((error) => {
         console.error("Error fetching received contacts:", error);
@@ -308,6 +319,7 @@
         sent.set(userContactsRes.data.results.sent);
         contactRes.set(userContactsRes.data.results.sent);
         sentReceived.set(false);
+        console.log($sentReceived);
       })
       .catch((error) => {
         console.error("Error fetching sent contacts:", error);
@@ -1105,10 +1117,10 @@
           >
             <!-- Delete Task (Archive) -->
             <Button button={deleteTask} {image} />
-            <button
+            <!-- <button
               class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
               >Delete Task</button
-            >
+            > -->
             {#if response.task && response.task.status === "closed"}
               <!-- Add an additional check for response.task to avoid null/undefined errors -->
               {#if response.task.receiver_id === $userDetails.id}
