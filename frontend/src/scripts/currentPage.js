@@ -43,12 +43,15 @@ export function currentPage() {
 
   // Handle dynamic routes
   const dynamicRoutes = [
-    { pattern: /^\/create-review\/[\w-]+$/, name: "Crear Reseña" }, // Updated regex for UUID-like IDs
-    { pattern: /^\/request-details\/[\w-]+$/, name: "Detalles de la Solicitud" }, // Updated regex for UUID-like IDs
-    { pattern: /^\/service-details\/[\w-]+$/, name: "Detalles del Servicio" }, // Updated regex for UUID-like IDs
-    { pattern: /^\/profile\/[\w-]+$/, name: "Perfil" } // Updated regex for UUID-like IDs
+    { pattern: /^\/create-review\/[\w-]+$/, name: "Crear Reseña" },
+    { pattern: /^\/request-details\/[\w-]+$/, name: "Detalles de la Solicitud" },
+    { pattern: /^\/service-details\/[\w-]+$/, name: "Detalles del Servicio" },
+    { pattern: /^\/profile\/[\w-]+$/, name: "Perfil" }
+
+    // Add more dynamic routes here
   ];
 
+  // Check for dynamic route match
   for (const route of dynamicRoutes) {
     if (route.pattern.test(path)) {
       return route.name;
