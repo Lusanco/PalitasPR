@@ -64,10 +64,6 @@
   $response = get(response);
 </script>
 
-<head>
-  <title>PalitasPR | Index</title>
-</head>
-
 <!-- Index Start -->
 <div
   class="flex flex-col items-center justify-center h-full min-h-screen gap-8 py-20 mx-2"
