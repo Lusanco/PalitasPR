@@ -10,7 +10,7 @@
       " flex flex-wrap  text-primary justify-between p-5 md:p-8 footer font-semibold bg-accent"}
 >
   <nav
-    class="flex flex-wrap items-center justify-center gap-4 mx-auto -mb-4 md:mx-0"
+    class="flex flex-wrap items-center justify-center gap-2 mx-auto -mb-5 md:gap-4 md:mx-0"
   >
     <a
       use:link
