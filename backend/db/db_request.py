@@ -22,7 +22,7 @@ class Db_request:
     def __init__(self, db_session):
         self.session = db_session
 
-    def get_requests_byTowns(self, my_service_id, town_id):
+    def get_requests_byTowns(self, my_service_id, town_id, page, limit):
         """
         Query Requests (Service Requests) based on service ID and town ID.
         Searches all requests in a specified town with all the related information.
@@ -60,8 +60,12 @@ class Db_request:
         if town_id != 0:
             query = query.filter(Town.id == town_id)
 
-        rows = query.all()
-        return rows
+        total_count = query.count()
+
+        offset = (page - 1) * limit
+
+        rows = query.offset(offset).limit(limit).all()
+        return total_count, rows
 
     async def get_user_requests(self, session, my_user_id):
         """
@@ -113,7 +117,7 @@ class Db_request:
 
         return requests_dict
 
-    def get_all_requests(self, town_id):
+    def get_all_requests(self, town_id, page, limit):
         '''
             Get all request and towns associations
         '''
@@ -151,6 +155,12 @@ class Db_request:
         # If a town sent, make query by towns
         if town_id != 0:
             query = query.filter(Town.id == town_id)
+
+        # Count total results before pagination
+        total_count = query.count()
+
+        offset = (page - 1) * limit
+
         # '.all()' submtis the request for the query
-        rows = query.all()
-        return rows
+        rows = query.offset(offset).limit(limit).all()
+        return total_count, rows
