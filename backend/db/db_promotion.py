@@ -24,7 +24,7 @@ class Db_promotion:
     def __init__(self, db_session):
         self.session = db_session
 
-    def get_promos_byTowns(self, my_service_id, town_id):
+    def get_promos_byTowns(self, my_service_id, town_id, page, limit):
         """
         Query promotions based on service ID and town ID.
         Searches for specific Promotions in a specified town with all the info related.
@@ -65,9 +65,13 @@ class Db_promotion:
         # If a town sent, make query by towns
         if town_id != 0:
             query = query.filter(Town.id == town_id)
+
+        total_count = query.count()
+
+        offset = (page - 1) * limit
         # .all() submtis the request for the query
-        rows = query.all()
-        return rows
+        rows = query.offset(offset).limit(limit).all()
+        return total_count, rows
 
     async def get_user_promos(self, session, my_user_id):
         """
@@ -147,7 +151,7 @@ class Db_promotion:
             review_list.append(review_dict)
         return review_list
 
-    def get_all_promotions(self, town_id):
+    def get_all_promotions(self, town_id, page, limit):
         print(f"All promotions for town_id {town_id}")
         query = (
             self.session.query(
@@ -187,6 +191,11 @@ class Db_promotion:
         # If a town sent, make query by towns
         if town_id != 0:
             query = query.filter(Town.id == town_id)
+
+        # Count total results before pagination
+        total_count = query.count()
+
+        offset = (page - 1) * limit
         # '.all()' submtis the request for the query
-        rows = query.all()
-        return rows
+        rows = query.offset(offset).limit(limit).all()
+        return total_count, rows
