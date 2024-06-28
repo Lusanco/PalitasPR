@@ -45,18 +45,18 @@
 
   onMount(() => {
     axios
-    .get("/api/user/status")
-    .then((userStatusRes) => {
-      userSession.set(true);
-      console.log(userStatusRes.data);
-    })
-    .catch((userStatusErr) => {
-      userSession.set(false);
-      console.log(userStatusErr);
-      console.log($userSession)
-    })
-  })
-  
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+      });
+  });
+
   function handleTownChange(event) {
     const townId = event.target.value;
     if (event.target.checked) {
@@ -76,10 +76,6 @@
     document.getElementById("townsDropdown").classList.toggle("hidden");
   }
 </script>
-
-<head>
-  <title>PalitasPR | Solicitar Servicio</title>
-</head>
 
 <div
   class="flex flex-col items-center justify-center h-full min-h-screen bg-[#f1f1f1]"
