@@ -8,7 +8,7 @@
   let profileID = writable();
 
   let twcss =
-    "flex flex-col items-center justify-center w-full h-24 font-bold text-center transition duration-200 ease-in-out rounded-lg shadow-md cursor-pointer md:h-32 text- bg-primary text-md md:text-2xl hover:bg-accent hover:text-primary";
+    "flex flex-col items-center justify-center w-full h-24 font-bold text-center transition duration-200 ease-in-out rounded-lg shadow-md cursor-pointer md:h-32 text- bg-white text-md md:text-2xl hover:bg-accent hover:text-primary";
 
   // Check if the user is logged in
   onMount(() => {
@@ -25,6 +25,7 @@
         userSession.set(false);
         console.log(userStatusErr);
         console.log($userSession);
+        window.location.href = "/login-to-continue";
       });
   });
 </script>
