@@ -15,15 +15,13 @@
   let search = "";
   let model = "promotions";
   let town = "all";
-  let page = 1;
-  let totalPages = 1;
   let button = {
     name: "",
     method: "GET",
-    url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`,
+    url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}`,
     headers: "application/json",
     twcss:
-      "btn border-none rounded-t-none rounded-l-none rounded-r-lg rounded-b-lg focus:outline-none text-[#CC2936] bg-white hover:text-[#f1f1f1] hover:bg-[#cc2936]",
+      "btn border-none rounded-t-none rounded-l-none rounded-r-lg rounded-b-lg focus:outline-none text-accent bg-primary hover:bg-accent hover:bg-opacity-10",
     misc: { "App Location": "Index Search Component" },
   };
   // Button Prop Variables And Dependencies
@@ -37,16 +35,6 @@
       .then((userStatusRes) => {
         userSession.set(true);
         console.log(userStatusRes.data);
-        return axios.get(button.url);
-      })
-      .catch((userStatusErr) => {
-        console.log(userStatusErr);
-        return axios.get(button.url);
-      })
-      .then((res) => {
-        response.set(res.data);
-        console.log(response);
-        totalPages = res.data.total_pages;
       })
       .catch((userStatusErr) => {
         userSession.set(false);
@@ -58,52 +46,32 @@
   // Function to handle the "Enter" key press
   function handleKeydown(event) {
     if (event.key === "Enter") {
-      page = 1;
+      // Trigger the button logic from the child component
       buttonRef.buttonLogic();
     }
   }
 
-  function nextPage() {
-    if (page < totalPages) {
-      page += 1;
-      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
-      buttonRef.buttonLogic();
-    }
-  }
-
-  function previousPage() {
-    if (page > 1) {
-      page -= 1;
-      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
-      buttonRef.buttonLogic();
-    }
-  }
   // Reactive statement to update button store when misc store changes
   $: {
     button = {
       ...button,
-      url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`,
+      url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}`,
     };
 
     // Update the data store with the current misc values
     data.set({ search, model, town });
   }
   $response = get(response);
-  // totalPages = $response.total_pages || 1;
 </script>
-
-<head>
-  <title>PalitasPR | Index</title>
-</head>
 
 <!-- Index Start -->
 <div
-  class="flex flex-col items-center justify-center h-full min-h-screen gap-8 py-20 mx-2"
+  class="flex flex-col items-center justify-center h-full min-h-screen gap-8 px-4 md:p-0"
 >
   <Slogan />
   <!-- SearchBar Start -->
   <div
-    class="items-center justify-center w-full max-w-md mx-2 border-2 shadow-lg md:mx-auto rounded-lg border-b-2 border-x-0 border-t-0 border-[#cc2936] bg-white"
+    class="w-full max-w-md border-0 border-b-2 rounded-lg shadow-lg bg-primary border-accent"
   >
     <div class="grid grid-cols-2 grid-rows-2 rounded-lg overflow-clip join">
       <div id="search-bar" class="col-span-2 row-span-1">
@@ -114,8 +82,11 @@
           bind:value={search}
           on:keydown={handleKeydown}
           placeholder="Search for..."
-          class="bg-white w-full col-span-2 border-t-0 border-b-2 rounded-none border-x-0 border-[#cc2936] input input-bordered focus:outline-none text-[#cc2936]"
+          class="w-full col-span-2 border-none rounded-none placeholder:text-secondary placeholder:opacity-60 bg-primary input input-bordered focus:outline-none text-secondary"
         />
+        <div
+          class="border-[1px] mx-2 flex justify-center items-center border-neutral"
+        ></div>
       </div>
       <div
         id="filters"
@@ -124,7 +95,7 @@
         <!-- Model Filter Start -->
         <select
           bind:value={model}
-          class="bg-white w-full border-none select select-bordered focus:outline-none text-[#cc2936]"
+          class="w-full border-none bg-primary select select-bordered focus:outline-none text-secondary"
         >
           <option value="promotions">Promotions</option>
           <option value="requests">Requests</option>
@@ -133,7 +104,7 @@
         <!-- Town Filter Start -->
         <select
           bind:value={town}
-          class="bg-white w-full border-none select select-bordered focus:outline-none text-[#cc2936]"
+          class="w-full border-none bg-primary select select-bordered focus:outline-none text-secondary"
         >
           <option value="all" disabled>Town</option>
           {#each Object.entries(townsID) as [town, id]}
@@ -147,20 +118,7 @@
           <!-- on:results={handleResults} -->
           <span class="sr-only">Search</span>
 
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-5 h-5 m-auto"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-            />
-          </svg>
+          <i class="fa-solid fa-magnifying-glass text-accent"></i>
         </Button>
       </div>
     </div>
@@ -171,10 +129,10 @@
   {:else if (!$state.hidden && !$state.loaded) || $state.reload}
     <Loading />
   {:else if $state.error}
-    <span class="font-bold text-[#cc2936]">No results found, try again.</span>
+    <span class="font-bold text-error">No results found, try again.</span>
   {:else}
     <div
-      class="flex py-2 flex-col gap-4 w-[95%] sm:w-[90%] md:w-[80%] overflow-y-scroll overflow-hidden h-96"
+      class="flex flex-col w-full gap-4 py-2 overflow-hidden overflow-y-scroll md:p-12 h-96"
     >
       <!-- {#each services as service} -->
       {#each $response.data.results as service}
@@ -183,7 +141,7 @@
           to={service.promo_id
             ? `/service-details/${service.promo_id}`
             : `/request-details/${service.request_id}`}
-          class="w-full min-h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-[#f1f1f1] active:scale-95 overflow-hidden border-b-4 border-[#cc2936]"
+          class="w-full overflow-hidden transition-all duration-200 ease-in-out transform border-b-2 md:border-b-[3px] rounded-md shadow-md min-h-40 md:rounded-2xl card card-side bg-primary hover:bg-accent hover:bg-opacity-10 active:scale-95 border-accent"
         >
           {#if !service.pictures}
             <div
@@ -241,19 +199,6 @@
         </Link>
         <!-- New Card End -->
       {/each}
-    </div>
-    <!-- {`z-50 bg-[#f1f1f1] fixed top-20 right-0 left-0 ${menuOpen ? "block" : "hidden"} bg-transparent md:left-auto md:w-80`} -->
-    <div class="flex justify-between w-full max-w-md mx-auto">
-      <button
-        on:click={previousPage}
-        class={`btn ${page > 1 ? "" : "cursor-not-allowed bg-black/20"}`}
-        >Previous</button
-      >
-      <button
-        on:click={nextPage}
-        class={`btn ${page < totalPages ? "" : "cursor-not-allowed bg-black/20"}`}
-        >Next</button
-      >
     </div>
   {/if}
 </div>

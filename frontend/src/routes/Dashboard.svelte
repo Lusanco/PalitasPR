@@ -7,6 +7,9 @@
 
   let profileID = writable();
 
+  let twcss =
+    "flex flex-col items-center justify-center w-full h-24 font-bold text-center transition duration-200 ease-in-out rounded-lg shadow-md cursor-pointer md:h-32 text- bg-primary text-md md:text-2xl hover:bg-accent hover:text-primary";
+
   // Check if the user is logged in
   onMount(() => {
     axios
@@ -34,25 +37,13 @@
       class="grid w-full grid-cols-2 grid-rows-2 gap-2 p-4 m-4 md:p-8 md:gap-3 md:m-12"
     >
       <!--* Create Service button -->
-      <Link
-        class="w-full h-24 md:h-32 rounded-lg text-[#1f1f1f] bg-white flex flex-col justify-center items-center font-bold shadow-md text-md md:text-2xl hover:bg-[#cc2936] hover:text-white transition duration-300 ease-in-out cursor-pointer text-center"
-        to="/create-service">Create Service</Link
-      >
+      <Link class={twcss} to="/create-service">Create Service</Link>
       <!--* Create Request button -->
-      <Link
-        class="w-full h-24 md:h-32 rounded-lg text-[#1f1f1f] bg-white flex flex-col justify-center items-center font-bold shadow-md text-md md:text-2xl hover:bg-[#cc2936] hover:text-white transition duration-300 ease-in-out cursor-pointer text-center"
-        to="/create-request">Create Request</Link
-      >
+      <Link class={twcss} to="/create-request">Create Request</Link>
       <!--* Tasks button -->
-      <Link
-        class="w-full h-24 md:h-32 rounded-lg text-[#1f1f1f] bg-white flex flex-col justify-center items-center font-bold shadow-md text-md md:text-2xl hover:bg-[#cc2936] hover:text-white transition duration-300 ease-in-out cursor-pointer text-center"
-        to="/tasks">Tasks</Link
-      >
+      <Link class={twcss} to="/tasks">Tasks</Link>
       <!--* Profile button -->
-      <Link
-        class="w-full h-24 md:h-32 rounded-lg text-[#1f1f1f] bg-white flex flex-col justify-center items-center font-bold shadow-md text-md md:text-2xl hover:bg-[#cc2936] hover:text-white transition duration-300 ease-in-out cursor-pointer text-center"
-        to={`/profile/${$profileID}`}>Profile</Link
-      >
+      <Link class={twcss} to={`/profile/${$profileID}`}>Profile</Link>
     </div>
   </div>
 </div>
