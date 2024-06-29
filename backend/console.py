@@ -71,13 +71,30 @@ class DBConsole(cmd.Cmd):
         while on == 1:
             model_name = input("Enter <promotions> or <requests>: ")
             name = input("Enter service name: ")
-            town = input("Enter town name(or all): ")
-
+            town = input("Enter town ID (or 'all' for all towns): ")
             
-            filtered_objs = db.filter(model_name, name, town)
-            print(f'\nFound {len(filtered_objs)} results:\n{filtered_objs}')
-            response = input('\n\nIf you dont want to filter again press <q>: ')
-            if response == 'q':
+            # Validate and convert town input
+            if town.lower() == 'all':
+                town_id = 'all'
+            else:
+                try:
+                    town_id = int(town)
+                except ValueError:
+                    print("Invalid town ID. Please enter a valid number or 'all'.")
+                    continue
+
+            # Call the landing_searchBar function
+            response, status_code = db_core.landing_searchBar(model=model_name, service=name, town_id=town_id)
+
+            if status_code == 200:
+                print(f'\nFound {response["total_count"]} results:\n')
+                for result in response['results']:
+                    print(result)
+            else:
+                print(f'Error: {response["error"]}')
+            
+            next_action = input('\n\nIf you don\'t want to filter again, press <q>: ')
+            if next_action.lower() == 'q':
                 on = 0
 
 
