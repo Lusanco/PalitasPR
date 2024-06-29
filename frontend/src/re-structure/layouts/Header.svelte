@@ -26,7 +26,7 @@
       on:click={handlePalitasPRClick}
       href="/"
       rel="noopener noreferrer"
-      class="text-xl bg-transparent border-none hover:from-[#1f1f1f] hover:scale-110 transition-transform ease-in-out duration-200 mx-4 rounded-full"
+      class="mx-4 text-xl transition-transform duration-300 ease-in-out bg-transparent border-none rounded-full hover:scale-110"
     >
       <img class="w-24 md:w-28" src="/logoDark.svg" alt="" />
     </a>
@@ -36,7 +36,7 @@
       use:link
       href="/login"
       rel="noopener noreferrer"
-      class="btn w-16 md:w-24 shadow-lg text-[#f1f1f1] bg-accent hover:bg-green-900"
+      class="w-16 shadow-lg btn md:w-24 text-primary bg-accent hover:bg-green-900"
       >Login</a
     >
     <a

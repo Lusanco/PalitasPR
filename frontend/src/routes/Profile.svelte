@@ -79,6 +79,28 @@
         isLoading.set(false);
       });
   });
+
+  // Function to format the rating
+  function formatRating(rating) {
+    // Convert rating to number if it's a string
+    rating = parseFloat(rating);
+    // Check if the rating ends with ".0"
+    if (rating % 1 === 0) {
+      return Math.floor(rating); // Return the integer part
+    } else {
+      return rating.toFixed(1); // Return the rating formatted to 1 decimal place
+    }
+  }
+
+  // Function to format date
+  function formatDate(dateString) {
+    const date = new Date(dateString); // Assuming dateString is in ISO 8601 format
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
 </script>
 
 {#if $isLoading}
@@ -86,13 +108,11 @@
 {:else if $response2}
   <!-- Profile Container -->
   <div class="flex flex-col items-center min-h-screen">
-    <div class="flex w-screen max-w-6xl mx-auto bg-white">
+    <div class="flex w-screen max-w-6xl mx-auto bg-primary">
       <!-- Upper Half -->
-      <div class="w-screen border-x-0 border-t-0 border-b-2 border-[#cc2936]">
+      <div class="w-screen p-0 md:p-2">
         <!-- Profile Cover -->
-        <div
-          class="flex border-[#cc2936] border-b-2 border-x-0 border-t-0 w-screen max-w-6xl mx-auto rounded-none h-60 max-h-96 skeleton"
-        >
+        <div class="flex w-full h-60 max-h-96 skeleton">
           <img
             src={$coverPic}
             alt="Banner"
@@ -100,78 +120,81 @@
           />
         </div>
         <!-- Profile Container -->
-        <div class="flex flex-col items-center w-full pb-4 bg-white">
-          <!-- Profile Picture -->
-          <div
-            class="w-40 border-[#cc2936] border-2 h-40 -mt-20 rounded-full skeleton"
-          >
-            <img
-              src={$profilePic}
-              alt="Profile Pic"
-              class="w-full h-full bg-cover rounded-full"
-            />
-          </div>
-          <h1 class="py-2 text-xl font-semibold text-[#1f1f1f]">
-            {`${$response2.results.first_name} ${$response2.results.last_name}`}
-          </h1>
-        </div>
-        <!-- Profile Details -->
-        <div
-          class="flex flex-wrap p-4 mt-4 bg-white rounded-none md:-mt-24 md:bg-transparent"
-        >
-          <div class="flex flex-wrap justify-between w-full px-4">
-            <span class="w-full text-center md:text-left md:w-fit"
-              >{$response2.results.job_title}</span
+        <div class="bg-white border-b-2 shadow-md rounded-b-md border-accent">
+          <div class="flex flex-col items-center w-full pb-4 bg-white">
+            <!-- Profile Picture -->
+            <div
+              class="w-40 h-40 -mt-20 border-4 border-white rounded-full skeleton"
             >
-            <!-- <span class="w-full text-center md:w-fit md:text-right">
+              <img
+                src={$profilePic}
+                alt="Profile Pic"
+                class="w-full h-full bg-cover rounded-full"
+              />
+            </div>
+            <h1 class="py-2 text-xl font-semibold text-[#1f1f1f]">
+              {`${$response2.results.first_name} ${$response2.results.last_name}`}
+            </h1>
+          </div>
+          <!-- Profile Details -->
+          <div
+            class="flex flex-wrap p-4 -mt-8 rounded-none bg-primary md:bg-transparent"
+          >
+            <div class="flex flex-wrap justify-between w-full px-4">
+              <span class="w-full text-lg text-left md:w-fit"
+                >{$response2.results.job_title}</span
+              >
+              <!-- <span class="w-full text-center md:w-fit md:text-right">
                 Placeholder, PR
               </span> -->
+            </div>
+            <div class="flex flex-wrap justify-between w-full px-4">
+              <span class="w-full text-left md:w-fit"
+                >Completado: {$response2.results.tasks_completed}
+                {$response2.results.tasks_completed === 1
+                  ? "Palita"
+                  : "Palitas"}</span
+              >
+              <span class="w-full text-right -mt-11 md:-mt-4 md:w-fit"
+                ><i class="fa-solid fa-trowel text-accent"></i>
+                {formatRating($response2.results.rating)}/5</span
+              >
+            </div>
           </div>
-          <div class="flex flex-wrap justify-between w-full px-4">
-            <span class="w-full text-center md:text-left md:w-fit"
-              >Completado: {$response2.results.tasks_completed}
-              {$response2.results.tasks_completed === 1
-                ? "Palita"
-                : "Palitas"}</span
-            >
-            <span class="w-full text-center md:text-right md:w-fit"
-              >{$response2.results.rating}/5.0</span
-            >
-          </div>
-        </div>
 
-        <!-- Description -->
-        <div class="bg-white rounded-none card">
-          <p
-            class="h-full text-justify line-clamp-none overflow-ellipsis card-body"
-          >
-            {$response2.results.bio}
-          </p>
+          <!-- Description -->
+          <div class="-mt-8 card">
+            <p class="h-full line-clamp-none overflow-ellipsis card-body">
+              {$response2.results.bio}
+            </p>
+          </div>
         </div>
         <br />
       </div>
       <br />
     </div>
-    <br />
     <!-- Bottom Half -->
-    <div class="flex flex-wrap w-full h-full max-w-6xl bg-white rounded-md">
+    <div
+      class="flex flex-wrap w-full h-full max-w-6xl -mt-2 rounded-lg bg-primary"
+    >
       <!-- Leftmost -->
-      <div class="w-full min-h-20 md:w-2/3">
+      <div
+        class="w-full border-r-2 border-opacity-25 min-h-20 md:w-2/3 border-neutral"
+      >
         <!-- Services -->
         <div
-          class="flex flex-col w-full h-full gap-1 p-4 rounded-none card min-h-96 basis-full md:basis-1/2"
+          class="flex flex-col w-full h-full p-5 rounded-none card min-h-96 basis-full"
         >
-          <h1 class="font-semibold text-3xl text-[#1f1f1f] card-title">
+          <h1 class="text-3xl font-semibold text-secondary card-title">
             Servicios
           </h1>
-          <br />
 
           <div
-            class="flex flex-col w-full gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96 element"
+            class="flex flex-col w-full gap-2 mt-4 overflow-hidden overflow-y-scroll min-h-96 h-96 element"
           >
             {#if $promotions.length === 0}
               <div
-                class="font-bold text-xl flex flex-col justify-center items-center text-[#cc2936] text-center h-full w-full"
+                class="flex flex-col items-center justify-center w-full h-full text-xl font-bold text-center text-error"
               >
                 Aún no ha publicado servicios.
               </div>
@@ -183,30 +206,38 @@
                   href={service.promo_id
                     ? `/service-details/${service.promo_id}`
                     : `/request-details/${service.request_id}`}
-                  class="w-full h-40 transition-all duration-200 ease-in-out transform rounded-none md:rounded-2xl shadow-xl card card-side bg-white hover:bg-[#cc2936] hover:text-white active:scale-95 border-b-4 border-[#cc2936]"
+                  class="w-full h-40 transition-all duration-75 ease-in-out bg-white border-b-0 shadow-md hover:border-b-2 rounded-xl card card-side active:scale-95 hover:border-accent"
                 >
                   <div class="w-1/2 h-40 p-0 px-2 md:w-1/4 md:card-body">
                     <div
-                      class="flex flex-col justify-center h-full my-auto text-left"
+                      class="flex flex-col justify-center h-full p-0 my-auto text-left border-r-0 border-opacity-40 md:border-r-2 border-neutral"
                     >
                       <h2
-                        class="md:text-lg overflow-ellipsis line-clamp-1 md:truncate"
-                      >
-                        {service.title}
-                      </h2>
-                      <p
-                        class="text-sm md:-mt-2 overflow-ellipsis line-clamp-1 md:truncate"
+                        class="text-lg font-normal truncate md:font-semibold text-accent overflow-ellipsis line-clamp-1"
                       >
                         {service.first_name}
                         {service.last_name}
+                      </h2>
+                      <p
+                        class="-mt-2 text-sm truncate overflow-ellipsis line-clamp-1"
+                      >
+                        {service.title}
                       </p>
-                      <h3 class="hidden text-lg md:block">Published</h3>
-                      <p class="text-sm md:-mt-2">{service.created_at}</p>
+                      <h2
+                        class="text-lg font-normal truncate md:font-semibold text-accent overflow-ellipsis line-clamp-1"
+                      >
+                        Publicado
+                      </h2>
+                      <p
+                        class="-mt-2 text-sm truncate overflow-ellipsis line-clamp-1"
+                      >
+                        {formatDate(service.created_at)}
+                      </p>
                     </div>
                   </div>
                   <div class="w-1/2 h-40 p-2 md:w-2/4 md:card-body">
                     <p
-                      class="h-full text-sm text-justify md:text-base line-clamp-4 overflow-ellipsis"
+                      class="h-full text-sm text-balance md:text-base line-clamp-4 overflow-ellipsis"
                     >
                       {service.description}
                     </p>
@@ -222,21 +253,22 @@
       <div class="w-full min-h-20 md:w-1/3">
         <!-- Gallery -->
         <div
-          class="flex flex-col h-full gap-1 p-4 bg-white rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2"
+          class="flex flex-col h-full gap-1 p-4 rounded-none bg-primary card min-h-96 basis-full md:w-fit md:basis-1/2"
         >
-          <h1 class="self-center text-3xl text-[#1f1f1f] card-title">
+          <h1 class="self-center mb-2 text-3xl text-secondary card-title">
             Galería
           </h1>
-          <br />
 
           <div
-            class="flex flex-wrap justify-center gap-2 overflow-hidden overflow-y-scroll min-h-96 h-96 element"
+            class="flex flex-wrap justify-center overflow-hidden overflow-y-scroll min-h-96 h-96 element"
           >
             {#each $images as image}
-              <div
-                class="rounded-none min-w-72 min-h-36 max-w-72 max-h-36 skeleton"
-              >
-                <img src={image} alt="Gallery Pic" />
+              <div class="mt-2 min-w-72 min-h-36 max-w-72 max-h-36 skeleton">
+                <img
+                  src={image}
+                  alt="Gallery Pic"
+                  class="object-cover transition-transform duration-100 ease-out rounded-md hover:scale-105 min-w-72 min-h-36 max-w-72 max-h-36"
+                />
               </div>
             {/each}
           </div>

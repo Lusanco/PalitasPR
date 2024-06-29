@@ -17,7 +17,7 @@
     url: "api/dashboard/promotion-request",
     headers: "multipart/form-data",
     twcss:
-      "px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
+      "px-8 py-3 font-semibold bg-accent text-primary rounded hover:bg-white hover:text-secondary hover:shadow-md",
     misc: { "App Location": "CreateRequest Form" },
   };
 
@@ -78,20 +78,20 @@
 </script>
 
 <div
-  class="flex flex-col items-center justify-center h-full min-h-screen bg-[#f1f1f1]"
+  class="flex flex-col items-center justify-center h-full min-h-screen bg-primary"
 >
   <div
     class="flex flex-col w-full h-full max-w-2xl gap-4 p-6 my-8 font-semibold bg-white rounded-lg shadow-lg md:p-12"
   >
     <h1
-      class="pt-4 text-2xl text-center text-[#1f1f1f] md:text-3xl lg:text-4xl"
+      class="pt-4 text-2xl text-center text-secondary md:text-3xl lg:text-4xl"
     >
       Solicitar Servicio
     </h1>
     <div>
-      <label for="title" class="text-[#1f1f1f]">Título</label>
+      <label for="title" class="text-secondary">Título</label>
       <input
-        class="w-full input input-bordered text-[#cc2936]"
+        class="w-full input input-bordered text-accent"
         type="text"
         name="title"
         id="title"
@@ -99,12 +99,12 @@
       />
     </div>
 
-    <label for="service" class="text-[#1f1f1f]"
+    <label for="service" class="text-secondary"
       >Seleccionar servicio
       <select
         bind:value={service_id}
         name="service"
-        class="block w-full select select-bordered text-[#cc2936]"
+        class="block w-full select select-bordered text-accent"
       >
         <option value={-1} disabled>---</option>
         {#each Object.entries(servicesID) as [service, id]}
@@ -117,7 +117,7 @@
       <button
         on:click={handleButtonClick}
         tabindex="0"
-        class="btn btn-base dropdown-toggle text-[#f1f1f1] bg-[#cc2936] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
+        class="btn btn-base dropdown-toggle text-primary bg-accent hover:bg-white hover:text-secondary hover:shadow-md"
         >Seleccionar pueblos</button
       >
       <ul
@@ -141,12 +141,12 @@
     </div>
 
     <div class="max-h-96">
-      <label for="description" class="text-[#1f1f1f]"
+      <label for="description" class="text-secondary"
         >Descripción del servicio solicitado</label
       >
       <textarea
         bind:value={description}
-        class="w-full textarea textarea-bordered text-[#cc2936]"
+        class="w-full textarea textarea-bordered text-accent"
         name="description"
         id="description"
       ></textarea>
@@ -176,9 +176,9 @@
       /> -->
     </div>
     <div
-      class="flex flex-col items-center justify-center w-full m-auto mx-auto space-y-1 text-[#1f1f1f]"
+      class="flex flex-col items-center justify-center w-full m-auto mx-auto space-y-1 text-secondary"
     >
-      <label for="imageInput" class="block text-sm font-medium text-[#1f1f1f]"
+      <label for="imageInput" class="block text-sm font-medium text-secondary"
       ></label>
       <div class="flex w-full">
         <label for="imageInput" class="w-full mb-2">
@@ -188,13 +188,13 @@
             name="image"
             id="imageInput"
             on:change={handleFileChange}
-            class="w-full px-8 py-12 text-[#1f1f1f] bg-[#f1f1f1] border-2 border-[#cc2936] border-dashed rounded-md"
+            class="w-full px-8 py-12 border-2 border-dashed rounded-md text-secondary bg-primary border-accent/60"
             accept="image/*"
           /></label
         >
       </div>
       {#if errorMessage}
-        <p class="text-[#cc2936]">{errorMessage}</p>
+        <p class="text-error">{errorMessage}</p>
       {/if}
     </div>
 

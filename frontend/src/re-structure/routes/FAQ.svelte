@@ -63,7 +63,7 @@
 >
   <div class="flex flex-col w-full max-w-5xl gap-4 px-2">
     <div class="flex flex-col gap-4 text-center">
-      <h2 class="text-5xl text-[#cc2936]">FAQ</h2>
+      <h2 class="text-5xl text-accent">FAQ</h2>
       <br />
       <p class="max-w-sm mx-auto">
         Here are some frequently asked questions. If you have any other
@@ -73,7 +73,7 @@
     <br />
     {#each questions as { question, answer }, index}
       <div
-        class="max-w-3xl px-4 mx-auto bg-white border-b-2 rounded-lg border-[#cc2936] text-[#1f1f1f] transition-all duration-100 hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+        class="max-w-3xl px-4 mx-auto transition-all duration-100 bg-white border-b-2 rounded-lg border-accent text-secondary hover:bg-accent hover:text-primary"
       >
         <button
           class="w-full px-2 py-4 text-xl font-medium text-left rounded-lg focus:outline-none"

@@ -4,15 +4,21 @@
 </script>
 
 <footer
-  class={$userSession ? `hidden` : `` + " flex flex-wrap border-[#1f1f1f] text-[#f1f1f1] justify-between p-10 footer border-t-4 font-semibold border-x-0 border-b-0 bg-[#cc2936]"}
+  class={$userSession
+    ? `hidden`
+    : `` +
+      " flex flex-wrap  text-primary justify-between p-5 md:p-8 footer font-semibold bg-accent"}
 >
-  <nav class="flex flex-wrap items-center justify-center gap-4 mx-auto">
+  <nav
+    class="flex flex-wrap items-center justify-center gap-2 mx-auto -mb-5 md:gap-4 md:mx-0"
+  >
     <a
       use:link
       href="/terms-of-use"
       rel="noopener noreferrer"
       class="link link-hover">Terms of Use</a
     >
+
     <a
       use:link
       href="/privacy"
@@ -32,7 +38,7 @@
       >FAQ</a
     >
   </nav>
-  <p class="mx-auto text-center md:text-end">
+  <p class="mx-auto text-center md:mx-0 md:text-end">
     Copyright © 2024 - All right reserved by PalitasPR
   </p>
 </footer>

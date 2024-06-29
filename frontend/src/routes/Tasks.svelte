@@ -29,12 +29,12 @@
   };
 
   let deleteTask = {
-    name: "Delete",
+    name: "Eliminar",
     method: "PUT",
     url: "/api/initial-contact",
     headers: "application/json", // "application/json"
     twcss:
-      "grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white",
+      "w-full grow font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f]",
     misc: { "App Location": "Delete Task" },
   };
 
@@ -169,45 +169,6 @@
       }
       console.log("End of Sent If Block");
     }
-    // if (
-    //   $submitData.initial_contact_id &&
-    //   $submitData.terms &&
-    //   $submitData.price &&
-    //   $contactRes[0].promo_id &&
-    //   $sentReceived
-    // ) {
-    //   data.set($submitData);
-    //   console.log("If Submit on Received: ", $data);
-    // } else if (
-    //   $submitData.initial_contact_id &&
-    //   $submitData.terms &&
-    //   $submitData.price &&
-    //   $contactRes[0].request_id &&
-    //   !$sentReceived
-    // ) {
-    //   data.set($submitData);
-    //   console.log("If Submit on Sent: ", $data);
-    // } else if (
-    //   !$submitData.initial_contact_id ||
-    //   (!$submitData.terms && !$submitData.price && $sentReceived)
-    // ) {
-    //   $data = {
-    //     initial_contact_id: $initial_contact_id,
-    //     receiver_hide: $sentReceived,
-    //   };
-    //   data.set($data);
-    //   console.log("Else If For Received: ", $data);
-    // } else if (
-    //   !$submitData.initial_contact_id ||
-    //   (!$submitData.terms && !$submitData.price && !$sentReceived)
-    // ) {
-    //   $data = {
-    //     initial_contact_id: $initial_contact_id,
-    //     sender_hide: !$sentReceived,
-    //   };
-    //   data.set($data);
-    //   console.log("Else If For Sent: ", $data);
-    // }
   }
 
   onMount(() => {
@@ -436,6 +397,15 @@
   </div>
   <div class="flex flex-col w-full h-full py-4 mx-auto">
     {#if $contactRes}
+      {#if $contactRes.length === 0}
+        <div class="">
+          <h1
+            class="flex justify-center mt-12 text-xl font-semibold text-center md:mt-24 md:text-3xl"
+          >
+            Aún no tiene tareas
+          </h1>
+        </div>
+      {/if}
       {#each contactResponses as response, index}
         <div
           class="max-w-6xl px-4 mx-auto w-full bg-white border-b-2 rounded-lg border-[#cc2936] text-[#1f1f1f] flex flex-col transition-all duration-100 hover:bg-[#cc2936] hover:text-[#f1f1f1]"
@@ -1192,7 +1162,26 @@
                 </div>
               </div>
             {/if}
-            <Button button={deleteTask} {image} />
+            <div class="my-4">
+              <div class="flex flex-col w-full grow">
+                {#if response.task && response.task.status === "closed"}
+                  <!-- Add an additional check for response.task to avoid null/undefined errors -->
+                  {#if response.task.receiver_id === $userDetails.id}
+                    <Link
+                      to="/create-review/{response.task.id}"
+                      class="grow w-full p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] "
+                      >Dejar reseña</Link
+                    >
+                  {/if}
+                {/if}
+                {#if response.task === null}
+                  <Button button={deleteTask} {image} />
+                {/if}
+                {#if response.task && response.task.status !== "active"}
+                  <Button button={deleteTask} {image} />
+                {/if}
+              </div>
+            </div>
           </div>
           <br />
           <div
@@ -1204,16 +1193,6 @@
               class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
               >Delete Task</button
             > -->
-            {#if response.task && response.task.status === "closed"}
-              <!-- Add an additional check for response.task to avoid null/undefined errors -->
-              {#if response.task.receiver_id === $userDetails.id}
-                <Link
-                  to="/create-review/{response.task.id}"
-                  class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
-                  >Leave Review</Link
-                >
-              {/if}
-            {/if}
           </div>
         </div>
       {/each}

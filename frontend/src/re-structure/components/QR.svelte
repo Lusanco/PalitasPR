@@ -44,7 +44,7 @@
   <div class="w-full p-12 m-2 bg-white rounded-md md:m-20 card">
     <!--* Title -->
     <h1
-      class="text-xl md:text-4xl text-center mb-8 md:mb-12 font-semibold text-[#1f1f1f]"
+      class="mb-8 text-xl font-semibold text-center md:text-4xl md:mb-12 text-secondary"
     >
       Sube tu QR de Ath Movil aquí
     </h1>
@@ -56,7 +56,7 @@
       id="imageInput"
       bind:this={fileInput}
       on:change={handleFileChange}
-      class="w-full px-8 py-12 text-[#1f1f1f] bg-[#f1f1f1] border-2 border-[#cc2936] border-dashed rounded-md"
+      class="w-full px-8 py-12 border-2 border-dashed rounded-md text-secondar bg-primary border-accent"
       accept="image/*"
     />
     <!--* Action buttons -->
