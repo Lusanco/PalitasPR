@@ -51,7 +51,7 @@
 
   // MODIFIED: Reactive statement for clearing inputs
   $: {
-    if ($sentReceived !== undefined || $contactRes[0]?.id !== undefined) {
+    if ($sentReceived !== undefined || $initial_contact_id !== undefined) {
       clearInputs();
       console.log("Inputs cleared due to sentReceived or contactRes change");
     }
