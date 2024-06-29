@@ -80,7 +80,7 @@
 
 <div class="flex flex-col items-center justify-center h-full min-h-screen">
   <div class="flex flex-col gap-4">
-    <div class="text-center">
+    <div class="-mb-2 text-center">
       <h1 class="text-5xl font-bold text-accent">Iniciar Sesión</h1>
       <p class="text-md text-secondary">
         Inicia sesión para acceder a tu cuenta
@@ -88,9 +88,9 @@
       <br />
     </div>
     <label
-      class="flex items-center gap-2 border-2 shadow-sm outline-none bg-primary input border-neutral"
+      class="flex items-center gap-4 px-2 py-1 bg-white border-2 rounded-lg border-neutral"
     >
-      <p class="w-12 text-center">Email</p>
+      <p class="w-12 text-center">Correo</p>
       <input
         bind:value={af1}
         on:keydown={handleKeydown}
@@ -100,7 +100,7 @@
       />
     </label>
     <label
-      class="flex items-center gap-2 border-2 shadow-sm bg-primary input border-neutral"
+      class="flex items-center gap-4 px-2 py-1 bg-white border-2 rounded-lg border-neutral"
     >
       <p class="w-12 text-center">Contraseña</p>
       <input
@@ -115,7 +115,7 @@
       use:link
       href="/forgot-password"
       rel="noopener noreferrer"
-      class="self-end pr-2 mb-2 -mt-4 text-sm link link-hover text-accent"
+      class="self-end pr-2 -mt-4 text-sm link link-hover text-accent"
       >¿Olvidaste tu contraseña?</a
     >
     <Button bind:this={buttonRef} {image} {button}></Button>
@@ -132,7 +132,7 @@
     {:else if (!$state.hidden && !$state.loaded) || $state.reload}
       <Loading />
     {:else if $state.error}
-      <div class="w-full mx-auto font-bold text-center text-[#cc2936]">
+      <div class="w-full mx-auto font-bold text-center text-error">
         Incorrect email or password, try again.
       </div>
     {/if}
