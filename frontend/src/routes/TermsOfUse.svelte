@@ -32,7 +32,7 @@
   <div
     class="p-5 bg-white border-b-2 rounded-md shadow-lg text-balance border-accent"
   >
-    <h1 class="text-5xl font-bold text-center text-accent">Terminos de Uso</h1>
+    <h1 class="text-4xl font-bold text-center text-accent">Terminos de Uso</h1>
     <br />
     <p class="text-xl text-center">
       Bienvenido a <span class="font-semibold text-accent">PalitasPR</span>. El
@@ -48,10 +48,12 @@
     class="p-2 text-xl font-semibold text-center bg-white shadow-xl md:p-4 rounded-xl md:text-left"
   >
     <br />
-    <div class="">
-      <h2 class="text-2xl font-semibold">1. Aceptación de los Términos</h2>
+    <div>
+      <h2 class="text-2xl font-semibold text-secondary">
+        1. Aceptación de los Términos
+      </h2>
       <br />
-      <p class=" text-secondary">
+      <p class="text-secondary">
         Al acceder y utilizar PalitasPR, aceptas estar sujeto a estos términos,
         todas las leyes y regulaciones aplicables.
       </p>
@@ -60,7 +62,9 @@
     <div class="border-b-2 border-accent border-opacity-30"></div>
     <br />
     <div>
-      <h2 class="text-2xl font-semibold">2. Descripción del Servicio</h2>
+      <h2 class="text-2xl font-semibold text-secondary">
+        2. Descripción del Servicio
+      </h2>
       <br />
       <p class=" text-secondary">
         PalitasPR es una plataforma que permite a los usuarios solicitar y
@@ -91,7 +95,7 @@
     <div class="mt-4">
       <h2 class="text-2xl font-semibold text-secondary">4. Uso Aceptable</h2>
       <br />
-      <p class=" text-secondary">Al utilizar PalitasPR, aceptas no:</p>
+      <p class="text-secondary">Al utilizar PalitasPR, aceptas no:</p>
       <ul class="mt-2 list-disc list-inside">
         <li class="list-none">
           <i class="fa-regular fa-hand-point-right"></i>
@@ -225,7 +229,7 @@
     <p
       class="p-5 mt-8 text-xl font-semibold text-center border-b-2 rounded-md shadow-md text-secondary bg-primary border-accent"
     >
-      Has visto los términos en <span class="underline">{formattedDate}</span>
+      Has visto los términos en: <span class="underline">{formattedDate}</span>
     </p>
   </div>
 </div>
