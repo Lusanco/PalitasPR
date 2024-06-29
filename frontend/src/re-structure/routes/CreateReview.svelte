@@ -18,7 +18,7 @@
     method: "POST",
     url: "/api/reviews/",
     headers: "application/json", // "application/json"
-    twcss: "btn bg-[#cc2936] text-white hover:bg-[#BB2532]",
+    twcss: "btn bg-accent text-white hover:bg-white hover:text-secondary",
     misc: { "App Location": "Create Review" },
   };
   function logFormData(data) {
@@ -78,7 +78,7 @@
   }
 </script>
 
-<div class="flex items-center justify-center min-h-screen bg-base">
+<div class="flex items-center justify-center min-h-screen bg-primary">
   <div class="w-full max-w-3xl p-4 m-5 bg-white shadow-xl card">
     <div class="card-body">
       <h2 class="card-title">Deja tu reseña</h2>
@@ -104,12 +104,12 @@
           bind:value={rating}
           min="1"
           max="5"
-          class="input input-bordered text-[#cc2936]"
+          class="input input-bordered text-accent"
           on:keydown={handleKeyPress}
         />
       </div>
       {#if errorMessage}
-        <p class="text-red-500">{errorMessage}</p>
+        <p class="text-error">{errorMessage}</p>
       {/if}
       <div class="mt-5 form-control">
         <Button {image} {button} />

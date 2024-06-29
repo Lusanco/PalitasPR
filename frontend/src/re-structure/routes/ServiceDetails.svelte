@@ -17,7 +17,7 @@
     url: "/api/initial-contact",
     headers: "application/json",
     twcss:
-      "md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md flex flex-col justify-center items-center",
+      "md:w-1/3 w-full btn px-8 py-3 font-semibold bg-accent text-primary rounded hover:bg-white hover:text-secondary hover:shadow-md flex flex-col justify-center items-center",
     misc: { "App Location": "Service Details" },
   };
 
@@ -82,7 +82,7 @@
 {:else if $response1 && $response2 && $profileID}
   <!-- ServiceDetails Container -->
   <div
-    class="flex flex-col items-center justify-center w-full h-full min-h-screen py-20 m-auto bg-[#f1f1f1]"
+    class="flex flex-col items-center justify-center w-full h-full min-h-screen py-20 m-auto bg-primary"
   >
     <!-- ServiceDetails Flex Wrap -->
     <div
@@ -90,15 +90,15 @@
     >
       <!-- ServiceDetails Left -->
       <div
-        class="h-full gap-1 p-4 element overflow-y-auto rounded-none card md:border-r-2 min-h-96 md:border-[#cc2936] basis-full md:w-fit md:basis-1/2 bg-white"
+        class="h-full gap-1 p-4 overflow-y-auto bg-white rounded-none element card md:border-r-2 min-h-96 md:border-accent basis-full md:w-fit md:basis-1/2"
       >
         <br />
-        <h1 class="self-center text-3xl card-title text-[#1f1f1f]">
+        <h1 class="self-center text-3xl card-title text-secondary">
           {$response1.results.title}
         </h1>
         <br />
         <div
-          class="flex flex-col overflow-hidden overflow-y-scroll min-h-96 h-96 element text-[#1f1f1f]"
+          class="flex flex-col overflow-hidden overflow-y-scroll min-h-96 h-96 element text-secondary"
         >
           {#if !$response1.results.pictures || $response1.results.pictures.length === 0}
             <div
@@ -125,7 +125,7 @@
             >
           </div>
           <!-- <br> -->
-          <hr class="border-[#cc2936]" />
+          <hr class="border-accent" />
           <div class="mt-2">
             Pueblos Disponibles: {#each $response1.results.towns as town}
               <span class="mx-1">{town},</span>
@@ -133,7 +133,7 @@
           </div>
           <!-- <hr class="border-[#cc2936]" /> -->
           <h3 class="mt-5 text-xl">Descripción</h3>
-          <hr class="border-[#cc2936]" />
+          <hr class="border-accent" />
           <p class="self-center w-full mt-2 text-justify min-h-40">
             {$response1.results.description}
           </p>
@@ -147,7 +147,7 @@
         class="flex flex-col h-full gap-1 p-4 bg-white rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2"
       >
         <br />
-        <h1 class="self-center text-3xl card-title text-[#1f1f1f]">Reviews</h1>
+        <h1 class="self-center text-3xl card-title text-secondary">Reviews</h1>
         <br />
 
         <div
@@ -155,16 +155,16 @@
         >
           {#if !$response2.results || $response2.results.length === 0}
             <div
-              class="font-bold text-xl flex flex-col justify-center items-center text-[#cc2936] text-center h-full w-full"
+              class="flex flex-col items-center justify-center w-full h-full text-xl font-bold text-center text-accent/60"
             >
               No Reviews Yet
             </div>
           {:else}
             {#each $response2.results as review}
               <div
-                class="flex flex-col justify-between p-4 shadow-md bg-[#f1f1f1] card rounded-lg"
+                class="flex flex-col justify-between p-4 rounded-lg shadow-md bg-primary card"
               >
-                <div class="flex justify-between gap-2 text-[#1f1f1f]">
+                <div class="flex justify-between gap-2 text-secondary">
                   <div>
                     {`${review.first_name} ${review.last_name}`}
                   </div>
@@ -176,7 +176,7 @@
                 >
                   {review.description}
                 </div>
-                <div class="flex justify-between gap-2 mt-8 text-[#1f1f1f]">
+                <div class="flex justify-between gap-2 mt-8 text-secondary">
                   <div>{review.created_at}</div>
                   <!-- <button
                       class="absolute btn right-4 bottom-4 bg-[#cc2936] text-white hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
@@ -196,21 +196,21 @@
             class="flex flex-col items-center justify-center w-10/12 gap-4 mx-4 bg-white md:flex-row md:w-11/12 md:max-w-6xl"
           >
             <Link
-              class="md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md flex flex-col justify-center items-center"
+              class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
               to="/">Back To Search</Link
             >
             {#if $userSession === false}
               <Link
-                class="md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md flex flex-col justify-center items-center"
+                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
                 to="/login-to-continue">Go To Profile</Link
               >
               <Link
-                class="md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md flex flex-col justify-center items-center"
+                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
                 to="/login-to-continue">Send Contact</Link
               >
             {:else}
               <Link
-                class="md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md flex flex-col justify-center items-center"
+                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
                 to={`/profile/${$profileID}`}>Go To Profile</Link
               >
               <Button {image} {button} />
