@@ -1,7 +1,7 @@
 <!-- Header Layout -->
 <script>
   import { link } from "svelte-routing";
-  import { userSession } from "../scripts/stores";
+  import { userSession } from "../../scripts/stores";
 
   // Function to handle the "PalitasPR" link click
   function handlePalitasPRClick(event) {
@@ -18,7 +18,7 @@
 <header
   class={$userSession
     ? `hidden`
-    : `` + " border-b-4 shadow-2xl border-[#cc2936] navbar bg-[#1f1f1f] "}
+    : `` + " p-2 md:p-4 shadow-lg md:shadow-xl navbar bg-primary "}
 >
   <div class="navbar-start">
     <a
@@ -26,24 +26,24 @@
       on:click={handlePalitasPRClick}
       href="/"
       rel="noopener noreferrer"
-      class="text-xl bg-transparent border-none hover:bg-gradient-to-t hover:from-[#1f1f1f] hover:via-[#cc2936] hover:to-[#1f1f1f] mx-4 rounded-full"
+      class="text-xl bg-transparent border-none hover:from-[#1f1f1f] hover:scale-110 transition-transform ease-in-out duration-200 mx-4 rounded-full"
     >
-      <img class="w-24" src="/logoLight.svg" alt="" />
+      <img class="w-24 md:w-28" src="/logoDark.svg" alt="" />
     </a>
   </div>
-  <div class="gap-2 navbar-end">
+  <div class="gap-2 mr-4 navbar-end">
     <a
       use:link
       href="/login"
       rel="noopener noreferrer"
-      class="btn border-[#cc2936] border-b-2 border-t-0 border-x-0 text-[#f1f1f1] bg-transparent hover:bg-transparent hover:border-[#f1f1f1]"
+      class="btn w-16 md:w-24 shadow-lg text-[#f1f1f1] bg-accent hover:bg-green-900"
       >Login</a
     >
     <a
       use:link
       href="/signup"
       rel="noopener noreferrer"
-      class="btn mr-4 border-[#cc2936] border-b-2 border-t-0 border-x-0 text-[#f1f1f1] bg-transparent hover:bg-transparent hover:border-[#f1f1f1]"
+      class="w-16 font-semibold border-2 shadow-lg md:w-24 text-accent border-accent btn bg-primary hover:opacity-80 hover:border-accent"
       >Signup</a
     >
   </div>
