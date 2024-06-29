@@ -7,7 +7,7 @@
   class={$userSession
     ? `hidden`
     : `` +
-      " flex flex-wrap  text-primary justify-between p-5 md:p-8 footer font-semibold bg-accent"}
+      " flex flex-wrap  text-base text-primary justify-between p-5 md:p-8 footer font-semibold bg-accent"}
 >
   <nav
     class="flex flex-wrap items-center justify-center gap-2 mx-auto -mb-5 md:gap-4 md:mx-0"

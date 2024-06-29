@@ -36,14 +36,14 @@
       use:link
       href="/login"
       rel="noopener noreferrer"
-      class="btn w-16 md:w-24 shadow-lg text-[#f1f1f1] bg-accent hover:bg-green-900"
+      class="btn w-16 md:w-24 text-base font-semibold shadow-lg text-[#f1f1f1] bg-accent hover:bg-green-900"
       >Login</a
     >
     <a
       use:link
       href="/signup"
       rel="noopener noreferrer"
-      class="w-16 font-semibold border-2 shadow-lg md:w-24 text-accent border-accent btn bg-primary hover:opacity-80 hover:border-accent"
+      class="w-16 text-base font-semibold border-2 shadow-lg md:w-24 text-accent border-accent btn bg-primary hover:opacity-80 hover:border-accent"
       >Signup</a
     >
   </div>

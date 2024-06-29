@@ -12,7 +12,7 @@
     url: "",
     headers: "",
     twcss:
-      "flex flex-col absolute items-center justify-center shadow-none w-16 h-16 btn btn-sm border-none text-secondary rounded-lg hover:bg-accent hover:text-primary focus:outline-none focus:ring-0 m-2 z-50",
+      "flex flex-col text-xl font-semibold absolute items-center justify-center shadow-none w-20 h-20 btn btn-sm border-none text-secondary rounded-lg hover:bg-accent hover:text-primary focus:outline-none focus:ring-0 m-2 z-50",
     misc: { "App Location": "Back Button Component" },
   };
   // Button Prop Variables And Dependencies
