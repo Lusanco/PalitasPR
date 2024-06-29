@@ -18,6 +18,7 @@
       rel="noopener noreferrer"
       class="link link-hover">Terms of Use</a
     >
+
     <a
       use:link
       href="/privacy"
