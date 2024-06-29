@@ -15,13 +15,15 @@
   let search = "";
   let model = "promotions";
   let town = "all";
+  let page = 1;
+  let totalPages = 1;
   let button = {
     name: "",
     method: "GET",
-    url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}`,
+    url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`,
     headers: "application/json",
     twcss:
-      "btn border-none rounded-t-none rounded-l-none rounded-r-lg rounded-b-lg focus:outline-none text-accent bg-white hover:bg-accent hover:bg-opacity-10",
+      "border-none rounded-t-none rounded-l-none rounded-r-lg h-full rounded-b-lg focus:outline-none text-accent bg-white hover:text-white hover:bg-accent w-full overflow-hidden",
     misc: { "App Location": "Index Search Component" },
   };
   // Button Prop Variables And Dependencies
@@ -35,6 +37,16 @@
       .then((userStatusRes) => {
         userSession.set(true);
         console.log(userStatusRes.data);
+        return axios.get(button.url);
+      })
+      .catch((userStatusErr) => {
+        console.log(userStatusErr);
+        return axios.get(button.url);
+      })
+      .then((res) => {
+        response.set(res.data);
+        console.log(response);
+        totalPages = res.data.total_pages;
       })
       .catch((userStatusErr) => {
         userSession.set(false);
@@ -46,27 +58,43 @@
   // Function to handle the "Enter" key press
   function handleKeydown(event) {
     if (event.key === "Enter") {
-      // Trigger the button logic from the child component
+      page = 1;
       buttonRef.buttonLogic();
     }
   }
 
+  function nextPage() {
+    if (page < totalPages) {
+      page += 1;
+      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
+      buttonRef.buttonLogic();
+    }
+  }
+
+  function previousPage() {
+    if (page > 1) {
+      page -= 1;
+      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
+      buttonRef.buttonLogic();
+    }
+  }
   // Reactive statement to update button store when misc store changes
   $: {
     button = {
       ...button,
-      url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}`,
+      url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`,
     };
 
     // Update the data store with the current misc values
     data.set({ search, model, town });
   }
   $response = get(response);
+  // totalPages = $response.total_pages || 1;
 </script>
 
 <!-- Index Start -->
 <div
-  class="flex flex-col items-center justify-center h-full gap-8 px-4 my-20 min-h-fit md:p-0"
+  class="flex flex-col items-center justify-center h-full max-w-6xl gap-8 px-4 my-20 min-h-fit md:p-0"
 >
   <Slogan />
   <!-- SearchBar Start -->
@@ -90,7 +118,7 @@
       </div>
       <div
         id="filters"
-        class="grid grid-cols-3 col-span-2 row-span-1 overflow-hidden"
+        class="grid w-full grid-cols-3 col-span-2 row-span-1 overflow-hidden"
       >
         <!-- Model Filter Start -->
         <select
@@ -118,7 +146,9 @@
           <!-- on:results={handleResults} -->
           <span class="sr-only">Search</span>
 
-          <i class="fa-solid fa-magnifying-glass text-accent"></i>
+          <i
+            class="flex items-center justify-center w-full h-full m-auto transition-all duration-300 fa-solid fa-magnifying-glass text-accent hover:text-white"
+          ></i>
         </Button>
       </div>
     </div>
@@ -132,7 +162,7 @@
     <span class="font-bold text-error">No results found, try again.</span>
   {:else}
     <div
-      class="flex flex-col w-full gap-4 py-2 overflow-hidden overflow-y-scroll md:p-12 h-96"
+      class="flex flex-col w-full gap-4 py-2 overflow-hidden overflow-y-scroll element md:px-12 h-96"
     >
       <!-- {#each services as service} -->
       {#each $response.data.results as service}
@@ -199,6 +229,18 @@
         </Link>
         <!-- New Card End -->
       {/each}
+    </div>
+    <div class="flex justify-between w-full max-w-md mx-auto">
+      <button
+        on:click={previousPage}
+        class={`btn ${page > 1 ? "" : "cursor-not-allowed bg-black/20"}`}
+        >Previous</button
+      >
+      <button
+        on:click={nextPage}
+        class={`btn ${page < totalPages ? "" : "cursor-not-allowed bg-black/20"}`}
+        >Next</button
+      >
     </div>
   {/if}
 </div>
