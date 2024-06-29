@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, make_response, session, g
 from db.db_operations import DBOperations
 from flask_login import login_required, current_user
 from db.db_task import Db_task
+from db.db_user import Db_user
 task_bp = Blueprint('tasks', __name__)
 
 
@@ -81,10 +82,15 @@ def get_tasks():
             # Notify contact_receiver(promo owner)
             if old_task_status == 'pending' and new_status == 'active':
                 read_recipient = 'receiver_read'
+                
 
-            # Notify sender, the task was marked as closed
+            # Notify sender, the task was marked as closed, add another task completed to the provider
             elif old_task_status == 'active' and new_status == 'closed':
                 read_recipient = 'sender_read'
+                provider_profile = Db_user(g.db_session).get_profile_by_userId(task.provider_id)
+                provider_profile.tasks_completed += 1
+                g.db_session.add(provider_profile)
+
 
             contact_dict = {'id': initial_contact.id,
                             f'{read_recipient}': False}
