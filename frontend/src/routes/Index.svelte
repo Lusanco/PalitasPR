@@ -20,7 +20,7 @@
   let button = {
     name: "",
     method: "GET",
-    url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}`,
+    url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`,
     headers: "application/json",
     twcss:
       "btn border-none rounded-t-none rounded-l-none rounded-r-lg rounded-b-lg focus:outline-none text-[#CC2936] bg-white hover:text-[#f1f1f1] hover:bg-[#cc2936]",
@@ -37,6 +37,10 @@
       .then((userStatusRes) => {
         userSession.set(true);
         console.log(userStatusRes.data);
+        return axios.get(button.url);
+      })
+      .catch((userStatusErr) => {
+        console.log(userStatusErr);
         return axios.get(button.url);
       })
       .then((res) => {
@@ -240,8 +244,16 @@
     </div>
     <!-- {`z-50 bg-[#f1f1f1] fixed top-20 right-0 left-0 ${menuOpen ? "block" : "hidden"} bg-transparent md:left-auto md:w-80`} -->
     <div class="flex justify-between w-full max-w-md mx-auto">
-      <button on:click={previousPage} class={`btn ${page > 1 ? "" : "cursor-not-allowed bg-black/20"}`}>Previous</button>
-      <button on:click={nextPage} class={`btn ${page < totalPages ? "" : "cursor-not-allowed bg-black/20"}`}>Next</button>
+      <button
+        on:click={previousPage}
+        class={`btn ${page > 1 ? "" : "cursor-not-allowed bg-black/20"}`}
+        >Previous</button
+      >
+      <button
+        on:click={nextPage}
+        class={`btn ${page < totalPages ? "" : "cursor-not-allowed bg-black/20"}`}
+        >Next</button
+      >
     </div>
   {/if}
 </div>
