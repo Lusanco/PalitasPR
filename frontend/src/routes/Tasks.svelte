@@ -31,7 +31,7 @@
   let deleteTask = {
     name: "Delete",
     method: "PUT",
-    url: "/api/tasks/",
+    url: "/api/initial-contact",
     headers: "application/json", // "application/json"
     twcss:
       "grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white",
@@ -128,7 +128,7 @@
         !$submitData.price
       ) {
         $data = {
-          initial_contact_id: $initial_contact_id,
+          id: $initial_contact_id,
           receiver_hide: $sentReceived,
         };
         data.set($data);
@@ -161,7 +161,7 @@
         !$submitData.price
       ) {
         $data = {
-          initial_contact_id: $initial_contact_id,
+          id: $initial_contact_id,
           sender_hide: !$sentReceived,
         };
         data.set($data);
@@ -1188,13 +1188,14 @@
                 </div>
               </div>
             {/if}
+            <Button button={deleteTask} {image} />
           </div>
           <br />
           <div
             class="flex flex-wrap items-center justify-center w-full gap-1 mx-auto md:gap-2"
           >
             <!-- Delete Task (Archive) -->
-            <Button button={deleteTask} {image} />
+            <!-- <Button button={deleteTask} {image} /> -->
             <!-- <button
               class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
               >Delete Task</button
