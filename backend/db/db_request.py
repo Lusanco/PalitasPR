@@ -2,7 +2,7 @@
     All related functions for Request class(service requests) that involves the database
     and routes from flask.
 '''
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from models import (
     User, Service, Town,
     Request_Towns, Request,
@@ -154,8 +154,7 @@ class Db_request:
         )
         # If a town sent, make query by towns
         if town_id != 0:
-            query = query.filter(Town.id == town_id)
-
+            query = query.filter(or_(Town.id == town_id, Town.id == 0))
         # Count total results before pagination
         total_count = query.count()
 
