@@ -38,7 +38,7 @@ def review_crud():
         # Check if task has no review and task status is closed
         review = Db_review(g.db_session).get_review_by_TaskID(data['task_id'])
         if review:
-            return make_response(jsonify({'error': f"A review has already been made for the task {data['task_id']}"}))
+            return make_response(jsonify({'error': f"A review has already been made for the task {data['task_id']}"}), 400)
         task = DBOperations(g.db_session).search('Task', data['task_id'])
         if not task:
             return make_response(jsonify({'error': f"No task found: {data['task_id']}"}), 400)
