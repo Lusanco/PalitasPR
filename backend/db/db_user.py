@@ -139,8 +139,6 @@ class Db_user:
 
             # RECEIVED_CONTACTS: The user is the receiver, we need sender info
             if user_id == initialContact.receiver_id:
-                if initialContact.receiver_id is True:
-                    break # User dont want decided to hide this contact/task
 
                 sender = initialContact.sender
                 receiver = initialContact.receiver
@@ -161,10 +159,9 @@ class Db_user:
                     contact_dict['task']['provider_phone'] = receiver.phone
 
                 contact_dict.pop('receiver_id')
-                received_contacts.append(contact_dict)
+                if initialContact.receiver_hide is False:
+                    received_contacts.append(contact_dict)
             else: # sent_contacts: User is sender, we need receiver_info
-                if initialContact.sender_hide is True:
-                    break # User dont want decided to hide this contact/task
                 
                 receiver = initialContact.receiver
                 sender = initialContact.sender
@@ -185,8 +182,11 @@ class Db_user:
                     contact_dict['task']['receiver_phone'] = sender.phone
 
                 contact_dict.pop('sender_id')
-                sent_contacts.append(contact_dict)
+                if initialContact.sender_hide is False:
+                    sent_contacts.append(contact_dict)
 
+            # check hide status and append if able
+         
             all_contacts['received'] = received_contacts
             all_contacts['sent'] = sent_contacts
         return {'results': all_contacts}, 200
