@@ -4,6 +4,8 @@
   import { onMount } from "svelte";
   import axios from "axios";
   import { writable } from "svelte/store";
+
+  let detailsOpen = writable(false);
   let menuOpen = false;
 
   function toggleMenu() {
@@ -11,7 +13,6 @@
   }
 
   function closeMenu(event) {
-    // Verifica si el clic fue fuera del menú y del botón
     if (
       menuOpen &&
       !event.target.closest("#navbar-cta") &&
@@ -20,9 +21,21 @@
       menuOpen = false;
     }
   }
+
+  function closeDetails() {
+    detailsOpen.set(false);
+  }
+
+  function handleLinkClick(event) {
+    // Allow navigation to happen first
+    setTimeout(() => {
+      toggleMenu();
+      closeDetails();
+    }, 0);
+  }
+
   let profileID = writable();
 
-  // Agrega el evento de clic al documento
   onMount(() => {
     axios
       .get("/api/user/status")
@@ -40,60 +53,119 @@
   });
 </script>
 
-<div class="flex justify-end m-2 bg-transparent">
+<div class="flex justify-end m-2 bg-primary">
   <button
     type="button"
-    class="inline-flex items-center justify-center w-16 h-16 p-2 text-sm text-[#cc2936] rounded-lg hover:opacity-90 focus:outline-none focus:ring-0"
+    class="inline-flex items-center justify-center w-16 h-16 rounded-lg"
     aria-controls="navbar-cta"
     aria-expanded={menuOpen}
     on:click={toggleMenu}
   >
     <span class="sr-only">Open main menu</span>
-    <svg
-      class="w-5 h-5"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 17 14"
-    >
-      <path
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M1 1h15M1 7h15M1 13h15"
-      />
-    </svg>
+    <i class="text-2xl fa-solid fa-bars text-accent"></i>
   </button>
 </div>
 
 <div
-  class={`z-50 bg-[#f1f1f1] fixed top-20 right-0 left-0 ${menuOpen ? "block" : "hidden"} bg-transparent md:left-auto md:w-80`}
+  class={`z-50 bg-primary fixed top-20 right-0 left-0 ${menuOpen ? "block" : "hidden"} bg-transparent md:left-auto md:w-80`}
   id="navbar-cta"
 >
-  <ul class="w-full p-4 shadow-lg md:w-80 menu bg-[#f1f1f1] rounded-box">
+  <ul class="w-full p-4 shadow-xl md:w-80 menu bg-primary rounded-box">
     <li>
       <a
         use:link
         href="/"
-        class="block px-5 py-4 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
-        on:click|preventDefault={toggleMenu}>Home</a
+        class="block gap-2 px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+        on:click={handleLinkClick}
+        ><i class="mr-2 fa-solid fa-house text-accent group-hover:text-primary"
+        ></i> Home</a
       >
     </li>
     <li>
       <a
         use:link
         href="/dashboard"
-        class="block px-5 py-4 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
-        on:click|preventDefault={toggleMenu}>Dashboard</a
+        class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+        on:click={handleLinkClick}
+        ><i
+          class="mr-2 fa-solid fa-table-columns text-accent group-hover:text-primary"
+        ></i> Dashboard</a
       >
     </li>
     <li>
       <a
         use:link
         href={`/profile/${$profileID}`}
-        class="block px-5 py-4 text-[#1f1f1f] rounded hover:bg-[#cc2936] hover:text-[#f1f1f1]"
-        on:click|preventDefault={toggleMenu}>Profile</a
+        class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+        on:click={handleLinkClick}
+        ><i class="mr-2 fa-solid fa-user text-accent group-hover:text-primary"
+        ></i> Profile</a
       >
+    </li>
+    <li>
+      <details bind:open={$detailsOpen}>
+        <summary
+          class="px-5 py-3 rounded text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+          >More</summary
+        >
+        <ul>
+          <li>
+            <a
+              use:link
+              href={`/terms-of-use`}
+              class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+              on:click={handleLinkClick}
+              ><i
+                class="mr-2 fa-solid fa-book text-accent group-hover:text-primary"
+              ></i> Terms of Use</a
+            >
+          </li>
+          <li>
+            <a
+              use:link
+              href={`/about`}
+              class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+              on:click={handleLinkClick}
+              ><i
+                class="mr-2 fa-solid fa-circle-info text-accent group-hover:text-primary"
+              ></i> About us</a
+            >
+          </li>
+          <li>
+            <a
+              use:link
+              href={`/privacy`}
+              class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+              on:click={handleLinkClick}
+              ><i
+                class="mr-2 fa-solid fa-lock text-accent group-hover:text-primary"
+              ></i> Privacy</a
+            >
+          </li>
+          <li>
+            <a
+              use:link
+              href={`/contact`}
+              class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+              on:click={handleLinkClick}
+              ><i
+                class="mr-2 fa-solid fa-envelope text-accent group-hover:text-primary"
+              ></i> Contact</a
+            >
+          </li>
+          <li>
+            <a
+              use:link
+              href={`/faq`}
+              class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+              on:click={handleLinkClick}
+              ><i
+                class="mr-2 fa-solid fa-circle-question text-accent group-hover:text-primary"
+              ></i> FAQ</a
+            >
+          </li>
+        </ul>
+      </details>
     </li>
     <li class="">
       <a
@@ -114,8 +186,8 @@
             });
         }}
         href="/"
-        class="mt-2 block px-4 py-3 text-sm font-medium text-center text-white bg-[#cc2936] hover:text-gray-800 rounded-lg"
-        on:click|preventDefault={toggleMenu}>Logout</a
+        class="block px-4 py-3 mt-2 text-sm font-medium text-center rounded-md text-primary bg-accent hover:bg-green-900"
+        on:click={handleLinkClick}>Logout</a
       >
     </li>
   </ul>

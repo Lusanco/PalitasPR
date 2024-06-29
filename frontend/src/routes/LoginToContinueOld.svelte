@@ -24,19 +24,23 @@
 </script>
 
 <div
-  class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto sm:p-10"
+  class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto text-teal-800 rounded-md sm:p-10"
 >
   <div class="mb-8 text-center">
-    <h1 class="text-4xl font-bold text-accent text-nowrap">Sesión Expirada</h1>
-    <p class="mt-1 text-lg text-secondary">Inicia sesión para continuar</p>
+    <h1 class="my-3 text-4xl font-bold text-[#cc2936]">
+      Please Login to Continue
+    </h1>
+    <p class="text-lg text-[#1f1f1f]">
+      You need to log in to access this page.
+    </p>
   </div>
-  <div class="">
+  <div class="space-y-2">
     <button
       on:click={redirectToLogin}
       type="button"
-      class="px-6 bg-accent text-primary hover:text-text-secondary hover:bg-green-900 btn"
+      class="bg-[#cc2936] text-[#f1f1f1] hover:text-[#1f1f1f] hover:bg-white btn px-6"
     >
-      Iniciar Sesión
+      Login
     </button>
   </div>
 </div>

@@ -24,7 +24,7 @@
     url: "/api/user/signup",
     headers: "application/json",
     twcss:
-      "shadow-md text-[#f1f1f1] btn bg-accent hover:bg-white hover:text-[#1f1f1f]",
+      "shadow-md text-[#f1f1f1] btn bg-[#cc2936] hover:bg-white hover:text-[#1f1f1f]",
     misc: { "App Location": "Signup" },
   };
 
@@ -130,92 +130,80 @@
 <div
   class="flex flex-col items-center justify-center h-full min-h-screen py-20 m-auto"
 >
-  <div class="flex flex-col max-w-sm gap-4">
-    <div class="-mb-2 text-center">
-      <h1 class="text-5xl font-bold text-accent">Crear Cuenta</h1>
-      <p class="text-md text-secondary">Crea tu cuenta para continuar</p>
+  <div class="flex flex-col max-w-sm gap-4 px-1">
+    <div class="text-center">
+      <h1 class="text-4xl font-bold text-[#1f1f1f]">Crear cuenta</h1>
+      <p class="text-sm text-[#cc2936]">Crea tu cuenta</p>
       <br />
     </div>
-    <label
-      class="flex items-center gap-4 px-2 py-1 bg-white border-2 rounded-lg border-neutral"
-    >
-      <p class="w-16 text-center">Nombre</p>
+    <label class="flex items-center gap-5 bg-white input input-bordered">
+      <p class="text-center w-14">Nombre</p>
       <input
         bind:value={first_name}
         on:keydown={handleKeydown}
         type="text"
-        class="border-none focus:ring-0 grow text-secondary"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
         placeholder="Juan"
       />
     </label>
-    <label
-      class="flex items-center gap-4 px-2 py-1 bg-white border-2 rounded-lg border-neutral"
-    >
-      <p class="w-16 text-center">Apellido</p>
+    <label class="flex items-center gap-5 bg-white input input-bordered">
+      <p class="text-center w-14">Apellido</p>
       <input
         bind:value={last_name}
         on:keydown={handleKeydown}
         type="text"
-        class="border-none focus:ring-0 grow text-secondary"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
         placeholder="del Pueblo"
       />
     </label>
-    <label
-      class="flex items-center gap-4 px-2 py-1 bg-white border-2 rounded-lg border-neutral"
-    >
-      <p class="w-16">Correo</p>
+    <label class="flex items-center gap-5 bg-white input input-bordered">
+      <p class=" w-14">Correo</p>
       <input
         bind:value={email}
         on:keydown={handleKeydown}
         type="email"
-        class="border-none focus:ring-0 grow text-secondary"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
         placeholder="juandpueblo@email.com"
       />
     </label>
-    <label
-      class="flex items-center gap-4 px-2 py-1 bg-white border-2 rounded-lg border-neutral"
-    >
-      <p class="w-16 text-center">Teléfono</p>
+    <label class="flex items-center gap-5 bg-white input input-bordered">
+      <p class="text-center w-14">Teléfono</p>
       <input
         bind:value={phone}
         on:input={handlePhoneNum}
         on:keydown={handleKeydown}
         type="tel"
-        class="border-none focus:ring-0 grow text-secondary"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
         placeholder="787-555-5555"
       />
     </label>
-    <label
-      class="flex items-center gap-4 px-2 py-1 bg-white border-2 rounded-lg border-neutral"
-    >
-      <p class="w-16 text-center">Contraseña</p>
+    <label class="flex items-center gap-5 bg-white input input-bordered">
+      <p class="text-center w-14">Contraseña</p>
       <input
         bind:value={password}
         on:keydown={handleKeydown}
         type="password"
-        class="border-none focus:ring-0 grow text-secondary"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
         placeholder="********"
       />
     </label>
-    <label
-      class="flex items-center gap-4 px-2 py-1 bg-white border-2 rounded-lg border-neutral"
-    >
-      <p class="w-16 text-center">Confirmar</p>
+    <label class="flex items-center gap-5 bg-white input input-bordered">
+      <p class="text-center w-14">Confirmar</p>
       <input
         bind:value={confirmPassword}
         on:keydown={handleKeydown}
         type="password"
-        class="border-none focus:ring-0 grow text-secondary"
+        class="border-none focus:ring-0 grow text-[#cc2936]"
         placeholder="********"
       />
     </label>
 
     <Button on:click={validatePasswords} bind:this={buttonRef} {image} {button}
     ></Button>
-    <p class="pr-2 -mt-3 text-sm text-right">
+    <p class="pr-2 -mt-4 text-right">
       ¿Ya tienes una cuenta? <a
         use:link
-        class="link link-hover text-accent"
+        class="link link-hover text-[#cc2936]"
         rel="noopener noreferrer"
         href="/login">Iniciar sesión</a
       >.
