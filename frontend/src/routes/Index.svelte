@@ -21,7 +21,7 @@
     url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}`,
     headers: "application/json",
     twcss:
-      "btn border-none rounded-t-none rounded-l-none rounded-r-lg rounded-b-lg focus:outline-none text-accent bg-primary hover:bg-accent hover:bg-opacity-10",
+      "btn border-none rounded-t-none rounded-l-none rounded-r-lg rounded-b-lg focus:outline-none text-accent bg-white hover:bg-accent hover:bg-opacity-10",
     misc: { "App Location": "Index Search Component" },
   };
   // Button Prop Variables And Dependencies
@@ -66,12 +66,12 @@
 
 <!-- Index Start -->
 <div
-  class="flex flex-col items-center justify-center h-full min-h-screen gap-8 px-4 md:p-0"
+  class="flex flex-col items-center justify-center h-full gap-8 px-4 my-20 min-h-fit md:p-0"
 >
   <Slogan />
   <!-- SearchBar Start -->
   <div
-    class="w-full max-w-md border-0 border-b-2 rounded-lg shadow-lg bg-primary border-accent"
+    class="w-full max-w-md bg-white border-0 border-b-2 rounded-lg shadow-lg border-accent"
   >
     <div class="grid grid-cols-2 grid-rows-2 rounded-lg overflow-clip join">
       <div id="search-bar" class="col-span-2 row-span-1">
@@ -82,7 +82,7 @@
           bind:value={search}
           on:keydown={handleKeydown}
           placeholder="Search for..."
-          class="w-full col-span-2 border-none rounded-none placeholder:text-secondary placeholder:opacity-60 bg-primary input input-bordered focus:outline-none text-secondary"
+          class="w-full col-span-2 bg-white border-none rounded-none placeholder:text-secondary placeholder:opacity-60 input input-bordered focus:outline-none text-secondary"
         />
         <div
           class="border-[1px] mx-2 flex justify-center items-center border-neutral"
@@ -95,7 +95,7 @@
         <!-- Model Filter Start -->
         <select
           bind:value={model}
-          class="w-full border-none bg-primary select select-bordered focus:outline-none text-secondary"
+          class="w-full bg-white border-none select select-bordered focus:outline-none text-secondary"
         >
           <option value="promotions">Promotions</option>
           <option value="requests">Requests</option>
@@ -104,7 +104,7 @@
         <!-- Town Filter Start -->
         <select
           bind:value={town}
-          class="w-full border-none bg-primary select select-bordered focus:outline-none text-secondary"
+          class="w-full bg-white border-none select select-bordered focus:outline-none text-secondary"
         >
           <option value="all" disabled>Town</option>
           {#each Object.entries(townsID) as [town, id]}
@@ -141,7 +141,7 @@
           to={service.promo_id
             ? `/service-details/${service.promo_id}`
             : `/request-details/${service.request_id}`}
-          class="w-full overflow-hidden transition-all duration-200 ease-in-out transform border-b-2 md:border-b-[3px] rounded-md shadow-md min-h-40 md:rounded-2xl card card-side bg-primary hover:bg-accent hover:bg-opacity-10 active:scale-95 border-accent"
+          class="w-full overflow-hidden transition-all duration-200 ease-in-out transform border-b-2 md:border-b-[3px] rounded-md shadow-md min-h-40 md:rounded-2xl card card-side bg-white hover:bg-accent hover:bg-opacity-10 active:scale-95 border-accent"
         >
           {#if !service.pictures}
             <div

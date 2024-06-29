@@ -53,7 +53,7 @@
   });
 </script>
 
-<div class="flex justify-end m-2 bg-primary">
+<div class="flex justify-end w-full m-2 bg-tranparent">
   <button
     type="button"
     class="inline-flex items-center justify-center w-20 h-20 rounded-lg"
@@ -67,11 +67,11 @@
 </div>
 
 <div
-  class={`z-50 bg-primary fixed top-20 right-0 left-0 ${menuOpen ? "block" : "hidden"} bg-transparent md:left-auto md:w-80`}
+  class={`z-50 bg-white fixed top-20 rounded-2xl right-0 left-0 ${menuOpen ? "block" : "hidden"} md:left-auto md:w-80`}
   id="navbar-cta"
 >
   <ul
-    class="w-full p-4 text-xl font-semibold shadow-xl md:w-80 menu bg-primary rounded-box"
+    class="w-full p-4 text-xl font-semibold shadow-xl md:w-80 menu bg-whte rounded-box"
   >
     <li>
       <a

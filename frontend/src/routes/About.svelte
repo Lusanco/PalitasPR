@@ -24,13 +24,13 @@
   }
 </script>
 
-<div class="mt-20 bg-white scroll-smooth">
-  <div class="relative bg-[#f1f1f1] h-[32rem]">
+<div class="mt-20 bg-transparent scroll-smooth">
+  <div class="relative bg-transparent h-[32rem]">
     <div class="absolute inset-x-0 bottom-0">
       <svg
         viewBox="0 0 224 12"
         fill="currentColor"
-        class="w-full -mb-1 text-[#1f1f1f] border-b-4 border-[#cc2936]"
+        class="w-full -mb-1 border-b-2 shadow-2xl text-green-900/70 border-accent"
         preserveAspectRatio="none"
       >
         <path
@@ -45,11 +45,11 @@
         class="relative max-w-2xl sm:mx-auto sm:max-w-xl md:max-w-2xl sm:text-center"
       >
         <h1
-          class="mb-10 text-5xl font-bold tracking-tight text-center text-[#cc2936] sm:text-4xl sm:leading-none"
+          class="mb-10 text-5xl font-bold tracking-tight text-center text-accent sm:text-4xl sm:leading-none"
         >
           About Us
         </h1>
-        <p class="text-2xl text-[#1f1f1f]">
+        <p class="text-2xl text-secondary">
           PalitasPR is a marketplace for requesting and promoting services
           locally in PR. We are a small team of 5 developers that gave life to
           this app for an event considered our graduation project.
@@ -60,7 +60,7 @@
         <button
           on:click={scrollToTeam}
           aria-label="Scroll down"
-          class="flex items-center justify-center w-10 h-10 mx-auto duration-300 transform shadow-lg border-[#cc2936] rounded-full text-[#cc2936] hover:shadow-sm hover:scale-110 border-2"
+          class="flex items-center justify-center w-10 h-10 mx-auto duration-300 transform border-2 rounded-full shadow-lg border-accent text-accent hover:shadow-sm hover:scale-110"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +83,7 @@
   >
     <div class="mx-auto mb-10 lg:max-w-xl sm:text-center">
       <h1
-        class="inline-block px-3 py-px mb-4 text-xl font-semibold tracking-wider uppercase rounded-full text-[#1f1f1f]"
+        class="inline-block px-3 py-px mb-4 text-xl font-semibold tracking-wider uppercase rounded-full text-secondary"
       >
         Our Team
       </h1>
