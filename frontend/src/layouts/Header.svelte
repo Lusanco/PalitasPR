@@ -15,7 +15,11 @@
 </script>
 
 <!-- Header Start -->
-<header class={$userSession ? `hidden` : `` + " border-b-4 shadow-2xl border-[#cc2936] navbar bg-[#1f1f1f] "}>
+<header
+  class={$userSession
+    ? `hidden`
+    : `` + " border-b-4 shadow-2xl border-[#cc2936] navbar bg-[#1f1f1f] "}
+>
   <div class="navbar-start">
     <a
       use:link
