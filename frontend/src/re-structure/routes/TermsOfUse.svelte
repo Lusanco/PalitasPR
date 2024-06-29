@@ -29,10 +29,10 @@
 <div
   class="container max-w-6xl px-4 py-8 mx-auto my-20 bg-primary hover:cursor-default"
 >
-  <h1 class="text-5xl font-bold text-center text-accent">Terminos de Uso</h1>
+  <h1 class="mb-4 text-5xl font-bold text-center text-accent">Terminos de Uso</h1>
 
   <div
-    class="p-5 text-lg border-b-2 rounded-md shadow-lg text-balance border-accent bg-primary"
+    class="p-5 text-lg bg-white border-b-2 rounded-md shadow-lg text-balance border-accent"
   >
     <p>
       Bienvenido a <span class="font-semibold text-accent">PalitasPR</span>. El
@@ -48,7 +48,7 @@
       <h2 class="text-2xl font-semibold text-secondary">
         1. Aceptación de los Términos
       </h2>
-      <p class=" text-[#1f1f1f1]">
+      <p class=" text-secondary">
         Al acceder y utilizar PalitasPR, aceptas estar sujeto a estos términos,
         todas las leyes y regulaciones aplicables.
       </p>
@@ -57,10 +57,10 @@
     <div class="my-2 border-b-2 border-neutral border-opacity-30"></div>
 
     <div class="mt-4">
-      <h2 class="text-2xl font-semibold text-[#1f1f1f1]">
+      <h2 class="text-2xl font-semibold text-secondary">
         2. Descripción del Servicio
       </h2>
-      <p class=" text-[#1f1f1f1]">
+      <p class=" text-secondary">
         PalitasPR es una plataforma que permite a los usuarios solicitar y
         promocionar servicios localmente en Puerto Rico. Proporcionamos una
         plataforma para que los usuarios se conecten, pero no somos responsables
@@ -72,10 +72,10 @@
     <div class="my-2 border-b-2 border-neutral border-opacity-30"></div>
 
     <div class="mt-4">
-      <h2 class="text-2xl font-semibold text-[#1f1f1f1]">
+      <h2 class="text-2xl font-semibold text-secondary">
         3. Cuentas de Usuario
       </h2>
-      <p class=" text-[#1f1f1f1]">
+      <p class=" text-secondary">
         Para utilizar ciertas funciones de PalitasPR, debes registrar una
         cuenta. Aceptas proporcionar información precisa y completa durante el
         registro y mantener la información de tu cuenta actualizada. Eres
@@ -88,9 +88,9 @@
     <div class="my-1 border-b-2 border-neutral border-opacity-30"></div>
 
     <div class="mt-4">
-      <h2 class="text-2xl font-semibold text-[#1f1f1f1]">4. Uso Aceptable</h2>
+      <h2 class="text-2xl font-semibold text-secondary">4. Uso Aceptable</h2>
 
-      <p class=" text-[#1f1f1f1]">Al utilizar PalitasPR, aceptas no:</p>
+      <p class=" text-secondary">Al utilizar PalitasPR, aceptas no:</p>
       <ul class="mt-2 list-disc list-inside">
         <li class="list-none">
           <i class="fa-regular fa-hand-point-right"></i>
@@ -115,10 +115,10 @@
     <div class="my-1 border-b-2 border-neutral border-opacity-30"></div>
 
     <div class="mt-4">
-      <h2 class="text-2xl font-semibold text-[#1f1f1f1]">
+      <h2 class="text-2xl font-semibold text-secondary">
         5. Contenido del Usuario
       </h2>
-      <p class=" text-[#1f1f1f1]">
+      <p class=" text-secondary">
         Eres responsable de todo el contenido que publiques en PalitasPR. Al
         publicar contenido, otorgas a PalitasPR una licencia mundial, no
         exclusiva, libre de regalías, sublicenciable y transferible para
@@ -130,10 +130,10 @@
     <div class="my-1 border-b-2 border-neutral border-opacity-30"></div>
 
     <div class="mt-4">
-      <h2 class="text-2xl font-semibold text-[#1f1f1f1]">
+      <h2 class="text-2xl font-semibold text-secondary">
         6. Terminación del Servicio
       </h2>
-      <p class=" text-[#1f1f1f1]">
+      <p class=" text-secondary">
         PalitasPR se reserva el derecho de suspender o terminar tu acceso a la
         plataforma en cualquier momento, sin previo aviso, por cualquier motivo,
         incluyendo pero no limitado a, el incumplimiento de estos términos.
@@ -143,10 +143,10 @@
     <div class="my-1 border-b-2 border-neutral border-opacity-30"></div>
 
     <div class="mt-4">
-      <h2 class="text-2xl font-semibold text-[#1f1f1f1]">
+      <h2 class="text-2xl font-semibold text-secondary">
         7. Limitación de Responsabilidad
       </h2>
-      <p class=" text-[#1f1f1f1]">
+      <p class=" text-secondary">
         PalitasPR no será responsable por cualquier daño indirecto, incidental,
         especial, consecuente o punitivo, incluyendo pero no limitado a, la
         pérdida de beneficios, datos, uso, buena voluntad u otras pérdidas
@@ -161,8 +161,8 @@
     <div class="my-1 border-b-2 border-neutral border-opacity-30"></div>
 
     <div class="mt-4">
-      <h2 class="text-2xl font-semibold text-[#1f1f1f1]">8. Indemnización</h2>
-      <p class=" text-[#1f1f1f1]">
+      <h2 class="text-2xl font-semibold text-secondary">8. Indemnización</h2>
+      <p class=" text-secondary">
         Aceptas indemnizar y mantener indemne a PalitasPR, sus afiliados,
         empleados y agentes, de cualquier reclamo, daño, obligación, pérdida,
         responsabilidad, costo o deuda, y gasto (incluyendo pero no limitado a
@@ -177,8 +177,8 @@
     <div class="my-1 border-b-2 border-neutral border-opacity-30"></div>
 
     <div class="mt-4">
-      <h2 class="text-2xl font-semibold text-[#1f1f1f1]">9. Ley Aplicable</h2>
-      <p class=" text-[#1f1f1f1]">
+      <h2 class="text-2xl font-semibold text-secondary">9. Ley Aplicable</h2>
+      <p class=" text-secondary">
         Estos términos se regirán e interpretarán de acuerdo con las leyes de
         Puerto Rico, sin tener en cuenta sus disposiciones sobre conflictos de
         leyes.
@@ -188,10 +188,10 @@
     <div class="my-1 border-b-2 border-neutral border-opacity-30"></div>
 
     <div class="mt-4">
-      <h2 class="text-2xl font-semibold text-[#1f1f1f1]">
+      <h2 class="text-2xl font-semibold text-secondary">
         10. Cambios en los Términos
       </h2>
-      <p class=" text-[#1f1f1f1]">
+      <p class=" text-secondary">
         PalitasPR se reserva el derecho de modificar estos términos en cualquier
         momento. Te notificaremos sobre cualquier cambio publicando los nuevos
         términos en nuestra plataforma. Es tu responsabilidad revisar estos
@@ -203,12 +203,12 @@
     <div class="my-1 border-b-2 border-neutral border-opacity-30"></div>
 
     <div class="mt-4">
-      <h2 class="text-2xl font-semibold text-[#1f1f1f1]">11. Contacto</h2>
-      <p class=" text-[#1f1f1f]">
+      <h2 class="text-2xl font-semibold text-secondary">11. Contacto</h2>
+      <p class=" text-secondary">
         Si tienes preguntas o dudas sobre estos términos, puedes ponerte en
         contacto con nosotros a través del siguiente correo electrónico: <a
           href="mailto:palitaspr@gmail.com"
-          class="underline text-accent">palitaspr@gmail.com</a
+          class="underline text-accent hover:text-accent/60">palitaspr@gmail.com</a
         >.
       </p>
     </div>
