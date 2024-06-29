@@ -20,11 +20,11 @@
 </script>
 
 <div
-  class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto text-[#1f1f1f] rounded-md sm:p-10"
+  class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto rounded-md text-accent sm:p-10"
 >
   <div class="mb-8 text-center">
     <h1 class="my-3 text-4xl font-bold">Review Created Successfully</h1>
-    <p class="text-sm text-[#1f1f1f]">
+    <p class="text-md text-secondary">
       Your review has been successfully submitted.
     </p>
   </div>
@@ -33,7 +33,7 @@
       use:link
       href="/dashboard"
       type="button"
-      class="w-full px-8 py-3 font-semibold bg-[#cc2936] rounded-md text-[#f1f1f1]"
+      class="w-full px-8 py-3 font-semibold rounded-md bg-accent text-primary hover:bg-white hover:text-secondary"
     >
       Back to Dashboard
     </a>
