@@ -10,9 +10,11 @@ import random
 from db.db_operations import DBOperations
 from db.db_promotion import Db_promotion
 from db.db_user import Db_user
+from db.db_core import Db_core
 from db_init import get_session
 db_session = get_session()
 db = DBOperations(db_session)
+db_core = Db_core(db_session)
 db_user = Db_user(db_session)
 db_promo = Db_promotion(db_session)
 
@@ -281,6 +283,43 @@ class DBConsole(cmd.Cmd):
         response = db_user.create_folders_for_allUsers()
         print(response)
         db_session.close()
+
+
+    def do_search_paginated(self, args):
+        """
+        Search for promotions or requests with pagination.
+        Usage: search_paginated
+        """
+        on = 1
+        while on == 1:
+            model = input("Enter <promotions> or <requests>: ")
+            service = input("Enter service name (or press Enter for all): ")
+            town = input("Enter town name (or 'all'): ")
+            page = int(input("Enter page number: "))
+            limit = int(input("Enter number of items per page: "))
+
+            response, status = db_core.landing_searchBar(model, service, town, page, limit)
+            
+            if status == 200:
+                results = response['results']
+                print(f"\nFound {response['total_count']} total results.")
+                print(f"Showing page {response['page']} of {response['total_pages']}")
+                print(f"Results for this page: {len(results)}")
+                
+                for item in results:
+                    print(f"\nID: {item.get('promo_id') or item.get('request_id')}")
+                    print(f"Title: {item['title']}")
+                    print(f"Service: {item['service']}")
+                    print(f"Description: {item['description']}")
+                    print(f"Towns: {item['towns']}")
+                    print("-" * 40)
+            else:
+                print(f"Error: {response.get('error', 'Unknown error')}")
+
+            response = input('\nTo search again, press Enter. To quit, type "q": ')
+            if response.lower() == 'q':
+                on = 0
+
 
 if __name__ == '__main__':
     DBConsole().cmdloop()

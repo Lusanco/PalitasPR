@@ -18,14 +18,24 @@
   const day = String(today.getDate()).padStart(2, "0");
 
   let image = null;
-  let button = {
+  let someterTask = {
     name: "Someter",
     method: "POST",
     url: "/api/tasks/",
     headers: "application/json", // "application/json"
     twcss:
       "w-full p-2 mb-4 mt-4 font-semibold text-white bg-[#cc2936] border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out",
-    misc: { "App Location": "Tasks" },
+    misc: { "App Location": "Submit Task" },
+  };
+
+  let deleteTask = {
+    name: "Delete",
+    method: "PUT",
+    url: "/api/tasks/",
+    headers: "application/json", // "application/json"
+    twcss:
+      "grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white",
+    misc: { "App Location": "Delete Task" },
   };
 
   const serviceNamesByID = Object.entries(servicesID).reduce(
@@ -38,6 +48,22 @@
 
   let bulletPointsStore = writable([]);
   let pipeSeperatedStringStore = writable("");
+
+  // MODIFIED: Reactive statement for clearing inputs
+  $: {
+    if ($sentReceived !== undefined || $initial_contact_id !== undefined) {
+      clearInputs();
+      console.log("Inputs cleared due to sentReceived or contactRes change");
+    }
+  }
+
+  // ADDED: Function to clear inputs
+  function clearInputs() {
+    price = "";
+    bulletPointsStore.set([]);
+    inputValue = "";
+    // Clear any other inputs you have
+  }
 
   $: {
     bulletPointsStore.subscribe((value) => {
@@ -53,7 +79,9 @@
   let initial_contact_id = writable(null);
   let sentReceived = writable(true);
   let contactRes = writable([]);
+  let promoRequestID = writable();
   let userDetails = writable("");
+  let submitData = writable();
   let price = "";
   let terms;
   let taskClosed = false;
@@ -66,37 +94,120 @@
     contactResponses = [...$contactRes];
   });
 
-  /* 
-    let sentReceived = writable(true);
-    let contactRes = writable();
-
-
-    $received.last_name
-    $contactRes.last_name
-
-    If ($sentReceived === true){
-      contactRes.set($received);
-    } else if ($sentReceived === false){
-      contactRes.set($sent);
-    }
-  
-    EN LA PARTE DE PROMO_ID EL REQUEST
-    {#if $sentReceived === true}
-      Contenido de PromoID
-    {:else}
-      <div class="hidden"></div>
-    {/if}
-  */
-
   $: {
-    $data = {
+    $submitData = {
       initial_contact_id: $initial_contact_id,
       terms: $pipeSeperatedStringStore,
       price,
     };
-
-    data.set($data);
-    console.log("Data updated:", $data);
+    // sentReceived.set($sentReceived);
+    if ($sentReceived) {
+      sentReceived.set(true);
+      console.log("Inside Received If Block");
+      if (
+        $submitData.initial_contact_id &&
+        $submitData.terms &&
+        $submitData.price &&
+        $contactRes[0].promo_id
+      ) {
+        console.log("If promo_id exist: ", $contactRes[0].promo_id);
+        data.set($submitData);
+        console.log("If Submit on Received: ", $data);
+      } else if (
+        $submitData.initial_contact_id &&
+        $submitData.terms &&
+        $submitData.price &&
+        $contactRes[0].request_id
+      ) {
+        console.log("If request_id exist: ", $contactRes[0].request_id);
+        data.set($submitData);
+        console.log("If Submit on Sent: ", $data);
+      } else if (
+        !$submitData.initial_contact_id ||
+        !$submitData.terms ||
+        !$submitData.price
+      ) {
+        $data = {
+          initial_contact_id: $initial_contact_id,
+          receiver_hide: $sentReceived,
+        };
+        data.set($data);
+        console.log("Else If For Received: ", $data);
+      }
+      console.log("End of Received If Block");
+    } else {
+      console.log("Inside Sent Else Block");
+      if (
+        $submitData.initial_contact_id &&
+        $submitData.terms &&
+        $submitData.price &&
+        $contactRes[0].promo_id
+      ) {
+        console.log("If promo_id exist: ", $contactRes[0].promo_id);
+        data.set($submitData);
+        console.log("If Submit on Received: ", $data);
+      } else if (
+        $submitData.initial_contact_id &&
+        $submitData.terms &&
+        $submitData.price &&
+        $contactRes[0].request_id
+      ) {
+        console.log("If request_id exist: ", $contactRes[0].request_id);
+        data.set($submitData);
+        console.log("If Submit on Sent: ", $data);
+      } else if (
+        !$submitData.initial_contact_id ||
+        !$submitData.terms ||
+        !$submitData.price
+      ) {
+        $data = {
+          initial_contact_id: $initial_contact_id,
+          sender_hide: !$sentReceived,
+        };
+        data.set($data);
+        console.log("Else If For Sent: ", $data);
+      }
+      console.log("End of Sent If Block");
+    }
+    // if (
+    //   $submitData.initial_contact_id &&
+    //   $submitData.terms &&
+    //   $submitData.price &&
+    //   $contactRes[0].promo_id &&
+    //   $sentReceived
+    // ) {
+    //   data.set($submitData);
+    //   console.log("If Submit on Received: ", $data);
+    // } else if (
+    //   $submitData.initial_contact_id &&
+    //   $submitData.terms &&
+    //   $submitData.price &&
+    //   $contactRes[0].request_id &&
+    //   !$sentReceived
+    // ) {
+    //   data.set($submitData);
+    //   console.log("If Submit on Sent: ", $data);
+    // } else if (
+    //   !$submitData.initial_contact_id ||
+    //   (!$submitData.terms && !$submitData.price && $sentReceived)
+    // ) {
+    //   $data = {
+    //     initial_contact_id: $initial_contact_id,
+    //     receiver_hide: $sentReceived,
+    //   };
+    //   data.set($data);
+    //   console.log("Else If For Received: ", $data);
+    // } else if (
+    //   !$submitData.initial_contact_id ||
+    //   (!$submitData.terms && !$submitData.price && !$sentReceived)
+    // ) {
+    //   $data = {
+    //     initial_contact_id: $initial_contact_id,
+    //     sender_hide: !$sentReceived,
+    //   };
+    //   data.set($data);
+    //   console.log("Else If For Sent: ", $data);
+    // }
   }
 
   onMount(() => {
@@ -126,6 +237,11 @@
         }
         let promo_id;
         if (!$contactRes === null || !$contactRes[0] === null) {
+          promoRequestID.set(
+            $contactRes[0].promo_id
+              ? $contactRes[0].promo_id
+              : $contactRes[0].request_id
+          );
           promo_id = $contactRes[0].promo_id;
           if (
             $contactRes[0].task != null &&
@@ -270,6 +386,7 @@
         received.set(userContactsRes.data.results.received);
         contactRes.set(userContactsRes.data.results.received);
         sentReceived.set(true);
+        console.log($sentReceived);
       })
       .catch((error) => {
         console.error("Error fetching received contacts:", error);
@@ -284,6 +401,7 @@
         sent.set(userContactsRes.data.results.sent);
         contactRes.set(userContactsRes.data.results.sent);
         sentReceived.set(false);
+        console.log($sentReceived);
       })
       .catch((error) => {
         console.error("Error fetching sent contacts:", error);
@@ -291,10 +409,6 @@
   }
 
   console.log("This is the result of userDetails", $userDetails);
-
-  /**
-   ** Values for the form fields
-   */
 </script>
 
 <div class="flex flex-col items-center w-full min-h-screen px-4 py-20 mx-auto">
@@ -735,7 +849,7 @@
                     <div>
                       <!--* Submit button -->
                       <!-- WHEN TASK EXISTS: no submit button -->
-                      <Button {button} {image} />
+                      <Button button={someterTask} {image} />
                       <br />
                     </div>
                   </div>
@@ -1079,10 +1193,12 @@
           <div
             class="flex flex-wrap items-center justify-center w-full gap-1 mx-auto md:gap-2"
           >
-            <button
+            <!-- Delete Task (Archive) -->
+            <Button button={deleteTask} {image} />
+            <!-- <button
               class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
               >Delete Task</button
-            >
+            > -->
             {#if response.task && response.task.status === "closed"}
               <!-- Add an additional check for response.task to avoid null/undefined errors -->
               {#if response.task.receiver_id === $userDetails.id}
