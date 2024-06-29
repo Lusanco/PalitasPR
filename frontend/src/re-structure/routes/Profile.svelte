@@ -138,10 +138,10 @@
           </div>
           <!-- Profile Details -->
           <div
-            class="flex flex-wrap p-4 -mt-8 rounded-none bg-primary md:bg-transparent"
+            class="flex flex-wrap p-4 -mt-8 bg-white rounded-none md:bg-transparent"
           >
             <div class="flex flex-wrap justify-between w-full px-4">
-              <span class="w-full text-lg text-left md:w-fit"
+              <span class="w-full text-xl text-left md:w-fit text-accent"
                 >{$response2.results.job_title}</span
               >
               <!-- <span class="w-full text-center md:w-fit md:text-right">
@@ -164,7 +164,9 @@
 
           <!-- Description -->
           <div class="-mt-8 card">
-            <p class="h-full line-clamp-none overflow-ellipsis card-body">
+            <p
+              class="h-full text-lg line-clamp-none overflow-ellipsis card-body"
+            >
               {$response2.results.bio}
             </p>
           </div>
