@@ -136,10 +136,12 @@ class Db_user:
             else:
                 contact_dict['task'] = None
                 contact_dict['service'] = self.session.query(Service.name).filter(Service.id == initialContact.promo.service_id).first()[0]
-            # DO NOT TOUCH LINE BELOW, adding object to session, prevent detached objects error on lazy loads
-            # initialContact = self.session.merge(initialContact)
-            # received_contacts: The user is the receiver, we need sender info
+
+            # RECEIVED_CONTACTS: The user is the receiver, we need sender info
             if user_id == initialContact.receiver_id:
+                if initialContact.receiver_id is True:
+                    break # User dont want decided to hide this contact/task
+
                 sender = initialContact.sender
                 receiver = initialContact.receiver
                 contact_dict['contact_first_name'] = sender.first_name
@@ -161,6 +163,9 @@ class Db_user:
                 contact_dict.pop('receiver_id')
                 received_contacts.append(contact_dict)
             else: # sent_contacts: User is sender, we need receiver_info
+                if initialContact.sender_hide is True:
+                    break # User dont want decided to hide this contact/task
+                
                 receiver = initialContact.receiver
                 sender = initialContact.sender
                 contact_dict['contact_first_name'] = receiver.first_name
