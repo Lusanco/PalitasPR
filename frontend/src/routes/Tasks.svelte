@@ -275,9 +275,13 @@
       initial_contact_id.set(null); // Clear the ID when closing
     } else {
       openIndex = index;
-      if ($received && $received[index]) {
-        initial_contact_id.set($received[index].id);
-      }
+
+      $received && $received[index]
+        ? initial_contact_id.set($received[index].id)
+        : initial_contact_id.set($sent[index].id);
+      // if ($received && $received[index]) {
+      //   initial_contact_id.set($received[index].id);
+      // }
     }
   }
 
