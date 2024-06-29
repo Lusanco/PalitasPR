@@ -30,7 +30,7 @@
 </script>
 
 <div
-  class="flex flex-col items-center justify-center h-full min-h-screen bg-base"
+  class="flex flex-col items-center justify-center h-full min-h-screen bg-primary"
 >
   <div class="flex w-full max-w-6xl">
     <div
