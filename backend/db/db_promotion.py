@@ -190,7 +190,7 @@ class Db_promotion:
         )
         # If a town sent, make query by towns
         if town_id != 0:
-            query = query.filter(Town.id == town_id)
+            query = query.filter(or_(Town.id == town_id, Town.id == 0))
 
         # Count total results before pagination
         total_count = query.count()
