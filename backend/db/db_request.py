@@ -58,7 +58,7 @@ class Db_request:
         )
 
         if town_id != 0:
-            query = query.filter(Town.id == town_id)
+            query = query.filter(or_(Town.id == town_id, Town.id == 0))
 
         total_count = query.count()
 
