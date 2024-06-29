@@ -18,7 +18,8 @@
 <header
   class={$userSession
     ? `hidden`
-    : `` + " p-2 md:p-4 shadow-lg md:shadow-xl navbar bg-primary "}
+    : `` +
+      " p-2 md:p-4 bg-gradient-to-b from-primary via-white to-white shadow-lg md:shadow-xl navbar border-b-2 border-accent/40"}
 >
   <div class="navbar-start">
     <a

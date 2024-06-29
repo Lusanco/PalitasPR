@@ -28,7 +28,7 @@
 >
   <div class="mb-8 text-center">
     <h1 class="text-4xl font-bold text-accent">Para Accesar Este Contenido</h1>
-    <p class="mt-1 text-lg text-secondary">Inicie sesión para continuar</p>
+    <p class="mt-1 text-lg text-secondary">Inicie sesión con su cuenta</p>
   </div>
   <div class="">
     <button
