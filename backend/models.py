@@ -73,8 +73,10 @@ class Initial_Contact(BaseModel, Base):
 
     receiver_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     receiver_read = Column(Boolean, default=False)
+    receiver_hide = Column(Boolean, default=False)
     sender_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     sender_read = Column(Boolean, default=False)
+    sender_hide = Column(Boolean, default=False)
     promo_id = Column(String(255), ForeignKey("promotions.id"))
     sent_task = Column(Boolean, default=False)
 

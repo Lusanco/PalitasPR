@@ -94,7 +94,9 @@ CREATE Table initial_contacts (
         promo_id varchar(50) References promotions(id) ON DELETE CASCADE,
         request_id varchar(50) References requests(id) ON DELETE CASCADE,
         receiver_read BOOLEAN DEFAULT False,
+        receiver_hide BOOLEAN DEFAULT False,
         sender_read BOOLEAN DEFAULT False,
+        sender_hide BOOLEAN DEFAULT False,
         sent_task BOOLEAN DEFAULT False,
         created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -111,7 +113,7 @@ CREATE TABLE tasks (
     receiver_confirm BOOLEAN,
     service_id INT REFERENCES services(id) ON DELETE CASCADE NOT NULL,
     description Text NOT NULL,
-    status VARCHAR(10) DEFAULT 'pending' CHECK(status in ('open', 'closed', 'pending')),
+    status VARCHAR(10) DEFAULT 'pending' CHECK(status in ('active', 'closed', 'pending', 'reviewed')),
     price INT DEFAULT 120,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -165,6 +167,7 @@ CREATE TABLE profiles (
     profile_pic VARCHAR(255),
     gallery VARCHAR(255),
     social_links TEXT,
+    qr_pic VARCHAR(255),
     tasks_completed INT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -225,6 +228,8 @@ VALUES
     ('Painter');
 
 -- Insert sample data into towns table
+INSERT INTO towns (name, id)
+VALUES('All', 0);
 INSERT INTO towns (name)
 VALUES
     ('Adjuntas'),
@@ -576,7 +581,7 @@ SELECT p.id, t.id
 FROM promotions p
 JOIN users u ON p.user_id = u.id
 JOIN services s ON p.service_id = s.id
-JOIN towns t ON t.name IN ('San Juan', 'Carolina', 'Guaynabo', 'Santurce', 'Bayamon')
+JOIN towns t ON t.name IN ('All')
 WHERE p.title = 'Urban DJ' AND u.first_name = 'Hector' AND u.last_name = 'Torres' AND s.name = 'DJ';
 
 INSERT INTO promo_towns (promo_id, town_id)
@@ -616,7 +621,7 @@ SELECT p.id, t.id
 FROM promotions p
 JOIN users u ON p.user_id = u.id
 JOIN services s ON p.service_id = s.id
-JOIN towns t ON t.name IN ('Cabo Rojo', 'Hormigueros')
+JOIN towns t ON t.name IN ('All')
 WHERE p.title = 'Pet Paradise Retreat' AND u.first_name = 'Angelica' AND u.last_name = 'Diaz' AND s.name = 'Pet Sitting';
 
 INSERT INTO promo_towns (promo_id, town_id)
