@@ -104,7 +104,14 @@ def promo_request():
         model = data.get("model")
         towns = data.get("town")
         towns_id = towns.split(',')
-        towns_id = [int(id.strip()) for id in towns_id]
+        towns_id = [id.strip() for id in towns_id]
+
+        if '' in towns_id:
+            return make_response(jsonify({'error': 'No town was selected'}))
+        if 'all' in towns_id:
+            towns_id = [0]
+        else:
+            towns_id = [int(id.strip()) for id in towns_id]
 
         data.pop("town")
         data.pop("model")

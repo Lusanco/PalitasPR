@@ -4,11 +4,11 @@
 '''
 from sqlalchemy.orm import joinedload
 from models import User
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from models import (
     User, Service, Town, Promo_Towns, 
     Promotion, Review, Task
-) 
+)
 
 
 class Db_promotion:
@@ -64,7 +64,7 @@ class Db_promotion:
         )
         # If a town sent, make query by towns
         if town_id != 0:
-            query = query.filter(Town.id == town_id)
+            query = query.filter(or_(Town.id == town_id, Town.id == 0))
 
         total_count = query.count()
 
@@ -190,7 +190,7 @@ class Db_promotion:
         )
         # If a town sent, make query by towns
         if town_id != 0:
-            query = query.filter(Town.id == town_id)
+            query = query.filter(or_(Town.id == town_id, Town.id == 0))
 
         # Count total results before pagination
         total_count = query.count()
