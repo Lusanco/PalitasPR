@@ -24,13 +24,13 @@
   }
 </script>
 
-<div class="mt-20 bg-transparent scroll-smooth">
-  <div class="relative bg-transparent h-[32rem]">
+<div class="w-full my-20 scroll-smooth">
+  <div class="relative h-[32rem]">
     <div class="absolute inset-x-0 bottom-0">
       <svg
         viewBox="0 0 224 12"
         fill="currentColor"
-        class="w-full -mb-1 border-b-2 shadow-2xl text-green-900/70 border-accent"
+        class="w-full -mb-1 bg-transparent border-b-2 shadow-2xl text-accent/70 border-accent"
         preserveAspectRatio="none"
       >
         <path
@@ -79,11 +79,13 @@
   </div>
   <div
     id="team"
-    class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
+    class="px-4 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
   >
-    <div class="mx-auto mb-10 lg:max-w-xl sm:text-center">
+    <br />
+    <div class="mx-auto text-center lg:max-w-xl">
+      <br />
       <h1
-        class="inline-block px-3 py-px mb-4 text-xl font-semibold tracking-wider uppercase rounded-full text-secondary"
+        class="inline-block pb-8 text-3xl font-semibold tracking-wider uppercase rounded-full text-secondary"
       >
         Our Team
       </h1>

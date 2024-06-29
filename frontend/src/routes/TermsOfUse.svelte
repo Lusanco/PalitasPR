@@ -27,7 +27,7 @@
 </script>
 
 <div
-  class="container max-w-6xl px-4 py-8 mx-auto my-20 bg-primary hover:cursor-default"
+  class="container max-w-6xl px-4 py-8 mx-auto my-20 min-h-fit hover:cursor-default"
 >
   <div
     class="p-5 bg-white border-b-2 rounded-md shadow-lg text-balance border-accent"

@@ -6,11 +6,12 @@ export const teamROLES = {
   "Livan Hernandez": "Web Developer",
 };
 export const teamCLASSLISTS = {
-  classDiv1: "flex flex-col items-center justify-center w-full md:w-1/5",
-  classImg: "object-cover w-20 h-20 mb-2 rounded-full shadow",
-  classDiv2: "flex flex-col items-center",
-  classP1: "text-lg font-bold",
-  classP2: "text-sm text-gray-800",
+  classDiv1:
+    "flex flex-col bg-white max-h-40 h-40 w-40 rounded-full overflow-clip min-h-40 items-center justify-center shadow-2xl border-2 border-accent/30",
+  classImg: "object-cover w-screen h-full",
+  classDiv2: "flex flex-col items-center h-1/3",
+  classP1: "text-base font-semibold  tracking-tighter leading-none",
+  classP2: "text-sm text-secondary  tracking-tighter leading-none",
 };
 export const teamALTS = {
   "Luis Santiago": "Profile Image of Luis Santiago, Lead Developer",
