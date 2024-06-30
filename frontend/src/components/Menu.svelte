@@ -54,7 +54,7 @@
   });
 
   function handleHomeClick(event) {
-    event.preventDefault();
+    // event.preventDefault();
     if (window.location.pathname === "/") {
       window.location.reload();
     } else {
