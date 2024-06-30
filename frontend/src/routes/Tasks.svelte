@@ -24,7 +24,7 @@
     url: "/api/tasks/",
     headers: "application/json", // "application/json"
     twcss:
-      "w-full p-2 mb-4 mt-4 font-semibold text-white bg-[#cc2936] border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out",
+      "w-full p-2 mb-4 mt-4 font-semibold text-white bg-accent border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out",
     misc: { "App Location": "Submit Task" },
   };
 
@@ -34,7 +34,7 @@
     url: "/api/initial-contact",
     headers: "application/json", // "application/json"
     twcss:
-      "w-full grow font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f]",
+      "w-full grow font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f]",
     misc: { "App Location": "Delete Task" },
   };
 
@@ -384,13 +384,13 @@
   >
     <button
       on:click={handleReceivedClick}
-      class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+      class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
     >
       Received
     </button>
     <button
       on:click={handleSentClick}
-      class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+      class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
     >
       Sent
     </button>
@@ -408,7 +408,7 @@
       {/if}
       {#each contactResponses as response, index}
         <div
-          class="max-w-6xl px-4 mx-auto w-full bg-white border-b-2 rounded-lg border-[#cc2936] text-[#1f1f1f] flex flex-col transition-all duration-100 hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+          class="max-w-6xl px-4 mx-auto w-full bg-white border-b-2 rounded-lg border-accent text-[#1f1f1f] flex flex-col transition-all duration-100 hover:bg-accent hover:text-[#f1f1f1]"
         >
           <button
             class="flex flex-col w-full gap-1 px-2 py-4 text-lg font-medium text-left rounded-lg md:text-xl focus:outline-none"
@@ -454,7 +454,7 @@
                 >
               {/if}
               {#if response.receiver_read === false}
-                <span class="w-10 h-10 bg-[#cc2936] rounded-badge animate-ping">
+                <span class="w-10 h-10 bg-accent rounded-badge animate-ping">
                 </span>
               {:else if response.receiver_read === true}
                 <span class="w-10 h-10 bg-[#f1f1f1] rounded-badge"> </span>
@@ -511,7 +511,7 @@
                   <br />
                   <div class="card-header">
                     <h1
-                      class="flex justify-center pb-4 text-2xl font-bold text-gray-700 border-b-2 md:mb-2 md:pb-8 md:text-4xl lg:text-5xl"
+                      class="flex justify-center pb-4 text-2xl font-bold border-b-2 text-secondary md:mb-2 md:pb-8 md:text-4xl lg:text-5xl"
                     >
                       Acuerdo de Servicio
                     </h1>
@@ -521,7 +521,7 @@
                     <!--* Provider Details -->
                     <div class="pb-4 border-b-2">
                       <h1
-                        class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                        class="mb-4 text-xl font-bold text-center text-secondary md:mb-8 md:text-2xl"
                       >
                         Detalles del Proveedor
                       </h1>
@@ -529,14 +529,14 @@
                         <!--* Provider Name -->
                         <label
                           for="service-provider"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Nombre
                           <input
                             readonly
                             id="service-provider"
                             type="text"
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0"
                             value={$sentReceived
                               ? `${$userDetails.first_name} ${$userDetails.last_name}`
                               : `${response.contact_first_name} ${response.contact_last_name}`}
@@ -545,14 +545,14 @@
                         <!--* Service Provided -->
                         <label
                           for="service"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Servicio
                           <input
                             readonly
                             id="service"
                             type="text"
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0"
                             value={`${response.service}`}
                           />
                         </label>
@@ -563,7 +563,7 @@
                         <!--* Provider Email -->
                         <label
                           for="email"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Correo Electrónico
                           <input
@@ -573,13 +573,13 @@
                             value={$sentReceived
                               ? `${$userDetails.email}`
                               : `${response.contact_email}`}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                           />
                         </label>
                         <!--* Provider Phone Number -->
                         <label
                           for="phone-number"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Número de Teléfono
                           <input
@@ -589,7 +589,7 @@
                             value={$sentReceived
                               ? `${$userDetails.phone}`
                               : `${response.phone}`}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                           />
                         </label>
                       </div>
@@ -597,7 +597,7 @@
                     <!--* Client Details -->
                     <div class="pb-4 mt-4 border-b-2 md:mt-8">
                       <h1
-                        class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                        class="mb-4 text-xl font-bold text-center text-secondary md:mb-8 md:text-2xl"
                       >
                         Detalles del Cliente
                       </h1>
@@ -605,7 +605,7 @@
                         <!--* Client Name -->
                         <label
                           for="service-client"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Nombre
                           <input
@@ -615,13 +615,13 @@
                             value={$sentReceived
                               ? `${response.contact_first_name} ${response.contact_last_name}`
                               : `${$userDetails.first_name} ${$userDetails.last_name}`}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0"
                           />
                         </label>
                         <!--* Client Email -->
                         <label
                           for="clientEmail"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Correo Electrónico
                           <input
@@ -631,13 +631,13 @@
                             value={$sentReceived
                               ? `${response.contact_email}`
                               : `${$userDetails.email}`}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                           />
                         </label>
                         <!--* Client Phone Number -->
                         <label
                           for="clientPhone-number"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Número de Teléfono
                           <input
@@ -647,7 +647,7 @@
                               ? `${response.phone}`
                               : `${$userDetails.phone}`}
                             type="text"
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                           />
                         </label>
                       </div>
@@ -655,14 +655,14 @@
                     <!--* Service Details -->
                     <div class="flex flex-col gap-2 my-4">
                       <h1
-                        class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                        class="mb-4 text-xl font-bold text-center text-secondary md:mb-8 md:text-2xl"
                       >
                         Terminos del Servicio
                       </h1>
                       <!--* Service Description -->
                       <label
                         for="agreement"
-                        class="text-lg font-semibold text-gray-500 text-start"
+                        class="text-lg font-semibold text-secondary text-start"
                       >
                         Descripción
                         <div>
@@ -678,11 +678,11 @@
                               bind:value={inputValue}
                               on:input={handleInput}
                               on:keydown={handleKeyDown}
-                              class="w-full p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                              class="w-full p-2 my-2 font-normal bg-white border-2 rounded-md border-secondary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                             />
                             <button
                               on:click={addBulletPoint}
-                              class="text-white bg-[#cc2936] border-none btn mt-[5px] hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
+                              class="text-white bg-accent border-none btn mt-[5px] hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
                             >
                               <i class="block fa-solid fa-plus md:hidden"
                               ></i><span class="hidden md:block">Añadir</span>
@@ -695,7 +695,7 @@
                               <div class="flex justify-between md:mx-4">
                                 <div class="flex gap-2 mt-1">
                                   <i
-                                    class="fa-solid fa-check mt-[5px] text-[#cc2936]"
+                                    class="fa-solid fa-check mt-[5px] text-accent"
                                   ></i>
                                   <li class="overflow-hidden text-base text-md">
                                     <p
@@ -716,7 +716,7 @@
                                     }}
                                     class="rounded btn-sm"
                                     ><i
-                                      class="fa-solid fa-trash hover:text-[#cc2936] ease-in-out transition-all duration-150"
+                                      class="transition-all duration-150 ease-in-out fa-solid fa-trash hover:text-accent"
                                     ></i></button
                                   >
                                 </div>
@@ -732,7 +732,7 @@
                         <div class="flex col-span-1">
                           <label
                             for="price"
-                            class="text-lg font-semibold text-gray-500 text-start"
+                            class="text-lg font-semibold text-secondary text-start"
                           >
                             Precio
                             <!--* Price Input -->
@@ -744,7 +744,7 @@
                                 placeholder="$0.00"
                                 bind:value={price}
                                 on:keypress={restrictToNumbersAndDecimal}
-                                class="p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                                class="p-2 my-2 font-normal bg-white border-2 rounded-md border-secondary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                               />
                             </div>
                           </label>
@@ -754,7 +754,7 @@
                         <div class="flex col-span-1">
                           <label
                             for="month"
-                            class="text-lg font-semibold text-gray-500 text-start"
+                            class="text-lg font-semibold text-secondary text-start"
                           >
                             Fecha <span class="text-xs">(actual)</span>
                             <!--? Month -->
@@ -766,7 +766,7 @@
                                 readonly
                                 value={month}
                                 on:keypress={handleDateInput}
-                                class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                                class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                               />
                               <!--? Day -->
                               <input
@@ -776,7 +776,7 @@
                                 readonly
                                 value={day}
                                 on:keypress={handleDateInput}
-                                class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                                class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                               />
                               <!--? Year -->
                               <input
@@ -786,7 +786,7 @@
                                 readonly
                                 value={year}
                                 on:keypress={handleDateInput}
-                                class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                                class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                               />
                             </div>
                           </label>
@@ -802,14 +802,14 @@
                           required
                           id="accept"
                           type="checkbox"
-                          class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-gray-300 rounded-sm ring-gray-300 mt-[5px] text-[#cc2936]"
+                          class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-secondary rounded-sm ring-secondary mt-[5px] text-accent"
                         />
                         <label for="accept">
-                          <p class="text-xs text-gray-500 md:text-base">
+                          <p class="text-xs text-secondary md:text-base">
                             He leído y acepto los
                             <!-- href="" -->
                             <span
-                              class="no-underline hover:text-[#BB2532] hover:underline text-[#cc2936]"
+                              class="no-underline hover:text-[#BB2532] hover:underline text-accent"
                               >términos y condiciones</span
                             > de PalitasPR. De igual manera, me comprometo a cumplir
                             con los acuerdos establecidos en este documento. Al someter
@@ -838,7 +838,7 @@
                 >
                   <div class="card-header">
                     <h1
-                      class="flex justify-center pb-4 -mb-4 text-2xl font-bold text-gray-700 border-b-2 md:mb-2 md:pb-8 md:text-4xl lg:text-5xl"
+                      class="flex justify-center pb-4 -mb-4 text-2xl font-bold border-b-2 text-secondary md:mb-2 md:pb-8 md:text-4xl lg:text-5xl"
                     >
                       Revisión de Acuerdo de Servicio
                     </h1>
@@ -847,7 +847,7 @@
                     <!--* Provider Details -->
                     <div class="pb-4 border-b-2">
                       <h1
-                        class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                        class="mb-4 text-xl font-bold text-center text-secondary md:mb-8 md:text-2xl"
                       >
                         Detalles del Proveedor
                       </h1>
@@ -855,7 +855,7 @@
                         <!--* Provider Name -->
                         <label
                           for="service-provider"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Nombre
                           <input
@@ -865,13 +865,13 @@
                             value={response.task.provider_first_name +
                               " " +
                               response.task.provider_last_name}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0"
                           />
                         </label>
                         <!--* Service Provided -->
                         <label
                           for="service"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Servicio
                           <input
@@ -879,13 +879,13 @@
                             id="service"
                             type="text"
                             value={response.task.service}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0"
                           />
                         </label>
                         <!--* Provider Email -->
                         <label
                           for="email"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Correo Electrónico
                           <input
@@ -893,13 +893,13 @@
                             id="email"
                             type="email"
                             value={response.task.provider_email}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                           />
                         </label>
                         <!--* Provider Phone Number -->
                         <label
                           for="phone-number"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Número de Teléfono
                           <input
@@ -907,7 +907,7 @@
                             id="phone-number"
                             type="text"
                             value={response.task.provider_phone}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                           />
                         </label>
                       </div>
@@ -915,7 +915,7 @@
                     <!--* Client Details -->
                     <div class="pb-4 mt-4 border-b-2 md:mt-8">
                       <h1
-                        class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                        class="mb-4 text-xl font-bold text-center text-secondary md:mb-8 md:text-2xl"
                       >
                         Detalles del Cliente
                       </h1>
@@ -923,7 +923,7 @@
                         <!--* Client Name -->
                         <label
                           for="service-client"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Nombre
                           <input
@@ -933,13 +933,13 @@
                             value={response.task.receiver_first_name +
                               " " +
                               response.task.receiver_last_name}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0"
                           />
                         </label>
                         <!--* Client Email -->
                         <label
                           for="clientEmail"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Correo Electrónico
                           <input
@@ -947,13 +947,13 @@
                             id="clientEmail"
                             type="email"
                             value={response.task.receiver_email}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                           />
                         </label>
                         <!--* Client Phone Number -->
                         <label
                           for="clientPhone-number"
-                          class="col-span-1 font-bold text-gray-500 text-md"
+                          class="col-span-1 font-bold text-secondary text-md"
                         >
                           Número de Teléfono
                           <input
@@ -961,7 +961,7 @@
                             id="clientPhone-number"
                             type="text"
                             value={response.task.receiver_phone}
-                            class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                            class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                           />
                         </label>
                       </div>
@@ -969,14 +969,14 @@
                     <!--* Service Details -->
                     <div class="flex flex-col gap-2 my-4">
                       <h1
-                        class="mb-4 text-xl font-bold text-center text-gray-700 md:mb-8 md:text-2xl"
+                        class="mb-4 text-xl font-bold text-center text-secondary md:mb-8 md:text-2xl"
                       >
                         Detalles del servicio
                       </h1>
                       <!--* Service Description -->
                       <label
                         for="agreement"
-                        class="text-lg font-semibold text-gray-500 text-start"
+                        class="text-lg font-semibold text-secondary text-start"
                       >
                         Descripción
                         <div>
@@ -991,7 +991,7 @@
                               <div class="flex justify-between mx-4">
                                 <div class="flex gap-2 mt-1">
                                   <i
-                                    class="fa-solid fa-check mt-[5px] text-[#cc2936]"
+                                    class="fa-solid fa-check mt-[5px] text-accent"
                                   ></i>
                                   <li class="text-base text-md">
                                     {bulletPoint}
@@ -1009,7 +1009,7 @@
                         <div class="flex col-span-1">
                           <label
                             for="price"
-                            class="text-lg font-semibold text-gray-500 text-start"
+                            class="text-lg font-semibold text-secondary text-start"
                           >
                             Precio
                             <!--* Price Input -->
@@ -1019,7 +1019,7 @@
                                 id="price"
                                 type="text"
                                 value={"$" + response.task.price}
-                                class="p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                                class="p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                               />
                             </div>
                           </label>
@@ -1028,7 +1028,7 @@
                         <div class="flex col-span-1">
                           <label
                             for="month"
-                            class="text-lg font-semibold text-gray-500 text-start"
+                            class="text-lg font-semibold text-secondary text-start"
                           >
                             Fecha <span class="text-xs">(actual)</span>
                             <!--? Month -->
@@ -1038,7 +1038,7 @@
                                 id="month"
                                 type="text"
                                 value={response.task.created_at.split(" ")[1]}
-                                class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                                class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                               />
                               <!--? Day -->
                               <input
@@ -1046,7 +1046,7 @@
                                 id="day"
                                 type="text"
                                 value={response.task.created_at.split(" ")[2]}
-                                class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                                class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                               />
                               <!--? Year -->
                               <input
@@ -1054,7 +1054,7 @@
                                 id="year"
                                 type="text"
                                 value={response.task.created_at.split(" ")[3]}
-                                class="w-full p-2 my-2 font-normal border-2 border-gray-300 rounded-md bg-slate-100 focus:outline-none focus:border-gray-300 focus:ring-0 placeholder:text-slate-300"
+                                class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                               />
                             </div>
                           </label>
@@ -1066,14 +1066,14 @@
                       <!--? Signature Input -->
                       <!-- <label for="signature">
                         <h1
-                          class="text-lg font-semibold text-gray-500 text-start"
+                          class="text-lg font-semibold text-secondary text-start"
                         >
                           Firma <span class="text-xs">(electrónica)</span>
                         </h1>
                         <input
                           id="signature"
                           type="text"
-                          class="w-full p-2 my-2 font-normal bg-white border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-300 focus:ring-0"
+                          class="w-full p-2 my-2 font-normal bg-white border-2 rounded-md border-secondary focus:outline-none focus:border-secondary focus:ring-0"
                         />
                       </label> -->
                       <!--? Agreement Checkbox -->
@@ -1083,14 +1083,14 @@
                           checked
                           id="accept"
                           type="checkbox"
-                          class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-gray-300 rounded-sm ring-gray-300 mt-[5px] text-[#cc2936]"
+                          class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-secondary rounded-sm ring-secondary mt-[5px] text-accent"
                         /> -->
                         <label for="accept">
-                          <p class="text-xs text-gray-500 md:text-base">
+                          <p class="text-xs text-secondary md:text-base">
                             He leído y acepto los
                             <a
                               href="/"
-                              class="no-underline hover:text-[#BB2532] hover:underline text-[#cc2936]"
+                              class="no-underline hover:text-[#BB2532] hover:underline text-accent"
                               >términos y condiciones</a
                             > de PalitasPR. De igual manera, me comprometo a cumplir
                             con los acuerdos establecidos en este documento. Al someter
@@ -1104,7 +1104,7 @@
                     <!-- <div> -->
                     <!--* Submit button -->
                     <!-- <button
-                        class="w-full p-2 mt-4 font-semibold text-white bg-[#cc2936] border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
+                        class="w-full p-2 mt-4 font-semibold text-white bg-accent border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
                         >Someter</button
                       >
                     </div> -->
@@ -1169,7 +1169,7 @@
                   {#if response.task.receiver_id === $userDetails.id}
                     <Link
                       to="/create-review/{response.task.id}"
-                      class="grow w-full p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] "
+                      class="grow w-full p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] "
                       >Dejar reseña</Link
                     >
                   {/if}
@@ -1190,7 +1190,7 @@
             <!-- Delete Task (Archive) -->
             <!-- <Button button={deleteTask} {image} /> -->
             <!-- <button
-              class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-[#cc2936] transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+              class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
               >Delete Task</button
             > -->
           </div>
