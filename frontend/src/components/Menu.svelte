@@ -31,6 +31,7 @@
     setTimeout(() => {
       toggleMenu();
       closeDetails();
+      handleHomeClick();
     }, 0);
   }
 
@@ -51,6 +52,15 @@
       document.removeEventListener("click", closeMenu);
     };
   });
+
+  function handleHomeClick(event) {
+    event.preventDefault();
+    if (window.location.pathname === "/") {
+      window.location.reload();
+    } else {
+      window.location.href = "/";
+    }
+  }
 </script>
 
 <div class="flex justify-end w-full m-2 bg-tranparent">
@@ -79,6 +89,7 @@
         href="/"
         class="block gap-2 px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
         on:click={handleLinkClick}
+        on:click={handleHomeClick}
         ><i class="mr-2 fa-solid fa-house text-accent group-hover:text-primary"
         ></i> Home</a
       >
