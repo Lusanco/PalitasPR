@@ -136,5 +136,6 @@ class Profile(BaseModel, Base):
     profile_pic = Column(String(255))
     cover_pic = Column(String(255))
     gallery = Column(String(255))
+    qr_pic = Column(String(255))
 
     user = relationship('User', foreign_keys=[user_id])
