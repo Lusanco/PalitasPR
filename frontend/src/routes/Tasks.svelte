@@ -380,7 +380,7 @@
   <h1 class="text-3xl font-semibold">Tasks</h1>
   <br />
   <div
-    class="flex flex-wrap items-center justify-center w-full gap-1 mx-auto md:gap-2"
+    class="flex flex-wrap items-center justify-center w-full max-w-6xl gap-1 mx-auto md:gap-2"
   >
     <button
       on:click={handleReceivedClick}
