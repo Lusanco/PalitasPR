@@ -128,11 +128,12 @@ class Db_user:
                 contact_dict['task']['service'] = service[0]
 
                 # LOGIC FOR PICTURE QR:
-                # if contact_dict['task']['status'] == 'closed' or contact_dict['task']['status'] == 'reviewed':
-                    # profile = self.get_profile_by_userId(user_id)
-                    #responseAWS, statusAWS = aws_bucket.get_picture('user_id', 'qr_pic', none, profile.qr_pic)
-                    # if statusAWS == 200:
-                        # contact_dict['task']['qr_pic'] = responseAWS['results']
+                if contact_dict['task']['status'] == 'closed' or contact_dict['task']['status'] == 'reviewed':
+                    profile = self.get_profile_by_userId(user_id)
+                    responseAWS, statusAWS = aws_bucket.get_picture('user_id', 'qr_pic', None, profile.qr_pic)
+                    if statusAWS == 200:
+                        contact_dict['task']['qr_pic'] = responseAWS['results']
+
             else:
                 contact_dict['task'] = None
                 contact_dict['service'] = self.session.query(Service.name).filter(Service.id == initialContact.promo.service_id).first()[0]
