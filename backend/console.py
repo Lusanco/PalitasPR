@@ -343,6 +343,15 @@ class DBConsole(cmd.Cmd):
                 print()
                 print(task.all_columns())
                 print("-" * 40)
+
+                # Check if task is not completed and handle QR picture
+                if not task.status:
+                    response = aws_bucket.get_picture(user_id, 'Task', task.id, 'qr.png')
+                    if response['status'] == 'success':
+                        print(f"QR Picture for Task {task.id}:")
+                        print(response['url'])  # Assuming the response contains a URL to the QR picture
+                    else:
+                        print(f"Failed to get QR Picture for Task {task.id}")
         else:
             print(f"No tasks found for user {user_id}")
 
