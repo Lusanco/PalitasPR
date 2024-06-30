@@ -59,13 +59,13 @@
 </script>
 
 <div
-  class="flex flex-col items-center justify-center h-full min-h-screen py-20 m-auto"
+  class="flex flex-col items-center justify-center h-full py-20 m-auto min-h-fit"
 >
   <div class="flex flex-col w-full max-w-5xl gap-4 px-2">
     <div class="flex flex-col gap-4 text-center">
-      <h2 class="text-5xl text-[#cc2936]">FAQ</h2>
+      <h2 class="text-4xl font-bold text-center text-accent">FAQ</h2>
       <br />
-      <p class="max-w-sm mx-auto">
+      <p class="w-full max-w-3xl text-xl text-center">
         Here are some frequently asked questions. If you have any other
         questions, please feel free to contact us.
       </p>
@@ -73,10 +73,10 @@
     <br />
     {#each questions as { question, answer }, index}
       <div
-        class="max-w-3xl px-4 mx-auto bg-white border-b-2 rounded-lg border-[#cc2936] text-[#1f1f1f] transition-all duration-100 hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+        class="max-w-3xl px-4 mx-auto transition-all duration-100 bg-white border-b-2 rounded-lg border-accent text-secondary hover:bg-accent hover:text-primary"
       >
         <button
-          class="w-full px-2 py-4 text-xl font-medium text-left rounded-lg focus:outline-none"
+          class="w-full px-2 py-4 text-2xl font-medium text-left rounded-lg focus:outline-none"
           on:click={() => toggleItem(index)}
         >
           {question}
@@ -85,7 +85,8 @@
           class={`overflow-hidden transition-all duration-300 ${openIndex === index ? "max-h-screen" : "max-h-0"}`}
         >
           <div class="px-4 py-2">
-            <p>{answer}</p>
+            <p class="text-xl">{answer}</p>
+            <br />
           </div>
         </div>
       </div>

@@ -78,7 +78,7 @@
   });
 </script>
 
-<div class="flex flex-col items-center justify-center h-full min-h-screen">
+<div class="flex flex-col items-center justify-center h-full py-20 min-h-fit">
   <div class="flex flex-col gap-4">
     <div class="-mb-2 text-center">
       <h1 class="text-5xl font-bold text-accent">Iniciar Sesión</h1>

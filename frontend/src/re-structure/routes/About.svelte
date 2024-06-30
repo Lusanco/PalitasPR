@@ -1,6 +1,6 @@
 <script>
   import Team from "../components/Team.svelte";
-  import { userSession } from "../../scripts/stores";
+  import { userSession } from "../scripts/stores";
   import axios from "axios";
   import { onMount } from "svelte";
 

@@ -53,10 +53,10 @@
   });
 </script>
 
-<div class="flex justify-end m-2 bg-primary">
+<div class="flex justify-end w-full m-2 bg-tranparent">
   <button
     type="button"
-    class="inline-flex items-center justify-center w-16 h-16 rounded-lg"
+    class="inline-flex items-center justify-center w-20 h-20 rounded-lg"
     aria-controls="navbar-cta"
     aria-expanded={menuOpen}
     on:click={toggleMenu}
@@ -67,10 +67,12 @@
 </div>
 
 <div
-  class={`z-50 bg-primary fixed top-20 right-0 left-0 ${menuOpen ? "block" : "hidden"} bg-transparent md:left-auto md:w-80`}
+  class={`z-50 bg-white fixed top-20 rounded-2xl right-0 left-0 ${menuOpen ? "block" : "hidden"} md:left-auto md:w-80`}
   id="navbar-cta"
 >
-  <ul class="w-full p-4 shadow-xl md:w-80 menu bg-primary rounded-box">
+  <ul
+    class="w-full p-4 text-xl font-semibold shadow-xl md:w-80 menu bg-whte rounded-box"
+  >
     <li>
       <a
         use:link
@@ -186,7 +188,7 @@
             });
         }}
         href="/"
-        class="block px-4 py-3 mt-2 text-sm font-medium text-center rounded-md text-primary bg-accent hover:bg-green-900"
+        class="block px-4 py-3 mt-2 text-xl font-semibold text-center rounded-md text-primary bg-accent hover:bg-green-900"
         on:click={handleLinkClick}>Logout</a
       >
     </li>

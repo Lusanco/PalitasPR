@@ -24,11 +24,11 @@
 </script>
 
 <div
-  class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto sm:p-10"
+  class="flex flex-col items-center justify-center h-full max-w-xl min-h-screen p-6 m-auto sm:p-10"
 >
   <div class="mb-8 text-center">
-    <h1 class="text-4xl font-bold text-accent text-nowrap">Sesión Expirada</h1>
-    <p class="mt-1 text-lg text-secondary">Inicia sesión para continuar</p>
+    <h1 class="text-4xl font-bold text-accent">Para Accesar Este Contenido</h1>
+    <p class="mt-1 text-lg text-secondary">Inicie sesión con su cuenta</p>
   </div>
   <div class="">
     <button
