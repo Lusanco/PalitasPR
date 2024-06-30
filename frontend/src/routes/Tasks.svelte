@@ -9,11 +9,15 @@
   import Button from "../components/Button.svelte";
   import { split } from "postcss/lib/list";
   import { afterUpdate } from "svelte";
+  import QR from "../components/QR.svelte";
 
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = String(today.getDate()).padStart(2, "0");
+
+  let view;
+  let providerName;
 
   let image = null;
   let someterTask = {
@@ -1155,6 +1159,32 @@
                         >
                           Cerrar
                         </button>
+                      {/if}
+                    {/if}
+                    <!--* ATH Movil QR -->
+                    {#if response.task.status === "closed"}
+                      {#if response.task.provider_id === $userDetails.id}
+                        <div
+                          class="flex items-center justify-center mx-auto overflow-x-auto"
+                        >
+                          <QR
+                            view={"provider"}
+                            providerName={$userDetails.first_name +
+                              " " +
+                              $userDetails.last_name}
+                          ></QR>
+                        </div>
+                      {:else if response.task.receiver_id === $userDetails.id}
+                        <div
+                          class="flex items-center justify-center mx-auto overflow-x-auto"
+                        >
+                          <QR
+                            view={"receiver"}
+                            providerName={response.task.provider_first_name +
+                              " " +
+                              response.task.provider_last_name}
+                          ></QR>
+                        </div>
                       {/if}
                     {/if}
                   </div>
