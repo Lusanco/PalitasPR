@@ -8,7 +8,7 @@
   let profileID = writable();
 
   let twcss =
-    "flex flex-col items-center justify-center w-full h-24 font-bold text-center transition duration-200 ease-in-out rounded-lg shadow-md cursor-pointer md:h-32 text- bg-white text-md md:text-2xl hover:bg-accent hover:text-primary";
+    "flex flex-col items-center justify-center font-bold text-center transition-all duration-200 rounded-lg shadow-md cursor-pointer bg-white min-h-20 text-2xl md:text-4xl h-40 w-40 md:w-80 hover:bg-accent hover:text-primary";
 
   // Check if the user is logged in
   onMount(() => {
@@ -31,16 +31,22 @@
 </script>
 
 <div
-  class="flex flex-col items-center justify-center h-full min-h-screen bg-base"
+  class="flex flex-col items-center justify-center h-full min-h-screen px-2 bg-primary"
 >
-  <div class="flex w-full max-w-6xl">
+  <div
+    class="flex flex-wrap items-center justify-center w-full max-w-3xl gap-4"
+  >
     <div
-      class="grid w-full grid-cols-2 grid-rows-2 gap-2 p-4 m-4 md:p-8 md:gap-3 md:m-12"
+      class="flex flex-wrap items-center justify-center w-full max-w-3xl gap-4"
     >
       <!--* Create Service button -->
       <Link class={twcss} to="/create-service">Create Service</Link>
       <!--* Create Request button -->
       <Link class={twcss} to="/create-request">Create Request</Link>
+    </div>
+    <div
+      class="flex flex-wrap items-center justify-center w-full max-w-3xl gap-4"
+    >
       <!--* Tasks button -->
       <Link class={twcss} to="/tasks">Tasks</Link>
       <!--* Profile button -->
