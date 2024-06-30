@@ -31,7 +31,6 @@
     setTimeout(() => {
       toggleMenu();
       closeDetails();
-      handleHomeClick();
     }, 0);
   }
 
