@@ -1,6 +1,4 @@
 <script>
-  // @ts-nocheck
-
   import { onMount } from "svelte";
   import axios from "axios";
   import { data, response, userSession } from "../scripts/stores";
@@ -80,7 +78,7 @@
   let sentReceived = writable(true);
   let contactRes = writable([]);
   let promoRequestID = writable();
-  let userDetails = writable("");
+  let userDetails = writable();
   let submitData = writable();
   let price = "";
   let terms;
