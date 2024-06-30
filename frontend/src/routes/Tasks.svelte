@@ -408,8 +408,9 @@
       {/if}
       {#each contactResponses as response, index}
         <div
-          class="max-w-6xl px-4 mx-auto w-full bg-white border-b-2 rounded-lg border-accent text-[#1f1f1f] flex flex-col transition-all duration-100 hover:bg-accent hover:text-[#f1f1f1]"
+          class="flex flex-col w-full max-w-6xl px-4 mx-auto transition-all duration-100 bg-white border-b-2 rounded-lg border-accent text-secondary hover:bg-accent/10"
         >
+          <!-- class="w-full overflow-hidden transition-all duration-200 ease-in-out transform border-b-2 md:border-b-[3px] rounded-md shadow-md min-h-40 md:rounded-2xl card card-side bg-white hover:bg-accent hover:bg-opacity-10 active:scale-95 border-accent" -->
           <button
             class="flex flex-col w-full gap-1 px-2 py-4 text-lg font-medium text-left rounded-lg md:text-xl focus:outline-none"
             on:click={() => toggleItem(index)}
