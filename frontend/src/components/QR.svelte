@@ -6,14 +6,21 @@
   import Button from "./Button.svelte";
 
   let userDetails = writable();
-
   let qr_pic = null;
   let imageUrl = null;
   let id;
   let fileInput;
-  let errMessage;
-  let guardarQR;
   let profile;
+
+  let button = {
+    name: "Guardar",
+    method: "PUT",
+    url: "",
+    headers: "multipart/form-data",
+    twcss:
+      "flex-1 w-full px-4 py-2 text-lg text-white border-none btn bg-accent",
+    misc: { "App Location": "Guardar QR" },
+  };
 
   export let view;
   export let providerName;
@@ -27,16 +34,8 @@
         id = userStatusRes.data.profile_id;
         console.log("User ID:", id);
 
-        /* // Update guardarQR with the correct URL
-        guardarQR = {
-          name: "Guardar",
-          method: "POST",
-          url: `/api/user/profile/${id}`,
-          headers: "application/json",
-          twcss:
-            "flex-1 w-full px-4 py-2 text-lg text-white border-none btn bg-accent",
-          misc: { "App Location": "Guardar QR" },
-        }; */
+        // Update button.url with the correct ID
+        button.url = `/api/user/profile/${id}`;
 
         return axios.get(`/api/user/profile/${id}`);
       })
@@ -62,51 +61,35 @@
     fileInput.value = null;
   }
 
-  /* function handleSave() {
-    if (image) {
+  function handleEdit() {
+    if (qr_pic) {
       const formData = new FormData();
-      formData.append("qr_pic", image);
+      formData.append("qr_pic", qr_pic);
 
       axios
-        .put(`/api/user/profile/${id}`, formData, {
+        .put(button.url, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         })
         .then((response) => {
-          imageUrl = URL.createObjectURL(image);
-          image = null;
-          fileInput.value = null;
+          imageUrl = URL.createObjectURL(qr_pic);
           console.log("Image uploaded successfully:", response);
         })
         .catch((error) => {
           console.error("Error uploading image:", error);
         });
     }
-  } */
-
-  function handleEdit() {
-    qr_pic = null;
-    imageUrl = null;
-    fileInput.value = null;
-
-    axios
-      .put(`/api/user/profile/${id}`, { qr_pic: imageUrl })
-      .then((response) => {
-        console.log("Image URL updated successfully:", response);
-      })
-      .catch((error) => {
-        console.error("Error updating image URL:", error);
-      });
   }
 
   function handleDelete() {
     axios
-      .delete(`/api/user/profile/${id}`)
+      .put(`/api/user/profile/${id}`)
       .then((response) => {
         qr_pic = null;
+        console.log("QR code deleted successfully:", qr_pic);
         imageUrl = null;
-        fileInput.value = null;
+        console.log("Image deleted successfully:", response);
       })
       .catch((error) => {
         console.error("Error deleting image:", error);
@@ -116,14 +99,14 @@
 
 {#if view === "provider"}
   <div
-    class="flex items-center justify-center w-full m-2 bg-white rounded-md md:m-20 card"
+    class="flex items-center justify-center w-full h-full p-8 m-2 rounded-md bg-neutral bg-opacity-30 md:m-12 card"
   >
-    <h1
-      class="text-xl md:text-4xl text-center mb-6 font-semibold text-[#1f1f1f]"
-    >
-      Sube tu QR de Ath Movil aquí
-    </h1>
     {#if imageUrl === null}
+      <h1
+        class="text-xl md:text-4xl text-center mb-6 font-semibold text-[#1f1f1f]"
+      >
+        Sube tu QR de Ath Movil aquí
+      </h1>
       <input
         type="file"
         name="image"
@@ -134,39 +117,7 @@
         accept="image/*"
       />
       <div class="flex w-full gap-2 mt-6">
-        <div
-          class="flex-1"
-          class:opacity-50={!qr_pic}
-          class:pointer-events-none={!qr_pic}
-        >
-          <!-- <Button button={guardarQR} {image} on:click={handleSave} /> -->
-          <button
-            class="flex-1 px-4 py-2 text-lg border-2 btn border-accent text-accent"
-            class:opacity-50={!qr_pic}
-            class:pointer-events-none={!qr_pic}
-            on:click={() => {
-              if (qr_pic) {
-                console.log("Uploading image:", qr_pic);
-
-                axios
-                  .put(`/api/user/profile/${id}`, qr_pic, {
-                    headers: {
-                      "Content-Type": qr_pic.type,
-                    },
-                  })
-                  .then((response) => {
-                    imageUrl = URL.createObjectURL(qr_pic);
-                    /* qr_pic = null;
-                    fileInput.value = null; */
-                    console.log("Image uploaded successfully:", response);
-                  })
-                  .catch((error) => {
-                    console.error("Error uploading image:", error);
-                  });
-              }
-            }}>Guardar</button
-          >
-        </div>
+        <Button {button} image={qr_pic} />
         <button
           class="flex-1 px-4 py-2 text-lg border-2 btn border-accent text-accent"
           class:opacity-50={!qr_pic}
@@ -180,14 +131,20 @@
         </button>
       </div>
     {:else}
+      <!--* View QR -->
       <div class="flex flex-col items-center justify-center">
+        <h1
+          class="text-xl md:text-4xl text-center mb-6 font-semibold text-[#1f1f1f]"
+        >
+          Tu QR de Ath Movil
+        </h1>
         <img src={imageUrl} alt="QR Code" class="w-full h-auto rounded-md" />
-        <div class="flex w-full gap-2 mt-6">
+        <!-- <div class="flex w-full gap-2 mt-6">
           <button class="flex-1 px-4 py-2 text-lg btn" on:click={handleEdit}>
             <i
               class="flex items-center justify-center text-lg fa-solid fa-pen-to-square"
             ></i>
-            <span class="hidden md:block">Edit</span>
+            <span class="hidden md:block">Editar</span>
           </button>
           <button class="flex-1 px-4 py-2 text-lg btn" on:click={handleDelete}>
             <i
@@ -195,7 +152,7 @@
             ></i>
             <span class="hidden md:block">Eliminar</span>
           </button>
-        </div>
+        </div> -->
       </div>
     {/if}
   </div>
