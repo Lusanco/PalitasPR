@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import { userSession, data } from "../scripts/stores";
   import Button from "../components/Button.svelte";
+  import { navigate } from "svelte-routing";
 
   let description = "";
   let rating = "";
@@ -71,9 +72,15 @@
     console.log("Data updated:", $data);
   }
 
+  function handleButtonClick() {
+    // Navigate to a new route or URL
+    navigate("/tasks");
+  }
+
   function handleKeyPress(event) {
     if (event.key === "Enter") {
       handleReviewSubmit();
+      handleButtonClick();
     }
   }
 </script>
@@ -112,7 +119,7 @@
         <p class="text-accent">{errorMessage}</p>
       {/if}
       <div class="mt-5 form-control">
-        <Button {image} {button} />
+        <Button {image} {button} on:click={handleButtonClick} />
       </div>
     </div>
   </div>
