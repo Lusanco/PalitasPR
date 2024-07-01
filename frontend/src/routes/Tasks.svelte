@@ -834,7 +834,7 @@
               </div>
             {:else}
               <div
-                class="w-full min-w-full min-h-full bg-white shadow-lg rounded-2xl"
+                class="w-full min-w-full min-h-full p-5 bg-white shadow-lg rounded-2xl"
               >
                 <div
                   class="flex flex-col overflow-y-scroll min-h-40 max-h-96 md:p-8 lg:p-12 md:card"
@@ -1165,7 +1165,7 @@
                     {#if response.task.status === "closed"}
                       {#if response.task.provider_id === $userDetails.id}
                         <div
-                          class="flex items-center justify-center mx-auto overflow-x-auto"
+                          class="flex items-center justify-center w-full h-full overflow-x-auto"
                         >
                           <QR
                             view={"provider"}
