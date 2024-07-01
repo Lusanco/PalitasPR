@@ -8,7 +8,6 @@
   let userDetails = writable();
 
   let qr_pic = null;
-  let image = qr_pic;
   let imageUrl = null;
   let id;
   let fileInput;
@@ -25,37 +24,30 @@
       .then((userStatusRes) => {
         userSession.set(true);
         userDetails.set(userStatusRes.data);
-        console.log("userStatusRes", userStatusRes.data);
-
         id = userStatusRes.data.profile_id;
-        console.log("id", id);
+        console.log("User ID:", id);
 
-        // Update guardarQR with the correct URL
+        /* // Update guardarQR with the correct URL
         guardarQR = {
           name: "Guardar",
           method: "POST",
           url: `/api/user/profile/${id}`,
-          headers: "application/json", // "application/json"
+          headers: "application/json",
           twcss:
             "flex-1 w-full px-4 py-2 text-lg text-white border-none btn bg-accent",
           misc: { "App Location": "Guardar QR" },
-        };
+        }; */
 
-        axios
-          .get(`/api/user/profile/${id}`)
-          .then((response) => {
-            profile = response.data.results;
-            console.log("profile", profile);
-            if (profile.qr_pic) {
-              imageUrl = profile.qr_pic;
-            }
-          })
-          .catch((error) => {
-            console.error("Error fetching profile data:", error);
-          });
+        return axios.get(`/api/user/profile/${id}`);
+      })
+      .then((response) => {
+        profile = response.data.results;
+        if (profile.qr_pic) {
+          imageUrl = profile.qr_pic;
+        }
       })
       .catch((error) => {
-        console.error("Error fetching user status:", error);
+        console.error("Error fetching profile data:", error);
         userSession.set(false);
       });
   });
@@ -70,10 +62,10 @@
     fileInput.value = null;
   }
 
-  function handleSave() {
-    if (qr_pic) {
+  /* function handleSave() {
+    if (image) {
       const formData = new FormData();
-      formData.append("qr_pic", qr_pic);
+      formData.append("qr_pic", image);
 
       axios
         .put(`/api/user/profile/${id}`, formData, {
@@ -82,8 +74,8 @@
           },
         })
         .then((response) => {
-          imageUrl = URL.createObjectURL(qr_pic);
-          qr_pic = null;
+          imageUrl = URL.createObjectURL(image);
+          image = null;
           fileInput.value = null;
           console.log("Image uploaded successfully:", response);
         })
@@ -91,6 +83,21 @@
           console.error("Error uploading image:", error);
         });
     }
+  } */
+
+  function handleEdit() {
+    qr_pic = null;
+    imageUrl = null;
+    fileInput.value = null;
+
+    axios
+      .put(`/api/user/profile/${id}`, { qr_pic: imageUrl })
+      .then((response) => {
+        console.log("Image URL updated successfully:", response);
+      })
+      .catch((error) => {
+        console.error("Error updating image URL:", error);
+      });
   }
 
   function handleDelete() {
@@ -107,9 +114,6 @@
   }
 </script>
 
-<!-- QR Component HTML -->
-
-<!-- <div class="flex items-center justify-center min-h-screen m-5 overflow-x-auto"> -->
 {#if view === "provider"}
   <div
     class="flex items-center justify-center w-full m-2 bg-white rounded-md md:m-20 card"
@@ -135,9 +139,34 @@
           class:opacity-50={!qr_pic}
           class:pointer-events-none={!qr_pic}
         >
-          <Button button={guardarQR} {image} on:click={handleSave} />
-        </div>
+          <!-- <Button button={guardarQR} {image} on:click={handleSave} /> -->
+          <button
+            class="flex-1 px-4 py-2 text-lg border-2 btn border-accent text-accent"
+            class:opacity-50={!qr_pic}
+            class:pointer-events-none={!qr_pic}
+            on:click={() => {
+              if (qr_pic) {
+                console.log("Uploading image:", qr_pic);
 
+                axios
+                  .put(`/api/user/profile/${id}`, qr_pic, {
+                    headers: {
+                      "Content-Type": qr_pic.type,
+                    },
+                  })
+                  .then((response) => {
+                    imageUrl = URL.createObjectURL(qr_pic);
+                    /* qr_pic = null;
+                    fileInput.value = null; */
+                    console.log("Image uploaded successfully:", response);
+                  })
+                  .catch((error) => {
+                    console.error("Error uploading image:", error);
+                  });
+              }
+            }}>Guardar</button
+          >
+        </div>
         <button
           class="flex-1 px-4 py-2 text-lg border-2 btn border-accent text-accent"
           class:opacity-50={!qr_pic}
@@ -154,11 +183,11 @@
       <div class="flex flex-col items-center justify-center">
         <img src={imageUrl} alt="QR Code" class="w-full h-auto rounded-md" />
         <div class="flex w-full gap-2 mt-6">
-          <button class="flex-1 px-4 py-2 text-lg btn" on:click={handleSave}>
+          <button class="flex-1 px-4 py-2 text-lg btn" on:click={handleEdit}>
             <i
               class="flex items-center justify-center text-lg fa-solid fa-pen-to-square"
             ></i>
-            <span class="hidden md:block">Guardar</span>
+            <span class="hidden md:block">Edit</span>
           </button>
           <button class="flex-1 px-4 py-2 text-lg btn" on:click={handleDelete}>
             <i
@@ -181,4 +210,3 @@
     </p>
   </div>
 {/if}
-<!-- </div> -->
