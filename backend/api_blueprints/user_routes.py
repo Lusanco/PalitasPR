@@ -212,10 +212,15 @@ def get_profile(profile_id):
     if request.method == "PUT":
         if 'image' in request.files: # ONLY FOR QR PIC FIX LATER FOR OTHER PICS
             user_id = current_user.id
+            profile = Db_user(g.db_session).get_profile_by_userId(user_id)
+            if profile.id != profile_id:
+                return make_response(jsonify({'error': 'Cant modify another user profile'}), 400)
+
             image = request.files
             image = image['image']
             pic_name = secure_filename(image.filename)
             pic_bytes = image.read()
+
             if pic_name == '':
                 return make_response(jsonify({'error': 'Empty File Name'}), 400)
 
@@ -223,7 +228,7 @@ def get_profile(profile_id):
                 user_id, 'Profile', None, pic_name, pic_bytes)
             if status != 200:
                 return make_response(jsonify(response), status)
-            profile = Db_user(g.db_session).get_profile_by_userId(user_id)
+
             profile.qr_pic = pic_name
             g.db_session.add(profile)
             g.db_session.commit()
