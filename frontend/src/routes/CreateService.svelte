@@ -5,6 +5,7 @@
   import Button from "../components/Button.svelte";
   import { onMount } from "svelte";
   import axios from "axios";
+  import { navigate } from "svelte-routing";
 
   let image = null;
   let town = "all";
@@ -77,6 +78,11 @@
 
   function handleButtonClick() {
     document.getElementById("townsDropdown").classList.toggle("hidden");
+  }
+
+  function handleSubmit() {
+    // Navigate to a new route or URL
+    navigate("/tasks");
   }
 </script>
 
@@ -201,7 +207,7 @@
       {/if}
     </div>
 
-    <Button {button} {image} />
+    <Button on:click={handleSubmit} {button} {image} />
     <div />
   </div>
 </div>

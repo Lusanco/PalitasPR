@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, make_response, g
 from flask_login import login_user, logout_user, login_required, current_user
 from db.db_operations import DBOperations
 from db.db_user import Db_user
+from werkzeug.utils import secure_filename
 import emails
 import aws_bucket
 
@@ -209,15 +210,39 @@ def get_profile(profile_id):
         return make_response(jsonify({"results": profile_dict}), 200)
 
     if request.method == "PUT":
-        data = request.get_json()
-        if "qr_pic" in data:
-            data.pop("qr_pic")
-        data["id"] = profile_id
+        if 'image' in request.files: # ONLY FOR QR PIC FIX LATER FOR OTHER PICS
+            user_id = current_user.id
+            profile = Db_user(g.db_session).get_profile_by_userId(user_id)
+            if profile.id != profile_id:
+                return make_response(jsonify({'error': 'Cant modify another user profile'}), 400)
 
-        response, status = DBOperations(g.db_session).update({"Profile": data})
-        if status == 200:
+            image = request.files
+            image = image['image']
+            pic_name = secure_filename(image.filename)
+            pic_bytes = image.read()
+
+            if pic_name == '':
+                return make_response(jsonify({'error': 'Empty File Name'}), 400)
+
+            response, status = aws_bucket.put_picture(
+                user_id, 'Profile', None, pic_name, pic_bytes)
+            if status != 200:
+                return make_response(jsonify(response), status)
+
+            profile.qr_pic = pic_name
+            g.db_session.add(profile)
             g.db_session.commit()
-        return make_response(jsonify(response), status)
+            return make_response(jsonify({'results': 'ok'}), 200)
+        else: # ONLY FOR NO PICS FIX LATER
+            data = request.get_json()
+            if "qr_pic" in data:
+                data.pop("qr_pic")
+            data["id"] = profile_id
+
+            response, status = DBOperations(g.db_session).update({"Profile": data})
+            if status == 200:
+                g.db_session.commit()
+            return make_response(jsonify(response), status)
 
 
 @user_bp.route("/update", methods=["GET"])
