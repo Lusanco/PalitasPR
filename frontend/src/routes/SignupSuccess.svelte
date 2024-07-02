@@ -30,12 +30,12 @@
       Has iniciado sesión en tu cuenta.
     </p>
     <p class="px-6 pt-4 text-sm text-center text-secondary">
-      <a use:link href="/" rel="noopener noreferrer" role="button">
+      <a use:link href="/login" rel="noopener noreferrer" role="button">
         <button
           type="button"
           class="px-6 bg-accent text-primary hover:text-secondary hover:bg-white btn"
         >
-          Continuar
+          Iniciar Sesión
         </button>
       </a>
     </p>
