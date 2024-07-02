@@ -30,7 +30,7 @@
       <svg
         viewBox="0 0 224 12"
         fill="currentColor"
-        class="w-full -mb-1 bg-transparent border-b-2 shadow-2xl text-accent/70 border-accent"
+        class="w-full -mb-1 bg-transparent shadow-2xl text-accent"
         preserveAspectRatio="none"
       >
         <path
@@ -60,7 +60,7 @@
         <button
           on:click={scrollToTeam}
           aria-label="Scroll down"
-          class="flex items-center justify-center w-10 h-10 mx-auto duration-300 transform border-2 rounded-full shadow-lg border-accent text-accent hover:shadow-sm hover:scale-110"
+          class="flex items-center justify-center w-10 h-10 mx-auto border-2 rounded-full shadow-lg md:hidden border-accent text-accent"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
