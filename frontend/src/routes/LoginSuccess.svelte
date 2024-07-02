@@ -24,15 +24,15 @@
 >
   <div class="mb-8 text-center">
     <h1 class="my-3 text-3xl font-bold text-wrap text-accent">
-      Login Successful
+      Sesión iniciada correctamente
     </h1>
-    <p class="px-6 mt-3 text-lg text-center">You are now logged in.</p>
+    <p class="px-6 mt-3 text-lg text-center">Ahora estás conectado.</p>
     <p class="px-6 pt-4 text-sm text-center text-secondary">
       <a
         href="/"
         class="px-6 bg-accent text-primary hover:text-secondary hover:bg-white btn"
       >
-        Continue
+        Continuar
       </a>
     </p>
   </div>
