@@ -59,12 +59,13 @@
   function handleKeydown(event) {
     if (event.key === "Enter") {
       page = 1;
+      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=1`
       buttonRef.buttonLogic();
     }
   }
 
   function nextPage() {
-    if (page < totalPages) {
+    if ($response.data.page < $response.data.total_pages) {
       page += 1;
       button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
       buttonRef.buttonLogic();
@@ -72,7 +73,7 @@
   }
 
   function previousPage() {
-    if (page > 1) {
+    if ($response.data.page > 1) {
       page -= 1;
       button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
       buttonRef.buttonLogic();
@@ -233,12 +234,12 @@
     <div class="flex justify-between w-full max-w-md mx-auto">
       <button
         on:click={previousPage}
-        class={`btn ${page > 1 ? "" : "cursor-not-allowed bg-black/20"}`}
+        class={`btn ${$response.data.page > 1 ? "" : "cursor-not-allowed bg-black/20"}`}
         >Previous</button
       >
       <button
         on:click={nextPage}
-        class={`btn ${page < totalPages ? "" : "cursor-not-allowed bg-black/20"}`}
+        class={`btn ${$response.data.page < $response.data.total_pages ? "" : "cursor-not-allowed bg-black/20"}`}
         >Next</button
       >
     </div>
