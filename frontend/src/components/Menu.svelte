@@ -90,7 +90,7 @@
         on:click={handleLinkClick}
         on:click={handleHomeClick}
         ><i class="mr-2 fa-solid fa-house text-accent group-hover:text-primary"
-        ></i> Home</a
+        ></i> Inicio</a
       >
     </li>
     <li>
@@ -101,7 +101,7 @@
         on:click={handleLinkClick}
         ><i
           class="mr-2 fa-solid fa-table-columns text-accent group-hover:text-primary"
-        ></i> Dashboard</a
+        ></i> Tablero</a
       >
     </li>
     <li>
@@ -111,14 +111,14 @@
         class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
         on:click={handleLinkClick}
         ><i class="mr-2 fa-solid fa-user text-accent group-hover:text-primary"
-        ></i> Profile</a
+        ></i> Perfil</a
       >
     </li>
     <li>
       <details bind:open={$detailsOpen}>
         <summary
           class="px-5 py-3 rounded text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
-          >More</summary
+          >Más</summary
         >
         <ul>
           <li>
@@ -129,18 +129,7 @@
               on:click={handleLinkClick}
               ><i
                 class="mr-2 fa-solid fa-book text-accent group-hover:text-primary"
-              ></i> Terms of Use</a
-            >
-          </li>
-          <li>
-            <a
-              use:link
-              href={`/about`}
-              class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
-              on:click={handleLinkClick}
-              ><i
-                class="mr-2 fa-solid fa-circle-info text-accent group-hover:text-primary"
-              ></i> About us</a
+              ></i> Términos de uso</a
             >
           </li>
           <li>
@@ -151,7 +140,18 @@
               on:click={handleLinkClick}
               ><i
                 class="mr-2 fa-solid fa-lock text-accent group-hover:text-primary"
-              ></i> Privacy</a
+              ></i> Privacidad</a
+            >
+          </li>
+          <li>
+            <a
+              use:link
+              href={`/about`}
+              class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+              on:click={handleLinkClick}
+              ><i
+                class="mr-2 fa-solid fa-circle-info text-accent group-hover:text-primary"
+              ></i> Acerca de nosotros</a
             >
           </li>
           <li>
@@ -162,7 +162,7 @@
               on:click={handleLinkClick}
               ><i
                 class="mr-2 fa-solid fa-envelope text-accent group-hover:text-primary"
-              ></i> Contact</a
+              ></i> Contáctanos</a
             >
           </li>
           <li>
@@ -173,7 +173,7 @@
               on:click={handleLinkClick}
               ><i
                 class="mr-2 fa-solid fa-circle-question text-accent group-hover:text-primary"
-              ></i> FAQ</a
+              ></i> Preguntas</a
             >
           </li>
         </ul>
