@@ -29,6 +29,7 @@
     <p class="px-6 mt-3 text-lg text-center">Ahora estás conectado.</p>
     <p class="px-6 pt-4 text-sm text-center text-secondary">
       <a
+        use:link
         href="/"
         class="px-6 bg-accent text-primary hover:text-secondary hover:bg-white btn"
       >
