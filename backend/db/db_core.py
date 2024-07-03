@@ -30,7 +30,7 @@ class Db_core:
     def __init__(self, db_session):
         self.session = db_session
 
-    def landing_searchBar(self, model=None, service=None, town_id = 0, page=1, limit=10):
+    def landing_searchBar(self, model=None, service=None, town_id = 0, page=1, limit=5):
         """
         Main search for services provided in specific towns based on the provided model, service, and town ID.
         This represents the user typing inside the landing page searchbar looking for a certain service.
