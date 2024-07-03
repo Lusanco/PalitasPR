@@ -353,7 +353,7 @@
   }
 
   function handleReceivedClick() {
-    loading = true;
+    cardLoading = true;
     axios
       .get("/api/user/contacts")
       .then((userContactsRes) => {
@@ -367,7 +367,7 @@
         console.error("Error fetching received contacts:", error);
       })
       .finally(() => {
-        loading = false;
+        cardLoading = false;
       });
   }
 
@@ -403,37 +403,41 @@
   >
     <h1 class="text-3xl font-semibold">Tasks</h1>
     <br />
-      <div
-        class="flex flex-wrap items-center justify-center w-full max-w-6xl gap-1 mx-auto md:gap-2"
+    <div
+      class="flex flex-wrap items-center justify-center w-full max-w-6xl gap-1 mx-auto md:gap-2"
+    >
+      <button
+        on:click={handleReceivedClick}
+        class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
       >
-        <button
-          on:click={handleReceivedClick}
-          class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
-        >
-          Received
-        </button>
-        <button
-          on:click={handleSentClick}
-          class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
-        >
-          Sent
-        </button>
-      </div>
+        Received
+      </button>
+      <button
+        on:click={handleSentClick}
+        class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+      >
+        Sent
+      </button>
+    </div>
     <div class="flex flex-col w-full h-full py-4 mx-auto">
       {#if $contactRes}
         {#if $contactRes.length === 0}
-          <div class="">
-            <h1
-              class="flex justify-center mt-12 text-xl font-semibold text-center md:mt-24 md:text-3xl"
-            >
-              Aún no tiene tareas
-            </h1>
-          </div>
+          {#if cardLoading}
+            <Loading />
           {:else}
-            {#if cardLoading}
-              <Loading />
-            {:else}
-          {#each contactResponses as response, index}
+            <div class="">
+              <h1
+                class="flex justify-center mt-12 text-xl font-semibold text-center md:mt-24 md:text-3xl"
+              >
+                Aún no tiene tareas
+              </h1>
+            </div>
+          {/if}
+        {/if}
+        {#each contactResponses as response, index}
+          {#if cardLoading}
+            <Loading />
+          {:else}
             <div
               class="flex flex-col w-full max-w-6xl px-4 mx-auto transition-all duration-100 bg-white border-b-2 rounded-lg border-accent text-secondary hover:bg-accent/10"
             >
@@ -481,8 +485,19 @@
                       >{response.task.status}</span
                     >
                   {/if}
+                  {#if response.promo_id}
+                    <span class="bg-[#f1f1f1] p-2 rounded-badge text-[#1f1f1f]"
+                      >Servicio</span
+                    >
+                  {:else}
+                    <span class="bg-[#f1f1f1] p-2 rounded-badge text-[#1f1f1f]"
+                      >Solicitud</span
+                    >
+                  {/if}
                   {#if response.receiver_read === false}
-                    <span class="w-10 h-10 bg-accent rounded-badge animate-ping">
+                    <span
+                      class="w-10 h-10 bg-accent rounded-badge animate-ping"
+                    >
                     </span>
                   {:else if response.receiver_read === true}
                     <span class="w-10 h-10 bg-[#f1f1f1] rounded-badge"> </span>
@@ -508,7 +523,9 @@
                     {$sentReceived ? response.phone : $userDetails.phone}
                   </span>
                   <span class="text-center md:text-end">
-                    {$sentReceived ? response.contact_email : $userDetails.email}
+                    {$sentReceived
+                      ? response.contact_email
+                      : $userDetails.email}
                   </span>
                 </div>
               </button>
@@ -553,7 +570,9 @@
                           >
                             Detalles del Proveedor
                           </h1>
-                          <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
+                          <div
+                            class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2"
+                          >
                             <!--* Provider Name -->
                             <label
                               for="service-provider"
@@ -585,9 +604,9 @@
                               />
                             </label>
                             <!-- 
-                          condition       received     sent
-                          $sentReceived ? response. : response.
-                          -->
+                        condition       received     sent
+                        $sentReceived ? response. : response.
+                         -->
                             <!--* Provider Email -->
                             <label
                               for="email"
@@ -629,7 +648,9 @@
                           >
                             Detalles del Cliente
                           </h1>
-                          <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
+                          <div
+                            class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2"
+                          >
                             <!--* Client Name -->
                             <label
                               for="service-client"
@@ -695,8 +716,8 @@
                             Descripción
                             <div>
                               <p class="text-xs md:text-sm">
-                                Describa el servicio ofrecido. Puede añadir más de
-                                un artículo a la lista.
+                                Describa el servicio ofrecido. Puede añadir más
+                                de un artículo a la lista.
                               </p>
                               <!--* Details input -->
                               <!-- When task === null -->
@@ -713,7 +734,9 @@
                                   class="text-white bg-accent border-none btn mt-[5px] hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
                                 >
                                   <i class="block fa-solid fa-plus md:hidden"
-                                  ></i><span class="hidden md:block">Añadir</span>
+                                  ></i><span class="hidden md:block"
+                                    >Añadir</span
+                                  >
                                 </button>
                               </div>
                               <!-- WHEN task exists: $bulletPointsStore = task.terms = ['termino1', 'termino2']-->
@@ -841,11 +864,11 @@
                                 <span
                                   class="no-underline hover:text-[#BB2532] hover:underline text-accent"
                                   >términos y condiciones</span
-                                > de PalitasPR. De igual manera, me comprometo a cumplir
-                                con los acuerdos establecidos en este documento. Al
-                                someter este formulario, acepto que la información
-                                proporcionada es verídica y correcta y podría ser utilizada
-                                para fines de contacto y/o asuntos legales.
+                                > de PalitasPR. De igual manera, me comprometo a
+                                cumplir con los acuerdos establecidos en este documento.
+                                Al someter este formulario, acepto que la información
+                                proporcionada es verídica y correcta y podría ser
+                                utilizada para fines de contacto y/o asuntos legales.
                               </p>
                             </label>
                           </div>
@@ -881,7 +904,9 @@
                           >
                             Detalles del Proveedor
                           </h1>
-                          <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
+                          <div
+                            class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2"
+                          >
                             <!--* Provider Name -->
                             <label
                               for="service-provider"
@@ -949,7 +974,9 @@
                           >
                             Detalles del Cliente
                           </h1>
-                          <div class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2">
+                          <div
+                            class="grid grid-cols-1 gap-2 mt-4 md:grid-cols-2"
+                          >
                             <!--* Client Name -->
                             <label
                               for="service-client"
@@ -1067,7 +1094,9 @@
                                     readonly
                                     id="month"
                                     type="text"
-                                    value={response.task.created_at.split(" ")[1]}
+                                    value={response.task.created_at.split(
+                                      " "
+                                    )[1]}
                                     class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                                   />
                                   <!--? Day -->
@@ -1075,7 +1104,9 @@
                                     readonly
                                     id="day"
                                     type="text"
-                                    value={response.task.created_at.split(" ")[2]}
+                                    value={response.task.created_at.split(
+                                      " "
+                                    )[2]}
                                     class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                                   />
                                   <!--? Year -->
@@ -1083,7 +1114,9 @@
                                     readonly
                                     id="year"
                                     type="text"
-                                    value={response.task.created_at.split(" ")[3]}
+                                    value={response.task.created_at.split(
+                                      " "
+                                    )[3]}
                                     class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
                                   />
                                 </div>
@@ -1095,26 +1128,26 @@
                         <div>
                           <!--? Signature Input -->
                           <!-- <label for="signature">
-                          <h1
-                            class="text-lg font-semibold text-secondary text-start"
-                          >
-                            Firma <span class="text-xs">(electrónica)</span>
-                          </h1>
-                          <input
-                            id="signature"
-                            type="text"
-                            class="w-full p-2 my-2 font-normal bg-white border-2 rounded-md border-secondary focus:outline-none focus:border-secondary focus:ring-0"
-                          />
-                        </label> -->
+                        <h1
+                          class="text-lg font-semibold text-secondary text-start"
+                        >
+                          Firma <span class="text-xs">(electrónica)</span>
+                        </h1>
+                        <input
+                          id="signature"
+                          type="text"
+                          class="w-full p-2 my-2 font-normal bg-white border-2 rounded-md border-secondary focus:outline-none focus:border-secondary focus:ring-0"
+                        />
+                      </label> -->
                           <!--? Agreement Checkbox -->
                           <div class="flex gap-2 mt-2">
                             <!-- <input
-                            disabled
-                            checked
-                            id="accept"
-                            type="checkbox"
-                            class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-secondary rounded-sm ring-secondary mt-[5px] text-accent"
-                          /> -->
+                          disabled
+                          checked
+                          id="accept"
+                          type="checkbox"
+                          class="border-none ring-2 ease-in-out transition-all duration-200 focus:ring-secondary rounded-sm ring-secondary mt-[5px] text-accent"
+                        /> -->
                             <label for="accept">
                               <p class="text-xs text-secondary md:text-base">
                                 He leído y acepto los
@@ -1122,11 +1155,11 @@
                                   href="/"
                                   class="no-underline hover:text-[#BB2532] hover:underline text-accent"
                                   >términos y condiciones</a
-                                > de PalitasPR. De igual manera, me comprometo a cumplir
-                                con los acuerdos establecidos en este documento. Al
-                                someter este formulario, acepto que la información
-                                proporcionada es verídica y correcta y podría ser utilizada
-                                para fines de contacto y/o asuntos legales.
+                                > de PalitasPR. De igual manera, me comprometo a
+                                cumplir con los acuerdos establecidos en este documento.
+                                Al someter este formulario, acepto que la información
+                                proporcionada es verídica y correcta y podría ser
+                                utilizada para fines de contacto y/o asuntos legales.
                               </p>
                             </label>
                           </div>
@@ -1134,10 +1167,10 @@
                         <!-- <div> -->
                         <!--* Submit button -->
                         <!-- <button
-                          class="w-full p-2 mt-4 font-semibold text-white bg-accent border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
-                          >Someter</button
-                        >
-                      </div> -->
+                        class="w-full p-2 mt-4 font-semibold text-white bg-accent border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
+                        >Someter</button
+                      >
+                    </div> -->
                         {#if response.task.status === "pending"}
                           {#if response.task.receiver_id === $userDetails.id}
                             <button
@@ -1207,7 +1240,8 @@
                             >
                               <QR
                                 view={"receiver"}
-                                providerName={response.task.provider_first_name +
+                                providerName={response.task
+                                  .provider_first_name +
                                   " " +
                                   response.task.provider_last_name}
                               ></QR>
@@ -1246,12 +1280,13 @@
                 <!-- Delete Task (Archive) -->
                 <!-- <Button button={deleteTask} {image} /> -->
                 <!-- <button
-                class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
-                >Delete Task</button
-              > -->
+              class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+              >Delete Task</button
+            > -->
               </div>
             </div>
-          {/each}
+          {/if}
+        {/each}
       {:else}
         <div
           class="flex flex-col items-center justify-center w-full min-h-screen py-20 m-auto skeleton"
