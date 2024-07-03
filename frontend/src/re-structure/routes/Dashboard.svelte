@@ -25,6 +25,7 @@
         userSession.set(false);
         console.log(userStatusErr);
         console.log($userSession);
+        window.location.href = "/login-to-continue";
       });
   });
 </script>

@@ -40,17 +40,17 @@
       class="flex flex-wrap items-center justify-center w-full max-w-3xl gap-4"
     >
       <!--* Create Service button -->
-      <Link class={twcss} to="/create-service">Create Service</Link>
+      <Link class={twcss} to="/create-service">Crear Servicios</Link>
       <!--* Create Request button -->
-      <Link class={twcss} to="/create-request">Create Request</Link>
+      <Link class={twcss} to="/create-request">Crear Solicitud</Link>
     </div>
     <div
       class="flex flex-wrap items-center justify-center w-full max-w-3xl gap-4"
     >
       <!--* Tasks button -->
-      <Link class={twcss} to="/tasks">Tasks</Link>
+      <Link class={twcss} to="/tasks">Tareas</Link>
       <!--* Profile button -->
-      <Link class={twcss} to={`/profile/${$profileID}`}>Profile</Link>
+      <Link class={twcss} to={`/profile/${$profileID}`}>Perfil</Link>
     </div>
   </div>
 </div>

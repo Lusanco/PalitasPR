@@ -1,6 +1,12 @@
 <script>
   import axios from "axios";
-  import { state, data, response } from "../scripts/stores";
+  import {
+    state,
+    data,
+    response,
+    responseData,
+    responseStatus,
+  } from "../scripts/stores";
   import { get, writable } from "svelte/store";
 
   let SDResponse = writable(null);
@@ -71,6 +77,8 @@
         }));
 
         response.set(axiosResponse);
+        responseData.set(axiosResponse.data);
+        responseStatus.set(axiosResponse.status);
         console.log(".then() Response Log: ", $response);
       })
       .catch((axiosError) => {
@@ -101,10 +109,18 @@
       }
       return;
     }
+    if (button.misc["App Location"] === "Crear Request") {
+      axiosLogic();
+      // console.log("Before IF", $response.status);
+      if ($responseStatus === 201) {
+        window.location.href = "/create-request-success";
+      }
+      return;
+    }
     if (button.misc["App Location"] === "Crear Servicio") {
       axiosLogic();
-      console.log("Before IF", $response.status);
-      if ($response.status === 201) {
+      // console.log("Before IF", $response.status);
+      if ($responseStatus === 201) {
         window.location.href = "/create-service-success";
       }
       return;

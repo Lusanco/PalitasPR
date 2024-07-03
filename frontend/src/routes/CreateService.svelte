@@ -1,16 +1,22 @@
 <script>
-  import { state, data, userSession } from "../scripts/stores";
-  import townsID from "../scripts/townsID";
-  import servicesID from "../scripts/servicesID";
-  import Button from "../components/Button.svelte";
   import { onMount } from "svelte";
   import axios from "axios";
-  import { navigate } from "svelte-routing";
+  import Button from "../components/Button.svelte";
+  import servicesID from "../scripts/servicesID";
+  import townsID from "../scripts/townsID";
+  import {
+    state,
+    data,
+    userSession,
+    response,
+    responseStatus,
+  } from "../scripts/stores";
+  import Loading from "../components/Loading.svelte";
 
   let image = null;
+  let model = "Promotion";
   let town = "all";
   let towns;
-  let model = "Promotion";
 
   let button = {
     name: "Crear Servicio",
@@ -18,19 +24,19 @@
     url: "api/dashboard/promotion-request",
     headers: "multipart/form-data",
     twcss:
-      "px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
+      "px-8 py-3 font-semibold bg-accent text-primary rounded hover:bg-white hover:text-secondary hover:shadow-md",
     misc: { "App Location": "Crear Servicio" },
   };
 
   let title = "";
   let service_id = "";
+  let selectedTowns = [];
+  let townList = "";
+  let showTownsDropdown = false;
   let description = "";
   let price_min = "";
   let price_max = "";
   let errorMessage = "";
-  let selectedTowns = [];
-  let townList = "";
-  let showTownsDropdown = false;
 
   $: {
     $data = {
@@ -80,27 +86,28 @@
     document.getElementById("townsDropdown").classList.toggle("hidden");
   }
 
-  function handleSubmit() {
-    // Navigate to a new route or URL
-    navigate("/tasks");
+  $: {
+    if ($response && $responseStatus === 201) {
+      window.location.href = "/create-service-success";
+    }
   }
 </script>
 
 <div
-  class="flex flex-col items-center justify-center h-full min-h-screen bg-[#f1f1f1]"
+  class="flex flex-col items-center justify-center h-full min-h-screen bg-primary"
 >
   <div
     class="flex flex-col w-full h-full max-w-2xl gap-4 p-6 my-8 font-semibold bg-white rounded-lg shadow-lg md:p-12"
   >
     <h1
-      class="pt-4 text-2xl text-center text-[#1f1f1f] md:text-3xl lg:text-4xl"
+      class="pt-4 text-2xl text-center text-secondary md:text-3xl lg:text-4xl"
     >
       Crear Servicio
     </h1>
     <div>
-      <label for="title" class="text-[#1f1f1f]">Título</label>
+      <label for="title" class="text-secondary">Título</label>
       <input
-        class="w-full input input-bordered text-[#cc2936]"
+        class="w-full input input-bordered border-neutral text-secondary"
         type="text"
         name="title"
         id="title"
@@ -108,12 +115,12 @@
       />
     </div>
 
-    <label for="service" class="text-[#1f1f1f]"
-      >Seleccionar servicio
+    <label for="service" class="text-secondary"
+      >Seleccionar servicios
       <select
         bind:value={service_id}
         name="service"
-        class="block w-full select select-bordered text-[#cc2936]"
+        class="block w-full select select-bordered border-neutral text-secondary"
       >
         <option value={-1} disabled>---</option>
         {#each Object.entries(servicesID) as [service, id]}
@@ -126,7 +133,7 @@
       <button
         on:click={handleButtonClick}
         tabindex="0"
-        class="btn btn-base dropdown-toggle text-[#f1f1f1] bg-[#cc2936] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
+        class="btn btn-base dropdown-toggle text-primary bg-accent hover:bg-white hover:text-secondary hover:shadow-md"
         >Seleccionar pueblos</button
       >
       <ul
@@ -141,7 +148,7 @@
               on:change={handleTownChange}
               type="checkbox"
               id={`'${id}'`}
-              class="mr-2 checkbox checkbox-base"
+              class="mr-2 transition-all duration-200 ease-in-out checkbox checkbox-accent"
             />
             {town}
           </li>
@@ -150,22 +157,22 @@
     </div>
 
     <div class="max-h-96">
-      <label for="description" class="text-[#1f1f1f]"
+      <label for="description" class="text-secondary"
         >Descripción del servicio ofrecido</label
       >
       <textarea
         bind:value={description}
-        class="w-full textarea textarea-bordered text-[#cc2936]"
+        class="w-full textarea textarea-bordered border-neutral text-secondary"
         name="description"
         id="description"
       ></textarea>
     </div>
     <div>
-      <label for="price-min" class="text-[#1f1f1f]"
+      <label for="price-min" class="text-secondary"
         >Precio mínimo (Opcional)</label
       >
       <input
-        class="w-full input input-bordered text-[#cc2936]"
+        class="w-full input input-bordered border-neutral text-secondary"
         type="number"
         name="price-min"
         id="price-min"
@@ -173,11 +180,11 @@
       />
     </div>
     <div>
-      <label for="price-max" class="text-[#1f1f1f]"
+      <label for="price-max" class="text-secondary"
         >Precio máximo (Opcional)</label
       >
       <input
-        class="w-full input input-bordered text-[#cc2936]"
+        class="w-full input input-bordered border-neutral text-secondary"
         type="number"
         name="price-max"
         id="price-max"
@@ -185,9 +192,9 @@
       />
     </div>
     <div
-      class="flex flex-col items-center justify-center w-full m-auto mx-auto space-y-1 text-[#1f1f1f]"
+      class="flex flex-col items-center justify-center w-full m-auto mx-auto space-y-1 text-secondary"
     >
-      <label for="imageInput" class="block text-sm font-medium text-[#1f1f1f]"
+      <label for="imageInput" class="block text-sm font-medium text-secondary"
       ></label>
       <div class="flex w-full">
         <label for="imageInput" class="w-full mb-2">
@@ -197,17 +204,24 @@
             name="image"
             id="imageInput"
             on:change={handleFileChange}
-            class="w-full px-8 py-12 text-[#1f1f1f] bg-[#f1f1f1] border-2 border-[#cc2936] border-dashed rounded-md"
+            class="w-full px-8 py-12 border-2 border-dashed rounded-md text-secondary bg-primary border-accent/60"
             accept="image/*"
           /></label
         >
       </div>
-      {#if errorMessage}
-        <p class="text-[#cc2936]">{errorMessage}</p>
-      {/if}
     </div>
-
-    <Button on:click={handleSubmit} {button} {image} />
+    <Button {button} {image} />
     <div />
   </div>
+  {#if $state.hidden}
+    <div class="hidden"></div>
+  {:else if (!$state.hidden && !$state.loaded) || $state.reload}
+    <div
+      class="absolute z-50 flex flex-col items-center justify-center w-screen min-h-screen m-auto"
+    >
+      <Loading />
+    </div>
+  {:else if $state.error}
+    <p class="text-error">{errorMessage}</p>
+  {/if}
 </div>

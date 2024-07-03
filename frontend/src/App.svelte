@@ -10,6 +10,7 @@
   // PalitasPR Routes
   import Index from "./routes/Index.svelte";
   import LoginToContinue from "./routes/LoginToContinue.svelte";
+  import LoginSuccess from "./routes/LoginSuccess.svelte";
   import Login from "./routes/Login.svelte";
   import Signup from "./routes/Signup.svelte";
   import SignupSuccess from "./routes/SignupSuccess.svelte";
@@ -53,6 +54,7 @@
     <Router>
       <Route path="/" component={Index} />
       <Route path="/login-to-continue" component={LoginToContinue} />
+      <Route path="/login-success" component={LoginSuccess} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       <Route path="/signup-success" component={SignupSuccess} />

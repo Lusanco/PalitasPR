@@ -237,14 +237,14 @@
       >.
     </p>
     {#if errorMessage}
-      <div class="text-center text-red-500">{errorMessage}</div>
+      <div class="text-center text-error">{errorMessage}</div>
     {/if}
     {#if $state.hidden === true}
       <div class="hidden"></div>
     {:else if (!$state.hidden && !$state.loaded) || $state.reload}
       <Loading />
     {:else if $state.error}
-      <div class="w-full mx-auto font-bold text-center text-stone-600">
+      <div class="w-full mx-auto font-bold text-center text-error">
         Correo o contraseña incorrectos. Por favor, intenta de nuevo.
       </div>
     {/if}

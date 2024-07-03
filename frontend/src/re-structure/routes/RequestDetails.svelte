@@ -3,7 +3,7 @@
   import axios from "axios";
   import { state, data, response, userSession } from "../../scripts/stores";
   import { writable } from "svelte/store";
-  import { link } from "svelte-routing";
+  import { Link, link } from "svelte-routing";
   import servicesID from "../../scripts/servicesID";
   import Button from "../components/Button.svelte";
   import { get } from "svelte/store";
@@ -16,7 +16,7 @@
     url: "/api/initial-contact",
     headers: "application/json",
     twcss:
-      "md:w-1/3 w-full btn px-8 py-3 font-semibold bg-[#cc2936] text-[#f1f1f1] rounded hover:bg-white hover:text-[#1f1f1f] hover:shadow-md",
+      "md:w-1/3 w-full btn px-8 py-3 font-semibold bg-accent text-primary rounded hover:bg-white hover:text-secondary hover:shadow-md flex flex-col justify-center items-center",
     misc: { "App Location": "Service Details" },
   };
 
@@ -31,9 +31,12 @@
 
   let isLoading = writable(true);
 
-  function showModal(event) {}
+  function showModal(event) {
+    // Función para mostrar el modal
+  }
+
   onMount(() => {
-    // Fetch user status
+    // Obtener el estado del usuario
     axios
       .get("/api/user/status")
       .then((userStatusRes) => {
@@ -43,44 +46,35 @@
       .catch((userStatusErr) => {
         userSession.set(false);
         console.log(userStatusErr);
-        console.log($userSession);
       });
 
-    // Get current URL and split to find ID
-    console.log("RequestDetails Component Has Mounted");
     currentUrl = window.location.href;
-    console.log("Current URL: ", currentUrl);
     urlArr = currentUrl.split("/");
     id = urlArr[urlArr.length - 1];
-    console.log("RequestDetails Component ID: ", id);
 
-    // Fetch request details and reviews
+    // Obtener los detalles de la solicitud y las reseñas
     axios
       .get(`/api/request/${id}`)
       .then((axiosResponse1) => {
         response.set(axiosResponse1);
         response1.set(axiosResponse1.data);
-        console.log(".then() Response Log: ", $response1);
         return axios.get(`/api/request/request_review/${id}`);
       })
       .then((axiosResponse2) => {
         response.set(axiosResponse2);
         response2.set(axiosResponse2.data);
-        console.log(".then() Response 2 Log: ", $response2);
         initialContact = {
           receiver_id: $response1.results.user_id,
           request_id: $response1.results.id,
         };
         data.set(initialContact);
         profileID.set($response1.results.profile_id);
-
         isLoading.set(false);
       })
       .catch((axiosError) => {
         userSession.set(false);
         window.location.href = "/404";
-        console.log(".catch() Error Log: ", axiosError);
-
+        console.log(axiosError);
         isLoading.set(false);
       });
   });
@@ -89,27 +83,24 @@
 {#if $isLoading}
   <Loading />
 {:else if $response1 && $response2}
-  <!-- ServiceDetails Container -->
   <div
-    class="flex flex-col items-center justify-center w-full h-full min-h-screen py-20 m-auto bg-[#f1f1f1]"
+    class="flex flex-col items-center justify-center w-full h-full min-h-screen py-20 m-auto bg-primary"
   >
-    <!-- ServiceDetails Flex Wrap -->
     <div
-      class="flex flex-wrap items-center justify-center w-full m-auto md:max-w-6xl"
+      class="flex flex-wrap items-center justify-center w-full h-full m-auto bg-white md:max-w-6xl join min-h-96"
     >
-      <!-- ServiceDetails Left -->
       <div
-        class="h-full gap-1 p-4 element overflow-y-auto rounded-none card md:border-r-2 min-h-96 md:border-[#cc2936] basis-full md:w-fit md:basis-1/2 bg-white"
+        class="h-full gap-1 p-4 overflow-y-auto bg-white rounded-none element card md:border-r-2 min-h-96 md:border-accent basis-full md:w-fit md:basis-1/2"
       >
         <br />
-        <h1 class="self-center text-3xl card-title text-[#1f1f1f]">
+        <h1 class="self-center text-3xl card-title text-secondary">
           {$response1.results.title}
         </h1>
         <br />
         <div
-          class="flex flex-col overflow-hidden overflow-y-scroll min-h-96 h-96 element text-[#1f1f1f]"
+          class="flex flex-col overflow-hidden overflow-y-scroll min-h-96 h-96 element text-secondary"
         >
-          {#if $response1.results.pictures === "" || null || []}
+          {#if !$response1.results.pictures || $response1.results.pictures.length === 0}
             <div
               class="self-center w-full h-40 rounded-none skeleton min-h-40"
             ></div>
@@ -125,7 +116,7 @@
             </div>
           {/if}
           <br />
-          <div class="flex flex-wrap justify-between">
+          <div class="flex flex-wrap justify-between text-xl">
             <span>
               {$response1.results.first_name}
               {$response1.results.last_name}
@@ -133,28 +124,25 @@
             <span>{Object.keys(servicesID)[$response1.results.service_id]}</span
             >
           </div>
-          <hr class="border-[#cc2936]" />
-          <br />
-          <div class="mt-2">
+          <hr class="border-accent" />
+          <div class="flex-grow mt-2">
             Pueblos Disponibles: {#each $response1.results.towns as town}
-              <span class="mx-1">{town},</span>
+              <span class="mx-1">{town}</span>
             {/each}
           </div>
-          <hr class="border-[#cc2936]" />
-          <br />
-          <p class="self-center w-full text-justify min-h-40">
+          <h3 class="mt-5 text-xl">Descripción</h3>
+          <hr class="border-accent" />
+          <p class="self-center w-full mt-2 text-justify min-h-40">
             {$response1.results.description}
           </p>
         </div>
+        <br />
       </div>
-      <!-- Left -->
-
-      <!-- ServiceDetails Right -->
       <div
         class="flex flex-col h-full gap-1 p-4 bg-white rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2"
       >
         <br />
-        <h1 class="self-center text-3xl card-title text-[#1f1f1f]">Reviews</h1>
+        <h1 class="self-center text-3xl card-title text-secondary">Reviews</h1>
         <br />
 
         <div
@@ -162,16 +150,16 @@
         >
           {#if !$response2.results || $response2.results.length === 0}
             <div
-              class="font-bold text-xl flex flex-col justify-center items-center text-[#cc2936] text-center h-full w-full"
+              class="flex flex-col items-center justify-center w-full h-full text-xl font-bold text-center text-accent/60"
             >
               No Reviews Yet
             </div>
           {:else}
             {#each $response2.results as review}
               <div
-                class="flex flex-col justify-between p-4 shadow-md bg-[#f1f1f1] card rounded-lg"
+                class="flex flex-col justify-between p-4 rounded-lg shadow-md bg-primary card"
               >
-                <div class="flex justify-between gap-2 text-[#1f1f1f]">
+                <div class="flex justify-between gap-2 text-secondary">
                   <div>
                     {`${review.first_name} ${review.last_name}`}
                   </div>
@@ -179,46 +167,47 @@
                 </div>
                 <br />
                 <div
-                  class="h-full py-6 text-justify line-clamp-none overflow-ellipsis text-[#1f1f1f]"
+                  class="h-full py-6 text-justify line-clamp-none overflow-ellipsis text-secondary"
                 >
                   {review.description}
                 </div>
-                <div class="flex justify-between gap-2 mt-8 text-[#1f1f1f]">
+                <div class="flex justify-between gap-2 mt-8 text-secondary">
                   <div>{review.created_at}</div>
-                  <!-- <button
-                      class="absolute btn right-4 bottom-4 bg-[#cc2936] text-white hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
-                      >Images</button
-                    > -->
                 </div>
               </div>
             {/each}
           {/if}
         </div>
-      </div>
-      <!-- Right -->
-    </div>
-    <!-- Flex Wrap -->
-    <div
-      class="flex items-center justify-center w-full bg-white h-fit md:max-w-6xl"
-    >
-      <div
-        class="flex flex-col items-center justify-center w-10/12 gap-4 mx-4 bg-white md:flex-row md:w-11/12 md:max-w-6xl"
-      >
-        <a
-          use:link
-          href="/"
-          class="md:w-1/3 btn w-full bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
-          >Back To Search</a
+        <br />
+        <div
+          class="flex items-center justify-center w-full bg-white h-fit md:max-w-6xl"
         >
-        <a
-          use:link
-          href={`/profile/${$profileID}`}
-          class="md:w-1/3 btn w-full bg-[#cc2936] text-[#f1f1f1] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
-          >Go To Profile</a
-        >
-        <Button {image} {button} />
+          <div
+            class="flex flex-col items-center justify-center w-10/12 gap-4 mx-4 bg-white md:flex-row md:w-11/12 md:max-w-6xl"
+          >
+            <Link
+            class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
+            to="/">Back To Search</Link
+          >
+          {#if $userSession === false}
+            <Link
+              class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
+              to="/login-to-continue">Go To Profile</Link
+            >
+            <Link
+              class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
+              to="/login-to-continue">Send Contact</Link
+            >
+          {:else}
+            <Link
+              class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
+              to={`/profile/${$profileID}`}>Go To Profile</Link
+            >
+            <Button {image} {button} />
+            {/if}
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <!-- Container -->
 {/if}

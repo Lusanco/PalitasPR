@@ -29,36 +29,36 @@
       class="relative p-20 px-4 py-10 shadow-lg bg-gradient-to-tr from-white to-white via-primary text-accent rounded-3xl"
     >
       <div class="pb-6 text-center">
-        <h1 class="text-3xl">Contact Us!</h1>
+        <h1 class="text-3xl">¡Contáctanos!</h1>
         <p class="text-secondary">
-          Fill up the form below to send us a message.
+          Completa el formulario a continuación para enviarnos un mensaje.
         </p>
       </div>
       <form>
         <input
           class="flex items-center w-full gap-2 px-3 py-2 mb-4 bg-white text-accent input input-bordered"
           type="text"
-          placeholder="Name"
+          placeholder="Nombre"
           name="name"
           bind:value={name}
         />
         <input
           class="flex items-center w-full gap-2 px-3 py-2 mb-4 bg-white text-accent input input-bordered"
           type="email"
-          placeholder="Email"
+          placeholder="Correo electrónico"
           name="email"
           bind:value={email}
         />
         <input
           class="flex items-center w-full gap-2 px-3 py-2 mb-4 bg-white text-accent input input-bordered"
           type="text"
-          placeholder="Subject"
+          placeholder="Asunto"
           name="_subject"
           bind:value={subject}
         />
         <textarea
           class="flex items-center w-full h-64 min-h-0 gap-2 px-3 py-2 mb-4 bg-white text-accent input input-bordered"
-          placeholder="Type your message here..."
+          placeholder="Escribe tu mensaje aquí..."
           name="message"
           bind:value={message}
           style="height: 121px;"

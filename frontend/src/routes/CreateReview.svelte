@@ -97,7 +97,7 @@
           id="description"
           bind:value={description}
           maxlength="250"
-          class="h-36 textarea textarea-bordered"
+          class="h-36 textarea textarea-bordered border-neutral text-secondary"
           on:keydown={handleKeyPress}
         ></textarea>
       </div>
@@ -111,7 +111,7 @@
           bind:value={rating}
           min="1"
           max="5"
-          class="input input-bordered text-accent"
+          class="input input-bordered border-neutral text-secondary"
           on:keydown={handleKeyPress}
         />
       </div>

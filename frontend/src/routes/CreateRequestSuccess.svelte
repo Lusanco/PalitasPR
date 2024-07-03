@@ -20,22 +20,27 @@
 </script>
 
 <div
-  class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto text-[#1f1f1f] rounded-md sm:p-10"
+  class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto rounded-md text-accent sm:p-10"
 >
   <div class="mb-8 text-center">
-    <h1 class="my-3 text-4xl font-bold">Request Created Successfully</h1>
-    <p class="text-sm text-[#1f1f1f]">
-      Your request has been successfully submitted.
-    </p>
+    <h1 class="my-3 text-4xl font-bold">Solicitud creada correctamente</h1>
+    <p class="text-sm text-secondary">Tu solicitud a sido sometida exito.</p>
   </div>
-  <div class="space-y-2">
+  <div class="flex justify-center px-4">
+    <a
+      use:link
+      href="/"
+      rel="noopener noreferrer"
+      class="w-full px-6 mx-1 bg-accent max-w-32 text-primary hover:text-secondary hover:bg-white btn"
+      >Buscar
+    </a>
     <a
       use:link
       href="/dashboard"
-      type="button"
-      class="w-full px-8 py-3 font-semibold bg-[#cc2936] rounded-md text-[#f1f1f1]"
+      rel="noopener noreferrer"
+      class="w-full px-6 mx-1 bg-accent max-w-32 text-primary hover:text-secondary hover:bg-white btn"
     >
-      Back to Dashboard
+      Tablero
     </a>
   </div>
 </div>

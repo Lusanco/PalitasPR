@@ -151,7 +151,7 @@
               on:click={handleLinkClick}
               ><i
                 class="mr-2 fa-solid fa-circle-info text-accent group-hover:text-primary"
-              ></i> Acerca de nosotros</a
+              ></i> Sobre Nosotros</a
             >
           </li>
           <li>
@@ -199,7 +199,7 @@
         }}
         href="/"
         class="block px-4 py-3 mt-2 text-xl font-semibold text-center rounded-md text-primary bg-accent hover:bg-green-900"
-        on:click={handleLinkClick}>Logout</a
+        on:click={handleLinkClick}>Cerrar Sesión</a
       >
     </li>
   </ul>
