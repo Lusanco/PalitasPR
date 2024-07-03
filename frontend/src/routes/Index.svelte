@@ -351,8 +351,10 @@
         on:click={nextPage}
         class={`btn ${$response.data.page < $response.data.total_pages ? "" : "cursor-not-allowed bg-black/20"}`}
         >Siguiente</button
-      >
+    > -->
     </div>
+    <!--
+      
+    Index End -->
   {/if}
 </div>
-<!-- Index End -->
