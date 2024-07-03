@@ -1,6 +1,6 @@
 const servicesID = {
   All: -1,
-  Unas: 1,
+  Uñas: 1,
   Jardineria: 2,
   Barberia: 3,
   Estilismo: 4,
