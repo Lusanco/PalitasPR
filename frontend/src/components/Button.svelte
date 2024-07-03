@@ -6,6 +6,10 @@
     response,
     responseData,
     responseStatus,
+    paginationPage,
+    paginationTotal,
+    paginationNext,
+    paginationPrev,
   } from "../scripts/stores";
   import { get, writable } from "svelte/store";
 
@@ -79,6 +83,10 @@
         response.set(axiosResponse);
         responseData.set(axiosResponse.data);
         responseStatus.set(axiosResponse.status);
+        if ($responseData.page && $responseData.total_pages) {
+          paginationPage.set($responseData.page);
+          paginationTotal.set($responseData.total_pages);
+        }
         console.log(".then() Response Log: ", $response);
       })
       .catch((axiosError) => {
