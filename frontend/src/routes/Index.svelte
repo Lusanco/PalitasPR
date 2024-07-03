@@ -59,7 +59,7 @@
   function handleKeydown(event) {
     if (event.key === "Enter") {
       page = 1;
-      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=1`
+      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=1`;
       buttonRef.buttonLogic();
     }
   }
@@ -104,13 +104,13 @@
   >
     <div class="grid grid-cols-2 grid-rows-2 rounded-lg overflow-clip join">
       <div id="search-bar" class="col-span-2 row-span-1">
-        <label for="Search" class="sr-only"> Search </label>
+        <label for="Search" class="sr-only"> Buscar </label>
         <input
           type="text"
           id="search"
           bind:value={search}
           on:keydown={handleKeydown}
-          placeholder="Search for..."
+          placeholder="Buscar..."
           class="w-full col-span-2 bg-white border-none rounded-none placeholder:text-secondary placeholder:opacity-60 input input-bordered focus:outline-none text-secondary"
         />
         <div
@@ -126,8 +126,8 @@
           bind:value={model}
           class="w-full bg-white border-none select select-bordered focus:outline-none text-secondary"
         >
-          <option value="promotions">Promotions</option>
-          <option value="requests">Requests</option>
+          <option value="promotions">Promociones</option>
+          <option value="requests">Solicitudes</option>
         </select>
         <!-- Model Filter End -->
         <!-- Town Filter Start -->
@@ -135,7 +135,7 @@
           bind:value={town}
           class="w-full bg-white border-none select select-bordered focus:outline-none text-secondary"
         >
-          <option value="all" disabled>Town</option>
+          <option value="all" disabled>Pueblos</option>
           {#each Object.entries(townsID) as [town, id]}
             <option value={id}>{town}</option>
           {/each}
@@ -145,7 +145,7 @@
         <!-- Bind the Button component to the reference variable -->
         <Button {button} {image} bind:this={buttonRef}>
           <!-- on:results={handleResults} -->
-          <span class="sr-only">Search</span>
+          <span class="sr-only">Buscar</span>
 
           <i
             class="flex items-center justify-center w-full h-full m-auto transition-all duration-300 fa-solid fa-magnifying-glass text-accent hover:text-white"
@@ -160,7 +160,9 @@
   {:else if (!$state.hidden && !$state.loaded) || $state.reload}
     <Loading />
   {:else if $state.error}
-    <span class="font-bold text-error">No results found, try again.</span>
+    <span class="font-bold text-error"
+      >No se encontraron resultados, intenta de nuevo.</span
+    >
   {:else}
     <div
       class="flex flex-col w-full gap-4 py-2 overflow-hidden overflow-y-scroll element md:px-12 h-96"
@@ -218,7 +220,7 @@
                 {service.first_name}
                 {service.last_name}
               </p>
-              <h3 class="hidden text-lg md:block">Published</h3>
+              <h3 class="hidden text-lg md:block">Publicado</h3>
               <p class="text-sm md:-mt-2">{service.created_at}</p>
             </div>
           </div>
@@ -235,12 +237,12 @@
       <button
         on:click={previousPage}
         class={`btn ${$response.data.page > 1 ? "" : "cursor-not-allowed bg-black/20"}`}
-        >Previous</button
+        >Anterior</button
       >
       <button
         on:click={nextPage}
         class={`btn ${$response.data.page < $response.data.total_pages ? "" : "cursor-not-allowed bg-black/20"}`}
-        >Next</button
+        >Siguiente</button
       >
     </div>
   {/if}

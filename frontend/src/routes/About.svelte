@@ -47,12 +47,13 @@
         <h1
           class="mb-10 text-5xl font-bold tracking-tight text-center text-accent sm:text-4xl sm:leading-none"
         >
-          About Us
+          Sobre Nosotros
         </h1>
         <p class="text-2xl text-secondary">
-          PalitasPR is a marketplace for requesting and promoting services
-          locally in PR. We are a small team of 5 developers that gave life to
-          this app for an event considered our graduation project.
+          PalitasPR es un mercado para solicitar y promover servicios localmente
+          en Puerto Rico. Somos un pequeño equipo de 5 desarrolladores que dio
+          vida a esta aplicación como parte de un proyecto considerado como
+          nuestra graduación.
         </p>
         <br />
         <br />
@@ -87,7 +88,7 @@
       <h1
         class="inline-block pb-8 text-3xl font-semibold tracking-wider uppercase rounded-full text-secondary"
       >
-        Our Team
+        Nuestro Equipo
       </h1>
       <Team />
     </div>

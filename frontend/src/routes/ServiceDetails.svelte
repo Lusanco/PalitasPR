@@ -12,12 +12,12 @@
 
   let image = null;
   let button = {
-    name: "Send Contact",
+    name: "Enviar contacto",
     method: "POST",
     url: "/api/initial-contact",
     headers: "application/json",
     twcss:
-      "md:w-1/3 w-full btn px-8 py-3 font-semibold bg-accent text-primary rounded hover:bg-white hover:text-secondary hover:shadow-md flex flex-col justify-center items-center",
+      "shadow-md md:w-1/3 w-full btn px-8 py-3 font-semibold bg-accent text-primary rounded hover:bg-white hover:text-secondary hover:shadow-md flex flex-col justify-center items-center",
     misc: { "App Location": "Service Details" },
   };
 
@@ -128,7 +128,7 @@
           <hr class="border-accent" />
           <div class="mt-2">
             Pueblos Disponibles: {#each $response1.results.towns as town}
-              <span class="mx-1">{town}</span>
+              <span class="mx-1">{town},</span>
             {/each}
           </div>
           <!-- <hr class="border-[#cc2936]" /> -->
@@ -147,7 +147,7 @@
         class="flex flex-col h-full gap-1 p-4 bg-white rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2"
       >
         <br />
-        <h1 class="self-center text-3xl card-title text-secondary">Reviews</h1>
+        <h1 class="self-center text-3xl card-title text-secondary">Reseñas</h1>
         <br />
 
         <div
@@ -157,7 +157,7 @@
             <div
               class="flex flex-col items-center justify-center w-full h-full text-xl font-bold text-center text-accent/60"
             >
-              No Reviews Yet
+              No hay reseñas aun
             </div>
           {:else}
             {#each $response2.results as review}
@@ -196,22 +196,22 @@
             class="flex flex-col items-center justify-center w-10/12 gap-4 mx-4 bg-white md:flex-row md:w-11/12 md:max-w-6xl"
           >
             <Link
-              class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
-              to="/">Back To Search</Link
+              class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
+              to="/">Inicio</Link
             >
             {#if $userSession === false}
               <Link
-                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
-                to="/login-to-continue">Go To Profile</Link
+                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
+                to="/login-to-continue">Ir a perfil</Link
               >
               <Link
-                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
-                to="/login-to-continue">Send Contact</Link
+                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
+                to="/login-to-continue">Enviar contacto</Link
               >
             {:else}
               <Link
-                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
-                to={`/profile/${$profileID}`}>Go To Profile</Link
+                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
+                to={`/profile/${$profileID}`}>Ir a perfil</Link
               >
               <Button {image} {button} />
             {/if}

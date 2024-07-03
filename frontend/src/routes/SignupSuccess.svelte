@@ -33,7 +33,7 @@
       <a use:link href="/login" rel="noopener noreferrer" role="button">
         <button
           type="button"
-          class="px-6 bg-accent text-primary hover:text-secondary hover:bg-white btn"
+          class="px-6 shadow-md bg-accent text-primary hover:text-secondary hover:bg-white hover:shadow-md btn"
         >
           Iniciar Sesión
         </button>
