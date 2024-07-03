@@ -3,8 +3,18 @@
   import townsID from "../scripts/townsID";
   import Loading from "../components/Loading.svelte";
   import Button from "../components/Button.svelte";
-  import { state, data, response, userSession } from "../scripts/stores";
-  import { get } from "svelte/store";
+  import {
+    state,
+    data,
+    response,
+    userSession,
+    responseData,
+    paginationPage,
+    paginationTotal,
+    paginationNext,
+    paginationPrev,
+  } from "../scripts/stores";
+  import { get, writable } from "svelte/store";
   import { Link, link } from "svelte-routing";
   import { onMount } from "svelte";
   import axios from "axios";
@@ -17,7 +27,7 @@
   let town = "all";
   let page = 1;
   let totalPages = 1;
-  let button = {
+  let searchButton = {
     name: "",
     method: "GET",
     url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`,
@@ -25,6 +35,16 @@
     twcss:
       "border-none rounded-t-none rounded-l-none rounded-r-lg h-full rounded-b-lg focus:outline-none text-accent bg-white hover:text-white hover:bg-accent w-full overflow-hidden",
     misc: { "App Location": "Index Search Component" },
+  };
+  let previousButton = {
+    ...searchButton,
+    name: "Anterior",
+    twcss: "btn",
+  };
+  let nextButton = {
+    ...searchButton,
+    name: "Siguiente",
+    twcss: "btn",
   };
   // Button Prop Variables And Dependencies
 
@@ -37,16 +57,6 @@
       .then((userStatusRes) => {
         userSession.set(true);
         console.log(userStatusRes.data);
-        return axios.get(button.url);
-      })
-      .catch((userStatusErr) => {
-        console.log(userStatusErr);
-        return axios.get(button.url);
-      })
-      .then((res) => {
-        response.set(res.data);
-        console.log(response);
-        totalPages = res.data.total_pages;
       })
       .catch((userStatusErr) => {
         userSession.set(false);
@@ -55,41 +65,36 @@
       });
   });
 
-  // Function to handle the "Enter" key press
   function handleKeydown(event) {
     if (event.key === "Enter") {
+      const trimmedSearch = search ? search.trim() : "";
       page = 1;
+      searchButton.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=1`;
       buttonRef.buttonLogic();
     }
   }
 
-  function nextPage() {
-    if (page < totalPages) {
-      page += 1;
-      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
-      buttonRef.buttonLogic();
-    }
-  }
-
-  function previousPage() {
-    if (page > 1) {
-      page -= 1;
-      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
-      buttonRef.buttonLogic();
-    }
-  }
-  // Reactive statement to update button store when misc store changes
   $: {
-    button = {
-      ...button,
-      url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`,
-    };
-
-    // Update the data store with the current misc values
-    data.set({ search, model, town });
+    // $response &&
+    // $responseData &&
+    // $responseData.results &&
+    console.log("Response Pagination Page: ", $paginationPage);
+    console.log("Response Pagination Total: ", $paginationTotal);
+    console.log("current page: ", $paginationPage);
+    if ($paginationPage < $paginationTotal) {
+      paginationPage.set($paginationPage + 1);
+      console.log("next page: ", $paginationPage);
+    }
+    if ($paginationPage > 1) {
+      console.log("current page: ", $paginationPage);
+      paginationPage.set(page--);
+      console.log("previous page: ", $paginationPage);
+    }
+    if (search) {
+      paginationPage.set(1);
+      console.log("current page: ", $paginationPage);
+    }
   }
-  $response = get(response);
-  // totalPages = $response.total_pages || 1;
 </script>
 
 <!-- Index Start -->
@@ -103,13 +108,13 @@
   >
     <div class="grid grid-cols-2 grid-rows-2 rounded-lg overflow-clip join">
       <div id="search-bar" class="col-span-2 row-span-1">
-        <label for="Search" class="sr-only"> Search </label>
+        <label for="Search" class="sr-only"> Buscar </label>
         <input
           type="text"
           id="search"
           bind:value={search}
           on:keydown={handleKeydown}
-          placeholder="Search for..."
+          placeholder="Buscar..."
           class="w-full col-span-2 bg-white border-none rounded-none placeholder:text-secondary placeholder:opacity-60 input input-bordered focus:outline-none text-secondary"
         />
         <div
@@ -125,8 +130,8 @@
           bind:value={model}
           class="w-full bg-white border-none select select-bordered focus:outline-none text-secondary"
         >
-          <option value="promotions">Promotions</option>
-          <option value="requests">Requests</option>
+          <option value="promotions">Servicios</option>
+          <option value="requests">Solicitudes</option>
         </select>
         <!-- Model Filter End -->
         <!-- Town Filter Start -->
@@ -134,7 +139,7 @@
           bind:value={town}
           class="w-full bg-white border-none select select-bordered focus:outline-none text-secondary"
         >
-          <option value="all" disabled>Town</option>
+          <option value="all" disabled>Pueblos</option>
           {#each Object.entries(townsID) as [town, id]}
             <option value={id}>{town}</option>
           {/each}
@@ -142,9 +147,9 @@
         <!-- Town Filter End -->
 
         <!-- Bind the Button component to the reference variable -->
-        <Button {button} {image} bind:this={buttonRef}>
+        <Button button={searchButton} {image} bind:this={buttonRef}>
           <!-- on:results={handleResults} -->
-          <span class="sr-only">Search</span>
+          <span class="sr-only">Buscar</span>
 
           <i
             class="flex items-center justify-center w-full h-full m-auto transition-all duration-300 fa-solid fa-magnifying-glass text-accent hover:text-white"
@@ -159,13 +164,15 @@
   {:else if (!$state.hidden && !$state.loaded) || $state.reload}
     <Loading />
   {:else if $state.error}
-    <span class="font-bold text-error">No results found, try again.</span>
+    <span class="font-bold text-error"
+      >No se encontraron resultados, intenta de nuevo.</span
+    >
   {:else}
     <div
       class="flex flex-col w-full gap-4 py-2 overflow-hidden overflow-y-scroll element md:px-12 h-96"
     >
       <!-- {#each services as service} -->
-      {#each $response.data.results as service}
+      {#each $responseData.results as service}
         <!-- New Card Start -->
         <Link
           to={service.promo_id
@@ -217,7 +224,7 @@
                 {service.first_name}
                 {service.last_name}
               </p>
-              <h3 class="hidden text-lg md:block">Published</h3>
+              <h3 class="hidden text-lg md:block">Publicado</h3>
               <p class="text-sm md:-mt-2">{service.created_at}</p>
             </div>
           </div>
@@ -231,16 +238,16 @@
       {/each}
     </div>
     <div class="flex justify-between w-full max-w-md mx-auto">
-      <button
-        on:click={previousPage}
-        class={`btn ${page > 1 ? "" : "cursor-not-allowed bg-black/20"}`}
-        >Previous</button
-      >
-      <button
-        on:click={nextPage}
-        class={`btn ${page < totalPages ? "" : "cursor-not-allowed bg-black/20"}`}
-        >Next</button
-      >
+      {#if $responseData.page > 1}
+        <Button button={previousButton} {image} bind:this={buttonRef} />
+      {:else}
+        <button class="cursor-not-allowed btn bg-black/20">Previous</button>
+      {/if}
+      {#if $responseData.page < $responseData.total_pages}
+        <Button button={nextButton} {image} bind:this={buttonRef} />
+      {:else}
+        <button class="cursor-not-allowed btn bg-black/20">Next</button>
+      {/if}
     </div>
   {/if}
 </div>

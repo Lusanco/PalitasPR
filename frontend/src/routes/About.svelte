@@ -30,7 +30,7 @@
       <svg
         viewBox="0 0 224 12"
         fill="currentColor"
-        class="w-full -mb-1 bg-transparent border-b-2 shadow-2xl text-accent/70 border-accent"
+        class="w-full -mb-1 bg-transparent shadow-2xl text-accent"
         preserveAspectRatio="none"
       >
         <path
@@ -47,12 +47,13 @@
         <h1
           class="mb-10 text-5xl font-bold tracking-tight text-center text-accent sm:text-4xl sm:leading-none"
         >
-          About Us
+          Sobre Nosotros
         </h1>
         <p class="text-2xl text-secondary">
-          PalitasPR is a marketplace for requesting and promoting services
-          locally in PR. We are a small team of 5 developers that gave life to
-          this app for an event considered our graduation project.
+          PalitasPR es un mercado para solicitar y promover servicios localmente
+          en Puerto Rico. Somos un pequeño equipo de 5 desarrolladores que dio
+          vida a esta aplicación como parte de un proyecto considerado como
+          nuestra graduación.
         </p>
         <br />
         <br />
@@ -60,7 +61,7 @@
         <button
           on:click={scrollToTeam}
           aria-label="Scroll down"
-          class="flex items-center justify-center w-10 h-10 mx-auto duration-300 transform border-2 rounded-full shadow-lg border-accent text-accent hover:shadow-sm hover:scale-110"
+          class="flex items-center justify-center w-10 h-10 mx-auto border-2 rounded-full shadow-lg md:hidden border-accent text-accent"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -87,7 +88,7 @@
       <h1
         class="inline-block pb-8 text-3xl font-semibold tracking-wider uppercase rounded-full text-secondary"
       >
-        Our Team
+        Nuestro Equipo
       </h1>
       <Team />
     </div>

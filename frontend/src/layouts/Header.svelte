@@ -4,6 +4,7 @@
   import Menu from "../components/Menu.svelte";
   import Button from "../components/Button.svelte";
   import { userSession } from "../scripts/stores";
+  import { writable } from "svelte/store";
 
   // Button Prop Variables And Dependencies
   let image = null;
@@ -29,7 +30,7 @@
   }
 </script>
 
-{#if $userSession || !$userSession}
+{#if !$userSession}
   <!-- Header Start -->
   <header
     class={$userSession
@@ -67,7 +68,7 @@
   </header>
   <!-- Header End -->
 {/if}
-{#if $userSession || !$userSession}
+{#if $userSession}
   <div
     class={`${$userSession ? "flex flex-row justify-between items-stretch w-full bg-transparent px-2" : "hidden"}`}
   >
@@ -75,7 +76,6 @@
       <span class="sr-only">Go back</span>
       <i class="text-md fa-solid fa-chevron-left"></i>
     </Button>
-
     <Menu></Menu>
   </div>
 {/if}

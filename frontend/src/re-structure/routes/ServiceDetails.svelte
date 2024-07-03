@@ -128,7 +128,7 @@
           <hr class="border-accent" />
           <div class="mt-2">
             Pueblos Disponibles: {#each $response1.results.towns as town}
-              <span class="mx-1">{town},</span>
+              <span class="mx-1">{town}</span>
             {/each}
           </div>
           <!-- <hr class="border-[#cc2936]" /> -->
@@ -172,7 +172,7 @@
                 </div>
                 <br />
                 <div
-                  class="h-full py-6 text-justify line-clamp-none overflow-ellipsis text-[#1f1f1f]"
+                  class="h-full py-6 text-justify line-clamp-none overflow-ellipsis text-secondary"
                 >
                   {review.description}
                 </div>

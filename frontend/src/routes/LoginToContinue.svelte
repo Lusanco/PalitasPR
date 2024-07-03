@@ -34,7 +34,7 @@
     <button
       on:click={redirectToLogin}
       type="button"
-      class="px-6 bg-accent text-primary hover:text-text-secondary hover:bg-green-900 btn"
+      class="px-6 shadow-md bg-accent text-primary hover:text-text-secondary hover:bg-white hover:text-secondary btn hover:shadow-md"
     >
       Iniciar Sesión
     </button>
