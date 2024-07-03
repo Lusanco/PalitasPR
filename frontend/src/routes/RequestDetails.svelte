@@ -93,10 +93,10 @@
     class="flex flex-col items-center justify-center w-full h-full min-h-screen py-20 m-auto bg-primary"
   >
     <div
-      class="flex flex-wrap items-center justify-center w-full h-full m-auto bg-white md:max-w-6xl join min-h-96"
+      class="flex flex-wrap items-center justify-center w-full h-full m-auto bg-white md:max-w-3xl lg:max-w-4xl join min-h-96"
     >
       <div
-        class="h-full gap-1 p-4 overflow-y-auto bg-white rounded-none element card md:border-r-2 min-h-96 md:border-accent basis-full md:w-fit md:basis-1/2"
+        class="h-full gap-1 p-4 overflow-y-auto bg-white rounded-none element card min-h-96 basis-full md:w-1/2"
       >
         <br />
         <h1 class="self-center text-3xl card-title text-secondary">
@@ -141,48 +141,6 @@
           <p class="self-center w-full mt-2 text-justify min-h-40">
             {$response1.results.description}
           </p>
-        </div>
-        <br />
-      </div>
-      <div
-        class="flex flex-col h-full gap-1 p-4 bg-white rounded-none card min-h-96 basis-full md:w-fit md:basis-1/2"
-      >
-        <br />
-        <h1 class="self-center text-3xl card-title text-secondary">Reseñas</h1>
-        <br />
-
-        <div
-          class="flex flex-col gap-2 overflow-hidden overflow-y-scroll element min-h-96 h-96"
-        >
-          {#if !$response2.results || $response2.results.length === 0}
-            <div
-              class="flex flex-col items-center justify-center w-full h-full text-xl font-bold text-center text-accent/60"
-            >
-              No hay reseñas aun
-            </div>
-          {:else}
-            {#each $response2.results as review}
-              <div
-                class="flex flex-col justify-between p-4 rounded-lg shadow-md bg-primary card"
-              >
-                <div class="flex justify-between gap-2 text-secondary">
-                  <div>
-                    {`${review.first_name} ${review.last_name}`}
-                  </div>
-                  <div>{`${review.rating}/5.0`}</div>
-                </div>
-                <br />
-                <div
-                  class="h-full py-6 text-justify line-clamp-none overflow-ellipsis text-secondary"
-                >
-                  {review.description}
-                </div>
-                <div class="flex justify-between gap-2 mt-8 text-secondary">
-                  <div>{review.created_at}</div>
-                </div>
-              </div>
-            {/each}
-          {/if}
         </div>
         <br />
         <div
