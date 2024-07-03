@@ -4,7 +4,7 @@
   import Loading from "../components/Loading.svelte";
   import Button from "../components/Button.svelte";
   import { state, data, response, userSession } from "../scripts/stores";
-  import { get } from "svelte/store";
+  import { get, writable } from "svelte/store";
   import { Link, link } from "svelte-routing";
   import { onMount } from "svelte";
   import axios from "axios";
@@ -17,7 +17,7 @@
   let town = "all";
   let page = 1;
   let totalPages = 1;
-  let button = {
+  let searchButton = {
     name: "",
     method: "GET",
     url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`,
@@ -26,10 +26,37 @@
       "border-none rounded-t-none rounded-l-none rounded-r-lg h-full rounded-b-lg focus:outline-none text-accent bg-white hover:text-white hover:bg-accent w-full overflow-hidden",
     misc: { "App Location": "Index Search Component" },
   };
+  let previousButton = {
+    ...searchButton,
+    name: "Previous",
+    twcss: "btn",
+  };
+  let nextButton = {
+    ...previousButton,
+    name: "Next",
+  };
   // Button Prop Variables And Dependencies
 
   // Define a reference for the Button component
   let buttonRef;
+
+  // function axiosPagination() {
+  //   axios
+  //     .get(button.url)
+  //     .then((paginationRes) => {
+  //       console.log("Page Pagination: ", paginationRes.data.page);
+  //       console.log("Total Pagination: ", paginationRes.data.total_pages);
+  //     })
+  //     .catch((paginationErr) => {
+  //       console.log("Error Pagination: ", paginationErr.data.response);
+  //     });
+  // .then((res) => {
+  //   response.set(res.data);
+  //   console.log(response);
+  //   totalPages = res.data.total_pages;
+  //   page = res.data.page;
+  // })
+  // }
 
   onMount(() => {
     axios
@@ -37,16 +64,6 @@
       .then((userStatusRes) => {
         userSession.set(true);
         console.log(userStatusRes.data);
-        return axios.get(button.url);
-      })
-      .catch((userStatusErr) => {
-        console.log(userStatusErr);
-        return axios.get(button.url);
-      })
-      .then((res) => {
-        response.set(res.data);
-        console.log(response);
-        totalPages = res.data.total_pages;
       })
       .catch((userStatusErr) => {
         userSession.set(false);
@@ -56,39 +73,118 @@
   });
 
   // Function to handle the "Enter" key press
+  // function handleKeydown(event) {
+  //   if (event.key === "Enter") {
+  //     page = 1;
+  //     searchButton.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
+  //     buttonRef.buttonLogic();
+  //   }
+  // }
+
   function handleKeydown(event) {
     if (event.key === "Enter") {
+      const trimmedSearch = search ? search.trim() : "";
       page = 1;
-      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=1`
+      searchButton.url = `/api/explore?search=${trimmedSearch}&model=${model}&town=${town}&page=${page}`;
       buttonRef.buttonLogic();
     }
   }
 
-  function nextPage() {
-    if ($response.data.page < $response.data.total_pages) {
-      page += 1;
-      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
-      buttonRef.buttonLogic();
+  // function nextPage() {
+  //   if (page < totalPages) {
+  //     page++;
+  //     // searchButton.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
+  //     console.log("Next Page Func", page);
+  //     buttonRef.buttonLogic();
+  //   }
+  // }
+
+  // function previousPage() {
+  //   if ($response.data.page > 1) {
+  //     page--;
+  //     searchButton.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
+  //     buttonRef.buttonLogic();
+  //   }
+  // }
+
+  $: {
+    if (page > 1) {
+      // page = page - 1;
+      const trimmedSearch = search ? search.trim() : "";
+
+      previousButton = {
+        ...previousButton,
+        url: `/api/explore?search=${trimmedSearch}&model=${model}&town=${town}&page=${page - 1}`,
+      };
+      console.log("Page for Prev Button: ", page - 1);
     }
   }
+  // $: {
+  //   if (page > 1) {
+  //     page = page - 1;
+  //     const trimmedSearch = search ? search.trim() : "";
+  //     previousButton = {
+  //       ...previousButton,
+  //       url: `/api/explore?search=${trimmedSearch}&model=${model}&town=${town}&page=${page}`,
+  //     };
+  //     console.log("Page for Prev Button: ", page);
+  //   }
+  // }
 
-  function previousPage() {
-    if ($response.data.page > 1) {
-      page -= 1;
-      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
-      buttonRef.buttonLogic();
+  // $: {
+  //   if (
+  //     $response &&
+  //     $response.data &&
+  //     $response.data.results &&
+  //     page < $response.data.total_pages
+  //   ) {
+  //     page = page + 1;
+  //     const trimmedSearch = search ? search.trim() : "";
+  //     nextButton = {
+  //       ...nextButton,
+  //       url: `/api/explore?search=${trimmedSearch}&model=${model}&town=${town}&page=${page}`,
+  //     };
+  //     console.log("Page for Next Button: ", page);
+  //   }
+  // }
+  $: {
+    if (
+      $response &&
+      $response.data &&
+      $response.data.results &&
+      page < $response.data.total_pages
+    ) {
+      const trimmedSearch = search ? search.trim() : "";
+      page++;
+      nextButton = {
+        ...nextButton,
+        url: `/api/explore?search=${trimmedSearch}&model=${model}&town=${town}&page=${page}`,
+      };
+      data.set({ search: trimmedSearch, model, town, page });
+      console.log("Page for Next Button: ", $data.page);
     }
   }
   // Reactive statement to update button store when misc store changes
   $: {
-    button = {
-      ...button,
-      url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`,
+    const trimmedSearch = search ? search.trim() : "";
+    searchButton = {
+      ...searchButton,
+      url: `/api/explore?search=${trimmedSearch}&model=${model}&town=${town}&page=1`,
     };
-
-    // Update the data store with the current misc values
-    data.set({ search, model, town });
+    console.log("Search changed: ", trimmedSearch);
+    page = 1; // Reset page to 1 when search changes
+    data.set({ search: trimmedSearch, model, town, page });
   }
+  // $: {
+  //   if (buttonRef && buttonRef.button) {
+  //     const urlParams = new URLSearchParams(buttonRef.button.url.split("?")[1]);
+  //     const newPage = parseInt(urlParams.get("page"));
+  //     if (!isNaN(newPage) && newPage !== page) {
+  //       page = newPage;
+  //       data.set({ search, model, town, page });
+  //     }
+  //   }
+  // }
   $response = get(response);
   // totalPages = $response.total_pages || 1;
 </script>
@@ -143,7 +239,7 @@
         <!-- Town Filter End -->
 
         <!-- Bind the Button component to the reference variable -->
-        <Button {button} {image} bind:this={buttonRef}>
+        <Button button={searchButton} {image} bind:this={buttonRef}>
           <!-- on:results={handleResults} -->
           <span class="sr-only">Search</span>
 
@@ -232,7 +328,19 @@
       {/each}
     </div>
     <div class="flex justify-between w-full max-w-md mx-auto">
-      <button
+      {#if $response.data.page > 1}
+        <Button button={previousButton} {image} bind:this={buttonRef} />
+        <!-- on:click={previousPage} -->
+      {:else}
+        <button class="cursor-not-allowed btn bg-black/20">Previous</button>
+      {/if}
+      {#if $response.data.page < $response.data.total_pages}
+        <Button button={nextButton} {image} bind:this={buttonRef} />
+        <!-- on:click={nextPage} -->
+      {:else}
+        <button class="cursor-not-allowed btn bg-black/20">Next</button>
+      {/if}
+      <!-- <button
         on:click={previousPage}
         class={`btn ${$response.data.page > 1 ? "" : "cursor-not-allowed bg-black/20"}`}
         >Previous</button
@@ -241,7 +349,7 @@
         on:click={nextPage}
         class={`btn ${$response.data.page < $response.data.total_pages ? "" : "cursor-not-allowed bg-black/20"}`}
         >Next</button
-      >
+      > -->
     </div>
   {/if}
 </div>
