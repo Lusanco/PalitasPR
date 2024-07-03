@@ -3,7 +3,17 @@
   import townsID from "../scripts/townsID";
   import Loading from "../components/Loading.svelte";
   import Button from "../components/Button.svelte";
-  import { state, data, response, userSession } from "../scripts/stores";
+  import {
+    state,
+    data,
+    response,
+    userSession,
+    responseData,
+    paginationPage,
+    paginationTotal,
+    paginationNext,
+    paginationPrev,
+  } from "../scripts/stores";
   import { get, writable } from "svelte/store";
   import { Link, link } from "svelte-routing";
   import { onMount } from "svelte";
@@ -28,35 +38,18 @@
   };
   let previousButton = {
     ...searchButton,
-    name: "Previous",
+    name: "Anterior",
     twcss: "btn",
   };
   let nextButton = {
-    ...previousButton,
-    name: "Next",
+    ...searchButton,
+    name: "Siguiente",
+    twcss: "btn",
   };
   // Button Prop Variables And Dependencies
 
   // Define a reference for the Button component
   let buttonRef;
-
-  // function axiosPagination() {
-  //   axios
-  //     .get(button.url)
-  //     .then((paginationRes) => {
-  //       console.log("Page Pagination: ", paginationRes.data.page);
-  //       console.log("Total Pagination: ", paginationRes.data.total_pages);
-  //     })
-  //     .catch((paginationErr) => {
-  //       console.log("Error Pagination: ", paginationErr.data.response);
-  //     });
-  // .then((res) => {
-  //   response.set(res.data);
-  //   console.log(response);
-  //   totalPages = res.data.total_pages;
-  //   page = res.data.page;
-  // })
-  // }
 
   onMount(() => {
     axios
@@ -72,121 +65,36 @@
       });
   });
 
-  // Function to handle the "Enter" key press
-  // function handleKeydown(event) {
-  //   if (event.key === "Enter") {
-  //     page = 1;
-  //     searchButton.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
-  //     buttonRef.buttonLogic();
-  //   }
-  // }
-
   function handleKeydown(event) {
     if (event.key === "Enter") {
       const trimmedSearch = search ? search.trim() : "";
       page = 1;
-      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=1`;
+      searchButton.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=1`;
       buttonRef.buttonLogic();
     }
   }
 
-  // function nextPage() {
-  //   if (page < totalPages) {
-  //     page++;
-  //     // searchButton.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
-  //     console.log("Next Page Func", page);
-  //     buttonRef.buttonLogic();
-  //   }
-  // }
-
-  // function previousPage() {
-  //   if ($response.data.page > 1) {
-  //     page--;
-  //     searchButton.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
-  //     buttonRef.buttonLogic();
-  //   }
-  // }
-
   $: {
-    if (page > 1) {
-      // page = page - 1;
-      const trimmedSearch = search ? search.trim() : "";
-
-      previousButton = {
-        ...previousButton,
-        url: `/api/explore?search=${trimmedSearch}&model=${model}&town=${town}&page=${page - 1}`,
-      };
-      console.log("Page for Prev Button: ", page - 1);
+    // $response &&
+    // $responseData &&
+    // $responseData.results &&
+    console.log("Response Pagination Page: ", $paginationPage);
+    console.log("Response Pagination Total: ", $paginationTotal);
+    console.log("current page: ", $paginationPage);
+    if ($paginationPage < $paginationTotal) {
+      paginationPage.set($paginationPage + 1);
+      console.log("next page: ", $paginationPage);
+    }
+    if ($paginationPage > 1) {
+      console.log("current page: ", $paginationPage);
+      paginationPage.set(page--);
+      console.log("previous page: ", $paginationPage);
+    }
+    if (search) {
+      paginationPage.set(1);
+      console.log("current page: ", $paginationPage);
     }
   }
-  // $: {
-  //   if (page > 1) {
-  //     page = page - 1;
-  //     const trimmedSearch = search ? search.trim() : "";
-  //     previousButton = {
-  //       ...previousButton,
-  //       url: `/api/explore?search=${trimmedSearch}&model=${model}&town=${town}&page=${page}`,
-  //     };
-  //     console.log("Page for Prev Button: ", page);
-  //   }
-  // }
-
-  // $: {
-  //   if (
-  //     $response &&
-  //     $response.data &&
-  //     $response.data.results &&
-  //     page < $response.data.total_pages
-  //   ) {
-  //     page = page + 1;
-  //     const trimmedSearch = search ? search.trim() : "";
-  //     nextButton = {
-  //       ...nextButton,
-  //       url: `/api/explore?search=${trimmedSearch}&model=${model}&town=${town}&page=${page}`,
-  //     };
-  //     console.log("Page for Next Button: ", page);
-  //   }
-  // }
-  $: {
-    if (
-      $response &&
-      $response.data &&
-      $response.data.results &&
-      page < $response.data.total_pages
-    ) {
-      const trimmedSearch = search ? search.trim() : "";
-      page++;
-      nextButton = {
-        ...nextButton,
-        url: `/api/explore?search=${trimmedSearch}&model=${model}&town=${town}&page=${page}`,
-      };
-      data.set({ search: trimmedSearch, model, town, page });
-      console.log("Page for Next Button: ", $data.page);
-    }
-  }
-  // Reactive statement to update button store when misc store changes
-  $: {
-    const trimmedSearch = search ? search.trim() : "";
-    searchButton = {
-      ...searchButton,
-      url: `/api/explore?search=${trimmedSearch}&model=${model}&town=${town}&page=1`,
-    };
-    console.log("Search changed: ", trimmedSearch);
-    page = 1; // Reset page to 1 when search changes
-    data.set({ search: trimmedSearch, model, town, page });
-  }
-  // $: {
-  //   if (buttonRef && buttonRef.button) {
-  //     const urlParams = new URLSearchParams(buttonRef.button.url.split("?")[1]);
-  //     const newPage = parseInt(urlParams.get("page"));
-  //     if (!isNaN(newPage) && newPage !== page) {
-  //       page = newPage;
-  //       data.set({ search, model, town, page });
-  //     }
-  //   }
-  // }
-  $response = get(response);
-  // totalPages = $response.total_pages || 1;
 </script>
 
 <!-- Index Start -->
@@ -222,7 +130,7 @@
           bind:value={model}
           class="w-full bg-white border-none select select-bordered focus:outline-none text-secondary"
         >
-          <option value="promotions">Promociones</option>
+          <option value="promotions">Servicios</option>
           <option value="requests">Solicitudes</option>
         </select>
         <!-- Model Filter End -->
@@ -264,7 +172,7 @@
       class="flex flex-col w-full gap-4 py-2 overflow-hidden overflow-y-scroll element md:px-12 h-96"
     >
       <!-- {#each services as service} -->
-      {#each $response.data.results as service}
+      {#each $responseData.results as service}
         <!-- New Card Start -->
         <Link
           to={service.promo_id
@@ -330,28 +238,16 @@
       {/each}
     </div>
     <div class="flex justify-between w-full max-w-md mx-auto">
-      {#if $response.data.page > 1}
+      {#if $responseData.page > 1}
         <Button button={previousButton} {image} bind:this={buttonRef} />
-        <!-- on:click={previousPage} -->
       {:else}
         <button class="cursor-not-allowed btn bg-black/20">Previous</button>
       {/if}
-      {#if $response.data.page < $response.data.total_pages}
+      {#if $responseData.page < $responseData.total_pages}
         <Button button={nextButton} {image} bind:this={buttonRef} />
-        <!-- on:click={nextPage} -->
       {:else}
         <button class="cursor-not-allowed btn bg-black/20">Next</button>
       {/if}
-      <!-- <button
-        on:click={previousPage}
-        class={`btn ${$response.data.page > 1 ? "" : "cursor-not-allowed bg-black/20"}`}
-        >Anterior</button
-      >
-      <button
-        on:click={nextPage}
-        class={`btn ${$response.data.page < $response.data.total_pages ? "" : "cursor-not-allowed bg-black/20"}`}
-        >Siguiente</button
-      >
     </div>
   {/if}
 </div>
