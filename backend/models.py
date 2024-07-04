@@ -77,12 +77,14 @@ class Initial_Contact(BaseModel, Base):
     sender_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     sender_read = Column(Boolean, default=False)
     sender_hide = Column(Boolean, default=False)
+    request_id = Column(String(255), ForeignKey("requests.id"))
     promo_id = Column(String(255), ForeignKey("promotions.id"))
     sent_task = Column(Boolean, default=False)
 
     sender = relationship("User", foreign_keys=[sender_id])
     receiver = relationship("User", foreign_keys=[receiver_id])
     promo = relationship("Promotion", foreign_keys=[promo_id])
+    request = relationship("Request", foreign_keys=[request_id])
 
 class Task(BaseModel, Base):
     __tablename__ = "tasks"
