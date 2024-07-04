@@ -55,7 +55,7 @@ app.register_blueprint(request_bp, url_prefix="/api/request")
 
 # Configure cache
 
-app.config.from_mapping({'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': 300})
+app.config.from_mapping({'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': 900})
 cache = Cache(app)
 login_manager = LoginManager(app)
 mail = Mail(app)

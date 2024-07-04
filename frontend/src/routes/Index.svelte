@@ -67,7 +67,7 @@
   function nextPage() {
     if ($response.data.page < $response.data.total_pages) {
       page += 1;
-      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
+      button.url = `/api/explore?search=${$response.data.results[0].search}&model=${model}&town=${town}&page=${$response.data.page + 1}`;
       buttonRef.buttonLogic();
     }
   }
@@ -75,7 +75,7 @@
   function previousPage() {
     if ($response.data.page > 1) {
       page -= 1;
-      button.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`;
+      button.url = `/api/explore?search=${$response.data.results[0].search}&model=${model}&town=${town}&page=${$response.data.page - 1}`;
       buttonRef.buttonLogic();
     }
   }
@@ -83,7 +83,7 @@
   $: {
     button = {
       ...button,
-      url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${page}`,
+      url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=1`,
     };
 
     // Update the data store with the current misc values

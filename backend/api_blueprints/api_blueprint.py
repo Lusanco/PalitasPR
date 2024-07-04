@@ -27,7 +27,7 @@ def explore():
     page = int(request.args.get('page', 1))
     limit = int(request.args.get('limit', 5))
  
-    # Generate cache key
+    # Use cache from current app
     cache = current_app.extensions['cache'][list(current_app.extensions['cache'].keys())[0]]
 
     if not cache.get('search_storage'):

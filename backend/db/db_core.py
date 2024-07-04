@@ -37,6 +37,7 @@ class Db_core:
         Example:
             result = Db_core().landing_searchbar(model='promotions', service='cleaning', town_id=1)
         """
+        serviceName = service
         if town_id == 'all' or town_id == '-1':
             town_id = 0
 
@@ -72,6 +73,11 @@ class Db_core:
                 return {'error': f'No service found with name: {service_name}'}, 404 
 
             my_service_id = service_obj.id
+            # cache  cache.old_service_id == new_service_id  !=   page = 1
+            # cache  cache.old_model == new_model  !=   page = 1
+
+            # cache.old_service_id = new_service
+            # cache.old_model = new_model
             service_name = service_obj.name
             if model == "promotions":
                 total_count, rows = Db_promotion(self.session).get_promos_byTowns(my_service_id, town_id, page, limit)
@@ -81,6 +87,10 @@ class Db_core:
         list_of_models = []
 
         # append dicts of models to list_of_models based on query results
+        print('BEFORE MAKING DICT')
+        print(f'MY SERVICE: {serviceName}')
+        print(f'MY PAGE: {page}')
+        print(f'MY SERVICE: {model}')
         for row in rows:
             if service_name: # doing a specific service ------------------------------
                 if model == "promotions":
@@ -96,7 +106,9 @@ class Db_core:
                         "last_name": row.last_name,
                         "towns": row[3],
                         "created_at": row.created_at.strftime("%Y-%m-%d"),
-                        'pictures': row.pictures
+                        'pictures': row.pictures,
+                        'model': 'promotions',
+                        'search': serviceName
                     }
                     list_of_models.append(model_dict)
                 else: # Requests dict...
@@ -110,7 +122,9 @@ class Db_core:
                         "last_name": row.last_name,
                         "towns": row[3],
                         "created_at": row.created_at.strftime("%Y-%m-%d"),
-                        'pictures': row.pictures
+                        'pictures': row.pictures,
+                        'model': 'requests',
+                        'search': serviceName
                     }
                     list_of_models.append(model_dict)
             else: # no specific service---------------------------------------------
@@ -127,7 +141,9 @@ class Db_core:
                         "last_name": row.last_name,
                         "towns": row[3],
                         "created_at": row.created_at.strftime("%Y-%m-%d"),
-                        'pictures': row.pictures
+                        'pictures': row.pictures,
+                        'model': 'promotions',
+                        'search': serviceName
                     }
                     list_of_models.append(model_dict)
                 else: # Requests dict...
@@ -141,7 +157,9 @@ class Db_core:
                         "last_name": row.last_name,
                         "towns": row[3],
                         "created_at": row.created_at.strftime("%Y-%m-%d"),
-                        'pictures': row.pictures
+                        'pictures': row.pictures,
+                        'model': 'requests',
+                        'search': serviceName
                     }
                     list_of_models.append(model_dict)
             # ------------------------------------------------------------------------------
