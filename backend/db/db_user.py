@@ -130,15 +130,6 @@ class Db_user:
                 contact_dict['task'].pop('service_id')
                 service = self.session.query(Service.name).filter(Service.id == task.service_id).first()
                 contact_dict['task']['service'] = service[0]
-
-                # LOGIC FOR PICTURE QR:
-                if contact_dict['task']['status'] in ['closed', 'reviewed']:
-                    profile = self.get_profile_by_userId(user_id)
-                    responseAWS, statusAWS = aws_bucket.get_picture('user_id', 'qr_pic', None, profile.qr_pic)
-                    if statusAWS == 200:
-                        contact_dict['task']['qr_pic'] = responseAWS['results']
-                    else:
-                        contact_dict['task']['qr_pic'] = None 
             else:
                 contact_dict['task'] = None
                 if initialContact.promo_id:
@@ -167,6 +158,8 @@ class Db_user:
                         contact_dict['task']['provider_last_name'] = receiver.last_name
                         contact_dict['task']['provider_email']= receiver.email
                         contact_dict['task']['provider_phone'] = receiver.phone
+                        provider_id = receiver.id
+
                     else:
                         contact_dict['task']['provider_email'] = contact_dict['contact_email']
                         contact_dict['task']['provider_first_name'] = contact_dict['contact_first_name']
@@ -176,6 +169,19 @@ class Db_user:
                         contact_dict['task']['receiver_last_name'] = receiver.last_name
                         contact_dict['task']['receiver_email']= receiver.email
                         contact_dict['task']['receiver_phone'] = receiver.phone
+                        provider_id = sender.id
+
+                    # LOGIC FOR PICTURE QR:
+                    if contact_dict['task']['status'] in ['closed', 'reviewed']:
+                        profile = self.get_profile_by_userId(provider_id)
+                        print(f'qr pic {profile.qr_pic}')
+                        responseAWS, statusAWS = aws_bucket.get_picture(provider_id, 'Qr', None, profile.qr_pic)
+                        print(statusAWS)
+                        print(responseAWS)
+                        if statusAWS == 200:
+                            contact_dict['task']['qr_pic'] = responseAWS['results']
+                        else:
+                            contact_dict['task']['qr_pic'] = None 
 
 
                 contact_dict.pop('receiver_id')
@@ -201,6 +207,7 @@ class Db_user:
                         contact_dict['task']['receiver_last_name'] = sender.last_name
                         contact_dict['task']['receiver_email']= sender.email
                         contact_dict['task']['receiver_phone'] = sender.phone
+                        provider_id = receiver.id
                     else:
                         contact_dict['task']['receiver_email'] = contact_dict['contact_email']
                         contact_dict['task']['receiver_first_name'] = contact_dict['contact_first_name']
@@ -210,7 +217,18 @@ class Db_user:
                         contact_dict['task']['provider_last_name'] = sender.last_name
                         contact_dict['task']['provider_email']= sender.email
                         contact_dict['task']['provider_phone'] = sender.phone
-
+                        provider_id = sender.id
+                    # LOGIC FOR PICTURE QR:
+                    if contact_dict['task']['status'] in ['closed', 'reviewed']:
+                        profile = self.get_profile_by_userId(provider_id)
+                        print(f'qr pic {profile.qr_pic}')
+                        responseAWS, statusAWS = aws_bucket.get_picture(provider_id, 'Qr', None, profile.qr_pic)
+                        print(statusAWS)
+                        print(responseAWS)
+                        if statusAWS == 200:
+                            contact_dict['task']['qr_pic'] = responseAWS['results']
+                        else:
+                            contact_dict['task']['qr_pic'] = None 
 
                 contact_dict.pop('sender_id')
                 if initialContact.sender_hide is False:
