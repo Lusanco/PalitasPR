@@ -64,6 +64,7 @@ def create_user_folder(user_id: str = None):
     gallery_folder = f'{user_folder}gallery/'
     profile_folder = f'{user_folder}profile/'
     cover_folder = f'{user_folder}cover/'
+    qr_folder = f'{user_folder}qr/'
 
 
     # All folders to create
@@ -75,7 +76,8 @@ def create_user_folder(user_id: str = None):
         reviews_folder,
         profile_folder,
         gallery_folder,
-        cover_folder
+        cover_folder,
+        qr_folder
         ]
 
     for folder in folders:
@@ -224,7 +226,7 @@ def get_picture(user_id: str, model: str, model_id: str, pic_name: str):
     - Example: get_picture('101', 'Promotion', '001', 'Palitas_logo_pitch.png')
     """
 
-    if model not in ['Gallery', 'Profile', 'Cover']:
+    if model not in ['Gallery', 'Profile', 'Cover', 'Qr']:
             models_dict = {
             'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
             'Request': f'{user_id}/requests/{model_id}/{pic_name}',
@@ -235,7 +237,8 @@ def get_picture(user_id: str, model: str, model_id: str, pic_name: str):
         models_dict = {
         'Profile': f'{user_id}/profile/{pic_name}',
         'Gallery': f'{user_id}/gallery/{pic_name}',
-        'Cover': f'{user_id}/cover/{pic_name}'
+        'Cover': f'{user_id}/cover/{pic_name}',
+        'Qr': f'{user_id}/qr/{pic_name}'
         }
 
     if model in models_dict:
@@ -272,7 +275,7 @@ def delete_picture(user_id: str, model: str, model_id, pic_name: str):
         """
 
         # Define the models and their respective paths
-        if model not in ['Gallery', 'Profile', 'Cover']:
+        if model not in ['Gallery', 'Profile', 'Cover', 'Qr']:
             models_dict = {
             'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
             'Request': f'{user_id}/requests/{model_id}/{pic_name}',
@@ -283,7 +286,8 @@ def delete_picture(user_id: str, model: str, model_id, pic_name: str):
             models_dict = {
             'Profile': f'{user_id}/profile/{pic_name}',
             'Gallery': f'{user_id}/gallery/{pic_name}',
-            'Cover': f'{user_id}/cover/{pic_name}'
+            'Cover': f'{user_id}/cover/{pic_name}',
+            'Qr': f'{user_id}/qr/{pic_name}'
             }
 
         if model in models_dict:
@@ -323,7 +327,7 @@ def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content:
         Call this function with the user ID, model name, and pic_name to delete an object from the S3 bucket.
         - Example: delete_picture('101', 'Promotion', '001/Palitas_logo_pitch.png', <bytes>)
         """
-        if model not in ['Gallery', 'Profile', 'Cover']:
+        if model not in ['Gallery', 'Profile', 'Cover', 'Qr']:
             models_dict = {
             'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
             'Request': f'{user_id}/requests/{model_id}/{pic_name}',
@@ -334,7 +338,8 @@ def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content:
             models_dict = {
             'Profile': f'{user_id}/profile/{pic_name}',
             'Gallery': f'{user_id}/gallery/{pic_name}',
-            'Cover': f'{user_id}/cover/{pic_name}'
+            'Cover': f'{user_id}/cover/{pic_name}',
+            'Qr': f'{user_id}/qr/{pic_name}'
             }
 
         # Construct path of picture
@@ -367,7 +372,7 @@ async def get_picture_async(user_id: str, model: str, model_id: str, pic_name: s
     """
     Retrieve a picture from an AWS S3 bucket asynchronously.
     """
-    if model not in ['Gallery', 'Profile', 'Cover']:
+    if model not in ['Gallery', 'Profile', 'Cover', 'Qr']:
             models_dict = {
             'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
             'Request': f'{user_id}/requests/{model_id}/{pic_name}',
@@ -378,7 +383,8 @@ async def get_picture_async(user_id: str, model: str, model_id: str, pic_name: s
         models_dict = {
         'Profile': f'{user_id}/profile/{pic_name}',
         'Gallery': f'{user_id}/gallery/{pic_name}',
-        'Cover': f'{user_id}/cover/{pic_name}'
+        'Cover': f'{user_id}/cover/{pic_name}',
+        'Qr': f'{user_id}/qr/{pic_name}'
         }
 
     if model in models_dict:

@@ -78,13 +78,20 @@ def send_contact():
     '''
     if request.method == 'POST':
         data = request.get_json()
-        if 'receiver_id' not in data or 'promo_id' not in data:
+        print('MY DATA')
+        print(data)
+        # Check validation errors:
+        if 'request_id' not in data and 'promo_id' not in data:
             return make_response(jsonify({'error': 'Missing a key'}), 400)
         if not DBOperations(g.db_session).search('User', data['receiver_id']):
             return make_response(jsonify({'error': 'Receiver doesnt exist'}), 404)
-        if not DBOperations(g.db_session).search('Promotion', data['promo_id']):
-            return make_response(jsonify({'error': 'Promotion doesnt exist'}), 404)
-        
+        if 'promo_id' in data:
+            if not DBOperations(g.db_session).search('Promotion', data['promo_id']):
+                return make_response(jsonify({'error': 'Promotion doesnt exist'}), 404)
+        else:
+            if not DBOperations(g.db_session).search('Request', data['request_id']):
+                return make_response(jsonify({'error': 'Request doesnt exist'}), 404)
+
         data['sender_id'] = current_user.id
         response, status = DBOperations(g.db_session).new({'Initial_Contact': data})
         if status != 201:

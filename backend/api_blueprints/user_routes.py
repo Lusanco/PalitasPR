@@ -225,7 +225,7 @@ def get_profile(profile_id):
                 return make_response(jsonify({'error': 'Empty File Name'}), 400)
 
             response, status = aws_bucket.put_picture(
-                user_id, 'Profile', None, pic_name, pic_bytes)
+                user_id, 'Qr', None, pic_name, pic_bytes)
             if status != 200:
                 return make_response(jsonify(response), status)
 
