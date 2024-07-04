@@ -1309,7 +1309,7 @@
                           {/if}
                         {/if}
                         <!--* ATH Movil QR -->
-                        {#if response.task.status === "closed"}
+                        {#if response.task.status === "closed" || response.task.status === "reviewed"}
                           {#if response.task.provider_id === $userDetails.id}
                             <div
                               class="flex items-center justify-center w-full h-full overflow-x-auto"
