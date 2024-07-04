@@ -37,6 +37,8 @@ class Db_core:
         Example:
             result = Db_core().landing_searchbar(model='promotions', service='cleaning', town_id=1)
         """
+        print(f"Model: {model}, Service: {service}, Town ID: {town_id}, Page: {page}, Limit: {limit}")
+
         if town_id == 'all' or town_id == '-1':
             town_id = 0
 
@@ -47,9 +49,13 @@ class Db_core:
 
         if service == None or service == '':
             if model == 'promotions':
+                print("Fetching all promotions...")
                 total_count, rows = Db_promotion(self.session).get_all_promotions(town_id, page, limit)
-            else:
+            elif model == 'requests':
+                print("Fetching all requests...")
                 total_count, rows = Db_request(self.session).get_all_requests(town_id, page, limit)
+            else:
+                return {'error': 'Invalid model specified'}, 400
             service_name = None
         else: # With service specific to find
             service_name = unidecode(service).lower() # Normalize text
@@ -74,9 +80,13 @@ class Db_core:
             my_service_id = service_obj.id
             service_name = service_obj.name
             if model == "promotions":
+                print("Fetching promotions by service and town...")
                 total_count, rows = Db_promotion(self.session).get_promos_byTowns(my_service_id, town_id, page, limit)
-            if model == "requests":
+            elif model == "requests":
+                print("Fetching requests by service and town...")
                 total_count, rows = Db_request(self.session).get_requests_byTowns(my_service_id, town_id, page, limit)
+            else:
+                return {'error': 'Invalid model specified'}, 400
 
         list_of_models = []
 
@@ -99,7 +109,7 @@ class Db_core:
                         'pictures': row.pictures
                     }
                     list_of_models.append(model_dict)
-                else: # Requests dict...
+                elif model == 'requests': # Requests dict...
                     model_dict = {
                         "request_id": str(row.request_id),
                         'user_id': row.user_id,
@@ -130,7 +140,7 @@ class Db_core:
                         'pictures': row.pictures
                     }
                     list_of_models.append(model_dict)
-                else: # Requests dict...
+                elif model == 'requests': # Requests dict...
                     model_dict = {
                         "request_id": str(row.request_id),
                         'user_id': row.user_id,
