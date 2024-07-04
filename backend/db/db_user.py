@@ -158,14 +158,25 @@ class Db_user:
 
                 # Prepare task: contact sender is task receiver | contact receiver is task provider
                 if task:
-                    contact_dict['task']['receiver_email'] = contact_dict['contact_email']
-                    contact_dict['task']['receiver_first_name'] = contact_dict['contact_first_name']
-                    contact_dict['task']['receiver_last_name'] = contact_dict['contact_last_name']
-                    contact_dict['task']['receiver_phone'] = contact_dict['phone']
-                    contact_dict['task']['provider_first_name'] = receiver.first_name
-                    contact_dict['task']['provider_last_name'] = receiver.last_name
-                    contact_dict['task']['provider_email']= receiver.email
-                    contact_dict['task']['provider_phone'] = receiver.phone
+                    if task.promo_id:
+                        contact_dict['task']['receiver_email'] = contact_dict['contact_email']
+                        contact_dict['task']['receiver_first_name'] = contact_dict['contact_first_name']
+                        contact_dict['task']['receiver_last_name'] = contact_dict['contact_last_name']
+                        contact_dict['task']['receiver_phone'] = contact_dict['phone']
+                        contact_dict['task']['provider_first_name'] = receiver.first_name
+                        contact_dict['task']['provider_last_name'] = receiver.last_name
+                        contact_dict['task']['provider_email']= receiver.email
+                        contact_dict['task']['provider_phone'] = receiver.phone
+                    else:
+                        contact_dict['task']['provider_email'] = contact_dict['contact_email']
+                        contact_dict['task']['provider_first_name'] = contact_dict['contact_first_name']
+                        contact_dict['task']['provider_last_name'] = contact_dict['contact_last_name']
+                        contact_dict['task']['provider_phone'] = contact_dict['phone']
+                        contact_dict['task']['receiver_first_name'] = receiver.first_name
+                        contact_dict['task']['receiver_last_name'] = receiver.last_name
+                        contact_dict['task']['receiver_email']= receiver.email
+                        contact_dict['task']['receiver_phone'] = receiver.phone
+
 
                 contact_dict.pop('receiver_id')
                 if initialContact.receiver_hide is False:
@@ -181,14 +192,25 @@ class Db_user:
 
                 # Prepare task: contact sender is task provider | contact receiver is task receiver
                 if task:
-                    contact_dict['task']['provider_email'] = contact_dict['contact_email']
-                    contact_dict['task']['provider_first_name'] = contact_dict['contact_first_name']
-                    contact_dict['task']['provider_last_name'] = contact_dict['contact_last_name']
-                    contact_dict['task']['provider_phone'] = contact_dict['phone']
-                    contact_dict['task']['receiver_first_name'] = sender.first_name
-                    contact_dict['task']['receiver_last_name'] = sender.last_name
-                    contact_dict['task']['receiver_email']= sender.email
-                    contact_dict['task']['receiver_phone'] = sender.phone
+                    if task.promo_id:
+                        contact_dict['task']['provider_email'] = contact_dict['contact_email']
+                        contact_dict['task']['provider_first_name'] = contact_dict['contact_first_name']
+                        contact_dict['task']['provider_last_name'] = contact_dict['contact_last_name']
+                        contact_dict['task']['provider_phone'] = contact_dict['phone']
+                        contact_dict['task']['receiver_first_name'] = sender.first_name
+                        contact_dict['task']['receiver_last_name'] = sender.last_name
+                        contact_dict['task']['receiver_email']= sender.email
+                        contact_dict['task']['receiver_phone'] = sender.phone
+                    else:
+                        contact_dict['task']['receiver_email'] = contact_dict['contact_email']
+                        contact_dict['task']['receiver_first_name'] = contact_dict['contact_first_name']
+                        contact_dict['task']['receiver_last_name'] = contact_dict['contact_last_name']
+                        contact_dict['task']['receiver_phone'] = contact_dict['phone']
+                        contact_dict['task']['provider_first_name'] = sender.first_name
+                        contact_dict['task']['provider_last_name'] = sender.last_name
+                        contact_dict['task']['provider_email']= sender.email
+                        contact_dict['task']['provider_phone'] = sender.phone
+
 
                 contact_dict.pop('sender_id')
                 if initialContact.sender_hide is False:
