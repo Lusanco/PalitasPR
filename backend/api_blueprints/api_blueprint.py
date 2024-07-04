@@ -19,7 +19,11 @@ def explore():
     town = request.args.get('town')
     page = int(request.args.get('page', 1))
     limit = int(request.args.get('limit', 5))
+
+    print(f"Received request - Model: {model}, Service: {service}, Town: {town}, Page: {page}, Limit: {limit}")
+
     response, status = Db_core(g.db_session).landing_searchBar(model, service, town, page, limit)
+    print(f"Response from landing_searchBar: {response}")
     if response['results'] is  None:
         return make_response(jsonify({'results': None}), 404)
     if status != 200:
