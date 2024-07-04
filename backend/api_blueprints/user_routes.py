@@ -159,6 +159,12 @@ def get_profile(profile_id):
     """
     Get a user's profile(not your own)
     """
+    # if current_user.id == profile.user_id
+        # if cache.get('profile')
+            # return cache profile
+        #else:
+        #normal code......
+        # antes de terminar cache['profile']= results
     if request.method == "GET":
         profile = DBOperations(g.db_session).search("Profile", profile_id)
         if not profile:
