@@ -18,6 +18,7 @@
   import { Link, link } from "svelte-routing";
   import { onMount } from "svelte";
   import axios from "axios";
+  import { currentPage } from "../scripts/currentPage";
 
   // Button Prop Variables And Dependencies
   let href = "";
@@ -27,6 +28,12 @@
   let town = "all";
   let page = 1;
   let totalPages = 1;
+  let nextUrl = writable(
+    `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${$paginationPage ? $paginationPage + 1 : 1}`
+  );
+  let prevUrl = writable(
+    `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${$paginationPage ? $paginationPage - 1 : 1}`
+  );
   let searchButton = {
     name: "",
     method: "GET",
@@ -39,11 +46,13 @@
   let previousButton = {
     ...searchButton,
     name: "Anterior",
+    url: $prevUrl,
     twcss: "btn",
   };
   let nextButton = {
     ...searchButton,
     name: "Siguiente",
+    url: $nextUrl,
     twcss: "btn",
   };
   // Button Prop Variables And Dependencies
@@ -74,27 +83,59 @@
     }
   }
 
+  // $: {
+  //   searchButton.url = `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${$paginationPage ? $paginationPage : 1}`;
+  //   console.log("searchButtonUrl ", searchButton.url);
+  // }
   $: {
-    // $response &&
-    // $responseData &&
-    // $responseData.results &&
-    console.log("Response Pagination Page: ", $paginationPage);
-    console.log("Response Pagination Total: ", $paginationTotal);
-    console.log("current page: ", $paginationPage);
+    if (search || search === "") {
+      searchButton = {
+        ...searchButton,
+        url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${1}`,
+      };
+
+      data.set({ search, model, town, page: 1 });
+      console.log("search Button ", $data.page);
+    }
     if ($paginationPage < $paginationTotal) {
-      paginationPage.set($paginationPage + 1);
-      console.log("next page: ", $paginationPage);
+      nextButton = {
+        ...nextButton,
+        url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${$paginationPage + 1}`,
+      };
+
+      data.set({ search, model, town, page: $paginationPage + 1 });
+      console.log("Next Button ", $data.page);
     }
     if ($paginationPage > 1) {
-      console.log("current page: ", $paginationPage);
-      paginationPage.set(page--);
-      console.log("previous page: ", $paginationPage);
-    }
-    if (search) {
-      paginationPage.set(1);
-      console.log("current page: ", $paginationPage);
+      previousButton = {
+        ...previousButton,
+        url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${$paginationPrev}`,
+      };
+
+      data.set({ search, model, town, page: $paginationPage - 1 });
+      console.log("Prev Button ", $data.page);
     }
   }
+  // $: {
+  //   previousButton = {
+  //     ...previousButton,
+  //     url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${$paginationPrev}`,
+  //   };
+
+  //   data.set({ search, model, town, page: $paginationPage - 1 });
+  // }
+
+  // $: {
+  //   nextButton = {
+  //     ...nextButton,
+  //     url: `/api/explore?search=${search.trim()}&model=${model}&town=${town}&page=${$paginationNext}`,
+  //   };
+
+  //   data.set({ search, model, town, page: $paginationPage + 1 });
+  // }
+  // $: {
+  //   console.log("current Page ", $paginationPage);
+  // }
 </script>
 
 <!-- Index Start -->
