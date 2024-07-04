@@ -2,9 +2,10 @@
   import { writable } from "svelte/store";
   import axios from "axios";
   import { onMount } from "svelte";
-  import { userSession, data } from "../scripts/stores";
+  import { userSession, data, state } from "../scripts/stores";
   import Button from "../components/Button.svelte";
   import { navigate } from "svelte-routing";
+  import Loading from "../components/Loading.svelte";
 
   let description = "";
   let rating = "";
@@ -123,4 +124,15 @@
       </div>
     </div>
   </div>
+  {#if $state.hidden}
+    <div class="hidden"></div>
+  {:else if (!$state.hidden && !$state.loaded) || $state.reload}
+    <div
+      class="absolute z-50 flex flex-col items-center justify-center w-screen min-h-screen m-auto"
+    >
+      <Loading />
+    </div>
+  {:else if $state.error}
+    <p class="text-error">{errorMessage}</p>
+  {/if}
 </div>
