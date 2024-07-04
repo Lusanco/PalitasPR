@@ -49,5 +49,8 @@ def review_crud():
         response, status = DBOperations(g.db_session).new({'Review': data})
         if status != 201:
             return make_response(jsonify(response), status)
+        response, status = DBOperations(g.db_session).update({'Task': {'status': 'reviewed', 'id': task.id}})
+        if status != 200:
+            return make_response(jsonify({'error': f"Task status could not change to reviewed"}), 500)
         g.db_session.commit()
         return make_response(jsonify({'results': 'ok'}), 201)
