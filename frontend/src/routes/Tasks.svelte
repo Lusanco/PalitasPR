@@ -443,7 +443,7 @@
             <Loading />
           {:else}
             <div
-              class="flex flex-col w-full max-w-6xl px-4 mx-auto transition-all duration-100 bg-white border-b-2 rounded-lg border-accent text-secondary hover:bg-accent/10"
+              class="flex flex-col w-full max-w-6xl px-4 mx-auto mt-2 transition-all duration-100 bg-white border-b-2 rounded-lg border-accent text-secondary hover:bg-accent/10"
             >
               <!-- class="w-full overflow-hidden transition-all duration-200 ease-in-out transform border-b-2 md:border-b-[3px] rounded-md shadow-md min-h-40 md:rounded-2xl card card-side bg-white hover:bg-accent hover:bg-opacity-10 active:scale-95 border-accent" -->
               <button
@@ -470,23 +470,23 @@
                 <div class="flex flex-wrap justify-between w-full">
                   {#if response.task === null}
                     <span class="bg-[#f1f1f1] p-2 rounded-badge text-[#1f1f1f]"
-                      >new</span
+                      >Nuevo</span
                     >
                   {:else if response.task.status === "closed"}
                     <span class="bg-[#f1f1f1] p-2 rounded-badge text-[#1f1f1f]"
-                      >{response.task.status}</span
+                      >Cerrado</span
                     >
                   {:else if response.task.status === "active"}
                     <span class="p-2 bg-green-500 rounded-badge text-[#1f1f1f]"
-                      >{response.task.status}</span
+                      >Activo</span
                     >
                   {:else if response.task.status === "pending"}
                     <span class="p-2 bg-yellow-500 rounded-badge text-[#1f1f1f]"
-                      >{response.task.status}</span
+                      >Pendiente</span
                     >
                   {:else if response.task.status === "rejected"}
                     <span class="p-2 bg-red-500 rounded-badge text-[#1f1f1f]"
-                      >{response.task.status}</span
+                      >Rechazado</span
                     >
                   {/if}
                   {#if response.promo_id}
@@ -583,15 +583,27 @@
                               class="col-span-1 font-bold text-secondary text-md"
                             >
                               Nombre
-                              <input
-                                readonly
-                                id="service-provider"
-                                type="text"
-                                class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0"
-                                value={$sentReceived
-                                  ? `${$userDetails.first_name} ${$userDetails.last_name}`
-                                  : `${response.contact_first_name} ${response.contact_last_name}`}
-                              />
+                              {#if response.promo_id}
+                                <input
+                                  readonly
+                                  id="service-provider"
+                                  type="text"
+                                  class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0"
+                                  value={$sentReceived
+                                    ? `${$userDetails.first_name} ${$userDetails.last_name}`
+                                    : `${response.contact_first_name} ${response.contact_last_name}`}
+                                />
+                              {:else}
+                                <input
+                                  readonly
+                                  id="service-provider"
+                                  type="text"
+                                  class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0"
+                                  value={$sentReceived
+                                    ? `${response.contact_first_name} ${response.contact_last_name}`
+                                    : `${$userDetails.first_name} ${$userDetails.last_name}`}
+                                />
+                              {/if}
                             </label>
                             <!--* Service Provided -->
                             <label
@@ -617,15 +629,27 @@
                               class="col-span-1 font-bold text-secondary text-md"
                             >
                               Correo Electrónico
-                              <input
-                                readonly
-                                id="email"
-                                type="email"
-                                value={$sentReceived
-                                  ? `${$userDetails.email}`
-                                  : `${response.contact_email}`}
-                                class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
-                              />
+                              {#if response.promo_id}
+                                <input
+                                  readonly
+                                  id="email"
+                                  type="email"
+                                  value={$sentReceived
+                                    ? `${$userDetails.email}`
+                                    : `${response.contact_email}`}
+                                  class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
+                                />
+                              {:else}
+                                <input
+                                  readonly
+                                  id="email"
+                                  type="email"
+                                  value={$sentReceived
+                                    ? `${response.contact_email}`
+                                    : `${$userDetails.email}`}
+                                  class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
+                                />
+                              {/if}
                             </label>
                             <!--* Provider Phone Number -->
                             <label
@@ -633,15 +657,27 @@
                               class="col-span-1 font-bold text-secondary text-md"
                             >
                               Número de Teléfono
-                              <input
-                                readonly
-                                id="phone-number"
-                                type="text"
-                                value={$sentReceived
-                                  ? `${$userDetails.phone}`
-                                  : `${response.phone}`}
-                                class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
-                              />
+                              {#if response.promo_id}
+                                <input
+                                  readonly
+                                  id="phone-number"
+                                  type="text"
+                                  value={$sentReceived
+                                    ? `${$userDetails.phone}`
+                                    : `${response.phone}`}
+                                  class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
+                                />
+                              {:else}
+                                <input
+                                  readonly
+                                  id="phone-number"
+                                  type="text"
+                                  value={$sentReceived
+                                    ? `${response.phone}`
+                                    : `${$userDetails.phone}`}
+                                  class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
+                                />
+                              {/if}
                             </label>
                           </div>
                         </div>
@@ -661,15 +697,27 @@
                               class="col-span-1 font-bold text-secondary text-md"
                             >
                               Nombre
-                              <input
-                                readonly
-                                id="service-client"
-                                type="text"
-                                value={$sentReceived
-                                  ? `${response.contact_first_name} ${response.contact_last_name}`
-                                  : `${$userDetails.first_name} ${$userDetails.last_name}`}
-                                class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0"
-                              />
+                              {#if response.promo_id}
+                                <input
+                                  readonly
+                                  id="service-client"
+                                  type="text"
+                                  value={$sentReceived
+                                    ? `${response.contact_first_name} ${response.contact_last_name}`
+                                    : `${$userDetails.first_name} ${$userDetails.last_name}`}
+                                  class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0"
+                                />
+                              {:else}
+                                <input
+                                  readonly
+                                  id="service-client"
+                                  type="text"
+                                  value={$sentReceived
+                                    ? `${$userDetails.first_name} ${$userDetails.last_name}`
+                                    : `${response.contact_first_name} ${response.contact_last_name}`}
+                                  class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0"
+                                />
+                              {/if}
                             </label>
                             <!--* Client Email -->
                             <label
@@ -677,15 +725,27 @@
                               class="col-span-1 font-bold text-secondary text-md"
                             >
                               Correo Electrónico
-                              <input
-                                readonly
-                                id="clientEmail"
-                                type="email"
-                                value={$sentReceived
-                                  ? `${response.contact_email}`
-                                  : `${$userDetails.email}`}
-                                class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
-                              />
+                              {#if response.promo_id}
+                                <input
+                                  readonly
+                                  id="clientEmail"
+                                  type="email"
+                                  value={$sentReceived
+                                    ? `${response.contact_email}`
+                                    : `${$userDetails.email}`}
+                                  class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
+                                />
+                              {:else}
+                                <input
+                                  readonly
+                                  id="clientEmail"
+                                  type="email"
+                                  value={$sentReceived
+                                    ? `${$userDetails.email}`
+                                    : `${response.contact_email}`}
+                                  class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
+                                />
+                              {/if}
                             </label>
                             <!--* Client Phone Number -->
                             <label
@@ -693,119 +753,137 @@
                               class="col-span-1 font-bold text-secondary text-md"
                             >
                               Número de Teléfono
-                              <input
-                                id="clientPhone-number"
-                                readonly
-                                value={$sentReceived
-                                  ? `${response.phone}`
-                                  : `${$userDetails.phone}`}
-                                type="text"
-                                class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
-                              />
+                              {#if response.promo_id}
+                                <input
+                                  id="clientPhone-number"
+                                  readonly
+                                  value={$sentReceived
+                                    ? `${response.phone}`
+                                    : `${$userDetails.phone}`}
+                                  type="text"
+                                  class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
+                                />
+                              {:else}
+                                <input
+                                  id="clientPhone-number"
+                                  readonly
+                                  value={$sentReceived
+                                    ? `${$userDetails.phone}`
+                                    : `${response.phone}`}
+                                  type="text"
+                                  class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
+                                />
+                              {/if}
                             </label>
                           </div>
                         </div>
                         <!--* Service Details -->
                         <div class="flex flex-col gap-2 my-4">
-                          <h1
-                            class="mb-4 text-xl font-bold text-center text-secondary md:mb-8 md:text-2xl"
-                          >
-                            Terminos del Servicio
-                          </h1>
                           <!--* Service Description -->
-                          <label
-                            for="agreement"
-                            class="text-lg font-semibold text-secondary text-start"
-                          >
-                            Descripción
-                            <div>
-                              <p class="text-xs md:text-sm">
-                                Describa el servicio ofrecido. Puede añadir más
-                                de un artículo a la lista.
-                              </p>
-                              <!--* Details input -->
-                              <!-- When task === null -->
-                              <div class="flex gap-2 pb-4 border-b-2">
-                                <input
-                                  type="text"
-                                  bind:value={inputValue}
-                                  on:input={handleInput}
-                                  on:keydown={handleKeyDown}
-                                  class="w-full p-2 my-2 font-normal bg-white border-2 rounded-md border-secondary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
-                                />
-                                <button
-                                  on:click={addBulletPoint}
-                                  class="text-white bg-accent border-none btn mt-[5px] hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
-                                >
-                                  <i class="block fa-solid fa-plus md:hidden"
-                                  ></i><span class="hidden md:block"
-                                    >Añadir</span
+                          {#if ($sentReceived === true && response.promo_id !== null) || ($sentReceived === false && response.request_id !== null)}
+                            <h1
+                              class="mb-4 text-xl font-bold text-center text-secondary md:mb-8 md:text-2xl"
+                            >
+                              Terminos del Servicio
+                            </h1>
+                            <label
+                              for="agreement"
+                              class="text-lg font-semibold text-secondary text-start"
+                            >
+                              Descripción
+                              <div>
+                                <p class="text-xs md:text-sm">
+                                  Describa el servicio ofrecido. Puede añadir
+                                  más de un artículo a la lista.
+                                </p>
+                                <!--* Details input -->
+                                <!-- When task === null -->
+                                <div class="flex gap-2 pb-4 border-b-2">
+                                  <input
+                                    type="text"
+                                    bind:value={inputValue}
+                                    on:input={handleInput}
+                                    on:keydown={handleKeyDown}
+                                    class="w-full p-2 my-2 font-normal bg-white border-2 rounded-md border-secondary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
+                                  />
+                                  <button
+                                    on:click={addBulletPoint}
+                                    class="text-white bg-accent border-none btn mt-[5px] hover:bg-[#BB2532] transition-all duration-150 ease-in-out"
                                   >
-                                </button>
-                              </div>
-                              <!-- WHEN task exists: $bulletPointsStore = task.terms = ['termino1', 'termino2']-->
-                              <!-- 'Termino1|Termino2|Termino3' -->
-                              <ul class="h-auto pb-4 my-4 border-b-2">
-                                {#each $bulletPointsStore as bulletPoint}
-                                  <div class="flex justify-between md:mx-4">
-                                    <div class="flex gap-2 mt-1">
-                                      <i
-                                        class="fa-solid fa-check mt-[5px] text-accent"
-                                      ></i>
-                                      <li
-                                        class="overflow-hidden text-base text-md"
-                                      >
-                                        <p
-                                          class="max-w-full line-clamp-none md:line-clamp-4 overflow-ellipsis"
+                                    <i class="block fa-solid fa-plus md:hidden"
+                                    ></i><span class="hidden md:block"
+                                      >Añadir</span
+                                    >
+                                  </button>
+                                </div>
+                                <ul class="h-auto pb-4 my-4 border-b-2">
+                                  {#each $bulletPointsStore as bulletPoint}
+                                    <div class="flex justify-between md:mx-4">
+                                      <div class="flex gap-2 mt-1">
+                                        <i
+                                          class="fa-solid fa-check mt-[5px] text-accent"
+                                        ></i>
+                                        <li
+                                          class="overflow-hidden text-base text-md"
                                         >
-                                          {bulletPoint}
-                                        </p>
-                                      </li>
+                                          <p
+                                            class="max-w-full line-clamp-none md:line-clamp-4 overflow-ellipsis"
+                                          >
+                                            {bulletPoint}
+                                          </p>
+                                        </li>
+                                      </div>
+                                      <div>
+                                        <button
+                                          on:click={() => {
+                                            bulletPointsStore.update((points) =>
+                                              points.filter(
+                                                (point) => point !== bulletPoint
+                                              )
+                                            );
+                                          }}
+                                          class="rounded btn-sm"
+                                          ><i
+                                            class="transition-all duration-150 ease-in-out fa-solid fa-trash hover:text-accent"
+                                          ></i></button
+                                        >
+                                      </div>
                                     </div>
-                                    <div>
-                                      <button
-                                        on:click={() => {
-                                          bulletPointsStore.update((points) =>
-                                            points.filter(
-                                              (point) => point !== bulletPoint
-                                            )
-                                          );
-                                        }}
-                                        class="rounded btn-sm"
-                                        ><i
-                                          class="transition-all duration-150 ease-in-out fa-solid fa-trash hover:text-accent"
-                                        ></i></button
-                                      >
-                                    </div>
-                                  </div>
-                                {/each}
-                              </ul>
-                            </div>
-                          </label>
+                                  {/each}
+                                </ul>
+                              </div>
+                            </label>
+                          {/if}
+
                           <!--* Price and Date -->
                           <div
                             class="grid items-start grid-cols-1 gap-2 md:grid-cols-2"
                           >
-                            <div class="flex col-span-1">
-                              <label
-                                for="price"
-                                class="text-lg font-semibold text-secondary text-start"
-                              >
-                                Precio
-                                <!--* Price Input -->
-                                <!-- WHEN TASK EXISTS price = task.price -->
-                                <div class="">
-                                  <input
-                                    id="price"
-                                    type="number"
-                                    placeholder="$0.00"
-                                    bind:value={price}
-                                    on:keypress={restrictToNumbersAndDecimal}
-                                    class="p-2 my-2 font-normal bg-white border-2 rounded-md border-secondary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
-                                  />
-                                </div>
-                              </label>
-                            </div>
+                            {#if ($sentReceived === true && response.promo_id !== null) || ($sentReceived === false && response.request_id !== null)}
+                              <div class="flex col-span-1">
+                                <label
+                                  for="price"
+                                  class="text-lg font-semibold text-secondary text-start"
+                                >
+                                  <!-- <p>
+                                  Promo id: {response.promo_id}, Contact id: {response.contact_id},
+                                  User Details: {$userDetails.id}
+                                </p> -->
+                                  Precio
+                                  <!--* Price Input -->
+                                  <div class="">
+                                    <input
+                                      id="price"
+                                      type="number"
+                                      placeholder="$0.00"
+                                      bind:value={price}
+                                      on:keypress={restrictToNumbersAndDecimal}
+                                      class="p-2 my-2 font-normal bg-white border-2 rounded-md border-secondary focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-secondary"
+                                    />
+                                  </div>
+                                </label>
+                              </div>
+                            {/if}
                             <!--* Date Inputs -->
                             <!-- WHEN TASK EXISTS: date = task.created_at -->
                             <div class="flex col-span-1">
@@ -879,9 +957,10 @@
                         </div>
                         <div>
                           <!--* Submit button -->
-                          <!-- WHEN TASK EXISTS: no submit button -->
-                          <Button button={someterTask} {image} />
-                          <br />
+                          {#if ($sentReceived === true && response.promo_id !== null) || ($sentReceived === false && response.request_id !== null)}
+                            <Button button={someterTask} {image} />
+                            <br />
+                          {/if}
                         </div>
                       </div>
                     </div>
