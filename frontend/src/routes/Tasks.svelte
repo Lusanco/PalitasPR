@@ -1319,6 +1319,7 @@
                                 providerName={$userDetails.first_name +
                                   " " +
                                   $userDetails.last_name}
+                                imageUrl={response.task.qr_pic}
                               ></QR>
                             </div>
                           {:else if response.task.receiver_id === $userDetails.id}
@@ -1331,6 +1332,7 @@
                                   .provider_first_name +
                                   " " +
                                   response.task.provider_last_name}
+                                imageUrl={response.task.qr_pic}
                               ></QR>
                             </div>
                           {/if}
