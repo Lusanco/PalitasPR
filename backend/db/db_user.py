@@ -117,8 +117,12 @@ class Db_user:
             contact_dict = {}
             contact_dict.update(initialContact.all_columns())
             task = Db_task(self.session).get_task_by_contactId(initialContact.id)
-            contact_dict['promo_title'] = initialContact.promo.title
-            contact_dict['promo_description'] = initialContact.promo.description
+            if initialContact.promo_id:
+                contact_dict['promoRequest_title'] = initialContact.promo.title
+                contact_dict['promoRequest_description'] = initialContact.promo.description
+            else:
+                contact_dict['promoRequest_title'] = initialContact.request.title
+                contact_dict['promoRequest_description'] = initialContact.request.description
 
             if task:
                 contact_dict['task'] = task.all_columns()
@@ -137,7 +141,10 @@ class Db_user:
                         contact_dict['task']['qr_pic'] = None 
             else:
                 contact_dict['task'] = None
-                contact_dict['service'] = self.session.query(Service.name).filter(Service.id == initialContact.promo.service_id).first()[0]
+                if initialContact.promo_id:
+                    contact_dict['service'] = self.session.query(Service.name).filter(Service.id == initialContact.promo.service_id).first()[0]
+                else:
+                    contact_dict['service'] = self.session.query(Service.name).filter(Service.id == initialContact.request.service_id).first()[0]
 
             # RECEIVED_CONTACTS: The user is the receiver, we need sender info
             if user_id == initialContact.receiver_id:
