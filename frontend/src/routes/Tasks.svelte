@@ -202,14 +202,14 @@
           console.log("ContactRes Sent", $contactRes);
         }
 
-        let promo_id;
+        let promoRequest_id;
         if (!$contactRes === null || !$contactRes[0] === null) {
           promoRequestID.set(
             $contactRes[0].promo_id
               ? $contactRes[0].promo_id
               : $contactRes[0].request_id
           );
-          promo_id = $contactRes[0].promo_id;
+          promoRequest_id = $contactRes[0].promo_id;
           if (
             $contactRes[0].task != null &&
             $contactRes[0].task.status === "closed"
@@ -217,12 +217,16 @@
             taskClosed = true;
           }
 
-          return axios.get(`/api/promotion/${promo_id}`);
+          if ($contactRes[0].promo_id) {
+            return axios.get(`/api/promotion/${promoRequest_id}`);
+          } else {
+            return axios.get(`/api/request/${promoRequest_id}`);
+          }
         }
-        if (promo_id === null) {
-          promo_id = "No valid ID";
+        if (promoRequest_id === null) {
+          promoRequest_id = "No valid ID";
         }
-        return axios.get(`/api/promotion/${promo_id}`);
+        return axios.get(`/api/promotion/${promoRequest_id}`);
       })
       .then((promoRes) => {
         promo.set(promoRes.data.results);
@@ -541,8 +545,8 @@
 
                 <br />
                 <div class="w-full text-justify">
-                  <span>{response.promo_title} -</span>
-                  <span>{response.promo_description}</span>
+                  <span>{response.promoRequest_title} -</span>
+                  <span>{response.promoRequest_description}</span>
                 </div>
                 <br />
 
