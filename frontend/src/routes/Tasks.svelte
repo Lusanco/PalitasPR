@@ -1005,6 +1005,10 @@
                                   response.task.provider_last_name}
                                 class="w-full p-2 my-2 font-normal border-2 rounded-md border-secondary bg-primary focus:outline-none focus:border-secondary focus:ring-0"
                               />
+                              <p>
+                                Provider first name: {response.task
+                                  .provider_first_name}
+                              </p>
                             </label>
                             <!--* Service Provided -->
                             <label
