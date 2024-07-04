@@ -488,6 +488,10 @@
                     <span class="p-2 bg-red-500 rounded-badge text-[#1f1f1f]"
                       >Rechazado</span
                     >
+                  {:else if response.task.status === "reviewed"}
+                    <span class="bg-[#f1f1f1] p-2 rounded-badge text-[#1f1f1f]"
+                      >Reseñado</span
+                    >
                   {/if}
                   {#if response.promo_id}
                     <span class="bg-[#f1f1f1] p-2 rounded-badge text-[#1f1f1f]"
