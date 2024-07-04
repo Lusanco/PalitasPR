@@ -894,7 +894,7 @@ SELECT
     u1.id AS receiver_id,        -- Jane Smith (service requester)
     ic.id AS initial_contact_id,
     p.service_id AS service_id, 
-    'closed' AS status, 
+    'reviewed' AS status, 
     'TASK DESCRIPTION: ' || p.title AS description
 FROM 
     promotions p
@@ -945,7 +945,7 @@ SELECT
     u1.id AS receiver_id,        -- Hector Torres (service requester)
     ic.id AS initial_contact_id,
     p.service_id AS service_id, 
-    'closed' AS status, 
+    'reviewed' AS status, 
     '2 TASK DESCRIPTION: ' || p.title AS description
 FROM 
     promotions p
@@ -996,7 +996,7 @@ SELECT
     u1.id AS receiver_id,        -- John Doe (service requester)
     ic.id AS initial_contact_id,
     p.service_id AS service_id, 
-    'closed' AS status, 
+    'reviewed' AS status, 
     'TASK DESCRIPTION: ' || p.title AS description
 FROM 
     promotions p
@@ -1047,7 +1047,7 @@ SELECT
     u1.id AS receiver_id,        -- John Doe (service requester)
     ic.id AS initial_contact_id,
     p.service_id AS service_id, 
-    'closed' AS status, 
+    'reviewed' AS status, 
     'TASK DESCRIPTION: ' || p.title AS description
 FROM 
     promotions p
