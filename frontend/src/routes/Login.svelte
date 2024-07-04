@@ -2,9 +2,10 @@
   import { link } from "svelte-routing";
   import Loading from "../components/Loading.svelte";
   import Button from "../components/Button.svelte";
-  import { state, data, response } from "../scripts/stores";
+  import { state, data, response, userSession } from "../scripts/stores";
   import { get } from "svelte/store";
   import { onMount } from "svelte";
+  import axios from "axios";
 
   // Button Prop Variables And Dependencies
   let image = null;
@@ -12,18 +13,32 @@
   let af2 = null;
   let errorMessage;
   let button = {
-    name: "Login",
+    name: "Iniciar Sesión",
     method: "GET",
     url: `/api/user/login?af1=${af1}&af2=${af2}`,
     headers: "application/json",
     twcss:
-      "shadow-md text-[#f1f1f1] btn bg-[#cc2936] hover:bg-white hover:text-[#1f1f1f]",
+      "shadow-md text-[#f1f1f1] btn bg-accent hover:text-primary hover:bg-accent hover:scale-105 focus:outline-none",
     misc: { "App Location": "Login" },
   };
   // Button Prop Variables And Dependencies
 
   // Define a reference for the Button component
   let buttonRef;
+
+  onMount(() => {
+    axios
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+      });
+  });
 
   // Function to handle the "Enter" key press
   function handleKeydown(event) {
@@ -54,7 +69,7 @@
   // Function to handle the Axios response and redirect on successful login
   $: {
     if ($response && $response.status === 200) {
-      window.location.href = "/";
+      window.location.href = "/login-success";
     }
   }
 
@@ -63,36 +78,36 @@
   });
 </script>
 
-<head>
-  <title>PalitasPR | Login</title>
-</head>
-
-<div
-  class="flex flex-col items-center justify-center h-full min-h-screen py-20 m-auto"
->
-  <div class="flex flex-col max-w-sm gap-4 px-1">
-    <div class="text-center">
-      <h1 class="text-4xl font-bold text-[#1f1f1f]">Login</h1>
-      <p class="text-sm text-[#cc2936]">Login to access your account</p>
+<div class="flex flex-col items-center justify-center h-full min-h-screen">
+  <div class="flex flex-col gap-4">
+    <div class="-mb-2 text-center">
+      <h1 class="text-5xl font-bold text-accent">Iniciar Sesión</h1>
+      <p class="text-md text-secondary">
+        Inicia sesión para acceder a tu cuenta
+      </p>
       <br />
     </div>
-    <label class="flex items-center gap-2 bg-white input input-bordered">
-      <p class="text-center w-14">Email</p>
+    <label
+      class="flex items-center gap-4 px-2 py-1 bg-white border-2 rounded-lg border-neutral"
+    >
+      <p class="w-12 text-center">Correo</p>
       <input
         bind:value={af1}
         on:keydown={handleKeydown}
         type="email"
-        class="border-none focus:ring-0 grow text-[#cc2936]"
+        class="ml-4 border-none focus:ring-0 grow text-secondary"
         placeholder="user@email.com"
       />
     </label>
-    <label class="flex items-center gap-2 bg-white input input-bordered">
-      <p class="text-center w-14">Password</p>
+    <label
+      class="flex items-center gap-4 px-2 py-1 bg-white border-2 rounded-lg border-neutral"
+    >
+      <p class="w-12 text-center">Contraseña</p>
       <input
         bind:value={af2}
         on:keydown={handleKeydown}
         type="password"
-        class="border-none focus:ring-0 grow text-[#cc2936]"
+        class="ml-4 border-none focus:ring-0 grow text-secondary"
         placeholder="********"
       />
     </label>
@@ -100,24 +115,24 @@
       use:link
       href="/forgot-password"
       rel="noopener noreferrer"
-      class="self-end pr-2 -mt-4 link link-hover text-[#cc2936]"
-      >Forgot password?</a
+      class="self-end pr-2 -mt-4 text-sm link link-hover text-accent"
+      >¿Olvidaste tu contraseña?</a
     >
     <Button bind:this={buttonRef} {image} {button}></Button>
-    <p class="pr-2 -mt-4 text-right">
-      Don't have an account yet? <a
+    <p class="pr-2 -mt-3 text-sm text-right">
+      ¿No tienes una cuenta aún? <a
         use:link
-        class="link link-hover text-[#cc2936]"
+        class="link link-hover text-accent"
         rel="noopener noreferrer"
-        href="/signup">Signup</a
-      >
+        href="/signup">Regístrate</a
+      >.
     </p>
     {#if $state.hidden === true}
       <div class="hidden"></div>
     {:else if (!$state.hidden && !$state.loaded) || $state.reload}
       <Loading />
     {:else if $state.error}
-      <div class="w-full mx-auto font-bold text-center text-[#cc2936]">
+      <div class="w-full mx-auto font-bold text-center text-error">
         Incorrect email or password, try again.
       </div>
     {/if}

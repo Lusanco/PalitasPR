@@ -1,5 +1,23 @@
 <script>
+  import { onMount } from "svelte";
+  import { userSession } from "../scripts/stores";
+  import axios from "axios";
+
   let openIndex = null;
+
+  onMount(() => {
+    axios
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+      });
+  });
 
   function toggleItem(index) {
     openIndex = openIndex === index ? null : index;
@@ -7,62 +25,61 @@
 
   let questions = [
     {
-      question: "What services are offered on your platform?",
+      question: "¿Qué servicios se ofrecen en su plataforma?",
       answer:
-        "Our platform offers a wide range of services across various categories such as home services, professional services, beauty and wellness, and more. You can browse through our service listings to find what you're looking for.",
+        "Nuestra plataforma ofrece una amplia gama de servicios en diversas categorías como servicios del hogar, servicios profesionales, belleza y bienestar, entre otros. Puedes explorar nuestras listas de servicios para encontrar lo que estás buscando.",
     },
     {
-      question: "How do I book or schedule a service?",
+      question: "¿Cómo puedo reservar o programar un servicio?",
       answer:
-        "To book or schedule a service, simply navigate to the service you're interested in, select the date and time that works best for you, and follow the prompts to complete the booking process. You'll receive confirmation once your booking is successful.",
+        "Para reservar o programar un servicio, simplemente navega hasta el servicio que te interesa, selecciona la fecha y hora que mejor te convenga, y sigue las indicaciones para completar el proceso de reserva. Recibirás confirmación una vez que tu reserva sea exitosa.",
     },
     {
-      question: "How can I pay for services on your platform?",
+      question: "¿Cómo puedo pagar por los servicios en su plataforma?",
       answer:
-        "For the time being, the only payment method we are working with is ATH Movil. Make sure to look up in the setting for the option to upload your QR code. Don't worry if you dont know how to upload it, we have a step by step guide to help you set it up. We are working on adding more payment options in the future. Stay tuned!",
+        "Por el momento, el único método de pago con el que trabajamos es ATH Movil. Asegúrate de buscar en la configuración la opción para subir tu código QR. No te preocupes si no sabes cómo hacerlo, tenemos una guía paso a paso para ayudarte a configurarlo. Estamos trabajando en agregar más opciones de pago en el futuro. ¡Mantente atento!",
     },
     {
-      question: "What are your cancellation and refund policies?",
+      question: "¿Cuáles son sus políticas de cancelación y reembolso?",
       answer:
-        "Our cancellation and refund policies vary depending on the service and provider. Generally, you can cancel or reschedule appointments with reasonable notice without any penalties. Refunds may be applicable in certain situations, such as provider cancellations or dissatisfaction with the service rendered.",
-    },
-    {
-      question: "How are service providers vetted and rated on your platform?",
-      answer:
-        "We have a rigorous vetting process in place to ensure that our service providers meet certain quality standards and are properly licensed and insured, where applicable. Additionally, our platform features a rating system where customers can leave reviews and feedback about their experiences, helping others make informed decisions.",
+        "Nuestras políticas de cancelación y reembolso varían según el servicio y el proveedor. Generalmente, puedes cancelar o reprogramar citas con un aviso razonable sin penalizaciones. Los reembolsos pueden ser aplicables en ciertas situaciones, como cancelaciones del proveedor o insatisfacción con el servicio prestado.",
     },
     {
       question:
-        "Can I leave reviews or feedback for service providers I've used?",
+        "¿Cómo se evalúan y califican los proveedores de servicios en su plataforma?",
       answer:
-        "Yes, we highly encourage customers to leave honest reviews and feedback for service providers they've used on our platform. This helps maintain transparency and quality control, and aids other users in making informed choices based on real experiences.",
+        "Tenemos un riguroso proceso de evaluación para asegurar que nuestros proveedores de servicios cumplan con ciertos estándares de calidad y estén debidamente licenciados y asegurados, cuando corresponda. Además, nuestra plataforma cuenta con un sistema de calificación donde los clientes pueden dejar reseñas y comentarios sobre sus experiencias, ayudando a otros a tomar decisiones informadas.",
+    },
+    {
+      question:
+        "¿Puedo dejar reseñas o comentarios para los proveedores de servicios que he utilizado?",
+      answer:
+        "Sí, animamos a los clientes a dejar reseñas y comentarios honestos sobre los proveedores de servicios que han utilizado en nuestra plataforma. Esto ayuda a mantener la transparencia y el control de calidad, y ayuda a otros usuarios a tomar decisiones informadas basadas en experiencias reales.",
     },
   ];
 </script>
 
-<head>
-  <title>PalitasPR | FAQ</title>
-</head>
-
 <div
-  class="flex flex-col items-center justify-center h-full min-h-screen py-20 m-auto"
+  class="flex flex-col items-center justify-center h-full py-20 m-auto min-h-fit"
 >
   <div class="flex flex-col w-full max-w-5xl gap-4 px-2">
     <div class="flex flex-col gap-4 text-center">
-      <h2 class="text-5xl text-[#cc2936]">FAQ</h2>
+      <h2 class="text-4xl font-bold text-center text-accent">
+        Preguntas frecuentes (FAQ)
+      </h2>
       <br />
-      <p class="max-w-sm mx-auto">
-        Here are some frequently asked questions. If you have any other
-        questions, please feel free to contact us.
+      <p class="w-full max-w-3xl text-xl text-center">
+        Aquí tienes algunas preguntas frecuentes. Si tienes alguna otra
+        pregunta, no dudes en contactarnos.
       </p>
     </div>
     <br />
     {#each questions as { question, answer }, index}
       <div
-        class="max-w-3xl px-4 mx-auto bg-white border-b-2 rounded-lg border-[#cc2936] text-[#1f1f1f] transition-all duration-100 hover:bg-[#cc2936] hover:text-[#f1f1f1]"
+        class="max-w-3xl px-4 mx-auto transition-all duration-100 bg-white border-b-2 rounded-lg border-accent text-secondary hover:bg-accent hover:text-primary"
       >
         <button
-          class="w-full px-2 py-4 text-xl font-medium text-left rounded-lg focus:outline-none"
+          class="w-full px-2 py-4 text-2xl font-medium text-left rounded-lg focus:outline-none"
           on:click={() => toggleItem(index)}
         >
           {question}
@@ -71,7 +88,8 @@
           class={`overflow-hidden transition-all duration-300 ${openIndex === index ? "max-h-screen" : "max-h-0"}`}
         >
           <div class="px-4 py-2">
-            <p>{answer}</p>
+            <p class="text-xl">{answer}</p>
+            <br />
           </div>
         </div>
       </div>

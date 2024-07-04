@@ -1,30 +1,46 @@
-<!-- Fix: link, layout for all bridge components -->
 <script>
-  function redirectToHome() {
-    window.location.href = "/";
-  }
+  import { link } from "svelte-routing";
+  import { onMount } from "svelte";
+  import { userSession } from "../scripts/stores";
+  import axios from "axios";
+
+  onMount(() => {
+    axios
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+      });
+  });
 </script>
 
-<head>
-  <title>PalitasPR | Create Request Success</title>
-</head>
-
 <div
-  class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto text-teal-800 rounded-md sm:p-10"
+  class="flex flex-col items-center justify-center h-full max-w-md min-h-screen p-6 m-auto rounded-md text-accent sm:p-10"
 >
   <div class="mb-8 text-center">
-    <h1 class="my-3 text-4xl font-bold">Request Created Successfully</h1>
-    <p class="text-sm text-teal-600">
-      Your request has been successfully submitted.
-    </p>
+    <h1 class="my-3 text-4xl font-bold">Solicitud creada correctamente</h1>
+    <p class="text-sm text-secondary">Tu solicitud a sido sometida exito.</p>
   </div>
-  <div class="space-y-2">
-    <button
-      on:click={redirectToHome}
-      type="button"
-      class="w-full px-8 py-3 font-semibold bg-teal-600 rounded-md text-teal-50"
+  <div class="flex justify-center px-4">
+    <a
+      use:link
+      href="/"
+      rel="noopener noreferrer"
+      class="w-full px-6 mx-1 bg-accent max-w-32 text-primary hover:text-secondary hover:bg-white btn"
+      >Buscar
+    </a>
+    <a
+      use:link
+      href="/dashboard"
+      rel="noopener noreferrer"
+      class="w-full px-6 mx-1 bg-accent max-w-32 text-primary hover:text-secondary hover:bg-white btn"
     >
-      Back to Dashboard
-    </button>
+      Tablero
+    </a>
   </div>
 </div>

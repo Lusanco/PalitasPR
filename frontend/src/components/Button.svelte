@@ -1,6 +1,16 @@
 <script>
   import axios from "axios";
-  import { state, data, response } from "../scripts/stores";
+  import {
+    state,
+    data,
+    response,
+    responseData,
+    responseStatus,
+    paginationPage,
+    paginationTotal,
+    paginationNext,
+    paginationPrev,
+  } from "../scripts/stores";
   import { get, writable } from "svelte/store";
 
   let SDResponse = writable(null);
@@ -54,25 +64,6 @@
       console.log("JSON Data:", axiosData);
     }
 
-    // data.set(new FormData());
-    // console.log("after data.set", $data);
-
-    // Append image if it exists
-
-    // Append other data as JSON
-    // const jsonData = JSON.stringify($data);
-    // $data.append("data", jsonData);
-    // console.log("after data.set", $data);
-    // Log data contents
-    // logFormData(data);
-    // let axiosData =
-    //   image || button.headers === "multipart/form-data" ? data : $data;
-    // console.log("after data.set", $data);
-    // console.log("Before Axios Response Log: ", $response);
-    // console.log("Before Axios Data Log: ", axiosData);
-    // console.log("Before Axios Misc Log: ", button.misc);
-    // console.log("Before Axios State Log: ", get(state));
-
     // Make the Axios request
     axios({
       method: button.method,
@@ -90,11 +81,13 @@
         }));
 
         response.set(axiosResponse);
-
+        responseData.set(axiosResponse.data);
+        responseStatus.set(axiosResponse.status);
+        if ($responseData.page && $responseData.total_pages) {
+          paginationPage.set($responseData.page);
+          paginationTotal.set($responseData.total_pages);
+        }
         console.log(".then() Response Log: ", $response);
-        // console.log(".then() Data Log: ", axiosData);
-        // console.log(".then() Misc Log: ", button.misc);
-        // console.log(".then() State Log: ", $state);
       })
       .catch((axiosError) => {
         state.update((s) => ({
@@ -106,9 +99,6 @@
         }));
 
         console.log(".catch() Error Log: ", axiosError);
-        // console.log(".catch() Data Log: ", axiosData);
-        // console.log(".catch() Misc Log: ", button.misc);
-        // console.log(".catch() State Log: ", $state);
       });
   }
 
@@ -117,8 +107,32 @@
     console.log("Back Button");
   }
 
-  // Function to handle button click
+  // Function to handle button click "Create Review"
   export function buttonLogic() {
+    if (button.misc["App Location"] === "Create Review") {
+      axiosLogic();
+      console.log("Before IF", $response.status);
+      if ($response.status === 200) {
+        window.location.href = "/create-review-success";
+      }
+      return;
+    }
+    if (button.misc["App Location"] === "Crear Request") {
+      axiosLogic();
+      // console.log("Before IF", $response.status);
+      if ($responseStatus === 201) {
+        window.location.href = "/create-request-success";
+      }
+      return;
+    }
+    if (button.misc["App Location"] === "Crear Servicio") {
+      axiosLogic();
+      // console.log("Before IF", $response.status);
+      if ($responseStatus === 201) {
+        window.location.href = "/create-service-success";
+      }
+      return;
+    }
     if (button.misc["App Location"] === "Service Details") {
       axiosLogic();
       $SDResponse = get(response);
@@ -132,6 +146,30 @@
     }
     if (button.misc["App Location"] === "Back Button Component") {
       backButton();
+      return;
+    }
+    if (button.misc["App Location"] === "Submit Task") {
+      axiosLogic();
+      function reloadTasks() {
+        if (window.location.pathname === "/tasks") {
+          window.location.reload();
+        } else {
+          window.location.href = "/tasks";
+        }
+      }
+      reloadTasks();
+      return;
+    }
+    if (button.misc["App Location"] === "Delete Task") {
+      axiosLogic();
+      function reloadTasks() {
+        if (window.location.pathname === "/tasks") {
+          window.location.reload();
+        } else {
+          window.location.href = "/tasks";
+        }
+      }
+      reloadTasks();
       return;
     }
     axiosLogic();

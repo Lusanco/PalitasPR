@@ -1,5 +1,23 @@
 <!-- After click it should redirect to Service where the offer was made/tied to -->
 <script>
+  import { onMount } from "svelte";
+  import { userSession } from "../scripts/stores";
+  import axios from "axios";
+
+  onMount(() => {
+    axios
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        console.log(userStatusRes.data);
+      })
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+      });
+  });
+
   let offers = [
     {
       id: 1,
@@ -75,10 +93,6 @@
     },
   ];
 </script>
-
-<head>
-  <title>PalitasPR | Inbox</title>
-</head>
 
 <div class="max-h-full min-h-screen">
   <h1 class="font-sans text-3xl text-center text-bold">Inbox</h1>

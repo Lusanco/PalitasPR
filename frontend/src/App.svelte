@@ -10,6 +10,7 @@
   // PalitasPR Routes
   import Index from "./routes/Index.svelte";
   import LoginToContinue from "./routes/LoginToContinue.svelte";
+  import LoginSuccess from "./routes/LoginSuccess.svelte";
   import Login from "./routes/Login.svelte";
   import Signup from "./routes/Signup.svelte";
   import SignupSuccess from "./routes/SignupSuccess.svelte";
@@ -31,8 +32,20 @@
   import NotFound from "./routes/NotFound.svelte";
   import TermsOfUse from "./routes/TermsOfUse.svelte";
   import Privacy from "./routes/Privacy.svelte";
-  import Test from "./routes/TEST.svelte";
   import InitialContactSuccess from "./routes/InitialContactSuccess.svelte";
+
+  // Agreement Routes
+  import Agreement from "./routes/Agreement.svelte";
+  import AgreementReview from "./routes/AgreementReview.svelte";
+  import Pass from "./routes/Pass.svelte";
+  import NotPass from "./routes/NotPass.svelte";
+  import Tasks from "./routes/Tasks.svelte";
+  import CreateReview from "./routes/CreateReview.svelte";
+
+  // QR | Ath Movil
+  import QR from "./components/QR.svelte";
+  import EmailSuccess from "./routes/EmailSuccess.svelte";
+  import CreateReviewSuccess from "./routes/CreateReviewSuccess.svelte";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -41,6 +54,7 @@
     <Router>
       <Route path="/" component={Index} />
       <Route path="/login-to-continue" component={LoginToContinue} />
+      <Route path="/login-success" component={LoginSuccess} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       <Route path="/signup-success" component={SignupSuccess} />
@@ -53,7 +67,7 @@
       <Route path="/request-details/:id" component={RequestDetails} />
       <Route path="/manage-services" component={ManageServices} />
       <Route path="/manage-requests" component={ManageRequests} />
-      <Route path="/profile" component={Profile} />
+      <Route path="/profile/:id" component={Profile} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/faq" component={Faq} />
@@ -64,9 +78,23 @@
         path="/initial-contact-success"
         component={InitialContactSuccess}
       />
+      <Route path="/tasks" component={Tasks} />
+      <Route path="/create-review/:id" component={CreateReview} />
+      <Route path="/email-success" component={EmailSuccess} />
+      <Route path="/create-review-success" component={CreateReviewSuccess} />
 
-      <!-- Test Route -->
-      <Route path="/test" component={Test} />
+      <!--* QR | Ath Movil -->
+      <Route path="/qr" component={QR} />
+
+      <!--! 404 / Not found -->
+      <Route path="*" component={NotFound} />
+
+      <!-- For development purposes only: Test Dev -->
+      <!-- <Route path="/test" component={Test} /> -->
+      <!-- For development purposes only: Login Hack -->
+      <Route path="/pass" component={Pass} />
+      <!-- For development purposes only: Logout Hack -->
+      <Route path="/logout" component={NotPass} />
     </Router>
   </Main>
   <Footer />

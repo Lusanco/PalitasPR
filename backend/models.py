@@ -1,18 +1,17 @@
-#!/usr/bin/python3
 """
     All classes for tables(DataBase)
 """
 
-from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, Integer, Boolean,  Index
 from sqlalchemy.orm import relationship
 from base_model import BaseModel, Base, BaseModelSerial
-from flask_login import UserMixin
 from sqlalchemy.dialects.postgresql import TSVECTOR
-from sqlalchemy.event import listen
-from sqlalchemy.sql import text
+from flask_login import UserMixin
+from sqlalchemy import (
+    Column, String, ForeignKey, UniqueConstraint, 
+    Integer, Boolean,  Index
+    )
 
 
-# ASSOCIATION USER & SERVICE & TOWN CLASS
 class Promo_Towns(BaseModel, Base):
     __tablename__ = "promo_towns"
 
@@ -42,8 +41,6 @@ class Service(Base):
         Index('idx_services_tsv', 'tsv', postgresql_using='gin'),
     )
 
-
-# USER CLASS
 class User(BaseModel, UserMixin, Base):
     __tablename__ = "users"
 
@@ -51,15 +48,14 @@ class User(BaseModel, UserMixin, Base):
     last_name = Column(String(255), nullable=False)
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
+    phone = Column(String(40))
     verified = Column(Boolean, default=False)
     verification_token = Column(String(128), unique=True)
 
-# TOWN CLASS (Serial id int)
 class Town(BaseModelSerial, Base):
     __tablename__ = "towns"
 
     name = Column(String(50), unique=True, nullable=False)
-
 
 class Review(BaseModel, Base):
     __tablename__ = "reviews"
@@ -72,33 +68,36 @@ class Review(BaseModel, Base):
 
     reviewer = relationship("User", foreign_keys=[user_id])
 
-# W)RKING DOWN HERE NEED TESTING
 class Initial_Contact(BaseModel, Base):
     __tablename__ = 'initial_contacts'
 
     receiver_id = Column(String(255), ForeignKey("users.id"), nullable=False)
+    receiver_read = Column(Boolean, default=False)
+    receiver_hide = Column(Boolean, default=False)
     sender_id = Column(String(255), ForeignKey("users.id"), nullable=False)
-    promo_id = Column(String(255), ForeignKey("promotions.id"), nullable=False)
-    read = Column(Boolean, default=False)
+    sender_read = Column(Boolean, default=False)
+    sender_hide = Column(Boolean, default=False)
+    request_id = Column(String(255), ForeignKey("requests.id"))
+    promo_id = Column(String(255), ForeignKey("promotions.id"))
     sent_task = Column(Boolean, default=False)
 
-    # Relationships
     sender = relationship("User", foreign_keys=[sender_id])
     receiver = relationship("User", foreign_keys=[receiver_id])
     promo = relationship("Promotion", foreign_keys=[promo_id])
-
+    request = relationship("Request", foreign_keys=[request_id])
 
 class Task(BaseModel, Base):
     __tablename__ = "tasks"
     initial_contact_id = Column(String(255), ForeignKey("initial_contacts.id"), nullable=False)
     promo_id = Column(String(50), ForeignKey('promotions.id'))
+    request_id = Column(String(50), ForeignKey('requests.id'))
     receiver_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     receiver_confirm = Column(Boolean)
     provider_id = Column(String(255), ForeignKey("users.id"), nullable=False)
     service_id = Column(String(255), ForeignKey("users.id"), nullable=False)
-    is_read = Column(Boolean, default=False)
-    status = Column(String(255), nullable=False, default="open")
+    status = Column(String(255), nullable=False, default="pending")
     description = Column(String(255), nullable=False)
+    price = Column(Integer)
 
     promo = relationship('Promotion', foreign_keys=[promo_id])
 
@@ -113,7 +112,7 @@ class Promotion(BaseModel, Base):
     pictures = Column(String(255))
 
     user = relationship('User', foreign_keys=[user_id])
-
+    service = relationship('Service', foreign_keys=[service_id])
 
 class Request(BaseModel, Base):
     __tablename__ = "requests"
@@ -122,6 +121,9 @@ class Request(BaseModel, Base):
     title = Column(String(100), nullable=False)
     description = Column(String(255), nullable=False)
     pictures = Column(String())
+
+    user = relationship('User', foreign_keys=[user_id])
+    service = relationship('Service', foreign_keys=[service_id])
 
 
 class Profile(BaseModel, Base):
@@ -136,6 +138,6 @@ class Profile(BaseModel, Base):
     profile_pic = Column(String(255))
     cover_pic = Column(String(255))
     gallery = Column(String(255))
+    qr_pic = Column(String(255))
 
-    # relationships
     user = relationship('User', foreign_keys=[user_id])

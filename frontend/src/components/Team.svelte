@@ -8,9 +8,7 @@
   } from "../scripts/teamMembers";
 </script>
 
-<div
-  class="flex flex-col items-center justify-center w-full gap-10 mx-auto md:flex-row"
->
+<div class="flex flex-wrap items-center justify-center w-full gap-10 mx-auto">
   {#each Object.entries(teamROLES) as [key, value]}
     <Member
       memberNAME={key}

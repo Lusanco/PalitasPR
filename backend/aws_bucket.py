@@ -6,17 +6,20 @@
 '''
 import boto3
 from botocore.exceptions import ClientError
-from typing import Tuple, Dict
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Specify your AWS credentials and region
-aws_access_key_id = 'AKIA4MTWIBZ4HIVJ6NWI'
-aws_secret_access_key = 'GTpG38b2yUeu+VkFew+nxScVY7IVfOjyK3p43k56'
-region_name = 'us-east-2'
+aws_access_key = os.getenv("AWS_ACCESS_KEY")
+aws_secret_key = os.getenv("AWS_SECRET_KEY")
+region_name = os.getenv("AWS_BUCKET_REGION")
 
 # Initialize the S3 client
 s3_client = boto3.client('s3', 
-                        aws_access_key_id=aws_access_key_id,
-                        aws_secret_access_key=aws_secret_access_key,
+                        aws_access_key_id=aws_access_key,
+                        aws_secret_access_key=aws_secret_key,
                         region_name=region_name)
 
 def create_user_folder(user_id: str = None):
@@ -35,13 +38,13 @@ def create_user_folder(user_id: str = None):
     AWS S3 Folder Structure:
     - Root: users/<user_id>/
     - Subfolders:
-      - profile/
-      - promotions/
-      - requests/
-      - tasks/
-      - reviews/
-      -gallery/
-      -profile/
+    - profile/
+    - promotions/
+    - requests/
+    - tasks/
+    - reviews/
+    -gallery/
+    -profile/
 
     Note:
     - Folders in AWS S3 must end with '/'.
@@ -61,18 +64,21 @@ def create_user_folder(user_id: str = None):
     gallery_folder = f'{user_folder}gallery/'
     profile_folder = f'{user_folder}profile/'
     cover_folder = f'{user_folder}cover/'
+    qr_folder = f'{user_folder}qr/'
 
 
     # All folders to create
-    folders = [user_folder,
-               promotions_folder,
-               requests_folder,
-               tasks_folder,
-               reviews_folder,
-               profile_folder,
-               gallery_folder,
-               cover_folder
-               ]
+    folders = [
+        user_folder,
+        promotions_folder,
+        requests_folder,
+        tasks_folder,
+        reviews_folder,
+        profile_folder,
+        gallery_folder,
+        cover_folder,
+        qr_folder
+        ]
 
     for folder in folders:
         try:
@@ -107,7 +113,7 @@ def create_model_folder(user_id: str, model: str, model_id: str):
     users/007/promotion/<model_id/
 
     Example Usage:
-     - Example: delete_picture('101', 'Promotion', '001')
+    - Example: delete_picture('101', 'Promotion', '001')
     '''
     print(f'\n\nInside createfolder: user_id:{user_id}, model:{model}, model_id:{model_id}\n\n')
     models_dict = {
@@ -220,7 +226,7 @@ def get_picture(user_id: str, model: str, model_id: str, pic_name: str):
     - Example: get_picture('101', 'Promotion', '001', 'Palitas_logo_pitch.png')
     """
 
-    if model not in ['Gallery', 'Profile', 'Cover']:
+    if model not in ['Gallery', 'Profile', 'Cover', 'Qr']:
             models_dict = {
             'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
             'Request': f'{user_id}/requests/{model_id}/{pic_name}',
@@ -231,7 +237,8 @@ def get_picture(user_id: str, model: str, model_id: str, pic_name: str):
         models_dict = {
         'Profile': f'{user_id}/profile/{pic_name}',
         'Gallery': f'{user_id}/gallery/{pic_name}',
-        'Cover': f'{user_id}/cover/{pic_name}'
+        'Cover': f'{user_id}/cover/{pic_name}',
+        'Qr': f'{user_id}/qr/{pic_name}'
         }
 
     if model in models_dict:
@@ -268,7 +275,7 @@ def delete_picture(user_id: str, model: str, model_id, pic_name: str):
         """
 
         # Define the models and their respective paths
-        if model not in ['Gallery', 'Profile', 'Cover']:
+        if model not in ['Gallery', 'Profile', 'Cover', 'Qr']:
             models_dict = {
             'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
             'Request': f'{user_id}/requests/{model_id}/{pic_name}',
@@ -279,7 +286,8 @@ def delete_picture(user_id: str, model: str, model_id, pic_name: str):
             models_dict = {
             'Profile': f'{user_id}/profile/{pic_name}',
             'Gallery': f'{user_id}/gallery/{pic_name}',
-            'Cover': f'{user_id}/cover/{pic_name}'
+            'Cover': f'{user_id}/cover/{pic_name}',
+            'Qr': f'{user_id}/qr/{pic_name}'
             }
 
         if model in models_dict:
@@ -319,7 +327,7 @@ def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content:
         Call this function with the user ID, model name, and pic_name to delete an object from the S3 bucket.
         - Example: delete_picture('101', 'Promotion', '001/Palitas_logo_pitch.png', <bytes>)
         """
-        if model not in ['Gallery', 'Profile', 'Cover']:
+        if model not in ['Gallery', 'Profile', 'Cover', 'Qr']:
             models_dict = {
             'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
             'Request': f'{user_id}/requests/{model_id}/{pic_name}',
@@ -330,7 +338,8 @@ def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content:
             models_dict = {
             'Profile': f'{user_id}/profile/{pic_name}',
             'Gallery': f'{user_id}/gallery/{pic_name}',
-            'Cover': f'{user_id}/cover/{pic_name}'
+            'Cover': f'{user_id}/cover/{pic_name}',
+            'Qr': f'{user_id}/qr/{pic_name}'
             }
 
         # Construct path of picture
@@ -358,3 +367,45 @@ def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content:
                         return ({'response': 'Object not found'}, 404)
                     else:
                         return ({'error': 'AWS error'}, 500)
+
+async def get_picture_async(user_id: str, model: str, model_id: str, pic_name: str):
+    """
+    Retrieve a picture from an AWS S3 bucket asynchronously.
+    """
+    if model not in ['Gallery', 'Profile', 'Cover', 'Qr']:
+            models_dict = {
+            'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
+            'Request': f'{user_id}/requests/{model_id}/{pic_name}',
+            'Task': f'{user_id}/tasks/{model_id}/{pic_name}',
+            'Review': f'{user_id}/reviews/{model_id}/{pic_name}'
+            }
+    else:
+        models_dict = {
+        'Profile': f'{user_id}/profile/{pic_name}',
+        'Gallery': f'{user_id}/gallery/{pic_name}',
+        'Cover': f'{user_id}/cover/{pic_name}',
+        'Qr': f'{user_id}/qr/{pic_name}'
+        }
+
+    if model in models_dict:
+        path = f'users/{models_dict[model]}' # This pastes users/101/promotions/001/Palitas_logo_pitch.png
+    else:
+        return ({'response': 'Model(Folder) does not not exist'}, 400)
+    try:
+        # Attempt to get the object
+        response = s3_client.get_object(Bucket='palitas-pics', Key=path)
+        
+        response = s3_client.generate_presigned_url('get_object',
+                                                    Params={'Bucket': 'palitas-pics', 'Key': path},
+                                                    ExpiresIn=3600)
+
+        return ({'results': response}, 200)
+
+    except ClientError as e:
+
+        if e.response['Error']['Code'] == 'NoSuchKey':
+            # Object does not exist, return an empty response
+            return ({'error': 'Picture not found'}, 400)
+        else:
+            # Other error occurred, raise or handle accordingly
+            return ({'error': 'Internal error aws'}, 500)

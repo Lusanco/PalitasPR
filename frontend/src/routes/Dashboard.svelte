@@ -1,24 +1,56 @@
 <script>
-  import Link from "../components/Link.svelte";
+  import { onMount } from "svelte";
+  import { userSession } from "../scripts/stores";
+  import axios from "axios";
+  import { Link } from "svelte-routing";
+  import { writable } from "svelte/store";
+
+  let profileID = writable();
 
   let twcss =
-    "w-full h-24 md:h-32 rounded-lg text-stone-600 bg-stone-300  flex flex-col justify-center items-center font-bold shadow-md text-md md:text-2xl hover:bg-stone-400 hover:text-stone-700 transition duration-300 ease-in-out cursor-pointer text-center";
+    "flex flex-col items-center justify-center font-bold text-center transition-all duration-200 rounded-lg shadow-md cursor-pointer bg-white min-h-20 text-2xl md:text-4xl h-40 w-40 md:w-80 hover:bg-accent hover:text-primary";
+
+  // Check if the user is logged in
+  onMount(() => {
+    axios
+      // Make a GET request to the user status endpoint
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        userSession.set(true);
+        profileID.set(userStatusRes.data.profile_id);
+        console.log(userStatusRes.data);
+      })
+      // Catch errors
+      .catch((userStatusErr) => {
+        userSession.set(false);
+        console.log(userStatusErr);
+        console.log($userSession);
+        window.location.href = "/login-to-continue";
+      });
+  });
 </script>
 
-<head>
-  <title>PalitasPR | Dashboard</title>
-</head>
-<div class="flex flex-col items-center justify-center h-full min-h-screen">
-  <div class="flex w-full">
+<div
+  class="flex flex-col items-center justify-center h-full min-h-screen px-2 bg-primary"
+>
+  <div
+    class="flex flex-wrap items-center justify-center w-full max-w-3xl gap-4"
+  >
     <div
-      class="grid w-full grid-cols-2 grid-rows-2 gap-2 p-4 m-4 md:p-8 md:gap-3 md:m-12"
+      class="flex flex-wrap items-center justify-center w-full max-w-3xl gap-4"
     >
-      <Link name="Create Service" {twcss} href="/create-service"></Link>
-      <Link name="Create Request" {twcss} href="/create-request"></Link>
-      <Link name="Manage Services" {twcss} href="/manage-services"></Link>
-      <Link name="Manage Requests" {twcss} href="/manage-requests"></Link>
-      <Link name="Tasks" {twcss} href="/inbox"></Link>
-      <Link name="Profile" {twcss} href="/profile"></Link>
+      <!--* Create Service button -->
+      <Link class={twcss} to="/create-service">Crear Servicios</Link>
+      <!--* Create Request button -->
+      <Link class={twcss} to="/create-request">Crear Solicitud</Link>
+    </div>
+    <div
+      class="flex flex-wrap items-center justify-center w-full max-w-3xl gap-4"
+    >
+      <!--* Tasks button -->
+      <Link class={twcss} to="/tasks">Tareas</Link>
+      <!--* Profile button -->
+      <Link class={twcss} to={`/profile/${$profileID}`}>Perfil</Link>
     </div>
   </div>
 </div>

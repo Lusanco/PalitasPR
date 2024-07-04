@@ -1,94 +1,205 @@
-<!-- Revised: Livan - Instrucctions in Trello -->
 <script>
   import { link } from "svelte-routing";
+  import { userSession } from "../scripts/stores";
+  import { onMount } from "svelte";
+  import axios from "axios";
+  import { writable } from "svelte/store";
+
+  let detailsOpen = writable(false);
   let menuOpen = false;
 
   function toggleMenu() {
     menuOpen = !menuOpen;
   }
+
+  function closeMenu(event) {
+    if (
+      menuOpen &&
+      !event.target.closest("#navbar-cta") &&
+      !event.target.closest('button[aria-controls="navbar-cta"]')
+    ) {
+      menuOpen = false;
+    }
+  }
+
+  function closeDetails() {
+    detailsOpen.set(false);
+  }
+
+  function handleLinkClick(event) {
+    // Allow navigation to happen first
+    setTimeout(() => {
+      toggleMenu();
+      closeDetails();
+    }, 0);
+  }
+
+  let profileID = writable();
+
+  onMount(() => {
+    axios
+      .get("/api/user/status")
+      .then((userStatusRes) => {
+        profileID.set(userStatusRes.data.profile_id);
+      })
+      .catch((userStatusErr) => {
+        console.log("User Status Err: ", userStatusErr);
+      });
+    document.addEventListener("click", closeMenu);
+
+    return () => {
+      document.removeEventListener("click", closeMenu);
+    };
+  });
+
+  function handleHomeClick(event) {
+    // event.preventDefault();
+    if (window.location.pathname === "/") {
+      window.location.reload();
+    } else {
+      window.location.href = "/";
+    }
+  }
 </script>
 
-<div class="flex justify-end m-2 bg-transparent md:hidden">
+<div class="flex justify-end w-full m-2 bg-tranparent">
   <button
     type="button"
-    class="inline-flex items-center justify-center w-16 h-16 p-2 text-sm text-teal-600 rounded-lg hover:text-teal-400 focus:outline-none focus:ring-0"
+    class="inline-flex items-center justify-center w-20 h-20 rounded-lg"
     aria-controls="navbar-cta"
     aria-expanded={menuOpen}
     on:click={toggleMenu}
   >
     <span class="sr-only">Open main menu</span>
-    <svg
-      class="w-5 h-5"
-      aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 17 14"
-    >
-      <path
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M1 1h15M1 7h15M1 13h15"
-      />
-    </svg>
+    <i class="text-2xl fa-solid fa-bars text-accent"></i>
   </button>
 </div>
 
 <div
-  class={`z-50 bg-teal-50 absolute left-0 right-0 ${menuOpen ? "block" : "hidden"} md:hidden bg-transparent`}
+  class={`z-50 bg-white fixed top-20 rounded-2xl right-0 left-0 ${menuOpen ? "block" : "hidden"} md:left-auto md:w-80`}
   id="navbar-cta"
 >
   <ul
-    class="z-50 flex flex-col p-2 mt-1 space-y-2 font-medium rounded-b-lg bg-slate-200 rtl:space-x-reverse"
+    class="w-full p-4 text-xl font-semibold shadow-xl md:w-80 menu bg-whte rounded-box"
   >
     <li>
       <a
         use:link
         href="/"
-        class="block px-3 py-2 text-teal-600 rounded hover:bg-teal-800 hover:text-gray-200 dark:text-teal-100 dark:hover:bg-teal-700 dark:hover:text-teal-100"
-        >Home</a
+        class="block gap-2 px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+        on:click={handleLinkClick}
+        on:click={handleHomeClick}
+        ><i class="mr-2 fa-solid fa-house text-accent group-hover:text-primary"
+        ></i> Inicio</a
       >
     </li>
     <li>
       <a
         use:link
-        href="/aboutus"
-        class="block px-3 py-2 text-teal-600 rounded hover:bg-teal-800 hover:text-gray-200 dark:text-teal-100 dark:hover:bg-teal-700 dark:hover:text-teal-100"
-        >About Us</a
+        href="/dashboard"
+        class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+        on:click={handleLinkClick}
+        ><i
+          class="mr-2 fa-solid fa-table-columns text-accent group-hover:text-primary"
+        ></i> Tablero</a
       >
     </li>
     <li>
       <a
         use:link
-        href="/services"
-        class="block px-3 py-2 text-teal-600 rounded hover:bg-teal-800 hover:text-gray-200 dark:text-teal-100 dark:hover:bg-teal-700 dark:hover:text-teal-100"
-        >Services</a
+        href={`/profile/${$profileID}`}
+        class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+        on:click={handleLinkClick}
+        ><i class="mr-2 fa-solid fa-user text-accent group-hover:text-primary"
+        ></i> Perfil</a
       >
     </li>
     <li>
-      <a
-        use:link
-        href="/contact"
-        class="block px-3 py-2 text-teal-600 rounded hover:bg-teal-800 hover:text-gray-200 dark:text-teal-100 dark:hover:bg-teal-700 dark:hover:text-teal-100"
-        >Contact</a
-      >
+      <details bind:open={$detailsOpen}>
+        <summary
+          class="px-5 py-3 rounded text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+          >Más</summary
+        >
+        <ul>
+          <li>
+            <a
+              use:link
+              href={`/terms-of-use`}
+              class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+              on:click={handleLinkClick}
+              ><i
+                class="mr-2 fa-solid fa-book text-accent group-hover:text-primary"
+              ></i> Términos de uso</a
+            >
+          </li>
+          <li>
+            <a
+              use:link
+              href={`/privacy`}
+              class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+              on:click={handleLinkClick}
+              ><i
+                class="mr-2 fa-solid fa-lock text-accent group-hover:text-primary"
+              ></i> Privacidad</a
+            >
+          </li>
+          <li>
+            <a
+              use:link
+              href={`/about`}
+              class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+              on:click={handleLinkClick}
+              ><i
+                class="mr-2 fa-solid fa-circle-info text-accent group-hover:text-primary"
+              ></i> Sobre Nosotros</a
+            >
+          </li>
+          <li>
+            <a
+              use:link
+              href={`/contact`}
+              class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+              on:click={handleLinkClick}
+              ><i
+                class="mr-2 fa-solid fa-envelope text-accent group-hover:text-primary"
+              ></i> Contáctanos</a
+            >
+          </li>
+          <li>
+            <a
+              use:link
+              href={`/faq`}
+              class="block px-5 py-3 rounded group text-secondary hover:bg-accent hover:bg-opacity-90 hover:text-primary"
+              on:click={handleLinkClick}
+              ><i
+                class="mr-2 fa-solid fa-circle-question text-accent group-hover:text-primary"
+              ></i> Preguntas</a
+            >
+          </li>
+        </ul>
+      </details>
     </li>
-    <!-- Hide these items on medium and larger screens -->
-    <li class="md:hidden">
+    <li class="">
       <a
         use:link
-        href="/login"
-        class="block px-4 py-2 text-sm font-medium text-center text-white bg-teal-400 rounded-lg hover:bg-teal-500 focus:ring-4 focus:outline-none focus:ring-teal-300"
-        >Sign In</a
-      >
-    </li>
-    <li class="md:hidden">
-      <a
-        use:link
-        href="/signup"
-        class="block px-4 py-2 text-sm font-medium text-center text-white bg-teal-400 rounded-lg hover:bg-teal-500 focus:ring-4 focus:outline-none focus:ring-teal-300"
-        >Sign Up</a
+        on:click={() => {
+          axios
+            .get("/api/user/logout")
+            .then((logoutRes) => {
+              if (window.location.pathname === "/") {
+                window.location.reload();
+              } else {
+                window.location.href = "/";
+              }
+              console.log(logoutRes);
+            })
+            .catch((logoutErr) => {
+              console.log(logoutErr);
+            });
+        }}
+        href="/"
+        class="block px-4 py-3 mt-2 text-xl font-semibold text-center rounded-md text-primary bg-accent hover:bg-green-900"
+        on:click={handleLinkClick}>Cerrar Sesión</a
       >
     </li>
   </ul>
