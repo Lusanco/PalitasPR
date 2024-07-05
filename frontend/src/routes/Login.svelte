@@ -69,7 +69,7 @@
   // Function to handle the Axios response and redirect on successful login
   $: {
     if ($response && $response.status === 200) {
-      window.location.href = "/login-success";
+      window.location.href = "/";
     }
   }
 
