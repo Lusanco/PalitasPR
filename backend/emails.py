@@ -30,7 +30,7 @@ def send_confirm_email(email, first_name, token):
     from app import mail, app
 
     subject = "Welcome to PalitasPR"
-    confirm_link = f"http://127.0.0.1:5000/api/user/verify_email/{token}"
+    confirm_link = f"https://palitaspr.com/api/user/verify_email/{token}"
 
     # Load the HTML template
     html_template = load_html_template("backend/email_template/email_template.html")

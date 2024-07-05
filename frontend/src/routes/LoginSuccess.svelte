@@ -31,7 +31,7 @@
       <a
         use:link
         href="/"
-        class="px-6 shadow-md bg-accent text-primary hover:text-secondary hover:bg-white btn hover:shadow-md"
+        class="px-6 shadow-md bg-accent/90 text-primary hover:bg-accent btn hover:shadow-md"
       >
         Continuar
       </a>

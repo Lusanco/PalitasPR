@@ -17,7 +17,7 @@
     url: "/api/initial-contact",
     headers: "application/json",
     twcss:
-      "shadow-md md:w-1/3 w-full btn px-8 py-3 font-semibold bg-accent text-primary rounded hover:bg-white hover:text-secondary hover:shadow-md flex flex-col justify-center items-center",
+      "shadow-md md:w-1/3 w-full btn px-8 py-3 font-semibold bg-accent/90 text-primary rounded hover:bg-accent hover:shadow-md flex flex-col justify-center items-center",
     misc: { "App Location": "Service Details" },
   };
 
@@ -196,21 +196,21 @@
             class="flex flex-col items-center justify-center w-10/12 gap-4 mx-4 bg-white md:flex-row md:w-11/12 md:max-w-6xl"
           >
             <Link
-              class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
+              class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent/90 text-primary hover:bg-accent hover:shadow-md"
               to="/">Inicio</Link
             >
             {#if $userSession === false}
               <Link
-                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
+                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent/90 text-primary hover:bg-accent hover:shadow-md"
                 to="/login-to-continue">Ir a perfil</Link
               >
               <Link
-                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
+                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent/90 text-primary hover:bg-accent hover:shadow-md"
                 to="/login-to-continue">Enviar contacto</Link
               >
             {:else}
               <Link
-                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent text-primary hover:bg-white hover:text-secondary hover:shadow-md"
+                class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent/90 text-primary hover:bg-accent hover:shadow-md"
                 to={`/profile/${$profileID}`}>Ir a perfil</Link
               >
               <Button {image} {button} />

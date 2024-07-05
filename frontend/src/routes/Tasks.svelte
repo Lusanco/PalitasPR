@@ -26,7 +26,7 @@
     url: "/api/tasks/",
     headers: "application/json", // "application/json"
     twcss:
-      "w-full p-2 mb-4 mt-4 font-semibold text-white bg-accent border-none btn hover:bg-[#BB2532] transition-all duration-150 ease-in-out",
+      "w-full p-2 mb-4 mt-4 font-semibold text-primary bg-accent/90 border-none btn hover:bg-accent transition-all duration-150 ease-in-out",
     misc: { "App Location": "Submit Task" },
   };
 
@@ -36,7 +36,7 @@
     url: "/api/initial-contact",
     headers: "application/json", // "application/json"
     twcss:
-      "w-full grow font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f]",
+      "w-full grow font-semibold bg-accent/90 transition-all duration-150 ease-in-out shadow-md text-primary btn hover:bg-accent",
     misc: { "App Location": "Delete Task" },
   };
 
@@ -412,13 +412,13 @@
     >
       <button
         on:click={handleReceivedClick}
-        class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+        class="w-full p-2 mt-4 mb-4 font-semibold transition-all duration-150 ease-in-out border-2 border-white shadow-md grow md:w-fit bg-accent/90 text-primary btn hover:bg-accent"
       >
         Recibidos
       </button>
       <button
         on:click={handleSentClick}
-        class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+        class="w-full p-2 mt-4 mb-4 font-semibold transition-all duration-150 ease-in-out border-2 border-white shadow-md grow md:w-fit bg-accent/90 text-primary btn hover:bg-accent"
       >
         Enviados
       </button>
@@ -516,7 +516,7 @@
                   class="flex flex-wrap justify-center w-full md:justify-between"
                 >
                   <span>
-                    Name: {$sentReceived
+                    Nombre: {$sentReceived
                       ? `${response.contact_first_name} ${response.contact_last_name}`
                       : `${$userDetails.first_name} ${$userDetails.last_name}`}
                   </span>
@@ -1269,6 +1269,7 @@
                                   })
                                   .then((submit) => {
                                     console.log("Data submitted", submit);
+                                    window.location.href = "/tasks";
                                   })
                                   .catch((submitErr) => {
                                     console.error(
@@ -1277,7 +1278,7 @@
                                     );
                                   });
                               }}
-                              class="flex-1 mt-2 btn"
+                              class="flex-1 mt-2 btn bg-accent/90 text-primary hover:bg-accent"
                             >
                               Someter
                             </button>
@@ -1294,6 +1295,7 @@
                                   })
                                   .then((submit) => {
                                     console.log("Data submitted", submit);
+                                    window.location.href = "/tasks";
                                   })
                                   .catch((submitErr) => {
                                     console.error(
@@ -1302,7 +1304,7 @@
                                     );
                                   });
                               }}
-                              class="flex-1 mt-2 btn"
+                              class="flex-1 mt-2 btn bg-accent/90 text-primary hover:bg-accent"
                             >
                               Cerrar
                             </button>
