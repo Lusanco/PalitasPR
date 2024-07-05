@@ -412,13 +412,13 @@
     >
       <button
         on:click={handleReceivedClick}
-        class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+        class="w-full p-2 mt-4 mb-4 font-semibold transition-all duration-150 ease-in-out border-2 border-white shadow-md grow md:w-fit bg-accent/90 text-primary btn hover:bg-accent"
       >
         Recibidos
       </button>
       <button
         on:click={handleSentClick}
-        class="grow w-full md:w-fit p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] border-2 border-white"
+        class="w-full p-2 mt-4 mb-4 font-semibold transition-all duration-150 ease-in-out border-2 border-white shadow-md grow md:w-fit bg-accent/90 text-primary btn hover:bg-accent"
       >
         Enviados
       </button>
