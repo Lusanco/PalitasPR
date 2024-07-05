@@ -242,6 +242,7 @@
   });
 
   let openIndex = null;
+  let activeButton = "received";
 
   function toggleItem(index) {
     if (openIndex === index) {
@@ -357,6 +358,7 @@
   }
 
   function handleReceivedClick() {
+    activeButton = "received";
     cardLoading = true;
     axios
       .get("/api/user/contacts")
@@ -378,6 +380,7 @@
   let cardLoading = false;
 
   function handleSentClick() {
+    activeButton = "sent";
     cardLoading = true;
     axios
       .get("/api/user/contacts")
@@ -412,13 +415,19 @@
     >
       <button
         on:click={handleReceivedClick}
-        class="w-full p-2 mt-4 mb-4 font-semibold transition-all duration-150 ease-in-out border-2 border-white shadow-md grow md:w-fit bg-accent/90 text-primary btn hover:bg-accent"
+        class="w-full p-2 mt-4 mb-4 font-semibold transition-all duration-150 ease-in-out border-2 border-white shadow-md grow md:w-fit bg-accent/90 text-primary btn hover:bg-accent
+        {activeButton === 'received'
+          ? 'bg-accent/90 text-primary hover:text-primary hover:bg-accent'
+          : 'bg-white text-secondary hover:text-primary hover:bg-accent'} "
       >
         Recibidos
       </button>
       <button
         on:click={handleSentClick}
-        class="w-full p-2 mt-4 mb-4 font-semibold transition-all duration-150 ease-in-out border-2 border-white shadow-md grow md:w-fit bg-accent/90 text-primary btn hover:bg-accent"
+        class="w-full p-2 mt-4 mb-4 font-semibold transition-all duration-150 ease-in-out border-2 border-white shadow-md grow md:w-fit bg-accent/90 text-primary btn hover:bg-accent
+        {activeButton === 'sent'
+          ? 'bg-accent/90 text-primary hover:text-primary hover:bg-accent'
+          : 'bg-white text-secondary hover:text-primary hover:bg-accent'} "
       >
         Enviados
       </button>
@@ -1350,7 +1359,7 @@
                       {#if response.task.receiver_id === $userDetails.id}
                         <Link
                           to="/create-review/{response.task.id}"
-                          class="grow w-full p-2 mb-4 mt-4 font-semibold bg-accent transition-all duration-150 ease-in-out shadow-md text-[#f1f1f1] btn hover:bg-white hover:text-[#1f1f1f] "
+                          class="w-full p-2 mt-4 mb-4 font-semibold transition-all duration-150 ease-in-out shadow-md grow bg-accent/90 text-primary btn hover:bg-accent"
                           >Dejar reseña</Link
                         >
                       {/if}
