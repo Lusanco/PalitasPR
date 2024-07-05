@@ -1,11 +1,18 @@
-from flask import Blueprint, jsonify, request, make_response, g
+from flask import Blueprint, jsonify, request, make_response, g, current_app
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from db.db_operations import DBOperations
 from db.db_core import Db_core
 import aws_bucket
+from hashlib import md5
 
 api_bp = Blueprint('api', __name__)
+
+
+def make_cache_key():
+    # Generate a cache key based on model and service without hashing
+    key = f"search_storage"
+    return key
 
 @api_bp.route('/explore', methods=['GET'])
 def explore():
@@ -19,8 +26,35 @@ def explore():
     town = request.args.get('town')
     page = int(request.args.get('page', 1))
     limit = int(request.args.get('limit', 5))
+ 
+    # Use cache from current app
+    cache = current_app.extensions['cache'][list(current_app.extensions['cache'].keys())[0]]
 
-    print(f"Received request - Model: {model}, Service: {service}, Town: {town}, Page: {page}, Limit: {limit}")
+    if not cache.get('search_storage'):
+        cache_key = make_cache_key()
+    else:
+        cache_key = 'search_storage'
+
+    # Fetch cached data
+    cache = current_app.extensions['cache'][list(current_app.extensions['cache'].keys())[0]]
+    cached_data = cache.get(cache_key)
+    print('OLD cached data')
+    print(cached_data)
+    if cached_data:
+        # Compare cached model and service with current request parameters
+        cached_model = cached_data['model']
+        cached_service = cached_data['service']
+
+        if cached_model != model or cached_service != service:
+            print('DATA HAS CHANGED')
+            page = 1
+    print('My cache:')
+    print(cache.get(cache_key))
+    # Store the current model and service in the cache
+    cache.set(cache_key, {'model': model, 'service': service}, timeout=300)
+    cached_data = cache.get(cache_key)
+    print('NEW cached data')
+    print(cached_data)
 
     response, status = Db_core(g.db_session).landing_searchBar(model, service, town, page, limit)
     print(f"Response from landing_searchBar: {response}")
@@ -51,7 +85,6 @@ def explore():
                     model['pictures'] = urlPic
                 else:
                     model['pictures'] = None
-
         return make_response(jsonify(response), status)
 
 
@@ -82,13 +115,20 @@ def send_contact():
     '''
     if request.method == 'POST':
         data = request.get_json()
-        if 'receiver_id' not in data or 'promo_id' not in data:
+        print('MY DATA')
+        print(data)
+        # Check validation errors:
+        if 'request_id' not in data and 'promo_id' not in data:
             return make_response(jsonify({'error': 'Missing a key'}), 400)
         if not DBOperations(g.db_session).search('User', data['receiver_id']):
             return make_response(jsonify({'error': 'Receiver doesnt exist'}), 404)
-        if not DBOperations(g.db_session).search('Promotion', data['promo_id']):
-            return make_response(jsonify({'error': 'Promotion doesnt exist'}), 404)
-        
+        if 'promo_id' in data:
+            if not DBOperations(g.db_session).search('Promotion', data['promo_id']):
+                return make_response(jsonify({'error': 'Promotion doesnt exist'}), 404)
+        else:
+            if not DBOperations(g.db_session).search('Request', data['request_id']):
+                return make_response(jsonify({'error': 'Request doesnt exist'}), 404)
+
         data['sender_id'] = current_user.id
         response, status = DBOperations(g.db_session).new({'Initial_Contact': data})
         if status != 201:

@@ -18,6 +18,8 @@ from api_blueprints.tasks_routes import task_bp
 from api_blueprints.reviews_routes import review_bp
 from api_blueprints.requests_routes import request_bp
 import os
+from flask_caching import Cache
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -51,6 +53,10 @@ app.register_blueprint(task_bp, url_prefix="/api/tasks")
 app.register_blueprint(review_bp, url_prefix="/api/reviews")
 app.register_blueprint(request_bp, url_prefix="/api/request")
 
+# Configure cache
+
+app.config.from_mapping({'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': 900})
+cache = Cache(app)
 login_manager = LoginManager(app)
 mail = Mail(app)
 CORS(app)

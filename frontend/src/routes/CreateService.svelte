@@ -24,7 +24,7 @@
     url: "api/dashboard/promotion-request",
     headers: "multipart/form-data",
     twcss:
-      "px-8 py-3 font-semibold bg-accent text-primary rounded hover:bg-white hover:text-secondary hover:shadow-md",
+      "px-8 py-3 font-semibold bg-accent/90 text-primary rounded hover:bg-accent hover:shadow-md",
     misc: { "App Location": "Crear Servicio" },
   };
 
@@ -133,7 +133,7 @@
       <button
         on:click={handleButtonClick}
         tabindex="0"
-        class="btn btn-base dropdown-toggle text-primary bg-accent hover:bg-white hover:text-secondary hover:shadow-md"
+        class="btn btn-base dropdown-toggle text-primary bg-accent/90 hover:bg-accent hover:shadow-md"
         >Seleccionar pueblos</button
       >
       <ul

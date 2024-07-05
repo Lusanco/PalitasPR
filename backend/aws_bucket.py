@@ -226,7 +226,7 @@ def get_picture(user_id: str, model: str, model_id: str, pic_name: str):
     - Example: get_picture('101', 'Promotion', '001', 'Palitas_logo_pitch.png')
     """
 
-    if model not in ['Gallery', 'Profile', 'Cover']:
+    if model not in ['Gallery', 'Profile', 'Cover', 'Qr']:
             models_dict = {
             'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
             'Request': f'{user_id}/requests/{model_id}/{pic_name}',
@@ -275,7 +275,7 @@ def delete_picture(user_id: str, model: str, model_id, pic_name: str):
         """
 
         # Define the models and their respective paths
-        if model not in ['Gallery', 'Profile', 'Cover']:
+        if model not in ['Gallery', 'Profile', 'Cover', 'Qr']:
             models_dict = {
             'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
             'Request': f'{user_id}/requests/{model_id}/{pic_name}',
@@ -327,7 +327,7 @@ def put_picture(user_id: str, model: str, model_id: str, pic_name: str, content:
         Call this function with the user ID, model name, and pic_name to delete an object from the S3 bucket.
         - Example: delete_picture('101', 'Promotion', '001/Palitas_logo_pitch.png', <bytes>)
         """
-        if model not in ['Gallery', 'Profile', 'Cover']:
+        if model not in ['Gallery', 'Profile', 'Cover', 'Qr']:
             models_dict = {
             'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
             'Request': f'{user_id}/requests/{model_id}/{pic_name}',
@@ -372,7 +372,7 @@ async def get_picture_async(user_id: str, model: str, model_id: str, pic_name: s
     """
     Retrieve a picture from an AWS S3 bucket asynchronously.
     """
-    if model not in ['Gallery', 'Profile', 'Cover']:
+    if model not in ['Gallery', 'Profile', 'Cover', 'Qr']:
             models_dict = {
             'Promotion': f'{user_id}/promotions/{model_id}/{pic_name}',
             'Request': f'{user_id}/requests/{model_id}/{pic_name}',

@@ -29,10 +29,10 @@
     <p class="px-6 mt-3 text-lg text-center text-secondary">
       Para continuar, inicie sesión en su cuenta
     </p>
-    <p class="px-6 pt-4 text-sm text-center text-stone-secondary">
+    <p class="px-6 pt-4 text-sm text-center text-secondary">
       <button
         type="button"
-        class="px-6 bg-accent text-primary hover:text-secondary hover:bg-white btn"
+        class="px-6 bg-accent/90 text-primary hover:bg-accent btn"
       >
         <a use:link href="/login" rel="noopener noreferrer" role="button">
           Login

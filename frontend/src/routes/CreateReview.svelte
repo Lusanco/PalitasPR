@@ -2,9 +2,11 @@
   import { writable } from "svelte/store";
   import axios from "axios";
   import { onMount } from "svelte";
-  import { userSession, data } from "../scripts/stores";
+  import { userSession, data, state } from "../scripts/stores";
   import Button from "../components/Button.svelte";
   import { navigate } from "svelte-routing";
+  import Loading from "../components/Loading.svelte";
+  import { response, responseStatus } from "../scripts/stores";
 
   let description = "";
   let rating = "";
@@ -19,7 +21,7 @@
     method: "POST",
     url: "/api/reviews/",
     headers: "application/json", // "application/json"
-    twcss: "btn bg-accent text-white hover:bg-white hover:text-secondary",
+    twcss: "btn bg-accent/90 text-primary hover:bg-accent",
     misc: { "App Location": "Create Review" },
   };
   function logFormData(data) {
@@ -74,13 +76,19 @@
 
   function handleButtonClick() {
     // Navigate to a new route or URL
-    navigate("/tasks");
+    navigate("/create-review-success");
   }
 
   function handleKeyPress(event) {
     if (event.key === "Enter") {
       handleReviewSubmit();
       handleButtonClick();
+    }
+  }
+
+  $: {
+    if ($response && $responseStatus === 201) {
+      window.location.href = "/create-review-success";
     }
   }
 </script>
@@ -123,4 +131,15 @@
       </div>
     </div>
   </div>
+  {#if $state.hidden}
+    <div class="hidden"></div>
+  {:else if (!$state.hidden && !$state.loaded) || $state.reload}
+    <div
+      class="absolute z-50 flex flex-col items-center justify-center w-screen min-h-screen m-auto"
+    >
+      <Loading />
+    </div>
+  {:else if $state.error}
+    <p class="text-error">{errorMessage}</p>
+  {/if}
 </div>

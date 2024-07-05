@@ -18,7 +18,7 @@
     url: `/api/user/login?af1=${af1}&af2=${af2}`,
     headers: "application/json",
     twcss:
-      "shadow-md text-[#f1f1f1] btn bg-accent hover:text-primary hover:bg-accent hover:scale-105 focus:outline-none",
+      "shadow-md text-[#f1f1f1] btn bg-accent/90 hover:text-primary hover:bg-accent hover:scale-105 focus:outline-none",
     misc: { "App Location": "Login" },
   };
   // Button Prop Variables And Dependencies
@@ -69,7 +69,7 @@
   // Function to handle the Axios response and redirect on successful login
   $: {
     if ($response && $response.status === 200) {
-      window.location.href = "/login-success";
+      window.location.href = "/";
     }
   }
 

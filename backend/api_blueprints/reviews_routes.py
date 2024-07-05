@@ -34,7 +34,6 @@ def review_crud():
         for key in keys:
             if key not in data:
                 return make_response(jsonify({'error': f"Missing key: {key}"}), 400)
-
         # Check if task has no review and task status is closed
         review = Db_review(g.db_session).get_review_by_TaskID(data['task_id'])
         if review:
@@ -49,5 +48,7 @@ def review_crud():
         response, status = DBOperations(g.db_session).new({'Review': data})
         if status != 201:
             return make_response(jsonify(response), status)
+        task.status = 'reviewed'
+        g.db_session.add(task)
         g.db_session.commit()
         return make_response(jsonify({'results': 'ok'}), 201)

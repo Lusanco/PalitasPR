@@ -31,14 +31,14 @@
       use:link
       href="/"
       rel="noopener noreferrer"
-      class="w-full px-6 mx-1 bg-accent max-w-32 text-primary hover:text-secondary hover:bg-white btn"
+      class="w-full px-6 mx-1 bg-accent/90 max-w-32 text-primary hover:bg-accent btn"
       >Buscar
     </a>
     <a
       use:link
       href="/dashboard"
       rel="noopener noreferrer"
-      class="w-full px-6 mx-1 bg-accent max-w-32 text-primary hover:text-secondary hover:bg-white btn"
+      class="w-full px-6 mx-1 bg-accent/90 max-w-32 text-primary hover:bg-accent btn"
     >
       Tablero
     </a>

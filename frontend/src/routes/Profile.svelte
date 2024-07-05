@@ -138,7 +138,7 @@
           </div>
           <!-- Profile Details -->
           <div
-            class="flex flex-wrap p-4 -mt-8 rounded-none bg-primary md:bg-transparent"
+            class="flex flex-wrap p-4 -mt-8 bg-white rounded-none md:bg-transparent"
           >
             <div class="flex flex-wrap justify-between w-full px-4">
               <span class="w-full text-lg text-left md:w-fit"
@@ -260,17 +260,25 @@
           </h1>
 
           <div
-            class="flex flex-wrap justify-center overflow-hidden overflow-y-scroll min-h-96 h-96 element"
+            class="flex flex-wrap justify-center w-full overflow-hidden overflow-y-scroll min-h-96 h-96 element"
           >
-            {#each $images as image}
-              <div class="mt-2 min-w-72 min-h-36 max-w-72 max-h-36 skeleton">
-                <img
-                  src={image}
-                  alt="Gallery Pic"
-                  class="object-cover transition-transform duration-100 ease-out rounded-md hover:scale-105 min-w-72 min-h-36 max-w-72 max-h-36"
-                />
-              </div>
-            {/each}
+            {#if $images.length === 0}
+              <h1
+                class="flex items-center justify-center w-full m-0 text-lg font-semibold text-center md:ml-5 text-error"
+              >
+                Aún no tiene fotos
+              </h1>
+            {:else}
+              {#each $images as image}
+                <div class="mt-2 min-w-72 min-h-36 max-w-72 max-h-36 skeleton">
+                  <img
+                    src={image}
+                    alt="Gallery Pic"
+                    class="object-cover transition-transform duration-100 ease-out rounded-md hover:scale-105 min-w-72 min-h-36 max-w-72 max-h-36"
+                  />
+                </div>
+              {/each}
+            {/if}
           </div>
         </div>
       </div>

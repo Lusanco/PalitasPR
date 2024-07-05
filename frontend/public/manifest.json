@@ -1,17 +1,11 @@
 {
   "name": "PalitasPR",
-  "short_name": "Palitas",
+  "short_name": "PalitasPR",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f1f1f1",
-  "theme_color": "#cc2936",
+  "theme_color": "#26262C",
   "icons": [
-    {
-      "src": "maskable-icon.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
     {
       "src": "maskable-icon.png",
       "sizes": "512x512",

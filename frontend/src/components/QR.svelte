@@ -7,7 +7,6 @@
 
   let userDetails = writable();
   let qr_pic = null;
-  let imageUrl = null;
   let id;
   let fileInput;
   let profile;
@@ -24,6 +23,7 @@
 
   export let view;
   export let providerName;
+  export let imageUrl;
 
   onMount(() => {
     axios
@@ -41,9 +41,7 @@
       })
       .then((response) => {
         profile = response.data.results;
-        if (profile.qr_pic) {
-          imageUrl = profile.qr_pic;
-        }
+        console.log("Profile data:", profile);
       })
       .catch((error) => {
         console.error("Error fetching profile data:", error);
@@ -61,7 +59,7 @@
     fileInput.value = null;
   }
 
-  function handleEdit() {
+  /* function handleEdit() {
     if (qr_pic) {
       const formData = new FormData();
       formData.append("qr_pic", qr_pic);
@@ -80,9 +78,9 @@
           console.error("Error uploading image:", error);
         });
     }
-  }
+  } */
 
-  function handleDelete() {
+  /* function handleDelete() {
     axios
       .put(`/api/user/profile/${id}`)
       .then((response) => {
@@ -94,7 +92,7 @@
       .catch((error) => {
         console.error("Error deleting image:", error);
       });
-  }
+  } */
 </script>
 
 {#if view === "provider"}
@@ -138,7 +136,11 @@
         >
           Tu QR de Ath Movil
         </h1>
-        <img src={imageUrl} alt="QR Code" class="w-full h-auto rounded-md" />
+        <img
+          src={imageUrl}
+          alt="QR Code"
+          class="h-40 rounded-md w-80 md:h-80"
+        />
         <!-- <div class="flex w-full gap-2 mt-6">
           <button class="flex-1 px-4 py-2 text-lg btn" on:click={handleEdit}>
             <i
@@ -158,10 +160,14 @@
   </div>
 {:else if view === "receiver"}
   <div
-    class="flex flex-col items-center justify-center w-full p-5 mt-8 bg-opacity-30 card bg-neutral"
+    class="flex flex-col items-center justify-center w-full p-5 mt-4 bg-opacity-30 card bg-neutral"
   >
     <h1 class="text-lg font-semibold md:text-2xl">QR code de {providerName}</h1>
-    <img src={imageUrl} alt="QR Code" class="w-full h-auto my-2 rounded-md" />
+    <img
+      src={imageUrl}
+      alt="QR Code"
+      class="my-2 rounded-md h-52 w-96 md:h-80"
+    />
     <p class="text-sm font-semibold text-center md:text-md">
       Escanéalo para realizar el pago vía ATH Movil
     </p>
