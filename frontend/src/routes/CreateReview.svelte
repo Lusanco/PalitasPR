@@ -6,6 +6,7 @@
   import Button from "../components/Button.svelte";
   import { navigate } from "svelte-routing";
   import Loading from "../components/Loading.svelte";
+  import { response, responseStatus } from "../scripts/stores";
 
   let description = "";
   let rating = "";
@@ -82,6 +83,12 @@
     if (event.key === "Enter") {
       handleReviewSubmit();
       handleButtonClick();
+    }
+  }
+
+  $: {
+    if ($response && $responseStatus === 201) {
+      window.location.href = "/create-review-success";
     }
   }
 </script>
