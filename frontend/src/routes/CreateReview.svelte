@@ -20,7 +20,7 @@
     method: "POST",
     url: "/api/reviews/",
     headers: "application/json", // "application/json"
-    twcss: "btn bg-accent text-white hover:bg-white hover:text-secondary",
+    twcss: "btn bg-accent/90 text-primary hover:bg-accent",
     misc: { "App Location": "Create Review" },
   };
   function logFormData(data) {
@@ -75,7 +75,7 @@
 
   function handleButtonClick() {
     // Navigate to a new route or URL
-    navigate("/tasks");
+    navigate("/create-review-success");
   }
 
   function handleKeyPress(event) {

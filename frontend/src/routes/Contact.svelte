@@ -36,28 +36,28 @@
       </div>
       <form>
         <input
-          class="flex items-center w-full gap-2 px-3 py-2 mb-4 bg-white text-accent input input-bordered"
+          class="flex items-center w-full gap-2 px-3 py-2 mb-4 bg-white text-secondary input input-bordered border-neutral"
           type="text"
           placeholder="Nombre"
           name="name"
           bind:value={name}
         />
         <input
-          class="flex items-center w-full gap-2 px-3 py-2 mb-4 bg-white text-accent input input-bordered"
+          class="flex items-center w-full gap-2 px-3 py-2 mb-4 bg-white text-secondary input input-bordered border-neutral"
           type="email"
           placeholder="Correo electrónico"
           name="email"
           bind:value={email}
         />
         <input
-          class="flex items-center w-full gap-2 px-3 py-2 mb-4 bg-white text-accent input input-bordered"
+          class="flex items-center w-full gap-2 px-3 py-2 mb-4 bg-white text-secondary input input-bordered border-neutral"
           type="text"
           placeholder="Asunto"
           name="_subject"
           bind:value={subject}
         />
         <textarea
-          class="flex items-center w-full h-64 min-h-0 gap-2 px-3 py-2 mb-4 bg-white text-accent input input-bordered"
+          class="flex items-center w-full h-64 min-h-0 gap-2 px-3 py-2 mb-4 bg-white text-secondary input input-bordered border-neutral"
           placeholder="Escribe tu mensaje aquí..."
           name="message"
           bind:value={message}
@@ -65,7 +65,7 @@
         ></textarea>
         <div class="flex justify-center w-full">
           <button
-            class="flex-1 p-2 mt-2 font-semibold text-center rounded-md shadow-xl text-primary bg-accent hover:bg-white hover:text-accent focus:outline-none focus:shadow-outline"
+            class="flex-1 p-2 mt-2 font-semibold text-center rounded-md shadow-xl text-primary bg-accent/90 hover:bg-accent focus:outline-none focus:shadow-outline"
             type="submit">Enviar</button
           >
         </div>

@@ -24,7 +24,7 @@
     url: "/api/user/signup",
     headers: "application/json",
     twcss:
-      "shadow-md text-white btn bg-accent hover:bg-white hover:text-secondary w-full max-w-96 flex justify-center items-center flex m-auto",
+      "shadow-md text-white btn bg-accent/90 hover:bg-accent w-full max-w-96 flex justify-center hover:scale-105 items-center flex m-auto",
     misc: { "App Location": "Signup" },
   };
 

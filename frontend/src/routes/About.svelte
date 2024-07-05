@@ -61,7 +61,7 @@
         <button
           on:click={scrollToTeam}
           aria-label="Scroll down"
-          class="flex items-center justify-center w-10 h-10 mx-auto border-2 rounded-full shadow-lg md:hidden border-accent text-accent"
+          class="flex items-center justify-center w-10 h-10 mx-auto border-2 rounded-full shadow-lg md:hidden border-accent/90 text-accent/90 hover:border-accent hover:text-accent"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
