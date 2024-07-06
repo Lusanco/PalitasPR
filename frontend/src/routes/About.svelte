@@ -18,6 +18,10 @@
       });
   });
 
+  let imagePath = "images/members/";
+  let linkedInUrl = "https://www.linkedin.com/in/";
+  let githubUrl = "https://github.com/";
+
   function scrollToTeam() {
     const teamSection = document.getElementById("team");
     teamSection.scrollIntoView({ behavior: "smooth" });
@@ -83,14 +87,185 @@
     class="px-4 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
   >
     <br />
-    <div class="mx-auto text-center lg:max-w-xl">
+    <div class="mx-auto text-center lg:max-w-6xl">
       <br />
       <h1
         class="inline-block pb-8 text-3xl font-semibold tracking-wider uppercase rounded-full text-secondary"
       >
         Nuestro Equipo
       </h1>
-      <Team />
+      <!-- <Team /> -->
+      <div
+        class="flex flex-col items-center justify-center w-full gap-2 mt-12 md:flex-row"
+      >
+        <!--* Member 1 -->
+        <div
+          class="p-5 border-2 shadow-lg card bg-primnary text-secondary border-neutral/20"
+        >
+          <!--* Image -->
+          <div class="flex items-center justify-center w-full">
+            <img
+              src="{imagePath}/Alfre.jpg"
+              alt=""
+              class="object-cover transition-transform duration-200 ease-in-out border-2 rounded-md w-52 h-52 border-neutral/30 hover:scale-105"
+            />
+          </div>
+          <!--* Details -->
+          <div class="mt-2 text-center">
+            <h1 class="text-xl italic font-semibold text-accent">
+              Luis Santiago
+            </h1>
+            <p class="font-semibold text-md">Lead Developer</p>
+          </div>
+          <!--* Action buttons -->
+          <div class="flex w-full gap-2 mt-2">
+            <a
+              href="{linkedInUrl}lusanco/"
+              class="flex-1 transition-colors duration-200 ease-in-out border-2 btn border-accent hover:bg-accent hover:text-primary text-secondary"
+              >LinkedIn</a
+            >
+            <a
+              href="{githubUrl}lusanco"
+              class="flex-1 transition-colors duration-200 ease-in-out border-2 btn border-accent hover:bg-accent hover:text-primary text-secondary"
+              >Github</a
+            >
+          </div>
+        </div>
+        <!--* Member 2 -->
+        <div
+          class="p-5 border-2 shadow-lg card bg-primnary text-secondary border-neutral/20"
+        >
+          <!--* Image -->
+          <div class="flex items-center justify-center w-full">
+            <img
+              src="{imagePath}/Louis.jpg"
+              alt=""
+              class="object-cover transition-transform duration-200 ease-in-out border-2 rounded-md w-52 h-52 border-neutral/30 hover:scale-105"
+            />
+          </div>
+          <!--* Details -->
+          <div class="mt-2 text-center">
+            <h1 class="text-xl italic font-semibold text-accent">Louis Toro</h1>
+            <p class="font-semibold text-md">Backend Developer</p>
+          </div>
+          <!--* Action buttons -->
+          <div class="flex w-full gap-2 mt-2">
+            <a
+              href="{linkedInUrl}ltoro9/"
+              class="flex-1 transition-colors duration-200 ease-in-out border-2 btn border-accent hover:bg-accent hover:text-primary text-secondary"
+              >LinkedIn</a
+            >
+            <a
+              href="{githubUrl}ltoro9"
+              class="flex-1 transition-colors duration-200 ease-in-out border-2 btn border-accent hover:bg-accent hover:text-primary text-secondary"
+              >Github</a
+            >
+          </div>
+        </div>
+        <!--* Member 3 -->
+        <div
+          class="p-5 border-2 shadow-lg card bg-primnary text-secondary border-neutral/20"
+        >
+          <!--* Image -->
+          <div class="flex items-center justify-center w-full">
+            <img
+              src="{imagePath}/Antonio.jpg"
+              alt=""
+              class="object-cover transition-transform duration-200 ease-in-out border-2 rounded-md w-52 h-52 border-neutral/30 hover:scale-105"
+            />
+          </div>
+          <!--* Details -->
+          <div class="mt-2 text-center">
+            <h1 class="text-xl italic font-semibold text-accent">
+              Antonio de Jesús
+            </h1>
+            <p class="font-semibold text-md">Database Developer</p>
+          </div>
+          <!--* Action buttons -->
+          <div class="flex w-full gap-2 mt-2">
+            <a
+              href="{linkedInUrl}antoniofdjs/"
+              class="flex-1 transition-colors duration-200 ease-in-out border-2 btn border-accent hover:bg-accent hover:text-primary text-secondary"
+              >LinkedIn</a
+            >
+            <a
+              href="{githubUrl}antoniofdjs"
+              class="flex-1 transition-colors duration-200 ease-in-out border-2 btn border-accent hover:bg-accent hover:text-primary text-secondary"
+              >Github</a
+            >
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col items-center justify-center w-full gap-2 mt-4 -mb-12 md:flex-row"
+      >
+        <!--* Member 4 -->
+        <div
+          class="p-5 border-2 shadow-lg card bg-primnary text-secondary border-neutral/20"
+        >
+          <!--* Image -->
+          <div class="flex items-center justify-center w-full">
+            <img
+              src="{imagePath}/Livan.jpg"
+              alt=""
+              class="object-cover transition-transform duration-200 ease-in-out border-2 rounded-md w-52 h-52 border-neutral/30 hover:scale-105"
+            />
+          </div>
+          <!--* Details -->
+          <div class="mt-2 text-center">
+            <h1 class="text-xl italic font-semibold text-accent">
+              Livan Hernandez
+            </h1>
+            <p class="font-semibold text-md">Frontend Developer</p>
+          </div>
+          <!--* Action buttons -->
+          <div class="flex w-full gap-2 mt-2">
+            <a
+              href="{linkedInUrl}livan-hernandez-baba4a190/"
+              class="flex-1 transition-colors duration-200 ease-in-out border-2 btn border-accent hover:bg-accent hover:text-primary text-secondary"
+              >LinkedIn</a
+            >
+            <a
+              href="{githubUrl}livanhernandez"
+              class="flex-1 transition-colors duration-200 ease-in-out border-2 btn border-accent hover:bg-accent hover:text-primary text-secondary"
+              >Github</a
+            >
+          </div>
+        </div>
+        <!--* Member 5 -->
+        <div
+          class="p-5 border-2 shadow-lg card bg-primnary text-secondary border-neutral/20"
+        >
+          <!--* Image -->
+          <div class="flex items-center justify-center w-full">
+            <img
+              src="{imagePath}/Jonathan.jpg"
+              alt=""
+              class="object-cover transition-transform duration-200 ease-in-out border-2 rounded-md w-52 h-52 border-neutral/30 hover:scale-105"
+            />
+          </div>
+          <!--* Details -->
+          <div class="mt-2 text-center">
+            <h1 class="text-xl italic font-semibold text-accent">
+              Jonathan Pérez
+            </h1>
+            <p class="font-semibold text-md">Mobile Developer</p>
+          </div>
+          <!--* Action buttons -->
+          <div class="flex w-full gap-2 mt-2">
+            <a
+              href="{linkedInUrl}prodjohnper/"
+              class="flex-1 transition-colors duration-200 ease-in-out border-2 btn border-accent hover:bg-accent hover:text-primary text-secondary"
+              >LinkedIn</a
+            >
+            <a
+              href="{githubUrl}prodjohnper"
+              class="flex-1 transition-colors duration-200 ease-in-out border-2 btn border-accent hover:bg-accent hover:text-primary text-secondary"
+              >Github</a
+            >
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

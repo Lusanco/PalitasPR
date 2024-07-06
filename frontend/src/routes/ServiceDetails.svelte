@@ -24,6 +24,7 @@
   const response1 = writable(null);
   const response2 = writable(null);
   let profileID = writable("");
+  let userDetails = writable("");
 
   let id;
   let currentUrl;
@@ -44,6 +45,7 @@
       .get("/api/user/status")
       .then((userStatusRes) => {
         userSession.set(true);
+        userDetails.set(userStatusRes.data.id);
         console.log(userStatusRes.data);
         return axios.get(`/api/promotion/${id}`);
       })
@@ -178,10 +180,6 @@
                 </div>
                 <div class="flex justify-between gap-2 mt-8 text-secondary">
                   <div>{review.created_at}</div>
-                  <!-- <button
-                      class="absolute btn right-4 bottom-4 bg-[#cc2936] text-white hover:bg-white hover:text-[#1f1f1f] hover:shadow-md"
-                      >Images</button
-                    > -->
                 </div>
               </div>
             {/each}
@@ -213,7 +211,9 @@
                 class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent/90 text-primary hover:bg-accent hover:shadow-md"
                 to={`/profile/${$profileID}`}>Ir a perfil</Link
               >
-              <Button {image} {button} />
+              {#if $response1.results.user_id !== $userDetails}
+                <Button {image} {button} />
+              {/if}
             {/if}
           </div>
         </div>

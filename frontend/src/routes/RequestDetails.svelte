@@ -23,6 +23,7 @@
   const response1 = writable(null);
   const response2 = writable(null);
   let profileID = writable("");
+  let userDetails = writable("");
 
   let id;
   let currentUrl;
@@ -38,6 +39,7 @@
       .get("/api/user/status")
       .then((userStatusRes) => {
         userSession.set(true);
+        userDetails.set(userStatusRes.data.id);
         console.log(userStatusRes.data);
       })
       .catch((userStatusErr) => {
@@ -167,7 +169,9 @@
                 class="flex flex-col items-center justify-center w-full px-8 py-3 font-semibold rounded shadow-md md:w-1/3 btn bg-accent/90 text-primary hover:bg-accent hover:shadow-md"
                 to={`/profile/${$profileID}`}>Ir a perfil</Link
               >
-              <Button {image} {button} />
+              {#if $response1.results.user_id !== $userDetails}
+                <Button {image} {button} />
+              {/if}
             {/if}
           </div>
         </div>
