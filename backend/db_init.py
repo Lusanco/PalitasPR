@@ -10,8 +10,8 @@ db_url = os.getenv("DB_URL")
 
 engine = create_engine(
     db_url,
-    pool_size=20,
-    max_overflow=10,
+    pool_size=30,
+    max_overflow=15,
     pool_timeout=30,
     pool_recycle=1800,
     pool_pre_ping=True,
