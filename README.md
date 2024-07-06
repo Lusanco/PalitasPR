@@ -28,8 +28,8 @@
 | -------------------------------------------------- | --------------------------------------------------------------------------------- | 
 | [_api_blueprints_](backend/api_blueprints)                         | Command interpreter using the cmd module.                                         |     
 | [_api_documentation_](backend/api_documentation) | Serializes instances to a JSON file and deserializes JSON file back to instances. |
-| [_db_](db)        | Init for reloading from JSON file to storage                                      |
-| [_email_template_](email_template)            | Super class serving as the base for all subclasses.                               |
+| [_db_](backend/db)        | Init for reloading from JSON file to storage                                      |
+| [_email_template_](backend/email_template)            | Super class serving as the base for all subclasses.                               |
 | [_static_](models/user.py)                        | Sub class representing User instance.                                             |
 | [_app.py_](backend/app.py)                        | Sub class representing City instance.                                             |
 | [_aws_bucket.py_](backend/aws_bucket.py)                      | Sub class representing Place instance.                                            |
