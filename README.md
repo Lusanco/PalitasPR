@@ -48,7 +48,25 @@ The **Main App** is the core of our platform, utilizing the Flask framework for 
 ### SQLAlchemy and Postgres
 Our application relies on SQLAlchemy, an ORM (Object-Relational Mapping) tool, to interact with our PostgreSQL database efficiently. SQLAlchemy simplifies database operations by mapping Python objects to database tables and handling queries through Python methods.
 
-While SQLAlchemy encourages using relationships defined in models for data retrieval, we occasionally opt for custom SQL queries executed directly from the database session. This approach allows us to optimize performance for specific queries that may be more efficient when tailored directly to our database schema and requirements. In some cases, bypassing ORM relationships has proven faster and more effective, especially for complex data retrieval operations.
+While SQLAlchemy encourages using relationships defined in models for data retrieval, we occasionally opt for custom SQL queries executed directly from the database session. This approach allows us to optimize performance for specific queries that may be more efficient when tailored directly to our database schema and requirements.
+
+Database Operations are managed through the **db** folder, organized based on class models and standard CRUD operations. We use SQLAlchemy as our ORM tool to map Python objects to PostgreSQL tables. While ORM relationships are used for typical data retrieval, custom SQL queries are employed for performance optimization in specific scenarios.
+
+**DB Operations Classes**
+The following classes manage various aspects of database interactions:
+
+- **DBOperations**: General database operations.
+- **Db_promotion**: Operations related to promotions.
+- **Db_use**r: User-related operations, including login and signup.
+- **Db_core**: Core operations like search and filtering.
+- **Db_task**: Task management operations.
+- **Db_review**: Review management operations.
+- **Db_promo_towns**: Promotion town mappings.
+- **Db_request_towns**: Request town mappings.
+- **Db_initial_contact**: Initial contact operations.
+- **Db_request**: Request management operations.
+
+These classes encapsulate the logic for interacting with the database, ensuring a clean separation of concerns and making the codebase easier to maintain and extend.
 
 This hybrid approach ensures flexibility in managing our database interactions, balancing the convenience of ORM with the performance benefits of custom SQL queries where necessary.
 
