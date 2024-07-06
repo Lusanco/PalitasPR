@@ -54,7 +54,7 @@ While SQLAlchemy encourages using relationships defined in models for data retri
 This hybrid approach ensures flexibility in managing our database interactions, balancing the convenience of ORM with the performance benefits of custom SQL queries where necessary.
 
 ### S3 Bucket With the App
-Our application seamlessly integrates with AWS S3 for managing pictures. When uploading or retrieving pictures, we leverage Boto3, the AWS SDK for Python, to interact with our S3 bucket. For uploads, the app sends requests to S3, storing pictures securely in the cloud. When retrieving pictures, we generate presigned URLs using Boto3, granting temporary access to specific objects in our S3 bucket. These presigned URLs are then provided to the frontend, enabling clients to fetch and display pictures dynamically. This approach ensures efficient storage, retrieval, and display of images while maintaining security and scalability.
+Our application integrates with AWS S3 for managing pictures. When uploading or retrieving pictures, we use Boto3, the AWS SDK for Python, to interact with our bucket. For uploads, the app sends requests to S3, storing pictures securely in the cloud. When retrieving pictures, we generate presigned URLs using Boto3, granting temporary access to specific objects in our S3 bucket. These presigned URLs are then provided to the frontend, enabling clients to fetch and display pictures dynamically.
 
 <h1>Cloud</h1>
 
@@ -71,9 +71,9 @@ Our application seamlessly integrates with AWS S3 for managing pictures. When up
 <h1>Deployment</h1>
 
 ### How is it Deployed
-Our deployment strategy revolves around leveraging AWS services for robust and scalable hosting. We've secured our domain, palitaspr.com, using Amazon Route 53 and obtained an SSL/TLS certificate from AWS Certificate Manager (ACM). This certificate ensures secure communication over HTTPS.
+Our deployment strategy revolves around AWS services. We've secured our domain, palitaspr.com, using Amazon Route 53 and obtained an SSL/TLS certificate from AWS Certificate Manager (ACM). This certificate ensures secure communication over HTTPS.
 
-The core of our infrastructure is managed by an Elastic Load Balancer (ELB), which distributes incoming traffic across multiple EC2 instances, but in the case of this demo project only to one. These instances are configured with a Linux server environment running Gunicorn and Nginx. Gunicorn serves as the WSGI server, handling Python web application requests(the main `app.py`, while Nginx acts as a reverse proxy server, enhancing performance by caching and serving static content.
+The core of our infrastructure is managed by an Elastic Load Balancer (ELB), which distributes incoming traffic across multiple EC2 instances, but in the case for this demo project only to one. These instances are configured with a Linux server environment running Gunicorn and Nginx. Gunicorn serves as the WSGI server, handling Python web application requests(the main `app.py`, while Nginx acts as a reverse proxy server, enhancing performance by caching and serving static content.
 
 Our ELB is configured to target a group of EC2 instances, where listeners on ports 80 (HTTP) and 443 (HTTPS) are redirected to our palitaspr.com EC2 instance.
 
