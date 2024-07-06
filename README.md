@@ -24,19 +24,19 @@
 
 <h1>Backend</h1>
 
-| Folders                                             | Content                                                                           |
+| Folders & Files                                         | Content                                                                           |
 | -------------------------------------------------- | --------------------------------------------------------------------------------- | 
-| [_api_blueprints_](backend/api_blueprints)                         | Command interpreter using the cmd module.                                         |     
-| [_api_documentation_](backend/api_documentation) | Serializes instances to a JSON file and deserializes JSON file back to instances. |
-| [_db_](backend/db)        | Init for reloading from JSON file to storage                                      |
-| [_email_template_](backend/email_template)            | Super class serving as the base for all subclasses.                               |
-| [_static_](models/user.py)                        | Sub class representing User instance.                                             |
-| [_app.py_](backend/app.py)                        | Sub class representing City instance.                                             |
-| [_aws_bucket.py_](backend/aws_bucket.py)                      | Sub class representing Place instance.                                            |
-| [_base_model.py_](backend/base_model.py)                    | Sub class representing Review instance.                                           |
-| [_models.py_](backend/models.py)                      | Sub class representing State instance.                                            |
-| [_console.py_](backend/console.py)                  | Sub class representing User instance.                                             |
-| [_emails.py_](backend/emails.py)                                  | Folder containing all unittests for files.                                        |
+| [_api_blueprints_](backend/api_blueprints)                         | Routes and blueprints for main flask app.py                                         |     
+| [_api_documentation_](backend/api_documentation) | Routes documentation |
+| [_db_](backend/db)        | Db operation files based on class model and regular C.R.U.D for database                                    |
+| [_email_template_](backend/email_template)            | Template for email visual structure sent on confimation email                               |
+| [_static_](models/user.py)                        | Files to serve from the frontend build via flask                                             |
+| [_app.py_](backend/app.py)                        | Main Flask Aplication                                          |
+| [_aws_bucket.py_](backend/aws_bucket.py)                      | S3 bucket related functions                                           |
+| [_base_model.py_](backend/base_model.py)                    | Base model for all models                                          |
+| [_models.py_](backend/models.py)                      | All models represeting tables on database                                           |
+| [_console.py_](backend/console.py)                  | Testing console for the app                                             |
+| [_emails.py_](backend/emails.py)                                  | Functions related to emails                                        |
 
 <h1>Resources</h1>
 
