@@ -9,6 +9,8 @@
 - [Description](#description)
 - [Usage](#usage)
 - [Resources](#resources)
+- [Frontend](#frontend)
+- [Backend](#backend)
 - [Credits](#credits)
 
 
@@ -19,6 +21,22 @@
 </p>
 
 <h1>Usage</h1>
+
+<h1>Backend</h1>
+
+| Folders                                             | Content                                                                           |
+| -------------------------------------------------- | --------------------------------------------------------------------------------- | 
+| [_api_blueprints_](backend/api_blueprints)                         | Command interpreter using the cmd module.                                         |     
+| [_api_documentation_](backend/api_documentation) | Serializes instances to a JSON file and deserializes JSON file back to instances. |
+| [_db_](db)        | Init for reloading from JSON file to storage                                      |
+| [_email_template_](email_template)            | Super class serving as the base for all subclasses.                               |
+| [_static_](models/user.py)                        | Sub class representing User instance.                                             |
+| [_app.py_](backend/app.py)                        | Sub class representing City instance.                                             |
+| [_aws_bucket.py_](backend/aws_bucket.py)                      | Sub class representing Place instance.                                            |
+| [_base_model.py_](backend/base_model.py)                    | Sub class representing Review instance.                                           |
+| [_models.py_](backend/models.py)                      | Sub class representing State instance.                                            |
+| [_console.py_](backend/console.py)                  | Sub class representing User instance.                                             |
+| [_emails.py_](backend/emails.py)                                  | Folder containing all unittests for files.                                        |
 
 <h1>Resources</h1>
 
