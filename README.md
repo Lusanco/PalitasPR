@@ -1,11 +1,11 @@
-
-<p align="center">
+<div align="center">
   <img src="https://github.com/Lusanco/PalitasPR/blob/development/pre-main/frontend/public/logoLight.svg" />
-</p>
+</div>
 
 <hr>
 
-<h3>Table of contents</h3>
+<!-- Table of contents -->
+### Table of contents
 
 - [Description](#description)
 - [Usage](#usage)
@@ -13,34 +13,36 @@
 - [Backend](#backend)
 - [Cloud](#cloud)
 - [Deployment](#deployment)
+- [Screenshots](#screenshots)
+- [Learn more about the project](#learn-more-about-the-project)
 - [Credits](#credits)
 
-
+<!-- Description -->
 <h1>Description</h1>
 
-  PalitasPR is a service requests - promotions platform born from the need of a fast and reliable service requests - promotions system. We all know that finding jobs/services online as a contractor or as a person who needs to contract a servicer it's almos impossible. Between almost-dead platforms and the load of congestion that we can find in social media, everyday, searching or promoting a service gets more difficult. Our team worked with multiple technologies to bring you the best user experience. 
+PalitasPR is a service requests - promotions platform born from the need of a fast and reliable services system. We all know that finding jobs/services online as a contractor or as a person who needs to contract a servicer it's a difficult task. Between almost-dead platforms and the congestion that we can find in social media, everyday, searching or promoting a service gets more difficult. Our team worked with multiple technologies to bring you the best user experience. 
   
-  Our frontend, made with the Javascript framework [Svelte](https://svelte.dev/), our CSS framework [TailwindCSS](https://tailwindcss.com/), the UI library [DaisyUI](https://daisyui.com/). Our backend, made with [Python](https://www.python.org/) and [Flask](https://flask.palletsprojects.com/en/3.0.x/). Our database, made in [PostgreSQL](https://www.postgresql.org/) and loaded into our cloud service. Our Cloud based in [AWS](https://aws.amazon.com/). All of this tools and technologies together, make our app as efficient and as reliable as it is.
+- The frontend is made with the Javascript framework Svelte, the CSS framework TailwindCSS, the UI library DaisyUI and Vite as the builder/bundler.
+- The backend is made with Python and the web framework Flask.
+- The database is made in PostgreSQL and loaded into our cloud service.
+- The cloud service we use is AWS.
+  
+All of this tools and technologies together, make our app efficient, functional and fast.
 
+<!-- Usage --> 
 <h1>Usage</h1>
 
-<h2>Frontend</h2>
 
-<h3> Running the Project </h3>
+<!-- Frontend --> 
+<h3>Frontend</h3>
 
-```bash
-npm run dev
-```
-
-- Svelte is a modern JavaScript framework that enables building fast and reactive user interfaces with less code.
-
-<h4> Svelte installation </h4>
+<h4> Svelte installation using Vite </h4>
 
 ```bash
 npm create vite@latest <project-name>
 ```
 
-- TailwindCSS is a utility-first CSS framework that provides low-level utility classes to build custom designs without leaving your HTML.
+##
 
 <h4> TailwindCSS Installation </h4>
 
@@ -65,13 +67,15 @@ export default {
 }
 ```
 
+<h5>Global CSS Tailwind imports</h5>
+
 ```css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 ```
 
-- DaisyUI is a plugin for TailwindCSS that provides a set of beautifully designed, fully customizable UI components.
+##
 
 <h4> DaisyUI Installation </h4>
 
@@ -88,110 +92,18 @@ module.exports = {
     require('daisyui'),
   ],
 }
-```
-
-<h3> Project Structure </h3>
 
 ```
-Root Directory
 
-index.html: Main HTML file.
-package.json: Project metadata and dependencies.
-tailwind.config.js: Configuration for TailwindCSS.
+##
 
-Public Directory
+<h4> Running the project </h4>
 
-images/members: Contains member images.
-Alfre.jpg
-Antonio.jpg
-Jonathan.jpg
-Livan.jpg
-Louis.jpg
-logoDark.svg, logoLight.svg: Project logos.
-manifest.json: Web app manifest.
-
-Main Files
-app.css: Global styles.
-App.svelte: Main Svelte component. Acts as the root component, orchestrating the structure and behavior of the app.
+```bash
+npm run dev # runs the project in development mode
 ```
 
-
-<h3> Components </h3>
-
-
-```
-Reusable UI components:
-
-Button.svelte: Custom button component.
-Card.svelte: A card component used for displaying information in a card layout.
-List.svelte: A list component for displaying lists of items.
-Loading.svelte: A loading spinner component to indicate loading states.
-Member.svelte: Displays member information.
-Menu.svelte: Navigation menu component.
-OfferCard.svelte: Displays offer details.
-OriginalButton.svelte: Another button variant with different styles.
-QR.svelte: QR code generator component.
-ReviewCard.svelte: Displays review details.
-Slogan.svelte: Component to display the application's slogan.
-Team.svelte: Displays team members' information.
-```
-
-<h3> Layouts </h3>
-
-```
-Layout components:
-
-Footer.svelte: The footer section of the layout.
-Header.svelte: The header section of the layout.
-Main.svelte: The main content area of the layout.
-```
-
-Routes
-
-```
-Page components for different routes:
-
-About.svelte: About page.
-Agreement.svelte: Agreement details page.
-AgreementReview.svelte: Review agreement details.
-Contact.svelte: Contact page.
-CreateRequest.svelte: Form to create a new request.
-CreateRequestSuccess.svelte: Success message after creating a request.
-CreateReview.svelte: Form to create a new review.
-CreateReviewSuccess.svelte: Success message after creating a review.
-CreateService.svelte: Form to create a new service.
-CreateServiceSuccess.svelte: Success message after creating a service.
-Dashboard.svelte: User dashboard with various functionalities.
-EmailSuccess.svelte: Email success notification page.
-FAQ.svelte: Frequently Asked Questions page.
-Inbox.svelte: User inbox for messages.
-Index.svelte: Landing page.
-InitialContactSuccess.svelte: Initial contact success message.
-Login.svelte: Login page.
-LoginToContinue.svelte: Prompt to login to continue.
-ManageRequests.svelte: Page to manage user requests.
-ManageServices.svelte: Page to manage user services.
-NotFound.svelte: 404 Not Found page.
-Privacy.svelte: Privacy policy page.
-Profile.svelte: User profile page.
-RequestDetails.svelte: Detailed view of a request.
-RequestOffers.svelte: View offers for a request.
-Review.svelte: Detailed view of a review.
-ServiceDetails.svelte: Detailed view of a service.
-ServiceOffers.svelte: View offers for a service.
-Signup.svelte: Signup page.
-SignupSuccess.svelte: Signup success message.
-Tasks.svelte: User tasks management page.
-TermsOfUse.svelte: Terms of use page.
-Scripts
-currentPage.js: Handles current page state.
-servicesID.js: Manages service IDs.
-stores.js: Contains Svelte stores.
-teamMembers.js: Manages team members data.
-townsID.js: Manages towns IDs.
-utils.js: General utility functions.
-```
-
+<!-- Backend -->
 <h2>Backend</h2>
 
 - <h3> Main App </h3>
@@ -248,7 +160,8 @@ These classes encapsulate the logic for interacting with the database, ensuring 
   
 </div>
 
-  <h1>Cloud</h1>
+<!-- Cloud -->
+<h1>Cloud</h1>
 
 - <h3>Deployment</h3>
 
@@ -274,11 +187,49 @@ These classes encapsulate the logic for interacting with the database, ensuring 
 
 </div>
 
-<h1>Credits</h1>
+<!-- Screenshots -->
+# Screenshots
 
-<!-- [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)]
-[![Gmail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)]
-[![LinkedIn](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)] -->
+### Home page | Search
+<div align="center">
+  
+  ![Search](https://palitaspr.netlify.app/images/searchIndex.png)
+  
+</div>
+
+##
+
+### Service details
+<div align="center">
+  
+  ![Service details](https://palitaspr.netlify.app/images/serviceDetails.png)
+  
+</div>
+
+##
+
+### Profile page
+<div align="center">
+  
+  ![Profile page](https://palitaspr.netlify.app/images/profile.png)
+  
+</div>
+
+<!-- Learn more about the project -->
+# Learn more about the project
+
+<br />
+
+<div align="center">
+
+  ### Take a look at our [landing page](https://palitaspr.netlify.app/) and learn more about PalitasPR!
+
+</div>
+
+<br />
+
+<!-- Credits -->
+<h1>Credits</h1>
 
 <div align="center">
 
@@ -290,4 +241,14 @@ These classes encapsulate the logic for interacting with the database, ensuring 
 | Louis Toro       | Backend Developer | [![LinkedIn](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/louis-s-toro-rosario-32b8088a/) [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ltoro9) [![Gmail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:louistororosario@gmail.com) 
 | Luis Santiago    | Lead Developer | [![LinkedIn](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/lusanco/) [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/lusanco) [![Gmail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:lasc1026@gmail.com) 
 
+</div>
+
+##
+
+<br />
+
+<div align="end">
+
+  [Back to top ↑](#table-of-contents)
+  
 </div>
