@@ -106,15 +106,15 @@ npm run dev # runs the project in development mode
 <!-- Backend -->
 <h2>Backend</h2>
 
-- <h3> Main App </h3>
-  The <b>Main App</b> is the core of our platform, utilizing the Flask framework for a seamless connection between the frontend and backend. It features a modular blueprint structure for organized routing and API management. With SQLAlchemy and PostgreSQL, we handle data efficiently, supporting C.R.U.D. operations and custom queries. The application serves static files, including Svelte-generated JavaScript and CSS, ensuring a dynamic user interface. AWS S3 integration allows secure image uploads and retrievals. Key components include app.py for app initialization, base_model.py and models.py for database schema, console.py for command-line database operations, and emails.py for managing email communications. This setup ensures a robust and scalable backend infrastructure.
+<h3> Main App </h3>
+The <b>Main App</b> is the core of our platform, utilizing the Flask framework for a seamless connection between the frontend and backend. It features a modular blueprint structure for organized routing and API management. With SQLAlchemy and PostgreSQL, we handle data efficiently, supporting C.R.U.D. operations and custom queries. The application serves static files, including Svelte-generated JavaScript and CSS, ensuring a dynamic user interface. AWS S3 integration allows secure image uploads and retrievals. Key components include app.py for app initialization, base_model.py and models.py for database schema, console.py for command-line database operations, and emails.py for managing email communications. This setup ensures a robust and scalable backend infrastructure.
 
-- <h3> SQLAlchemy and Postgres </h3>
-  Our application relies on SQLAlchemy, an ORM (Object-Relational Mapping) tool, to interact with our PostgreSQL database efficiently. SQLAlchemy simplifies database operations by mapping Python objects to database tables and handling queries through Python methods.
+<h3> SQLAlchemy and Postgres </h3>
+Our application relies on SQLAlchemy, an ORM (Object-Relational Mapping) tool, to interact with our PostgreSQL database efficiently. SQLAlchemy simplifies database operations by mapping Python objects to database tables and handling queries through Python methods.
 
-  While SQLAlchemy encourages using relationships defined in models for data retrieval, we occasionally opt for custom SQL queries executed directly from the database session. This approach allows us to optimize performance for specific queries that may be more efficient when tailored directly to our database schema and requirements.
+While SQLAlchemy encourages using relationships defined in models for data retrieval, we occasionally opt for custom SQL queries executed directly from the database session. This approach allows us to optimize performance for specific queries that may be more efficient when tailored directly to our database schema and requirements.
 
-  Database Operations are managed through the **db** folder, organized based on class models and standard CRUD operations. We use SQLAlchemy as our ORM tool to map Python objects to PostgreSQL tables. While ORM relationships are used for typical data retrieval, custom SQL queries are employed for performance optimization in specific scenarios.
+Database Operations are managed through the **db** folder, organized based on class models and standard CRUD operations. We use SQLAlchemy as our ORM tool to map Python objects to PostgreSQL tables. While ORM relationships are used for typical data retrieval, custom SQL queries are employed for performance optimization in specific scenarios.
 
   **DB Operations Classes**
   The following classes manage various aspects of database interactions:
@@ -132,10 +132,10 @@ npm run dev # runs the project in development mode
 
 These classes encapsulate the logic for interacting with the database, ensuring a clean separation of concerns and making the codebase easier to maintain and extend.
 
-  This hybrid approach ensures flexibility in managing our database interactions, balancing the convenience of ORM with the performance benefits of custom SQL queries where necessary.
+This hybrid approach ensures flexibility in managing our database interactions, balancing the convenience of ORM with the performance benefits of custom SQL queries where necessary.
 
-- <h3> S3 Bucket With the App </h3>
-  Our application seamlessly integrates with AWS S3 for managing pictures. When uploading or retrieving pictures, we leverage Boto3, the AWS SDK for Python, to interact with our S3 bucket. For uploads, the app sends requests to S3, storing pictures securely in the cloud. When retrieving pictures, we generate presigned URLs using Boto3, granting temporary access to specific objects in our S3 bucket. These presigned URLs are then provided to the frontend, enabling clients to fetch and display pictures dynamically. This approach ensures efficient storage, retrieval, and display of images while maintaining security and scalability.
+<h3> S3 Bucket With the App </h3>
+Our application seamlessly integrates with AWS S3 for managing pictures. When uploading or retrieving pictures, we leverage Boto3, the AWS SDK for Python, to interact with our S3 bucket. For uploads, the app sends requests to S3, storing pictures securely in the cloud. When retrieving pictures, we generate presigned URLs using Boto3, granting temporary access to specific objects in our S3 bucket. These presigned URLs are then provided to the frontend, enabling clients to fetch and display pictures dynamically. This approach ensures efficient storage, retrieval, and display of images while maintaining security and scalability.
 
 <div align="center">
 
@@ -163,14 +163,14 @@ These classes encapsulate the logic for interacting with the database, ensuring 
 <!-- Cloud -->
 <h1>Cloud</h1>
 
-- <h3>Deployment</h3>
+<h3>Deployment</h3>
 
-  <h4> How is it Deployed?</h4>
-  Our deployment strategy revolves around leveraging AWS services for robust and scalable hosting. We've secured our domain, palitaspr.com, using Amazon Route 53 and obtained an SSL/TLS certificate from AWS Certificate Manager (ACM). This certificate ensures secure communication over HTTPS.
+<h4> How is it Deployed?</h4>
+Our deployment strategy revolves around leveraging AWS services for robust and scalable hosting. We've secured our domain, palitaspr.com, using Amazon Route 53 and obtained an SSL/TLS certificate from AWS Certificate Manager (ACM). This certificate ensures secure communication over HTTPS.
 
-  The core of our infrastructure is managed by an Elastic Load Balancer (ELB), which distributes incoming traffic across multiple EC2 instances, but in the case of this demo project only to one. These instances are configured with a Linux server environment running Gunicorn and Nginx. Gunicorn serves as the WSGI server, handling Python web application requests(the main `app.py`, while Nginx acts as a reverse proxy server, enhancing performance by caching and serving static content.
+The core of our infrastructure is managed by an Elastic Load Balancer (ELB), which distributes incoming traffic across multiple EC2 instances, but in the case of this demo project only to one. These instances are configured with a Linux server environment running Gunicorn and Nginx. Gunicorn serves as the WSGI server, handling Python web application requests the main `app.py`, while Nginx acts as a reverse proxy server, enhancing performance by caching and serving static content.
 
-  Our ELB is configured to target a group of EC2 instances, where listeners on ports 80 (HTTP) and 443 (HTTPS) are redirected to our palitaspr.com EC2 instance.
+Our ELB is configured to target a group of EC2 instances, where listeners on ports 80 (HTTP) and 443 (HTTPS) are redirected to our palitaspr.com EC2 instance.
 
 <div align="center">
 
