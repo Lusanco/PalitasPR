@@ -1,8 +1,8 @@
-<div align="center">
-  <img src="https://github.com/Lusanco/PalitasPR/blob/development/pre-main/frontend/public/logoLight.svg" />
-</div>
+# PalitasPR
 
-<hr>
+<div align="center">
+  <img src="https://github.com/Lusanco/PalitasPR/blob/development/pre-main/frontend/public/logoLight.svg" alt="PalitasPR logo"/>
+</div>
 
 <!-- Table of contents -->
 ### Table of contents
@@ -249,6 +249,6 @@ These classes encapsulate the logic for interacting with the database, ensuring 
 
 <div align="end">
 
-  [Back to top ↑](#table-of-contents)
+  [Back to top ↑](#palitaspr)
   
 </div>
