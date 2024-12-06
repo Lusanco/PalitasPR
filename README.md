@@ -20,14 +20,18 @@
 <!-- Description -->
 <h1>Description</h1>
 
-PalitasPR is a service requests - promotions platform born from the need of a fast and reliable services system. We all know that finding jobs/services online as a contractor or as a person who needs to contract a servicer it's a difficult task. Between almost-dead platforms and the congestion that we can find in social media, everyday, searching or promoting a service gets more difficult. Our team worked with multiple technologies to bring you the best user experience. 
+PalitasPR is a platform designed to simplify the connection between service providers and requesters in Puerto Rico. Finding and promoting services online can be challenging due to outdated platforms and the overwhelming noise on social media. Our platform streamlines this process by offering a fast, reliable, and user-friendly solution.
+
+## Project Overview
   
-- The frontend is made with the Javascript framework Svelte, the CSS framework TailwindCSS, the UI library DaisyUI and Vite as the builder/bundler.
-- The backend is made with Python and the web framework Flask.
-- The database is made in PostgreSQL and loaded into our cloud service.
-- The cloud service we use is AWS.
-  
-All of this tools and technologies together, make our app efficient, functional and fast.
+- Frontend: Built with Svelte for a reactive, efficient user interface, styled using Tailwind CSS and DaisyUI, with Vite as the build tool.
+- Backend: Powered by Python Flask, handling requests and server-side logic.
+- Database: Structured with PostgreSQL for robust and scalable data management.
+- Cloud Services: Originally deployed using AWS (RDS, S3, EC2) for hosting and scalability.
+
+### Note
+
+This project is no longer hosted but remains accessible on GitHub for review and reference.
 
 <!-- Usage --> 
 <h1>Usage</h1>
