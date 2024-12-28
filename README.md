@@ -1,7 +1,7 @@
 # PalitasPR
 
 <div align="center">
-  <img src="https://github.com/Lusanco/PalitasPR/blob/development/pre-main/frontend/public/logoLight.svg" alt="PalitasPR logo"/>
+  <img src="https://github.com/Lusanco/palitaspr/blob/main/frontend/public/logoLight.svg" alt="PalitasPR logo"/>
 </div>
 
 <!-- Table of contents -->
